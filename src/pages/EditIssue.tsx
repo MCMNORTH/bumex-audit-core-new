@@ -40,11 +40,13 @@ const statusOptions: { value: Status; label: string }[] = [
   { value: "done", label: "Done" },
 ];
 
-const CreateIssue = () => {
-  const { projectId = "" } = useParams();
-  const { addIssue, getEpicsByProject } = useAppStore();
+const EditIssue = () => {
+  const { issueId = "" } = useParams();
+  const { issues, updateIssue, getEpicsByProject } = useAppStore();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const issue = issues.find(i => i.id === issueId);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,9 +58,27 @@ const CreateIssue = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const epics = getEpicsByProject(projectId);
+  const epics = issue ? getEpicsByProject(issue.projectId) : [];
 
   useEffect(() => {
+    if (!issue) {
+      toast({
+        title: "Error",
+        description: "Issue not found",
+        variant: "destructive",
+      });
+      navigate('/');
+      return;
+    }
+
+    setTitle(issue.title);
+    setDescription(issue.description);
+    setType(issue.type);
+    setPriority(issue.priority);
+    setStatus(issue.status);
+    setAssigneeId(issue.assigneeId);
+    setEpicId(issue.epicId);
+
     const fetchUsers = async () => {
       setLoading(true);
       try {
@@ -68,9 +88,6 @@ const CreateIssue = () => {
           ...doc.data()
         })) as User[];
         setUsers(usersData);
-        if (usersData.length > 0) {
-          setAssigneeId(usersData[0].id);
-        }
       } catch (error) {
         console.error("Error fetching users:", error);
         toast({
@@ -84,7 +101,7 @@ const CreateIssue = () => {
     };
 
     fetchUsers();
-  }, [toast]);
+  }, [issue, navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,34 +115,36 @@ const CreateIssue = () => {
       return;
     }
 
+    if (!issue) return;
+
     try {
-      // Create a new issue object, ensuring no undefined values are passed to Firestore
-      const newIssue = {
+      // Create updated issue object
+      const updatedIssue = {
+        ...issue,
         title,
         description,
         type,
         status,
         priority,
         assigneeId: assigneeId || null, // Use null instead of undefined
-        reporterId: localStorage.getItem("userId") || "",
-        projectId,
-        // Only include epicId if it's not undefined or "no-epic"
+        updatedAt: new Date().toISOString(),
+        // Handle epic ID properly
         ...(epicId && epicId !== "no-epic" ? { epicId } : { epicId: null }),
       };
 
-      await addIssue(newIssue);
+      await updateIssue(updatedIssue);
 
       toast({
-        title: "Issue created",
-        description: `"${title}" has been created successfully.`,
+        title: "Issue updated",
+        description: `"${title}" has been updated successfully.`,
       });
 
-      navigate(`/projects/${projectId}`);
+      navigate(`/issues/${issueId}`);
     } catch (error) {
-      console.error("Error creating issue:", error);
+      console.error("Error updating issue:", error);
       toast({
         title: "Error",
-        description: "Failed to create issue",
+        description: "Failed to update issue",
         variant: "destructive",
       });
     }
@@ -139,9 +158,13 @@ const CreateIssue = () => {
     return "Unknown User";
   };
 
+  if (!issue) {
+    return <div className="p-6">Loading...</div>;
+  }
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Create Issue</h1>
+      <h1 className="text-2xl font-bold mb-6">Edit Issue</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
@@ -271,7 +294,7 @@ const CreateIssue = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate(`/projects/${projectId}`)}
+            onClick={() => navigate(`/issues/${issueId}`)}
           >
             Cancel
           </Button>
@@ -279,7 +302,7 @@ const CreateIssue = () => {
             type="submit"
             className="bg-jira-blue hover:bg-jira-blue-dark"
           >
-            Create Issue
+            Save Changes
           </Button>
         </div>
       </form>
@@ -287,4 +310,4 @@ const CreateIssue = () => {
   );
 };
 
-export default CreateIssue;
+export default EditIssue;

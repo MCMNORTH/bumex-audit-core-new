@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { Epic, Issue, Project, Status, User } from '@/types';
 import { firestore } from '@/lib/firebase';
@@ -26,6 +25,7 @@ interface AppState {
   setSelectedIssue: (issue: Issue | null) => void;
   
   addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Project>;
+  updateProject: (project: Project) => Promise<void>;
   addEpic: (epic: Omit<Epic, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Epic>;
   addIssue: (issue: Omit<Issue, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Issue>;
   
@@ -106,6 +106,18 @@ export const useAppStore = create<AppState>((set, get) => ({
     await firestore.createProject(newProject);
     set((state) => ({ projects: [...state.projects, newProject] }));
     return newProject;
+  },
+  
+  updateProject: async (project) => {
+    const updatedProject = {
+      ...project,
+      updatedAt: new Date().toISOString()
+    };
+    await firestore.updateProject(project.id, updatedProject);
+    set((state) => ({
+      projects: state.projects.map((p) => (p.id === project.id ? updatedProject : p)),
+      selectedProject: state.selectedProject?.id === project.id ? updatedProject : state.selectedProject,
+    }));
   },
   
   addEpic: async (epicData) => {

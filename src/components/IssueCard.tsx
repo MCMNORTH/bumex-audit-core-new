@@ -1,83 +1,70 @@
-
-import { cn } from "@/lib/utils";
-import { Issue, IssueType } from "@/types";
 import { useAppStore } from "@/store";
-import { Bug, CheckSquare, ClipboardList, File } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const issueTypeIcons: Record<IssueType, React.ReactNode> = {
-  task: <CheckSquare className="h-4 w-4 text-jira-blue" />,
-  bug: <Bug className="h-4 w-4 text-jira-red" />,
-  story: <ClipboardList className="h-4 w-4 text-jira-green" />,
-  epic: <File className="h-4 w-4 text-jira-purple" />,
-};
-
-const priorityColors: Record<string, string> = {
-  highest: "bg-jira-red",
-  high: "bg-orange-500",
-  medium: "bg-jira-yellow",
-  low: "bg-green-400",
-  lowest: "bg-gray-300",
-};
-
-interface IssueCardProps {
-  issue: Issue;
-}
-
-export const IssueCard = ({ issue }: IssueCardProps) => {
-  const { getUserById, setSelectedIssue } = useAppStore();
+export function IssueCard({ issue }) {
+  const { getUserById } = useAppStore();
+  const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
   const navigate = useNavigate();
   
-  const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
-
-  const handleClick = () => {
-    setSelectedIssue(issue);
-    navigate(`/issues/${issue.id}`);
+  // Map priority to colors
+  const priorityColors = {
+    highest: "bg-red-500",
+    high: "bg-orange-500",
+    medium: "bg-yellow-500",
+    low: "bg-blue-500",
+    lowest: "bg-gray-400",
+  };
+  
+  // Map issue type to icons
+  const typeIcons = {
+    bug: "🐞",
+    task: "✅",
+    story: "📝",
+    epic: "🏆",
   };
 
   return (
-    <div 
-      className="task-card fade-in"
-      onClick={handleClick}
+    <div className="bg-white p-3 rounded-md shadow border border-gray-200 mb-2 cursor-pointer"
+      onClick={() => navigate(`/issues/${issue.id}`)}
     >
-      <div className="flex justify-between mb-2">
+      <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-1">
-          {issueTypeIcons[issue.type]}
-          <span className="text-xs text-gray-500">
-            {issue.id.substring(0, 8)}
-          </span>
+          <span className="text-sm" title={issue.type}>{typeIcons[issue.type]}</span>
+          <span className={`w-2 h-2 rounded-full ${priorityColors[issue.priority]}`} title={`Priority: ${issue.priority}`}></span>
         </div>
-        <div className={cn("h-1.5 w-1.5 rounded-full", priorityColors[issue.priority])} />
+        <button 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            navigate(`/issues/${issue.id}/edit`);
+          }}
+          className="text-xs text-blue-600 hover:underline"
+        >
+          Edit
+        </button>
       </div>
       
-      <h3 className="text-sm font-medium text-gray-800 mb-2 line-clamp-2">{issue.title}</h3>
+      <h3 className="font-medium text-sm line-clamp-2">{issue.title}</h3>
       
-      <div className="flex justify-between items-center">
-        {issue.type !== 'epic' && (
-          <span className="bg-jira-gray-card text-xs py-0.5 px-1.5 rounded text-gray-600">
-            {issue.epicId ? `${issue.epicId.substring(0, 8)}` : ''}
-          </span>
-        )}
-        
-        {assignee ? (
-          <div 
-            className="h-6 w-6 rounded-full bg-jira-blue-dark text-white flex items-center justify-center text-xs font-medium"
-            title={assignee.name}
-          >
-            {assignee.avatarUrl ? (
-              <img 
-                src={assignee.avatarUrl} 
-                alt={assignee.name} 
-                className="h-full w-full rounded-full object-cover"
-              />
-            ) : (
-              assignee.name.substring(0, 2).toUpperCase()
-            )}
-          </div>
-        ) : (
-          <div className="h-6 w-6 rounded-full border-2 border-dashed border-gray-300" />
-        )}
+      <div className="flex justify-between items-center mt-2">
+        <div className="flex items-center">
+          {assignee ? (
+            <div className="flex items-center">
+              <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs overflow-hidden">
+                {assignee.avatarUrl ? (
+                  <img src={assignee.avatarUrl} alt={assignee.name} className="w-full h-full object-cover" />
+                ) : (
+                  (assignee.name || assignee.email || "U").charAt(0).toUpperCase()
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="w-5 h-5 rounded-full border border-dashed border-gray-300 flex items-center justify-center">
+              <span className="text-xs text-gray-400">?</span>
+            </div>
+          )}
+        </div>
+        <div className="text-xs text-gray-500">{issue.id.substring(0, 8)}</div>
       </div>
     </div>
   );
-};
+}

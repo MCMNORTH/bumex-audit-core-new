@@ -7,9 +7,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import CreateProject from "./pages/CreateProject";
+import EditProject from "./pages/EditProject";
 import ProjectBoard from "./pages/ProjectBoard"; 
 import ProjectIssues from "./pages/ProjectIssues";
 import CreateIssue from "./pages/CreateIssue";
+import EditIssue from "./pages/EditIssue";
 import IssueDetail from "./pages/IssueDetail";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -49,7 +51,9 @@ const AppRoutes = () => {
         <Route path="/projects/:projectId/board" element={<ProjectBoard />} />
         <Route path="/projects/:projectId/issues" element={<ProjectIssues />} />
         <Route path="/projects/:projectId/create-issue" element={<CreateIssue />} />
+        <Route path="/projects/:projectId/edit" element={<EditProject />} />
         <Route path="/issues/:issueId" element={<IssueDetail />} />
+        <Route path="/issues/:issueId/edit" element={<EditIssue />} />
       </Route>
       
       <Route path="*" element={<NotFound />} />

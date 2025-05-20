@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User } from "lucide-react";
+import { PlusCircle, User, Home } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
@@ -41,6 +41,13 @@ export const Sidebar = () => {
       </div>
       
       <div className="p-2">
+        <Button 
+          onClick={() => navigate('/')} 
+          className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2 mb-2"
+        >
+          <Home className="h-4 w-4" />
+          {isOpen && <span>Dashboard</span>}
+        </Button>
         <Button 
           onClick={() => navigate('/create-project')} 
           className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2"
