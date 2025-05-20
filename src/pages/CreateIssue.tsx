@@ -13,8 +13,10 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
-import { IssueType, Priority, Status } from "@/types";
+import { useState, useEffect } from "react";
+import { IssueType, Priority, Status, User } from "@/types";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const issueTypes: { value: IssueType; label: string }[] = [
   { value: "task", label: "Task" },
@@ -40,7 +42,7 @@ const statusOptions: { value: Status; label: string }[] = [
 
 const CreateIssue = () => {
   const { projectId = "" } = useParams();
-  const { addIssue, getEpicsByProject, users } = useAppStore();
+  const { addIssue, getEpicsByProject } = useAppStore();
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -49,12 +51,42 @@ const CreateIssue = () => {
   const [type, setType] = useState<IssueType>("task");
   const [priority, setPriority] = useState<Priority>("medium");
   const [status, setStatus] = useState<Status>("todo");
-  const [assigneeId, setAssigneeId] = useState<string | undefined>(users[0]?.id);
+  const [assigneeId, setAssigneeId] = useState<string | undefined>(undefined);
   const [epicId, setEpicId] = useState<string | undefined>(undefined);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const epics = getEpicsByProject(projectId);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const usersData = usersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as User[];
+        setUsers(usersData);
+        if (usersData.length > 0) {
+          setAssigneeId(usersData[0].id);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch users",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [toast]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title) {
@@ -66,29 +98,35 @@ const CreateIssue = () => {
       return;
     }
 
-    const newIssue = {
-      id: `issue-${Date.now()}`,
-      title,
-      description,
-      type,
-      status,
-      priority,
-      assigneeId,
-      reporterId: users[0]?.id,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      epicId,
-      projectId,
-    };
+    try {
+      const newIssue = {
+        title,
+        description,
+        type,
+        status,
+        priority,
+        assigneeId,
+        reporterId: localStorage.getItem("userId") || "",
+        epicId,
+        projectId,
+      };
 
-    addIssue(newIssue);
+      await addIssue(newIssue);
 
-    toast({
-      title: "Issue created",
-      description: `"${title}" has been created successfully.`,
-    });
+      toast({
+        title: "Issue created",
+        description: `"${title}" has been created successfully.`,
+      });
 
-    navigate(`/projects/${projectId}`);
+      navigate(`/projects/${projectId}`);
+    } catch (error) {
+      console.error("Error creating issue:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create issue",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -169,15 +207,16 @@ const CreateIssue = () => {
             <Select
               value={assigneeId || "unassigned"}
               onValueChange={setAssigneeId}
+              disabled={loading}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select assignee" />
+                <SelectValue placeholder={loading ? "Loading users..." : "Select assignee"} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
-                    {user.name}
+                    {user.name || user.displayName || user.email?.split('@')[0] || "Unknown User"}
                   </SelectItem>
                 ))}
               </SelectContent>
