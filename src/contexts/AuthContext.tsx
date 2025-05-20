@@ -15,6 +15,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>; // Added for compatibility
   changePassword: (newPassword: string) => Promise<void>;
 }
 
@@ -40,6 +41,12 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     await signOut(auth);
   };
 
+  // This function is added only for compatibility with existing code
+  // Since signup is disabled, we'll make it throw an error
+  const signup = async (email: string, password: string) => {
+    throw new Error("Signup is disabled. Please login with an existing account.");
+  };
+
   const changePassword = async (newPassword: string) => {
     if (!currentUser) throw new Error("No user is signed in");
     await updatePassword(currentUser, newPassword);
@@ -59,6 +66,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     loading,
     login,
     logout,
+    signup, // Include in context
     changePassword
   };
 
