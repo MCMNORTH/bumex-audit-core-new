@@ -4,16 +4,17 @@ import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, User } from "lucide-react";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export const Sidebar = () => {
   const { projects, selectedProject, setSelectedProject } = useAppStore();
-  const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { state } = useSidebar();
+  const isOpen = state !== "collapsed";
 
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
@@ -32,7 +33,7 @@ export const Sidebar = () => {
           Jira Clone
         </h1>
         <button
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => useSidebar().toggleSidebar()}
           className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent"
         >
           {isOpen ? "◀" : "▶"}
