@@ -129,6 +129,14 @@ const CreateIssue = () => {
     }
   };
 
+  // Helper function to get user display name
+  const getUserDisplayName = (user: User): string => {
+    if (user.name) return user.name;
+    if (user.displayName) return user.displayName;
+    if (user.email) return user.email.split('@')[0];
+    return "Unknown User";
+  };
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Create Issue</h1>
@@ -216,7 +224,7 @@ const CreateIssue = () => {
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
-                    {user.name || user.displayName || user.email?.split('@')[0] || "Unknown User"}
+                    {getUserDisplayName(user)}
                   </SelectItem>
                 ))}
               </SelectContent>
