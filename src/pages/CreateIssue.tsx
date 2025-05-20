@@ -167,14 +167,14 @@ const CreateIssue = () => {
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
             <Select
-              value={assigneeId || ""}
+              value={assigneeId || "unassigned"}
               onValueChange={setAssigneeId}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select assignee" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.name}
@@ -189,14 +189,14 @@ const CreateIssue = () => {
           <div className="space-y-2">
             <Label htmlFor="epic">Epic</Label>
             <Select
-              value={epicId || ""}
+              value={epicId || "no-epic"}
               onValueChange={setEpicId}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select epic" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No epic</SelectItem>
+                <SelectItem value="no-epic">No epic</SelectItem>
                 {epics.map((epic) => (
                   <SelectItem key={epic.id} value={epic.id}>
                     {epic.title}
