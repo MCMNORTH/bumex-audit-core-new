@@ -1,7 +1,8 @@
 
 import { create } from 'zustand';
-import { mockEpics, mockIssues, mockProjects, mockUsers } from '@/data/mockData';
 import { Epic, Issue, Project, Status, User } from '@/types';
+import { firestore } from '@/lib/firebase';
+import { v4 as uuidv4 } from 'uuid';
 
 interface AppState {
   users: User[];
@@ -10,16 +11,28 @@ interface AppState {
   issues: Issue[];
   selectedProject: Project | null;
   selectedIssue: Issue | null;
+  loading: {
+    projects: boolean;
+    epics: boolean;
+    issues: boolean;
+  };
 
   // Actions
+  fetchProjects: () => Promise<void>;
+  fetchEpics: (projectId: string) => Promise<void>;
+  fetchIssues: (projectId: string) => Promise<void>;
+  
   setSelectedProject: (project: Project | null) => void;
   setSelectedIssue: (issue: Issue | null) => void;
-  addProject: (project: Project) => void;
-  addEpic: (epic: Epic) => void;
-  addIssue: (issue: Issue) => void;
-  updateIssue: (issue: Issue) => void;
-  updateIssueStatus: (issueId: string, status: Status) => void;
-  deleteIssue: (issueId: string) => void;
+  
+  addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Project>;
+  addEpic: (epic: Omit<Epic, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Epic>;
+  addIssue: (issue: Omit<Issue, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Issue>;
+  
+  updateIssue: (issue: Issue) => Promise<void>;
+  updateIssueStatus: (issueId: string, status: Status) => Promise<void>;
+  deleteIssue: (issueId: string) => Promise<void>;
+  
   getIssuesByProject: (projectId: string) => Issue[];
   getEpicsByProject: (projectId: string) => Epic[];
   getIssuesByEpic: (epicId: string) => Issue[];
@@ -28,35 +41,136 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  users: mockUsers,
-  projects: mockProjects,
-  epics: mockEpics,
-  issues: mockIssues,
-  selectedProject: mockProjects[0],
+  users: [],
+  projects: [],
+  epics: [],
+  issues: [],
+  selectedProject: null,
   selectedIssue: null,
+  loading: {
+    projects: false,
+    epics: false,
+    issues: false,
+  },
+
+  fetchProjects: async () => {
+    set(state => ({ loading: { ...state.loading, projects: true }}));
+    try {
+      const projects = await firestore.getAllProjects() as Project[];
+      set({ projects, loading: { ...get().loading, projects: false } });
+      
+      // If there are projects and no selected project, select the first one
+      if (projects.length > 0 && !get().selectedProject) {
+        set({ selectedProject: projects[0] });
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      set(state => ({ loading: { ...state.loading, projects: false }}));
+    }
+  },
+
+  fetchEpics: async (projectId: string) => {
+    set(state => ({ loading: { ...state.loading, epics: true }}));
+    try {
+      const epics = await firestore.getEpicsByProject(projectId) as Epic[];
+      set({ epics, loading: { ...get().loading, epics: false } });
+    } catch (error) {
+      console.error("Error fetching epics:", error);
+      set(state => ({ loading: { ...state.loading, epics: false }}));
+    }
+  },
+
+  fetchIssues: async (projectId: string) => {
+    set(state => ({ loading: { ...state.loading, issues: true }}));
+    try {
+      const issues = await firestore.getIssuesByProject(projectId) as Issue[];
+      set({ issues, loading: { ...get().loading, issues: false } });
+    } catch (error) {
+      console.error("Error fetching issues:", error);
+      set(state => ({ loading: { ...state.loading, issues: false }}));
+    }
+  },
 
   setSelectedProject: (project) => set({ selectedProject: project }),
   setSelectedIssue: (issue) => set({ selectedIssue: issue }),
   
-  addProject: (project) => set((state) => ({ projects: [...state.projects, project] })),
+  addProject: async (projectData) => {
+    const now = new Date().toISOString();
+    const newProject: Project = {
+      id: uuidv4(),
+      ...projectData,
+      createdAt: now,
+      updatedAt: now,
+    };
+    
+    await firestore.createProject(newProject);
+    set((state) => ({ projects: [...state.projects, newProject] }));
+    return newProject;
+  },
   
-  addEpic: (epic) => set((state) => ({ epics: [...state.epics, epic] })),
+  addEpic: async (epicData) => {
+    const now = new Date().toISOString();
+    const newEpic: Epic = {
+      id: uuidv4(),
+      ...epicData,
+      createdAt: now,
+      updatedAt: now,
+    };
+    
+    await firestore.createEpic(newEpic);
+    set((state) => ({ epics: [...state.epics, newEpic] }));
+    return newEpic;
+  },
   
-  addIssue: (issue) => set((state) => ({ issues: [...state.issues, issue] })),
+  addIssue: async (issueData) => {
+    const now = new Date().toISOString();
+    const newIssue: Issue = {
+      id: uuidv4(),
+      ...issueData,
+      createdAt: now,
+      updatedAt: now,
+    };
+    
+    await firestore.createIssue(newIssue);
+    set((state) => ({ issues: [...state.issues, newIssue] }));
+    return newIssue;
+  },
   
-  updateIssue: (issue) => set((state) => ({
-    issues: state.issues.map((i) => (i.id === issue.id ? issue : i)),
-  })),
+  updateIssue: async (issue) => {
+    const updatedIssue = {
+      ...issue,
+      updatedAt: new Date().toISOString()
+    };
+    await firestore.updateIssue(issue.id, updatedIssue);
+    set((state) => ({
+      issues: state.issues.map((i) => (i.id === issue.id ? updatedIssue : i)),
+    }));
+  },
   
-  updateIssueStatus: (issueId, status) => set((state) => ({
-    issues: state.issues.map((issue) => 
-      issue.id === issueId ? { ...issue, status } : issue
-    ),
-  })),
+  updateIssueStatus: async (issueId, status) => {
+    const issue = get().issues.find(i => i.id === issueId);
+    if (!issue) return;
+    
+    const updatedIssue = {
+      ...issue,
+      status,
+      updatedAt: new Date().toISOString()
+    };
+    
+    await firestore.updateIssue(issueId, { status, updatedAt: updatedIssue.updatedAt });
+    set((state) => ({
+      issues: state.issues.map((issue) => 
+        issue.id === issueId ? updatedIssue : issue
+      ),
+    }));
+  },
   
-  deleteIssue: (issueId) => set((state) => ({
-    issues: state.issues.filter((issue) => issue.id !== issueId),
-  })),
+  deleteIssue: async (issueId) => {
+    await firestore.deleteIssue(issueId);
+    set((state) => ({
+      issues: state.issues.filter((issue) => issue.id !== issueId),
+    }));
+  },
   
   getIssuesByProject: (projectId) => {
     return get().issues.filter((issue) => issue.projectId === projectId);
@@ -78,3 +192,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     return get().users.find((user) => user.id === userId);
   },
 }));
+
+// Initialize the store by loading projects
+if (typeof window !== 'undefined') {
+  useAppStore.getState().fetchProjects();
+}

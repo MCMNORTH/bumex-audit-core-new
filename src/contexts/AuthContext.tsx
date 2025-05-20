@@ -5,7 +5,8 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  updatePassword
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -13,8 +14,8 @@ interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  changePassword: (newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -31,16 +32,17 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const signup = (email: string, password: string) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  const login = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const login = (email: string, password: string) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const logout = async () => {
+    await signOut(auth);
   };
 
-  const logout = () => {
-    return signOut(auth);
+  const changePassword = async (newPassword: string) => {
+    if (!currentUser) throw new Error("No user is signed in");
+    await updatePassword(currentUser, newPassword);
   };
 
   useEffect(() => {
@@ -56,8 +58,8 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     currentUser,
     loading,
     login,
-    signup,
-    logout
+    logout,
+    changePassword
   };
 
   return (

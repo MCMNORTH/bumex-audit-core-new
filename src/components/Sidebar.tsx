@@ -3,19 +3,24 @@ import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, User } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { LogoutButton } from "./LogoutButton";
 
 export const Sidebar = () => {
   const { projects, selectedProject, setSelectedProject } = useAppStore();
   const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}`);
   };
+
+  const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || "User";
 
   return (
     <div className={cn(
@@ -69,12 +74,22 @@ export const Sidebar = () => {
         </ul>
       </div>
       
-      <div className="p-4 border-t border-sidebar-border">
-        <div className={cn("flex items-center gap-2", !isOpen && "justify-center")}>
-          <div className="w-8 h-8 bg-jira-blue rounded-full flex items-center justify-center">
-            <span className="text-white font-semibold">JD</span>
-          </div>
-          {isOpen && <span>John Doe</span>}
+      <div className="mt-auto border-t border-sidebar-border">
+        <div className="p-2">
+          <Button 
+            onClick={() => navigate('/profile')} 
+            variant="ghost" 
+            size="sm"
+            className="w-full justify-start text-muted-foreground hover:text-foreground"
+          >
+            <User className="mr-2 h-4 w-4" />
+            {isOpen && <span>{displayName}</span>}
+          </Button>
+          {isOpen ? <LogoutButton /> : (
+            <div className="flex justify-center p-2">
+              <LogoutButton />
+            </div>
+          )}
         </div>
       </div>
     </div>
