@@ -20,7 +20,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { login } = useAuth(); // Changed from signIn to login to match AuthContext
   const navigate = useNavigate();
 
   const form = useForm<LoginFormData>({
@@ -34,7 +34,7 @@ const Login = () => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      await signIn(data.email, data.password);
+      await login(data.email, data.password);
       toast("Login successful", {
         description: "Welcome back!"
       });
@@ -43,7 +43,7 @@ const Login = () => {
       console.error("Login error:", error);
       toast("Login failed", {
         description: "Invalid email or password. Please try again.",
-        variant: "destructive",
+        // Removed the 'variant' property as it doesn't exist in the ExternalToast type
       });
     } finally {
       setIsLoading(false);
