@@ -1,31 +1,20 @@
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { Sprint } from '@/types';
 import { useAppStore } from '@/store';
-import { 
-  format, 
-  parseISO, 
-  addMonths, 
-  startOfMonth, 
-  endOfMonth, 
-  eachDayOfInterval, 
-  eachWeekOfInterval, 
-  eachMonthOfInterval,
-  isSameMonth,
-  isSameWeek,
-  isSameDay,
-  addDays,
-  addWeeks
-} from 'date-fns';
+import { format, parseISO, isSameDay, isWithinInterval, addMonths } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';
+import { Calendar } from "@/components/ui/calendar";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { 
-  ToggleGroup, 
-  ToggleGroupItem 
-} from '@/components/ui/toggle-group';
-
-type TimelineView = 'days' | 'weeks' | 'months';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { cn } from '@/lib/utils';
 
 interface ProjectTimelineProps {
   projectId: string;
@@ -33,15 +22,9 @@ interface ProjectTimelineProps {
 
 export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
   const { getSprintsByProject, fetchSprints } = useAppStore();
-  const [timeUnits, setTimeUnits] = useState<Date[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<TimelineView>('months');
-  const [startDate, setStartDate] = useState(() => startOfMonth(addMonths(new Date(), -1)));
-  const [endDate, setEndDate] = useState(() => endOfMonth(addMonths(new Date(), 2)));
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const [month, setMonth] = useState<Date>(new Date());
+  const [selectedSprint, setSelectedSprint] = useState<Sprint | null>(null);
   
   // Fetching sprints data
   useEffect(() => {
@@ -54,115 +37,7 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
     loadSprints();
   }, [projectId, fetchSprints]);
   
-  // Update timeline units based on selected view
-  useEffect(() => {
-    let units: Date[] = [];
-    
-    switch (view) {
-      case 'days':
-        units = eachDayOfInterval({ start: startDate, end: endDate });
-        break;
-      case 'weeks':
-        units = eachWeekOfInterval({ start: startDate, end: endDate });
-        break;
-      case 'months':
-        units = eachMonthOfInterval({ start: startDate, end: endDate });
-        break;
-    }
-    
-    setTimeUnits(units);
-  }, [view, startDate, endDate]);
-  
   const sprints = getSprintsByProject(projectId);
-  
-  // Time navigation handlers
-  const navigatePrevious = () => {
-    switch (view) {
-      case 'days':
-        setStartDate(prev => addDays(prev, -14));
-        setEndDate(prev => addDays(prev, -14));
-        break;
-      case 'weeks':
-        setStartDate(prev => addWeeks(prev, -4));
-        setEndDate(prev => addWeeks(prev, -4));
-        break;
-      case 'months':
-        setStartDate(prev => addMonths(prev, -3));
-        setEndDate(prev => addMonths(prev, -3));
-        break;
-    }
-  };
-  
-  const navigateNext = () => {
-    switch (view) {
-      case 'days':
-        setStartDate(prev => addDays(prev, 14));
-        setEndDate(prev => addDays(prev, 14));
-        break;
-      case 'weeks':
-        setStartDate(prev => addWeeks(prev, 4));
-        setEndDate(prev => addWeeks(prev, 4));
-        break;
-      case 'months':
-        setStartDate(prev => addMonths(prev, 3));
-        setEndDate(prev => addMonths(prev, 3));
-        break;
-    }
-  };
-  
-  // Dragging functionality
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!timelineRef.current) return;
-    
-    setIsDragging(true);
-    setStartX(e.pageX - timelineRef.current.offsetLeft);
-    setScrollLeft(timelineRef.current.scrollLeft);
-  };
-  
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-  
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-  
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !timelineRef.current) return;
-    
-    e.preventDefault();
-    const x = e.pageX - timelineRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
-    timelineRef.current.scrollLeft = scrollLeft - walk;
-  };
-  
-  // Helper function to check if a sprint is active during a specific time unit
-  const isSprintActiveInTimeUnit = (sprint: Sprint, timeUnit: Date) => {
-    if (!sprint.startDate || !sprint.endDate) return false;
-    
-    const sprintStart = parseISO(sprint.startDate);
-    const sprintEnd = parseISO(sprint.endDate);
-    
-    if (view === 'days') {
-      return (
-        isSameDay(timeUnit, sprintStart) ||
-        isSameDay(timeUnit, sprintEnd) ||
-        (timeUnit > sprintStart && timeUnit < sprintEnd)
-      );
-    } else if (view === 'weeks') {
-      return (
-        isSameWeek(timeUnit, sprintStart) ||
-        isSameWeek(timeUnit, sprintEnd) ||
-        (timeUnit > sprintStart && timeUnit < sprintEnd)
-      );
-    } else {
-      return (
-        isSameMonth(timeUnit, sprintStart) ||
-        isSameMonth(timeUnit, sprintEnd) ||
-        (timeUnit > sprintStart && timeUnit < sprintEnd)
-      );
-    }
-  };
   
   // Helper function to get sprint color based on status
   const getSprintColor = (status: Sprint['status']) => {
@@ -173,115 +48,200 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
     }
   };
 
-  // Helper function to format time unit label
-  const formatTimeUnitLabel = (date: Date) => {
-    switch (view) {
-      case 'days':
-        return format(date, 'MMM d');
-      case 'weeks':
-        return `Week of ${format(date, 'MMM d')}`;
-      case 'months':
-        return format(date, 'MMMM yyyy');
+  // Navigate to previous/next month
+  const prevMonth = () => {
+    setMonth(prev => addMonths(prev, -1));
+  };
+  
+  const nextMonth = () => {
+    setMonth(prev => addMonths(prev, 1));
+  };
+  
+  // Custom day rendering to highlight sprint dates
+  const renderDay = (day: Date) => {
+    // Track which sprints are active on this day
+    const activeSprints = sprints.filter(sprint => {
+      if (!sprint.startDate || !sprint.endDate) return false;
+      
+      const startDate = parseISO(sprint.startDate);
+      const endDate = parseISO(sprint.endDate);
+      
+      return isWithinInterval(day, { start: startDate, end: endDate }) ||
+             isSameDay(day, startDate) ||
+             isSameDay(day, endDate);
+    });
+
+    if (activeSprints.length === 0) return null;
+    
+    return (
+      <div className="h-full w-full relative">
+        <div className="absolute bottom-1 left-0 right-0 flex justify-center gap-0.5">
+          {activeSprints.slice(0, 3).map((sprint, i) => (
+            <div 
+              key={sprint.id}
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                getSprintColor(sprint.status)
+              )}
+              title={sprint.name}
+            ></div>
+          ))}
+          {activeSprints.length > 3 && (
+            <div className="h-1.5 w-1.5 rounded-full bg-gray-500" title={`+${activeSprints.length - 3} more sprints`}></div>
+          )}
+        </div>
+      </div>
+    );
+  };
+  
+  // Handle day click to show sprint details
+  const handleDayClick = (day: Date) => {
+    const activeSprints = sprints.filter(sprint => {
+      if (!sprint.startDate || !sprint.endDate) return false;
+      
+      const startDate = parseISO(sprint.startDate);
+      const endDate = parseISO(sprint.endDate);
+      
+      return isWithinInterval(day, { start: startDate, end: endDate }) ||
+             isSameDay(day, startDate) ||
+             isSameDay(day, endDate);
+    });
+    
+    if (activeSprints.length > 0) {
+      // If there's only one sprint on this day, select it directly
+      if (activeSprints.length === 1) {
+        setSelectedSprint(activeSprints[0]);
+      } else if (selectedSprint) {
+        // If there's already a selected sprint and it's in the active sprints, cycle to the next one
+        const currentIndex = activeSprints.findIndex(s => s.id === selectedSprint.id);
+        if (currentIndex >= 0 && currentIndex < activeSprints.length - 1) {
+          setSelectedSprint(activeSprints[currentIndex + 1]);
+        } else {
+          setSelectedSprint(activeSprints[0]);
+        }
+      } else {
+        // If nothing is selected, select the first active sprint
+        setSelectedSprint(activeSprints[0]);
+      }
+    } else {
+      setSelectedSprint(null);
     }
   };
   
   if (loading) {
-    return <div className="p-4 text-center">Loading timeline...</div>;
+    return <div className="p-4 text-center">Loading calendar...</div>;
   }
   
   return (
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
-        <div className="flex space-x-2">
+        <div className="flex items-center gap-2">
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={navigatePrevious}
+            onClick={prevMonth}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
+          <h3 className="font-medium">{format(month, 'MMMM yyyy')}</h3>
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={navigateNext}
+            onClick={nextMonth}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>
         
-        <ToggleGroup 
-          type="single" 
-          value={view}
-          onValueChange={(value) => {
-            if (value) setView(value as TimelineView);
-          }}
-        >
-          <ToggleGroupItem value="days">Days</ToggleGroupItem>
-          <ToggleGroupItem value="weeks">Weeks</ToggleGroupItem>
-          <ToggleGroupItem value="months">Months</ToggleGroupItem>
-        </ToggleGroup>
+        {sprints.length > 0 && (
+          <Select 
+            value={selectedSprint?.id || ""} 
+            onValueChange={(value) => {
+              const sprint = sprints.find(s => s.id === value);
+              setSelectedSprint(sprint || null);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a sprint" />
+            </SelectTrigger>
+            <SelectContent>
+              {sprints.map(sprint => (
+                <SelectItem key={sprint.id} value={sprint.id}>
+                  {sprint.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       
-      <Card className="border rounded-md overflow-hidden">
-        <CardContent className="p-0">
-          <div 
-            ref={timelineRef}
-            className="overflow-x-auto"
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            onMouseMove={handleMouseMove}
-            style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-          >
-            <div className="min-w-max">
-              {/* Timeline Header */}
-              <div className="flex border-b sticky top-0 bg-white z-10">
-                <div className="w-32 min-w-32 p-2 font-medium border-r">Sprints</div>
-                {timeUnits.map((unit) => (
-                  <div 
-                    key={unit.toString()} 
-                    className="min-w-[120px] p-2 text-center font-medium border-r last:border-r-0"
-                  >
-                    {formatTimeUnitLabel(unit)}
-                  </div>
-                ))}
+      <Card>
+        <CardContent className="p-6">
+          <Calendar
+            mode="single"
+            month={month}
+            onMonthChange={setMonth}
+            className={cn("w-full pointer-events-auto")}
+            onDayClick={handleDayClick}
+            components={{
+              Day: ({ day, ...props }) => (
+                <Button
+                  variant="ghost"
+                  className={cn(
+                    "h-9 w-9 p-0 font-normal relative aria-selected:opacity-100",
+                    props.className
+                  )}
+                  {...props}
+                >
+                  {format(day, "d")}
+                  {renderDay(day)}
+                </Button>
+              ),
+            }}
+          />
+        </CardContent>
+      </Card>
+      
+      {selectedSprint && (
+        <Card className="mt-4">
+          <CardContent className="p-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className={cn("h-3 w-3 rounded-full", getSprintColor(selectedSprint.status))}></div>
+                <h3 className="font-semibold">{selectedSprint.name}</h3>
+                <span className={cn("ml-2 px-2 py-0.5 rounded-full text-xs font-medium", 
+                  selectedSprint.status === 'active' ? "bg-green-100 text-green-800" : 
+                  selectedSprint.status === 'completed' ? "bg-blue-100 text-blue-800" : 
+                  "bg-gray-100 text-gray-800")}>
+                  {selectedSprint.status.charAt(0).toUpperCase() + selectedSprint.status.slice(1)}
+                </span>
               </div>
               
-              {/* Timeline Body */}
-              <div>
-                {sprints.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">No sprints found</div>
-                ) : (
-                  sprints.map((sprint) => (
-                    <div key={sprint.id} className="flex items-center border-b last:border-b-0">
-                      <div className="w-32 min-w-32 p-2 font-medium border-r truncate">
-                        {sprint.name}
-                      </div>
-                      
-                      {timeUnits.map((unit) => {
-                        const isActive = isSprintActiveInTimeUnit(sprint, unit);
-                        return (
-                          <div 
-                            key={unit.toString()}
-                            className="min-w-[120px] p-2 border-r last:border-r-0 min-h-[40px]"
-                          >
-                            {isActive && (
-                              <div 
-                                className={`${getSprintColor(sprint.status)} h-4 rounded-md`}
-                                title={sprint.name}
-                              ></div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))
+              {selectedSprint.goal && (
+                <p className="text-sm text-gray-500">{selectedSprint.goal}</p>
+              )}
+              
+              <div className="text-xs text-gray-500">
+                {selectedSprint.startDate && (
+                  <span>Start: {format(parseISO(selectedSprint.startDate), 'MMM d, yyyy')}</span>
+                )}
+                {selectedSprint.startDate && selectedSprint.endDate && (
+                  <span> • </span>
+                )}
+                {selectedSprint.endDate && (
+                  <span>End: {format(parseISO(selectedSprint.endDate), 'MMM d, yyyy')}</span>
                 )}
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
+      
+      {sprints.length === 0 && (
+        <div className="text-center p-8 text-gray-500">
+          No sprints available. Create sprints in the Sprints tab to see them on the calendar.
+        </div>
+      )}
     </div>
   );
 };
