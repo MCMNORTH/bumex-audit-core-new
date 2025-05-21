@@ -59,31 +59,40 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
-          <CardDescription>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+      <div className="w-full max-w-md mb-8">
+        <img 
+          src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png"
+          alt="OverWork Logo"
+          className="mx-auto h-12 mb-6"
+        />
+      </div>
+      
+      <Card className="w-full max-w-md shadow-lg border-0">
+        <CardHeader className="space-y-1 pb-4 text-center">
+          <CardTitle className="text-2xl font-bold text-[#459ed7]">Welcome Back</CardTitle>
+          <CardDescription className="text-gray-500">
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-gray-700">Email</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="email@example.com" 
                         {...field} 
                         disabled={loading}
+                        className="h-11"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[#f04f3a]" />
                   </FormItem>
                 )}
               />
@@ -92,30 +101,46 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-gray-700">Password</FormLabel>
                     <FormControl>
                       <Input 
                         type="password" 
                         placeholder="••••••••" 
                         {...field} 
                         disabled={loading}
+                        className="h-11"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-[#f04f3a]" />
                   </FormItem>
                 )}
               />
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full h-11 bg-[#459ed7] hover:bg-[#3688bd]" 
                 disabled={loading}
               >
                 {loading ? "Logging in..." : "Login"}
               </Button>
+              
+              <div className="text-center text-sm">
+                <span className="text-gray-500">Don't have an account? </span>
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto font-semibold text-[#459ed7] hover:text-[#3688bd]"
+                  onClick={() => navigate("/signup")}
+                >
+                  Sign up
+                </Button>
+              </div>
             </form>
           </Form>
         </CardContent>
       </Card>
+      
+      <div className="mt-8 text-center text-sm text-gray-500">
+        &copy; {new Date().getFullYear()} OverWork. All rights reserved.
+      </div>
     </div>
   );
 };

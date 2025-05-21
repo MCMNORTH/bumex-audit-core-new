@@ -21,6 +21,7 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
   const [isExpanded, setIsExpanded] = useState(true);
   const { getIssuesBySprint, updateSprint } = useAppStore();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [sprintStatus, setSprintStatus] = useState(sprint.status);
   
   const issues = getIssuesBySprint(sprint.id);
   
@@ -43,11 +44,13 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
 
   const handleStartSprint = async () => {
     try {
-      await updateSprint({
+      const updatedSprint = {
         ...sprint,
-        status: "active",
+        status: "active" as const,
         startDate: sprint.startDate || new Date().toISOString()
-      });
+      };
+      await updateSprint(updatedSprint);
+      setSprintStatus("active");
     } catch (error) {
       console.error("Error starting sprint:", error);
     }
@@ -55,11 +58,13 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
 
   const handleCompleteSprint = async () => {
     try {
-      await updateSprint({
+      const updatedSprint = {
         ...sprint,
-        status: "completed",
+        status: "completed" as const,
         endDate: sprint.endDate || new Date().toISOString()
-      });
+      };
+      await updateSprint(updatedSprint);
+      setSprintStatus("completed");
     } catch (error) {
       console.error("Error completing sprint:", error);
     }
@@ -71,8 +76,8 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
         <div className="flex flex-col flex-grow cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
           <div className="flex items-center">
             <h3 className="font-semibold">{sprint.name}</h3>
-            <span className={cn("ml-2 px-2 py-0.5 rounded-full text-xs font-medium", getStatusBadgeColor(sprint.status))}>
-              {sprint.status.charAt(0).toUpperCase() + sprint.status.slice(1)}
+            <span className={cn("ml-2 px-2 py-0.5 rounded-full text-xs font-medium", getStatusBadgeColor(sprintStatus))}>
+              {sprintStatus.charAt(0).toUpperCase() + sprintStatus.slice(1)}
             </span>
           </div>
           {sprint.goal && (
@@ -89,7 +94,7 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
           </span>
           
           <div className="flex gap-1">
-            {sprint.status === "future" && (
+            {sprintStatus === "future" && (
               <Button 
                 variant="outline" 
                 size="sm"
@@ -100,7 +105,7 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
               </Button>
             )}
             
-            {sprint.status === "active" && (
+            {sprintStatus === "active" && (
               <Button 
                 variant="outline" 
                 size="sm"

@@ -3,7 +3,7 @@ export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
 
-export type IssueType = "task" | "bug" | "story" | "epic";
+export type IssueType = "task" | "bug" | "story" | "epic" | "subtask";
 
 export interface User {
   id: string;
@@ -29,7 +29,7 @@ export interface Issue {
   id: string;
   title: string;
   description?: string;
-  type: "bug" | "task" | "story" | "epic";
+  type: "bug" | "task" | "story" | "epic" | "subtask";
   status: Status;
   priority: "highest" | "high" | "medium" | "low" | "lowest";
   assigneeId?: string;
@@ -40,7 +40,12 @@ export interface Issue {
   projectId: string;
   createdAt: string;
   updatedAt: string;
-};
+}
+
+export interface SubTask extends Issue {
+  parentId: string; // Required for subtasks
+  type: "subtask";   // Subtasks always have this type
+}
 
 export interface Project {
   id: string;

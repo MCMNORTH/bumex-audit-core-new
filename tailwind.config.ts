@@ -64,15 +64,16 @@ export default {
           ring: 'hsl(var(--sidebar-ring))'
         },
         jira: {
-          'blue': '#2684FF',
-          'blue-dark': '#0052CC',
+          'blue': '#459ed7',
+          'blue-dark': '#3688bd',
           'cyan': '#00B8D9',
           'green': '#36B37E',
-          'red': '#FF5630',
+          'red': '#f04f3a',
           'yellow': '#FFAB00',
           'gray-dark': '#172B4D',
           'gray-light': '#F4F5F7',
           'gray-card': '#EBECF0',
+          'dark-sidebar': '#0a0d17',
         }
       },
       borderRadius: {

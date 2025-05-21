@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/store";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { 
   Bug, 
   CheckSquare, 
@@ -18,11 +18,20 @@ import {
 import { toast } from "sonner";
 import { Status } from "@/types";
 import { Badge } from "@/components/ui/badge";
+import { SubTaskList } from "@/components/SubTaskList";
 
 const IssueDetail = () => {
   const { issueId = "" } = useParams();
-  const { issues, getUserById, getProjectById, updateIssueStatus, deleteIssue } = useAppStore();
+  const { issues, getUserById, getProjectById, updateIssueStatus, deleteIssue, fetchIssues } = useAppStore();
   const navigate = useNavigate();
+
+  // Fetch issues to ensure we have the latest data
+  useEffect(() => {
+    const issue = issues.find(i => i.id === issueId);
+    if (issue) {
+      fetchIssues(issue.projectId);
+    }
+  }, [issueId, issues, fetchIssues]);
 
   const issue = useMemo(() => {
     return issues.find(i => i.id === issueId);
@@ -43,6 +52,9 @@ const IssueDetail = () => {
     );
   }
 
+  // Don't show subtask list for subtasks themselves
+  const isSubtask = issue.type === "subtask";
+
   const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
   const reporter = issue.reporterId ? getUserById(issue.reporterId) : null;
   const project = getProjectById(issue.projectId);
@@ -50,13 +62,15 @@ const IssueDetail = () => {
   const getIssueTypeIcon = () => {
     switch (issue.type) {
       case 'bug': 
-        return <Bug className="h-5 w-5 text-jira-red" />;
+        return <Bug className="h-5 w-5 text-[#f04f3a]" />;
       case 'task': 
-        return <CheckSquare className="h-5 w-5 text-jira-blue" />;
+        return <CheckSquare className="h-5 w-5 text-[#459ed7]" />;
       case 'story': 
-        return <ClipboardList className="h-5 w-5 text-jira-green" />;
+        return <ClipboardList className="h-5 w-5 text-[#36B37E]" />;
       case 'epic': 
         return <File className="h-5 w-5 text-purple-500" />;
+      case 'subtask':
+        return <CheckSquare className="h-5 w-5 text-gray-400" />;
       default: 
         return null;
     }
@@ -65,11 +79,11 @@ const IssueDetail = () => {
   const getPriorityBadge = () => {
     switch (issue.priority) {
       case 'highest':
-        return <Badge className="bg-jira-red">Highest</Badge>;
+        return <Badge className="bg-[#f04f3a]">Highest</Badge>;
       case 'high':
         return <Badge className="bg-orange-500">High</Badge>;
       case 'medium':
-        return <Badge className="bg-jira-yellow text-black">Medium</Badge>;
+        return <Badge className="bg-[#FFAB00] text-black">Medium</Badge>;
       case 'low':
         return <Badge className="bg-green-500">Low</Badge>;
       case 'lowest':
@@ -107,11 +121,21 @@ const IssueDetail = () => {
         
         <div className="flex-1" />
         
-        <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(`/issues/${issue.id}/edit`)}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-1"
+          onClick={() => navigate(`/issues/${issue.id}/edit`)}
+        >
           <Edit className="h-4 w-4" /> Edit
         </Button>
         
-        <Button variant="outline" size="sm" className="gap-1 text-jira-red" onClick={handleDelete}>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="gap-1 text-[#f04f3a]" 
+          onClick={handleDelete}
+        >
           <Trash2 className="h-4 w-4" /> Delete
         </Button>
       </div>
@@ -160,7 +184,7 @@ const IssueDetail = () => {
               <Button
                 variant={issue.status === "todo" ? "default" : "outline"}
                 size="sm"
-                className={issue.status === "todo" ? "bg-jira-blue" : ""}
+                className={issue.status === "todo" ? "bg-[#459ed7]" : ""}
                 onClick={() => handleStatusChange("todo")}
               >
                 To Do
@@ -168,7 +192,7 @@ const IssueDetail = () => {
               <Button
                 variant={issue.status === "in-progress" ? "default" : "outline"}
                 size="sm"
-                className={issue.status === "in-progress" ? "bg-jira-yellow text-black hover:text-black" : ""}
+                className={issue.status === "in-progress" ? "bg-[#FFAB00] text-black hover:text-black" : ""}
                 onClick={() => handleStatusChange("in-progress")}
               >
                 In Progress
@@ -184,7 +208,7 @@ const IssueDetail = () => {
               <Button
                 variant={issue.status === "done" ? "default" : "outline"}
                 size="sm"
-                className={issue.status === "done" ? "bg-jira-green" : ""}
+                className={issue.status === "done" ? "bg-[#36B37E]" : ""}
                 onClick={() => handleStatusChange("done")}
               >
                 Done
@@ -199,7 +223,7 @@ const IssueDetail = () => {
                 <span className="text-sm font-medium w-20">Assignee:</span>
                 {assignee ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-jira-blue-dark text-white flex items-center justify-center text-xs">
+                    <div className="h-6 w-6 rounded-full bg-[#459ed7] text-white flex items-center justify-center text-xs">
                       {assignee.avatarUrl ? (
                         <img 
                           src={assignee.avatarUrl} 
@@ -221,7 +245,7 @@ const IssueDetail = () => {
                 <span className="text-sm font-medium w-20">Reporter:</span>
                 {reporter ? (
                   <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-jira-blue-dark text-white flex items-center justify-center text-xs">
+                    <div className="h-6 w-6 rounded-full bg-[#459ed7] text-white flex items-center justify-center text-xs">
                       {reporter.avatarUrl ? (
                         <img 
                           src={reporter.avatarUrl} 
@@ -241,6 +265,9 @@ const IssueDetail = () => {
             </div>
           </div>
         </div>
+        
+        {/* Only show subtasks for regular issues, not for subtasks themselves */}
+        {!isSubtask && <SubTaskList parentIssue={issue} />}
       </div>
     </div>
   );

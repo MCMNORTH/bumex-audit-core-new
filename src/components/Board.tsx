@@ -18,17 +18,24 @@ const columns: { id: Status; title: string }[] = [
 ];
 
 export const Board = ({ projectId }: BoardProps) => {
-  const { getIssuesByProject, updateIssueStatus, getSprintsByProject, fetchIssues, loading } = useAppStore();
+  const { getIssuesByProject, updateIssueStatus, getSprintsByProject, fetchIssues, fetchSprints, loading } = useAppStore();
   const [draggedIssueId, setDraggedIssueId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Fetch issues when the component mounts
+  // Fetch issues AND sprints when the component mounts
   useEffect(() => {
-    if (projectId) {
-      console.log("Board: Fetching issues for project", projectId);
-      fetchIssues(projectId);
-    }
-  }, [projectId, fetchIssues]);
+    const loadData = async () => {
+      if (projectId) {
+        console.log("Board: Fetching data for project", projectId);
+        await Promise.all([
+          fetchIssues(projectId),
+          fetchSprints(projectId)
+        ]);
+      }
+    };
+    
+    loadData();
+  }, [projectId, fetchIssues, fetchSprints]);
 
   const allIssues = getIssuesByProject(projectId);
   
