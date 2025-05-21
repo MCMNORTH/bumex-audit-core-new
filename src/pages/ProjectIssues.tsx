@@ -2,7 +2,7 @@
 import { useAppStore } from "@/store";
 import { useParams } from "react-router-dom";
 import { ProjectHeader } from "@/components/ProjectHeader";
-import { IssueCard } from "@/components/TaskCard";
+import { IssueCard } from "@/components/IssueCard";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
@@ -47,7 +47,7 @@ const ProjectIssues = () => {
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
             <Input
-              placeholder="Search tasks..."
+              placeholder="Search issues..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -55,10 +55,10 @@ const ProjectIssues = () => {
           <div className="w-64">
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger>
-                <SelectValue placeholder="Filter tasks" />
+                <SelectValue placeholder="Filter issues" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Tasks</SelectItem>
+                <SelectItem value="all">All Issues</SelectItem>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 <SelectItem value="type-task">Tasks</SelectItem>
                 <SelectItem value="type-bug">Bugs</SelectItem>
@@ -76,7 +76,7 @@ const ProjectIssues = () => {
 
         {loading.issues ? (
           <div className="text-center py-8">
-            <p className="text-gray-500">Loading tasks...</p>
+            <p className="text-gray-500">Loading issues...</p>
           </div>
         ) : (
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -88,7 +88,7 @@ const ProjectIssues = () => {
             
             {filteredIssues.length === 0 && !loading.issues && (
               <div className="col-span-full py-8 text-center">
-                <p className="text-gray-500">No tasks match your search criteria.</p>
+                <p className="text-gray-500">No issues match your search criteria.</p>
               </div>
             )}
           </div>

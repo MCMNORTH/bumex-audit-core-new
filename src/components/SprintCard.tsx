@@ -4,8 +4,8 @@ import { Sprint } from "@/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarClock, ChevronDown, ChevronUp, Edit, Play, CheckCircle2 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { IssueCard } from "./TaskCard";
+import { useState } from "react";
+import { IssueCard } from "./IssueCard";
 import { Button } from "./ui/button";
 import { SprintEditDialog } from "./SprintEditDialog";
 
@@ -21,14 +21,8 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
   const [isExpanded, setIsExpanded] = useState(true);
   const { getIssuesBySprint, updateSprint } = useAppStore();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [sprintStatus, setSprintStatus] = useState(sprint.status);
   
   const issues = getIssuesBySprint(sprint.id);
-  
-  // Update local state when sprint props change
-  useEffect(() => {
-    setSprintStatus(sprint.status);
-  }, [sprint.status]);
   
   const getStatusBadgeColor = (status: Sprint["status"]) => {
     switch (status) {
@@ -49,13 +43,11 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
 
   const handleStartSprint = async () => {
     try {
-      const updatedSprint = {
+      await updateSprint({
         ...sprint,
-        status: "active" as const,
+        status: "active",
         startDate: sprint.startDate || new Date().toISOString()
-      };
-      await updateSprint(updatedSprint);
-      setSprintStatus("active");
+      });
     } catch (error) {
       console.error("Error starting sprint:", error);
     }
@@ -63,13 +55,11 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
 
   const handleCompleteSprint = async () => {
     try {
-      const updatedSprint = {
+      await updateSprint({
         ...sprint,
-        status: "completed" as const,
+        status: "completed",
         endDate: sprint.endDate || new Date().toISOString()
-      };
-      await updateSprint(updatedSprint);
-      setSprintStatus("completed");
+      });
     } catch (error) {
       console.error("Error completing sprint:", error);
     }
@@ -81,8 +71,8 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
         <div className="flex flex-col flex-grow cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
           <div className="flex items-center">
             <h3 className="font-semibold">{sprint.name}</h3>
-            <span className={cn("ml-2 px-2 py-0.5 rounded-full text-xs font-medium", getStatusBadgeColor(sprintStatus))}>
-              {sprintStatus.charAt(0).toUpperCase() + sprintStatus.slice(1)}
+            <span className={cn("ml-2 px-2 py-0.5 rounded-full text-xs font-medium", getStatusBadgeColor(sprint.status))}>
+              {sprint.status.charAt(0).toUpperCase() + sprint.status.slice(1)}
             </span>
           </div>
           {sprint.goal && (
@@ -99,18 +89,18 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
           </span>
           
           <div className="flex gap-1">
-            {sprintStatus === "future" && (
+            {sprint.status === "future" && (
               <Button 
                 variant="outline" 
                 size="sm"
-                className="text-xs h-7 bg-primary hover:bg-primary/90 text-white hover:text-white"
+                className="text-xs h-7"
                 onClick={handleStartSprint}
               >
                 <Play className="h-3 w-3 mr-1" /> Start
               </Button>
             )}
             
-            {sprintStatus === "active" && (
+            {sprint.status === "active" && (
               <Button 
                 variant="outline" 
                 size="sm"
@@ -157,7 +147,7 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
         >
           {issues.length === 0 ? (
             <div className="text-center p-4 text-gray-500">
-              No tasks in this sprint. Drag and drop tasks here.
+              No issues in this sprint. Drag and drop issues here.
             </div>
           ) : (
             <div className="space-y-2">

@@ -63,10 +63,17 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
         },
-        // Direct color references
-        'brand-blue': '#459ed7',
-        'brand-dark': '#0a0d17',
-        'brand-red': '#f04f3a',
+        jira: {
+          'blue': '#2684FF',
+          'blue-dark': '#0052CC',
+          'cyan': '#00B8D9',
+          'green': '#36B37E',
+          'red': '#FF5630',
+          'yellow': '#FFAB00',
+          'gray-dark': '#172B4D',
+          'gray-light': '#F4F5F7',
+          'gray-card': '#EBECF0',
+        }
       },
       borderRadius: {
         lg: 'var(--radius)',

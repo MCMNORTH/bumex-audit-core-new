@@ -51,14 +51,14 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
       await updateIssueSprint(draggedIssueId, targetSprintId);
       
       toast({
-        title: "Task updated",
-        description: `Task moved to ${sprintId === "backlog" ? "Backlog" : "Sprint"}`
+        title: "Issue updated",
+        description: `Issue moved to ${sprintId === "backlog" ? "Backlog" : "Sprint"}`
       });
     } catch (error) {
-      console.error("Error updating task sprint:", error);
+      console.error("Error updating issue sprint:", error);
       toast({
         title: "Error",
-        description: "Failed to update task sprint",
+        description: "Failed to update issue sprint",
         variant: "destructive"
       });
     } finally {
@@ -67,7 +67,7 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
   };
   
   if (loading.sprints || loading.issues) {
-    return <div className="p-4">Loading sprints and tasks...</div>;
+    return <div className="p-4">Loading sprints and issues...</div>;
   }
   
   return (
@@ -86,7 +86,7 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
         </h3>
         <div className="bg-gray-50 p-4 rounded-md min-h-[100px]">
           {backlogIssues.length === 0 ? (
-            <div className="text-gray-500 text-center">No tasks in backlog</div>
+            <div className="text-gray-500 text-center">No issues in backlog</div>
           ) : (
             <div className="space-y-2">
               {backlogIssues.map((issue) => (
