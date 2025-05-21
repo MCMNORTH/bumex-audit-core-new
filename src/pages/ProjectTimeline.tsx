@@ -45,12 +45,30 @@ const ProjectTimeline = () => {
 
   // Calculate sprint position and width based on dates
   const calculateSprintPosition = (sprint: Sprint) => {
+    // Check if sprint dates exist
     if (!sprint.startDate || !sprint.endDate) return null;
     
-    const startDate = new Date(sprint.startDate);
-    const endDate = new Date(sprint.endDate);
+    // Create Date objects, but check if they're valid first
+    let startDate: Date | null = null;
+    let endDate: Date | null = null;
+    
+    try {
+      startDate = new Date(sprint.startDate);
+      endDate = new Date(sprint.endDate);
+      
+      // Verify the dates are valid
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        console.error("Invalid sprint dates:", sprint);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error parsing sprint dates:", error);
+      return null;
+    }
     
     // Check if sprint is within the displayed months range
+    if (!months.length) return null;
+    
     const firstDisplayedMonth = months[0];
     const lastDisplayedMonth = endOfMonth(months[months.length - 1]);
     
