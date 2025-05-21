@@ -7,25 +7,25 @@ import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const Dashboard = () => {
-  const { projects, issues, epics, fetchProjects, fetchIssues, fetchEpics, loading } = useAppStore();
+  const { projects, issues, epics, fetchProjects, fetchIssues, fetchEpics } = useAppStore();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch all relevant data when the dashboard loads
+  // Optimize data fetching to prevent flickering
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       await fetchProjects();
       
-      // Fetch issues and epics for all projects
-      const fetchPromises = projects.map(project => {
-        return Promise.all([
-          fetchIssues(project.id),
-          fetchEpics(project.id)
-        ]);
-      });
-      
-      if (fetchPromises.length) {
+      // Only fetch issues and epics once projects are loaded
+      if (projects.length > 0) {
+        const fetchPromises = projects.map(project => {
+          return Promise.all([
+            fetchIssues(project.id),
+            fetchEpics(project.id)
+          ]);
+        });
+        
         await Promise.all(fetchPromises.flat());
       }
       
@@ -33,7 +33,7 @@ const Dashboard = () => {
     };
     
     loadData();
-  }, [fetchProjects, fetchIssues, fetchEpics, projects]);
+  }, []); // Remove projects dependency to prevent refetching
   
   const totalIssues = issues.length;
   const completedIssues = issues.filter(issue => issue.status === 'done').length;

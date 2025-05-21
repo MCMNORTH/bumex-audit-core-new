@@ -2,14 +2,26 @@
 import { useParams } from "react-router-dom";
 import { ProjectHeader } from "@/components/ProjectHeader";
 import { SprintBoard } from "@/components/SprintBoard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { CreateSprintDialog } from "@/components/CreateSprintDialog";
+import { useAppStore } from "@/store";
 
 const ProjectSprints = () => {
   const { projectId = "" } = useParams();
   const [isCreateSprintOpen, setIsCreateSprintOpen] = useState(false);
+  const { fetchSprints, fetchIssues } = useAppStore();
+  
+  // Pre-fetch sprints and issues when the component mounts
+  useEffect(() => {
+    if (projectId) {
+      Promise.all([
+        fetchSprints(projectId),
+        fetchIssues(projectId)
+      ]);
+    }
+  }, [projectId, fetchSprints, fetchIssues]);
   
   return (
     <div className="h-full flex flex-col">

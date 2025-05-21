@@ -59,7 +59,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md mb-8">
         <img 
           src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png"

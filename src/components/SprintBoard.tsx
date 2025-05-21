@@ -19,9 +19,15 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
     const loadData = async () => {
       if (projectId) {
         console.log("SprintBoard: Loading data for project", projectId);
-        await fetchIssues(projectId);
-        await fetchSprints(projectId);
-        const projectSprints = getSprintsByProject(projectId);
+        await Promise.all([
+          fetchIssues(projectId),
+          fetchSprints(projectId)
+        ]);
+        
+        // Sort sprints by creation date (newest first)
+        const projectSprints = getSprintsByProject(projectId)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        
         setSprints(projectSprints);
       }
     };

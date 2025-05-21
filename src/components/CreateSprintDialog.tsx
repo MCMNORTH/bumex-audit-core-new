@@ -31,7 +31,7 @@ export const CreateSprintDialog = ({
   onOpenChange,
   projectId,
 }: CreateSprintDialogProps) => {
-  const { addSprint } = useAppStore();
+  const { addSprint, fetchSprints } = useAppStore();
   const { toast } = useToast();
   
   const [name, setName] = useState("");
@@ -67,6 +67,9 @@ export const CreateSprintDialog = ({
         endDate: endDate?.toISOString(),
         status,
       });
+      
+      // Immediately fetch updated sprints to refresh the list
+      await fetchSprints(projectId);
       
       toast({
         title: "Sprint created",
