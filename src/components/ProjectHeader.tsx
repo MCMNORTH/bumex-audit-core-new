@@ -2,9 +2,10 @@
 import { useEffect, useState } from "react";
 import { useAppStore } from "@/store";
 import { Project } from "@/types";
-import { Link, useLocation, NavLink } from "react-router-dom";
-import { Calendar, LayoutGrid, List, Clock } from "lucide-react";
+import { Link, useLocation, NavLink, useNavigate } from "react-router-dom";
+import { Calendar, LayoutGrid, List, Clock, PlusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 interface ProjectHeaderProps {
   projectId: string;
@@ -14,6 +15,7 @@ export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
   const { getProjectById } = useAppStore();
   const [project, setProject] = useState<Project | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
   
   useEffect(() => {
     const currentProject = getProjectById(projectId);
@@ -28,12 +30,25 @@ export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
 
   return (
     <div className="bg-white border-b">
-      <div className="px-6 py-3">
-        <Link to="/" className="text-gray-500 text-sm hover:underline">
-          Projects
-        </Link>
-        <span className="text-gray-400 mx-1">/</span>
-        <span className="font-medium">{project.name}</span>
+      <div className="px-6 py-3 flex justify-between items-center">
+        <div>
+          <Link to="/" className="text-gray-500 text-sm hover:underline">
+            Projects
+          </Link>
+          <span className="text-gray-400 mx-1">/</span>
+          <span className="font-medium">{project.name}</span>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Button 
+            size="sm"
+            className="bg-[#459ed7] hover:bg-[#3688bd] gap-1"
+            onClick={() => navigate(`/projects/${projectId}/create-issue`)}
+          >
+            <PlusCircle className="h-4 w-4" />
+            Create Issue
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center px-6 overflow-x-auto">

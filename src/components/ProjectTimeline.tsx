@@ -40,8 +40,14 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
   
   // Function to determine sprint position based on dates
   const getSprintPosition = (sprint: Sprint) => {
-    const startDate = sprint.startDate ? parseISO(sprint.startDate) : new Date();
-    const endDate = sprint.endDate ? parseISO(sprint.endDate) : addMonths(startDate, 1);
+    // Use defensive coding to handle invalid dates
+    const startDate = sprint.startDate && !isNaN(new Date(sprint.startDate).getTime()) 
+      ? parseISO(sprint.startDate) 
+      : new Date();
+      
+    const endDate = sprint.endDate && !isNaN(new Date(sprint.endDate).getTime())
+      ? parseISO(sprint.endDate) 
+      : addMonths(startDate, 1);
     
     // Position is relative to the timeline's start month
     const startMonth = format(startDate, 'yyyy-MM');
