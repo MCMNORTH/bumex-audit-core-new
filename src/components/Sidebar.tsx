@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User, Home } from "lucide-react";
+import { PlusCircle, User, Home, LayoutDashboard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
@@ -13,7 +13,7 @@ export const Sidebar = () => {
   const { projects, selectedProject, setSelectedProject } = useAppStore();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
-  const { state } = useSidebar();
+  const { state, toggleSidebar } = useSidebar();
   const isOpen = state !== "collapsed";
 
   const handleProjectSelect = (project: Project) => {
@@ -33,7 +33,7 @@ export const Sidebar = () => {
           Jira Clone
         </h1>
         <button
-          onClick={() => useSidebar().toggleSidebar()}
+          onClick={toggleSidebar}
           className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent"
         >
           {isOpen ? "◀" : "▶"}
@@ -45,7 +45,7 @@ export const Sidebar = () => {
           onClick={() => navigate('/')} 
           className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2 mb-2"
         >
-          <Home className="h-4 w-4" />
+          <LayoutDashboard className="h-4 w-4" />
           {isOpen && <span>Dashboard</span>}
         </Button>
         <Button 
@@ -62,7 +62,7 @@ export const Sidebar = () => {
           Projects
         </div>
         <ul className="space-y-1">
-          {projects.map((project) => (
+          {projects.filter(project => !project.deleted).map((project) => (
             <li key={project.id}>
               <button
                 onClick={() => handleProjectSelect(project)}

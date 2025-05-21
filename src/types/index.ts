@@ -1,4 +1,3 @@
-
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -13,21 +12,34 @@ export interface User {
   avatarUrl?: string;
 }
 
+export type Sprint = {
+  id: string;
+  name: string;
+  projectId: string;
+  startDate?: string;
+  endDate?: string;
+  status: "future" | "active" | "completed";
+  goal?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export interface Issue {
   id: string;
   title: string;
-  description: string;
-  type: IssueType;
+  description?: string;
+  type: "bug" | "task" | "story" | "epic";
   status: Status;
-  priority: Priority;
+  priority: "highest" | "high" | "medium" | "low" | "lowest";
   assigneeId?: string;
   reporterId: string;
+  epicId?: string;
+  sprintId?: string;
+  parentId?: string;
+  projectId: string;
   createdAt: string;
   updatedAt: string;
-  epicId?: string;
-  parentId?: string; // For subtasks
-  projectId: string;
-}
+};
 
 export interface Project {
   id: string;

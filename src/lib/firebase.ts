@@ -24,6 +24,7 @@ export const projectsCollection = collection(db, "projects");
 export const epicsCollection = collection(db, "epics");
 export const issuesCollection = collection(db, "issues");
 export const usersCollection = collection(db, "users");
+export const sprintsCollection = collection(db, "sprints");
 
 // Helper functions for Firestore operations
 export const firestore = {
@@ -50,6 +51,12 @@ export const firestore = {
     const userRef = doc(usersCollection, userData.id);
     await setDoc(userRef, userData);
     return userData;
+  },
+
+  createSprint: async (sprintData: any) => {
+    const sprintRef = doc(sprintsCollection, sprintData.id);
+    await setDoc(sprintRef, sprintData);
+    return sprintData;
   },
   
   // Read
@@ -94,6 +101,18 @@ export const firestore = {
     return issuesSnap.docs.map(doc => doc.data());
   },
   
+  getSprint: async (sprintId: string) => {
+    const sprintRef = doc(sprintsCollection, sprintId);
+    const sprintSnap = await getDoc(sprintRef);
+    return sprintSnap.exists() ? sprintSnap.data() : null;
+  },
+  
+  getSprintsByProject: async (projectId: string) => {
+    const q = query(sprintsCollection, where("projectId", "==", projectId));
+    const sprintsSnap = await getDocs(q);
+    return sprintsSnap.docs.map(doc => doc.data());
+  },
+  
   getUser: async (userId: string) => {
     const userRef = doc(usersCollection, userId);
     const userSnap = await getDoc(userRef);
@@ -119,6 +138,12 @@ export const firestore = {
     return { id: issueId, ...data };
   },
   
+  updateSprint: async (sprintId: string, data: any) => {
+    const sprintRef = doc(sprintsCollection, sprintId);
+    await updateDoc(sprintRef, data);
+    return { id: sprintId, ...data };
+  },
+  
   // Delete
   deleteProject: async (projectId: string) => {
     await deleteDoc(doc(projectsCollection, projectId));
@@ -133,6 +158,11 @@ export const firestore = {
   deleteIssue: async (issueId: string) => {
     await deleteDoc(doc(issuesCollection, issueId));
     return issueId;
+  },
+
+  deleteSprint: async (sprintId: string) => {
+    await deleteDoc(doc(sprintsCollection, sprintId));
+    return sprintId;
   },
 };
 

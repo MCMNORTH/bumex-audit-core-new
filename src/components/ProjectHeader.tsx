@@ -1,3 +1,4 @@
+
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -76,6 +77,19 @@ export function ProjectHeader({ projectId }: { projectId: string }) {
             }
           >
             Issues
+          </NavLink>
+          <NavLink
+            to={`/projects/${projectId}/sprints`}
+            className={({ isActive }) =>
+              cn(
+                "px-4 py-2 text-sm border-b-2",
+                isActive
+                  ? "border-jira-blue text-jira-blue"
+                  : "border-transparent hover:border-gray-300"
+              )
+            }
+          >
+            Sprints
           </NavLink>
         </div>
       </div>

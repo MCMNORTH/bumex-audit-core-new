@@ -10,6 +10,8 @@ import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { User } from "@/types";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertTriangle } from "lucide-react";
 
 const EditProject = () => {
   const { projectId = "" } = useParams();
@@ -25,6 +27,7 @@ const EditProject = () => {
   const [lead, setLead] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
     if (!project) {
@@ -106,6 +109,32 @@ const EditProject = () => {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (!project) return;
+    
+    try {
+      await updateProject({
+        ...project,
+        deleted: true,
+        updatedAt: new Date().toISOString(),
+      });
+      
+      toast({
+        title: "Project deleted",
+        description: `"${project.name}" has been deleted.`,
+      });
+      
+      navigate('/');
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete project",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Helper function to get user display name
   const getUserDisplayName = (user: User): string => {
     if (user.name) return user.name;
@@ -182,17 +211,46 @@ const EditProject = () => {
           </select>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => navigate(`/projects/${projectId}`)}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" className="bg-jira-blue hover:bg-jira-blue-dark">
-            Save Changes
-          </Button>
+        <div className="flex justify-between gap-2 pt-4">
+          <Dialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+            <DialogTrigger asChild>
+              <Button type="button" variant="destructive">
+                Delete Project
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-red-500" />
+                  Delete Project
+                </DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete "{project.name}"? This action can't be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setConfirmDeleteOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteProject}>
+                  Delete
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(`/projects/${projectId}`)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" className="bg-jira-blue hover:bg-jira-blue-dark">
+              Save Changes
+            </Button>
+          </div>
         </div>
       </form>
     </div>
