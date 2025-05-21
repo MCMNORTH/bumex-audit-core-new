@@ -1,98 +1,94 @@
 
+import { useEffect, useState } from "react";
 import { useAppStore } from "@/store";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import { Project } from "@/types";
+import { Link, useLocation, NavLink } from "react-router-dom";
+import { Calendar, LayoutGrid, List, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ProjectHeaderProps {
   projectId: string;
 }
 
-export function ProjectHeader({ projectId }: { projectId: string }) {
-  const { getProjectById, getUserById } = useAppStore();
-  const navigate = useNavigate();
+export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
+  const { getProjectById } = useAppStore();
+  const [project, setProject] = useState<Project | null>(null);
+  const location = useLocation();
   
-  const project = getProjectById(projectId);
-  const projectLead = project?.lead ? getUserById(project.lead) : null;
+  useEffect(() => {
+    const currentProject = getProjectById(projectId);
+    if (currentProject) {
+      setProject(currentProject);
+    }
+  }, [projectId, getProjectById]);
 
-  if (!project) return null;
+  if (!project) {
+    return <div className="h-16 border-b bg-gray-50"></div>;
+  }
 
   return (
-    <div className="bg-white border-b p-4 shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-jira-blue-dark rounded flex items-center justify-center text-white font-semibold">
-            {project?.key.substring(0, 2).toUpperCase()}
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">{project?.name}</h1>
-            <p className="text-sm text-muted-foreground">
-              {project?.description || "No description"}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <Button
-            className="bg-jira-blue hover:bg-jira-blue-dark"
-            onClick={() => navigate(`/projects/${projectId}/edit`)}
-          >
-            Edit Project
-          </Button>
-          <Button
-            onClick={() => navigate(`/projects/${projectId}/create-issue`)}
-            className="bg-jira-blue hover:bg-jira-blue-dark"
-          >
-            Create Issue
-          </Button>
-        </div>
+    <div className="bg-white border-b">
+      <div className="px-6 py-3">
+        <Link to="/" className="text-gray-500 text-sm hover:underline">
+          Projects
+        </Link>
+        <span className="text-gray-400 mx-1">/</span>
+        <span className="font-medium">{project.name}</span>
       </div>
 
-      <div className="max-w-7xl mx-auto mt-4">
-        <div className="flex">
-          <NavLink
-            to={`/projects/${projectId}/board`}
-            className={({ isActive }) =>
-              cn(
-                "px-4 py-2 text-sm border-b-2",
-                isActive
-                  ? "border-jira-blue text-jira-blue"
-                  : "border-transparent hover:border-gray-300"
-              )
-            }
-          >
-            Board
-          </NavLink>
-          <NavLink
-            to={`/projects/${projectId}/issues`}
-            className={({ isActive }) =>
-              cn(
-                "px-4 py-2 text-sm border-b-2",
-                isActive
-                  ? "border-jira-blue text-jira-blue"
-                  : "border-transparent hover:border-gray-300"
-              )
-            }
-          >
-            Issues
-          </NavLink>
-          <NavLink
-            to={`/projects/${projectId}/sprints`}
-            className={({ isActive }) =>
-              cn(
-                "px-4 py-2 text-sm border-b-2",
-                isActive
-                  ? "border-jira-blue text-jira-blue"
-                  : "border-transparent hover:border-gray-300"
-              )
-            }
-          >
-            Sprints
-          </NavLink>
-        </div>
+      <div className="flex items-center px-6 overflow-x-auto">
+        <NavLink
+          to={`/projects/${projectId}/board`}
+          className={({ isActive }) => cn(
+            "flex items-center px-4 py-2 text-sm border-b-2 -mb-px",
+            isActive
+              ? "border-blue-500 text-blue-600 font-medium"
+              : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"
+          )}
+        >
+          <LayoutGrid className="h-4 w-4 mr-2" />
+          Board
+        </NavLink>
+        
+        <NavLink
+          to={`/projects/${projectId}/issues`}
+          className={({ isActive }) => cn(
+            "flex items-center px-4 py-2 text-sm border-b-2 -mb-px",
+            isActive
+              ? "border-blue-500 text-blue-600 font-medium"
+              : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"
+          )}
+        >
+          <List className="h-4 w-4 mr-2" />
+          Issues
+        </NavLink>
+        
+        <NavLink
+          to={`/projects/${projectId}/sprints`}
+          className={({ isActive }) => cn(
+            "flex items-center px-4 py-2 text-sm border-b-2 -mb-px",
+            isActive
+              ? "border-blue-500 text-blue-600 font-medium"
+              : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"
+          )}
+        >
+          <Calendar className="h-4 w-4 mr-2" />
+          Sprints
+        </NavLink>
+        
+        <NavLink
+          to={`/projects/${projectId}/timeline`}
+          className={({ isActive }) => cn(
+            "flex items-center px-4 py-2 text-sm border-b-2 -mb-px",
+            isActive
+              ? "border-blue-500 text-blue-600 font-medium"
+              : "border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300"
+          )}
+        >
+          <Clock className="h-4 w-4 mr-2" />
+          Timeline
+        </NavLink>
       </div>
     </div>
   );
-}
+};
