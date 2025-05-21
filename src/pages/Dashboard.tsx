@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
@@ -11,29 +10,37 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
 
-  // Optimize data fetching to prevent flickering
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      await fetchProjects();
       
-      // Only fetch issues and epics once projects are loaded
-      if (projects.length > 0) {
-        const fetchPromises = projects.map(project => {
-          return Promise.all([
-            fetchIssues(project.id),
-            fetchEpics(project.id)
-          ]);
-        });
+      try {
+        // Fetch projects first
+        await fetchProjects();
         
-        await Promise.all(fetchPromises.flat());
+        // Get all project IDs
+        const projectIds = projects.map(project => project.id);
+        
+        // Fetch all issues and epics for each project in parallel
+        if (projectIds.length > 0) {
+          const promises = [];
+          
+          for (const projectId of projectIds) {
+            promises.push(fetchIssues(projectId));
+            promises.push(fetchEpics(projectId));
+          }
+          
+          await Promise.all(promises);
+        }
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setIsLoading(false);
     };
     
     loadData();
-  }, []); // Remove projects dependency to prevent refetching
+  }, []); // Only run this effect once on component mount
   
   const totalIssues = issues.length;
   const completedIssues = issues.filter(issue => issue.status === 'done').length;
@@ -85,7 +92,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </div>
-
+          
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Projects</h2>
             {projects.length === 0 ? (

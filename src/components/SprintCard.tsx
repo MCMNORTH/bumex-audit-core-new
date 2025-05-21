@@ -1,4 +1,3 @@
-
 import { useAppStore } from "@/store";
 import { Sprint } from "@/types";
 import { cn } from "@/lib/utils";
@@ -131,13 +130,13 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
             <Button 
               variant="ghost" 
               size="icon"
-              className="h-7 w-7 hover:text-white"
+              className="h-7 w-7 hover:bg-gray-200 group"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (
-                <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-white" />
+                <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-gray-900" />
               ) : (
-                <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-white" />
+                <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-900" />
               )}
             </Button>
           </div>

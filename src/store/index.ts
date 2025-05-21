@@ -86,7 +86,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     set(state => ({ loading: { ...state.loading, epics: true }}));
     try {
       const epics = await firestore.getEpicsByProject(projectId) as Epic[];
-      set({ epics, loading: { ...get().loading, epics: false } });
+      // Update epics by merging with existing ones to avoid flickering
+      set(state => ({ 
+        epics: [...state.epics.filter(e => e.projectId !== projectId), ...epics],
+        loading: { ...state.loading, epics: false } 
+      }));
     } catch (error) {
       console.error("Error fetching epics:", error);
       set(state => ({ loading: { ...state.loading, epics: false }}));
@@ -94,12 +98,14 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   fetchIssues: async (projectId: string) => {
-    console.log("Fetching issues for project:", projectId);
     set(state => ({ loading: { ...state.loading, issues: true }}));
     try {
       const issues = await firestore.getIssuesByProject(projectId) as Issue[];
-      console.log("Fetched issues:", issues);
-      set({ issues, loading: { ...get().loading, issues: false } });
+      // Update issues by merging with existing ones to avoid flickering
+      set(state => ({
+        issues: [...state.issues.filter(i => i.projectId !== projectId), ...issues],
+        loading: { ...state.loading, issues: false }
+      }));
     } catch (error) {
       console.error("Error fetching issues:", error);
       set(state => ({ loading: { ...state.loading, issues: false }}));
@@ -110,7 +116,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     set(state => ({ loading: { ...state.loading, sprints: true }}));
     try {
       const sprints = await firestore.getSprintsByProject(projectId) as Sprint[];
-      set({ sprints, loading: { ...get().loading, sprints: false } });
+      // Update sprints by merging with existing ones to avoid flickering
+      set(state => ({
+        sprints: [...state.sprints.filter(s => s.projectId !== projectId), ...sprints],
+        loading: { ...state.loading, sprints: false }
+      }));
     } catch (error) {
       console.error("Error fetching sprints:", error);
       set(state => ({ loading: { ...state.loading, sprints: false }}));
@@ -239,6 +249,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     };
     
     await firestore.createSprint(newSprint);
+    // Immediately update the state with the new sprint
     set((state) => ({ sprints: [...state.sprints, newSprint] }));
     return newSprint;
   },
@@ -249,6 +260,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       updatedAt: new Date().toISOString()
     };
     await firestore.updateSprint(sprint.id, updatedSprint);
+    // Immediately update the state with the updated sprint
     set((state) => ({
       sprints: state.sprints.map((s) => (s.id === sprint.id ? updatedSprint : s)),
     }));

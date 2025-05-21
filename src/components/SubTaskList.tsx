@@ -115,13 +115,13 @@ export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
               className="flex-shrink-0 mr-3"
               onClick={() => toggleSubtaskStatus(subtask)}
             >
-              <CheckSquare
-                className={`h-5 w-5 ${
-                  subtask.status === "done"
-                    ? "text-[#459ed7] fill-[#459ed7]"
-                    : "text-gray-300"
-                }`}
-              />
+              {subtask.status === "done" ? (
+                <CheckSquare
+                  className="h-5 w-5 text-[#459ed7] fill-[#459ed7]"
+                />
+              ) : (
+                <CheckSquare className="h-5 w-5 text-gray-300" />
+              )}
             </button>
             <span
               className={`flex-grow ${

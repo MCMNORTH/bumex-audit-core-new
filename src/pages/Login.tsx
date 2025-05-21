@@ -1,145 +1,113 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
-const formSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });
 
-const Login = () => {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [loading, setLoading] = useState(false);
+type LoginFormData = z.infer<typeof loginSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+const Login = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
+
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
     try {
-      setLoading(true);
-      await login(values.email, values.password);
-      toast({
-        title: "Login successful",
-        description: "You've been logged in successfully.",
+      await signIn(data.email, data.password);
+      toast("Login successful", {
+        description: "Welcome back!"
       });
       navigate("/");
     } catch (error) {
       console.error("Login error:", error);
-      toast({
-        title: "Login failed",
-        description: "Incorrect email or password. Please try again.",
+      toast("Login failed", {
+        description: "Invalid email or password. Please try again.",
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-md mb-8">
-        <img 
-          src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png"
-          alt="OverWork Logo"
-          className="mx-auto h-12 mb-6"
-        />
-      </div>
-      
-      <Card className="w-full max-w-md shadow-lg border-0">
-        <CardHeader className="space-y-1 pb-4 text-center">
-          <CardTitle className="text-2xl font-bold text-[#459ed7]">Welcome Back</CardTitle>
-          <CardDescription className="text-gray-500">
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Email</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="email@example.com" 
-                        {...field} 
-                        disabled={loading}
-                        className="h-11"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-[#f04f3a]" />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-gray-700">Password</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="password" 
-                        placeholder="••••••••" 
-                        {...field} 
-                        disabled={loading}
-                        className="h-11"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-[#f04f3a]" />
-                  </FormItem>
-                )}
-              />
-              <Button 
-                type="submit" 
-                className="w-full h-11 bg-[#459ed7] hover:bg-[#3688bd]" 
-                disabled={loading}
-              >
-                {loading ? "Logging in..." : "Login"}
-              </Button>
-              
-              <div className="text-center text-sm">
-                <span className="text-gray-500">Don't have an account? </span>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <div className="w-full max-w-md">
+        <Card className="border shadow-sm">
+          <CardHeader>
+            <div className="text-center">
+              <h1 className="text-2xl font-bold">Welcome back</h1>
+              <p className="text-sm text-gray-500 mt-1">Sign in to your account</p>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="you@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="••••••••" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button 
-                  variant="link" 
-                  className="p-0 h-auto font-semibold text-[#459ed7] hover:text-[#3688bd]"
-                  onClick={() => navigate("/signup")}
+                  type="submit" 
+                  className="w-full bg-[#459ed7] hover:bg-[#3688bd]"
+                  disabled={isLoading}
                 >
-                  Sign up
+                  {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-      
-      <div className="mt-8 text-center text-sm text-gray-500">
-        &copy; {new Date().getFullYear()} OverWork. All rights reserved.
+              </form>
+            </Form>
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <p className="text-sm text-gray-500">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-[#459ed7] hover:underline">
+                Sign up
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );
