@@ -1,4 +1,3 @@
-
 import { useAppStore } from "@/store";
 import { Button } from "./ui/button";
 import { Issue } from "@/types";
@@ -8,39 +7,33 @@ import { Input } from "./ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
-
 interface SubTaskListProps {
   parentIssue: Issue;
 }
-
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(1, "Title is required")
 });
-
-export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
-  const { issues, addIssue, updateIssueStatus, deleteIssue } = useAppStore();
+export const SubTaskList = ({
+  parentIssue
+}: SubTaskListProps) => {
+  const {
+    issues,
+    addIssue,
+    updateIssueStatus,
+    deleteIssue
+  } = useAppStore();
   const [isAddingSubtask, setIsAddingSubtask] = useState(false);
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-    },
+      title: ""
+    }
   });
 
   // Filter to get all subtasks for this parent issue
-  const subtasks = issues.filter(
-    (issue) => issue.parentId === parentIssue.id && issue.type === "subtask"
-  );
-
+  const subtasks = issues.filter(issue => issue.parentId === parentIssue.id && issue.type === "subtask");
   const onAddSubtask = async (values: z.infer<typeof formSchema>) => {
     try {
       await addIssue({
@@ -51,22 +44,20 @@ export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
         projectId: parentIssue.projectId,
         reporterId: parentIssue.reporterId,
         parentId: parentIssue.id,
-        sprintId: parentIssue.sprintId,
+        sprintId: parentIssue.sprintId
       });
-
       form.reset();
       setIsAddingSubtask(false);
       toast("Subtask added", {
-        description: "The subtask has been added successfully",
+        description: "The subtask has been added successfully"
       });
     } catch (error) {
       console.error("Error adding subtask:", error);
       toast("Failed to add subtask", {
-        description: "An error occurred while adding the subtask",
+        description: "An error occurred while adding the subtask"
       });
     }
   };
-
   const toggleSubtaskStatus = async (subtask: Issue) => {
     const newStatus = subtask.status === "done" ? "todo" : "done";
     try {
@@ -81,7 +72,6 @@ export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
       });
     }
   };
-
   const handleDeleteSubtask = async (subtaskId: string) => {
     try {
       await deleteIssue(subtaskId);
@@ -95,9 +85,7 @@ export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
       });
     }
   };
-
-  return (
-    <div className="mt-6">
+  return <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-medium">Subtasks</h3>
         <span className="text-sm text-gray-500">
@@ -106,78 +94,37 @@ export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
       </div>
 
       <div className="space-y-3">
-        {subtasks.map((subtask) => (
-          <div
-            key={subtask.id}
-            className="flex items-center p-3 bg-gray-50 rounded-md border border-gray-200"
-          >
-            <button
-              className="flex-shrink-0 mr-3"
-              onClick={() => toggleSubtaskStatus(subtask)}
-            >
-              {subtask.status === "done" ? (
-                <CheckSquare
-                  className="h-5 w-5 text-[#459ed7] fill-[#459ed7]"
-                />
-              ) : (
-                <CheckSquare className="h-5 w-5 text-gray-300" />
-              )}
+        {subtasks.map(subtask => <div key={subtask.id} className="flex items-center p-3 bg-gray-50 rounded-md border border-gray-200">
+            <button className="flex-shrink-0 mr-3" onClick={() => toggleSubtaskStatus(subtask)}>
+              {subtask.status === "done" ? <CheckSquare className="h-5 w-5 text-[#459ed7] fill-[#459ed7] bg-white" /> : <CheckSquare className="h-5 w-5 text-gray-300" />}
             </button>
-            <span
-              className={`flex-grow ${
-                subtask.status === "done" ? "line-through text-gray-500" : ""
-              }`}
-            >
+            <span className={`flex-grow ${subtask.status === "done" ? "line-through text-gray-500" : ""}`}>
               {subtask.title}
             </span>
-            <button
-              onClick={() => handleDeleteSubtask(subtask.id)}
-              className="flex-shrink-0 text-gray-400 hover:text-[#f04f3a]"
-            >
+            <button onClick={() => handleDeleteSubtask(subtask.id)} className="flex-shrink-0 text-gray-400 hover:text-[#f04f3a]">
               <X className="h-4 w-4" />
             </button>
-          </div>
-        ))}
+          </div>)}
 
-        {subtasks.length === 0 && !isAddingSubtask && (
-          <div className="text-center py-4 text-gray-500 bg-gray-50 rounded-md">
+        {subtasks.length === 0 && !isAddingSubtask && <div className="text-center py-4 text-gray-500 bg-gray-50 rounded-md">
             No subtasks yet
-          </div>
-        )}
+          </div>}
 
-        {isAddingSubtask ? (
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onAddSubtask)}
-              className="bg-gray-50 p-3 rounded-md border border-gray-200"
-            >
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
+        {isAddingSubtask ? <Form {...form}>
+            <form onSubmit={form.handleSubmit(onAddSubtask)} className="bg-gray-50 p-3 rounded-md border border-gray-200">
+              <FormField control={form.control} name="title" render={({
+            field
+          }) => <FormItem>
                     <FormControl>
-                      <Input
-                        placeholder="Enter subtask title"
-                        {...field}
-                        autoFocus
-                        className="mb-2"
-                      />
+                      <Input placeholder="Enter subtask title" {...field} autoFocus className="mb-2" />
                     </FormControl>
                     <FormMessage className="text-[#f04f3a]" />
-                  </FormItem>
-                )}
-              />
+                  </FormItem>} />
               <div className="flex justify-end gap-2 mt-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setIsAddingSubtask(false);
-                    form.reset();
-                  }}
-                >
+                <Button type="button" variant="outline" size="sm" onClick={() => {
+              setIsAddingSubtask(false);
+              form.reset();
+            }}>
                   Cancel
                 </Button>
                 <Button type="submit" size="sm" className="bg-[#459ed7] hover:bg-[#3688bd]">
@@ -185,18 +132,10 @@ export const SubTaskList = ({ parentIssue }: SubTaskListProps) => {
                 </Button>
               </div>
             </form>
-          </Form>
-        ) : (
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setIsAddingSubtask(true)}
-          >
+          </Form> : <Button variant="outline" className="w-full" onClick={() => setIsAddingSubtask(true)}>
             <PlusCircle className="h-4 w-4 mr-2" />
             Add Subtask
-          </Button>
-        )}
+          </Button>}
       </div>
-    </div>
-  );
+    </div>;
 };
