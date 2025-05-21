@@ -58,7 +58,7 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
   };
   
   // Custom day rendering to highlight sprint dates
-  const renderDay = (day: Date) => {
+  const renderDay = (date: Date) => {
     // Track which sprints are active on this day
     const activeSprints = sprints.filter(sprint => {
       if (!sprint.startDate || !sprint.endDate) return false;
@@ -66,9 +66,9 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
       const startDate = parseISO(sprint.startDate);
       const endDate = parseISO(sprint.endDate);
       
-      return isWithinInterval(day, { start: startDate, end: endDate }) ||
-             isSameDay(day, startDate) ||
-             isSameDay(day, endDate);
+      return isWithinInterval(date, { start: startDate, end: endDate }) ||
+             isSameDay(date, startDate) ||
+             isSameDay(date, endDate);
     });
 
     if (activeSprints.length === 0) return null;
@@ -184,7 +184,7 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
             className={cn("w-full pointer-events-auto")}
             onDayClick={handleDayClick}
             components={{
-              Day: ({ day, ...props }) => (
+              Day: ({ date, ...props }: { date: Date; [key: string]: any }) => (
                 <Button
                   variant="ghost"
                   className={cn(
@@ -193,8 +193,8 @@ export const ProjectTimeline = ({ projectId }: ProjectTimelineProps) => {
                   )}
                   {...props}
                 >
-                  {format(day, "d")}
-                  {renderDay(day)}
+                  {format(date, "d")}
+                  {renderDay(date)}
                 </Button>
               ),
             }}
