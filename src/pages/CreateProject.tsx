@@ -5,51 +5,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { User } from "@/types";
 
 const CreateProject = () => {
-  const { addProject } = useAppStore();
+  const { addProject, users } = useAppStore();
   const { toast } = useToast();
   const navigate = useNavigate();
   
   const [name, setName] = useState("");
   const [key, setKey] = useState("");
   const [description, setDescription] = useState("");
-  const [lead, setLead] = useState("");
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false);
-  
-  useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const usersSnapshot = await getDocs(collection(db, "users"));
-        const usersData = usersSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as User[];
-        
-        setUsers(usersData);
-        if (usersData.length > 0) {
-          setLead(usersData[0].id);
-        }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        toast({
-          title: "Error",
-          description: "Failed to load users"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUsers();
-  }, [toast]);
+  const [lead, setLead] = useState(users[0]?.id || "");
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,7 +24,8 @@ const CreateProject = () => {
     if (!name || !key) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields."
+        description: "Please fill in all required fields.",
+        variant: "destructive",
       });
       return;
     }
@@ -76,18 +44,10 @@ const CreateProject = () => {
     
     toast({
       title: "Project created",
-      description: `${name} has been created successfully.`
+      description: `${name} has been created successfully.`,
     });
     
     navigate(`/projects/${newProject.id}`);
-  };
-
-  // Helper function to get user display name
-  const getUserDisplayName = (user: User): string => {
-    if (user.name) return user.name;
-    if (user.displayName) return user.displayName;
-    if (user.email) return user.email.split('@')[0];
-    return "Unknown User";
   };
   
   return (
@@ -140,19 +100,12 @@ const CreateProject = () => {
             value={lead}
             onChange={(e) => setLead(e.target.value)}
             className="w-full border border-input rounded-md px-3 py-2"
-            disabled={loading}
           >
-            {loading ? (
-              <option>Loading users...</option>
-            ) : users.length > 0 ? (
-              users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {getUserDisplayName(user)}
-                </option>
-              ))
-            ) : (
-              <option value="">No users available</option>
-            )}
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
           </select>
         </div>
         
