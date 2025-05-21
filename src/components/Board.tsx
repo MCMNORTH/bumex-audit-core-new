@@ -18,10 +18,19 @@ const columns: { id: Status; title: string }[] = [
 ];
 
 export const Board = ({ projectId }: BoardProps) => {
-  const { getIssuesByProject, updateIssueStatus } = useAppStore();
-  const issues = getIssuesByProject(projectId);
+  const { getIssuesByProject, updateIssueStatus, getSprintsByProject } = useAppStore();
+  const allIssues = getIssuesByProject(projectId);
   const [draggedIssueId, setDraggedIssueId] = useState<string | null>(null);
   const { toast } = useToast();
+
+  // Get active sprint
+  const sprints = getSprintsByProject(projectId);
+  const activeSprint = sprints.find(sprint => sprint.status === "active");
+  
+  // Filter issues by active sprint
+  const issues = activeSprint 
+    ? allIssues.filter(issue => issue.sprintId === activeSprint.id)
+    : [];
 
   const issuesByStatus = (status: Status) => {
     return issues.filter((issue) => issue.status === status);
@@ -65,7 +74,18 @@ export const Board = ({ projectId }: BoardProps) => {
 
   return (
     <div className="p-4 flex gap-4 overflow-x-auto">
-      {columns.map((column) => (
+      {!activeSprint && (
+        <div className="flex items-center justify-center w-full p-8 text-center">
+          <div className="bg-gray-50 p-6 rounded-md shadow-sm border border-gray-200">
+            <h3 className="text-xl font-medium mb-2">No Active Sprint</h3>
+            <p className="text-gray-500">
+              Start a sprint from the Sprints page to see issues here.
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {activeSprint && columns.map((column) => (
         <div 
           key={column.id} 
           className="kanban-column w-72 flex-shrink-0"
@@ -89,6 +109,11 @@ export const Board = ({ projectId }: BoardProps) => {
                 <IssueCard key={issue.id} issue={issue} />
               </div>
             ))}
+            {issuesByStatus(column.id).length === 0 && (
+              <div className="text-center p-4 text-gray-400 text-sm">
+                No issues in this status
+              </div>
+            )}
           </div>
         </div>
       ))}

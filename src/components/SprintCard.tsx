@@ -3,9 +3,11 @@ import { useAppStore } from "@/store";
 import { Sprint } from "@/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { CalendarClock, ChevronDown, ChevronUp, Edit, Play, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { IssueCard } from "./IssueCard";
+import { Button } from "./ui/button";
+import { SprintEditDialog } from "./SprintEditDialog";
 
 interface SprintCardProps {
   sprint: Sprint;
@@ -17,7 +19,8 @@ interface SprintCardProps {
 
 export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart }: SprintCardProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { getIssuesBySprint } = useAppStore();
+  const { getIssuesBySprint, updateSprint } = useAppStore();
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   
   const issues = getIssuesBySprint(sprint.id);
   
@@ -37,11 +40,35 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
     if (!dateString) return "Not set";
     return format(new Date(dateString), "MMM d, yyyy");
   };
+
+  const handleStartSprint = async () => {
+    try {
+      await updateSprint({
+        ...sprint,
+        status: "active",
+        startDate: sprint.startDate || new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error starting sprint:", error);
+    }
+  };
+
+  const handleCompleteSprint = async () => {
+    try {
+      await updateSprint({
+        ...sprint,
+        status: "completed",
+        endDate: sprint.endDate || new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error completing sprint:", error);
+    }
+  };
   
   return (
     <div className="mb-6 rounded-md border bg-white shadow-sm">
-      <div className="flex items-center justify-between p-4 cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
-        <div className="flex flex-col">
+      <div className="flex items-center justify-between p-4">
+        <div className="flex flex-col flex-grow cursor-pointer" onClick={() => setIsExpanded(!isExpanded)}>
           <div className="flex items-center">
             <h3 className="font-semibold">{sprint.name}</h3>
             <span className={cn("ml-2 px-2 py-0.5 rounded-full text-xs font-medium", getStatusBadgeColor(sprint.status))}>
@@ -52,18 +79,63 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
             <p className="text-sm text-gray-500 mt-1">{sprint.goal}</p>
           )}
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-xs text-gray-500">
+        <div className="flex items-center gap-2">
+          <div className="text-xs text-gray-500 flex items-center">
+            <CalendarClock className="h-3 w-3 mr-1" />
             {formatDate(sprint.startDate)} - {formatDate(sprint.endDate)}
           </div>
-          <span className="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full mr-2">
+          <span className="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full ml-2">
             {issues.length}
           </span>
-          {isExpanded ? (
-            <ChevronUp className="h-5 w-5 text-gray-500" />
-          ) : (
-            <ChevronDown className="h-5 w-5 text-gray-500" />
-          )}
+          
+          <div className="flex gap-1">
+            {sprint.status === "future" && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-xs h-7"
+                onClick={handleStartSprint}
+              >
+                <Play className="h-3 w-3 mr-1" /> Start
+              </Button>
+            )}
+            
+            {sprint.status === "active" && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-xs h-7"
+                onClick={handleCompleteSprint}
+              >
+                <CheckCircle2 className="h-3 w-3 mr-1" /> Complete
+              </Button>
+            )}
+            
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="text-xs h-7"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditDialogOpen(true);
+              }}
+            >
+              <Edit className="h-3 w-3" />
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 text-gray-500" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
       
@@ -93,6 +165,12 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
           )}
         </div>
       )}
+      
+      <SprintEditDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        sprint={sprint}
+      />
     </div>
   );
 };

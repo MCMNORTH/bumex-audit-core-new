@@ -1,7 +1,14 @@
-import { useAppStore } from "@/store";
-import { useNavigate } from "react-router-dom";
 
-export function IssueCard({ issue }) {
+import { useAppStore } from "@/store";
+import { Bug, CheckCircle2, FileText, Award } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Issue } from "@/types";
+
+interface IssueCardProps {
+  issue: Issue;
+}
+
+export function IssueCard({ issue }: IssueCardProps) {
   const { getUserById } = useAppStore();
   const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
   const navigate = useNavigate();
@@ -15,12 +22,20 @@ export function IssueCard({ issue }) {
     lowest: "bg-gray-400",
   };
   
-  // Map issue type to icons
-  const typeIcons = {
-    bug: "🐞",
-    task: "✅",
-    story: "📝",
-    epic: "🏆",
+  // Map issue type to icons with updated modern look
+  const TypeIcon = () => {
+    switch (issue.type) {
+      case "bug":
+        return <Bug className="h-4 w-4 text-red-500" />;
+      case "task":
+        return <CheckCircle2 className="h-4 w-4 text-blue-500" />;
+      case "story":
+        return <FileText className="h-4 w-4 text-green-500" />;
+      case "epic":
+        return <Award className="h-4 w-4 text-purple-500" />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -28,8 +43,8 @@ export function IssueCard({ issue }) {
       onClick={() => navigate(`/issues/${issue.id}`)}
     >
       <div className="flex justify-between items-center mb-2">
-        <div className="flex items-center gap-1">
-          <span className="text-sm" title={issue.type}>{typeIcons[issue.type]}</span>
+        <div className="flex items-center gap-2">
+          <TypeIcon />
           <span className={`w-2 h-2 rounded-full ${priorityColors[issue.priority]}`} title={`Priority: ${issue.priority}`}></span>
         </div>
         <button 

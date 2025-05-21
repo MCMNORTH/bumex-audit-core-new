@@ -1,3 +1,4 @@
+
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -50,6 +51,7 @@ export interface Project {
   createdAt: string;
   updatedAt: string;
   avatarUrl?: string;
+  deleted?: boolean;
 }
 
 export interface Epic {
