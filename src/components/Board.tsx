@@ -1,6 +1,6 @@
 
 import { Status } from "@/types";
-import { IssueCard } from "./IssueCard";
+import { IssueCard } from "./TaskCard";
 import { useAppStore } from "@/store";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -18,17 +18,18 @@ const columns: { id: Status; title: string }[] = [
 ];
 
 export const Board = ({ projectId }: BoardProps) => {
-  const { getIssuesByProject, updateIssueStatus, getSprintsByProject, fetchIssues, loading } = useAppStore();
+  const { getIssuesByProject, updateIssueStatus, getSprintsByProject, fetchIssues, fetchSprints, loading } = useAppStore();
   const [draggedIssueId, setDraggedIssueId] = useState<string | null>(null);
   const { toast } = useToast();
 
-  // Fetch issues when the component mounts
+  // Fetch issues and sprints when the component mounts
   useEffect(() => {
     if (projectId) {
-      console.log("Board: Fetching issues for project", projectId);
+      console.log("Board: Fetching data for project", projectId);
       fetchIssues(projectId);
+      fetchSprints(projectId);
     }
-  }, [projectId, fetchIssues]);
+  }, [projectId, fetchIssues, fetchSprints]);
 
   const allIssues = getIssuesByProject(projectId);
   
@@ -66,14 +67,14 @@ export const Board = ({ projectId }: BoardProps) => {
     try {
       await updateIssueStatus(draggedIssueId, status);
       toast({
-        title: "Issue updated",
-        description: `Issue moved to ${columns.find(col => col.id === status)?.title}`
+        title: "Task updated",
+        description: `Task moved to ${columns.find(col => col.id === status)?.title}`
       });
     } catch (error) {
-      console.error("Error updating issue status:", error);
+      console.error("Error updating task status:", error);
       toast({
         title: "Error",
-        description: "Failed to update issue status",
+        description: "Failed to update task status",
         variant: "destructive"
       });
     } finally {
@@ -85,7 +86,7 @@ export const Board = ({ projectId }: BoardProps) => {
     <div className="p-4 flex gap-4 overflow-x-auto">
       {loading.issues && (
         <div className="w-full text-center py-8">
-          <p className="text-gray-500">Loading issues...</p>
+          <p className="text-gray-500">Loading tasks...</p>
         </div>
       )}
       
@@ -94,7 +95,7 @@ export const Board = ({ projectId }: BoardProps) => {
           <div className="bg-gray-50 p-6 rounded-md shadow-sm border border-gray-200">
             <h3 className="text-xl font-medium mb-2">No Active Sprint</h3>
             <p className="text-gray-500">
-              Start a sprint from the Sprints page to see issues here.
+              Start a sprint from the Sprints page to see tasks here.
             </p>
           </div>
         </div>
@@ -126,7 +127,7 @@ export const Board = ({ projectId }: BoardProps) => {
             ))}
             {issuesByStatus(column.id).length === 0 && (
               <div className="text-center p-4 text-gray-400 text-sm">
-                No issues in this status
+                No tasks in this status
               </div>
             )}
           </div>
