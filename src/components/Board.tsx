@@ -3,7 +3,7 @@ import { Status } from "@/types";
 import { IssueCard } from "./IssueCard";
 import { useAppStore } from "@/store";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 interface BoardProps {
@@ -18,11 +18,20 @@ const columns: { id: Status; title: string }[] = [
 ];
 
 export const Board = ({ projectId }: BoardProps) => {
-  const { getIssuesByProject, updateIssueStatus, getSprintsByProject } = useAppStore();
-  const allIssues = getIssuesByProject(projectId);
+  const { getIssuesByProject, updateIssueStatus, getSprintsByProject, fetchIssues, loading } = useAppStore();
   const [draggedIssueId, setDraggedIssueId] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Fetch issues when the component mounts
+  useEffect(() => {
+    if (projectId) {
+      console.log("Board: Fetching issues for project", projectId);
+      fetchIssues(projectId);
+    }
+  }, [projectId, fetchIssues]);
+
+  const allIssues = getIssuesByProject(projectId);
+  
   // Get active sprint
   const sprints = getSprintsByProject(projectId);
   const activeSprint = sprints.find(sprint => sprint.status === "active");
@@ -74,7 +83,13 @@ export const Board = ({ projectId }: BoardProps) => {
 
   return (
     <div className="p-4 flex gap-4 overflow-x-auto">
-      {!activeSprint && (
+      {loading.issues && (
+        <div className="w-full text-center py-8">
+          <p className="text-gray-500">Loading issues...</p>
+        </div>
+      )}
+      
+      {!loading.issues && !activeSprint && (
         <div className="flex items-center justify-center w-full p-8 text-center">
           <div className="bg-gray-50 p-6 rounded-md shadow-sm border border-gray-200">
             <h3 className="text-xl font-medium mb-2">No Active Sprint</h3>
@@ -85,7 +100,7 @@ export const Board = ({ projectId }: BoardProps) => {
         </div>
       )}
       
-      {activeSprint && columns.map((column) => (
+      {!loading.issues && activeSprint && columns.map((column) => (
         <div 
           key={column.id} 
           className="kanban-column w-72 flex-shrink-0"

@@ -10,24 +10,28 @@ interface SprintBoardProps {
 }
 
 export const SprintBoard = ({ projectId }: SprintBoardProps) => {
-  const { getSprintsByProject, fetchSprints, loading, getIssuesByProject, updateIssueSprint } = useAppStore();
+  const { getSprintsByProject, fetchSprints, loading, getIssuesByProject, updateIssueSprint, fetchIssues } = useAppStore();
   const { toast } = useToast();
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [draggedIssueId, setDraggedIssueId] = useState<string | null>(null);
   
+  useEffect(() => {
+    const loadData = async () => {
+      if (projectId) {
+        console.log("SprintBoard: Loading data for project", projectId);
+        await fetchIssues(projectId);
+        await fetchSprints(projectId);
+        const projectSprints = getSprintsByProject(projectId);
+        setSprints(projectSprints);
+      }
+    };
+    
+    loadData();
+  }, [projectId, fetchIssues, fetchSprints, getSprintsByProject]);
+  
   const issues = getIssuesByProject(projectId);
   const backlogIssues = issues.filter(issue => !issue.sprintId);
   
-  useEffect(() => {
-    const loadSprints = async () => {
-      await fetchSprints(projectId);
-      const projectSprints = getSprintsByProject(projectId);
-      setSprints(projectSprints);
-    };
-    
-    loadSprints();
-  }, [projectId, fetchSprints, getSprintsByProject]);
-
   const handleDragStart = (issueId: string) => {
     setDraggedIssueId(issueId);
   };
@@ -62,8 +66,8 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
     }
   };
   
-  if (loading.sprints) {
-    return <div className="p-4">Loading sprints...</div>;
+  if (loading.sprints || loading.issues) {
+    return <div className="p-4">Loading sprints and issues...</div>;
   }
   
   return (

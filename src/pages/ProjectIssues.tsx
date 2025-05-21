@@ -3,7 +3,7 @@ import { useAppStore } from "@/store";
 import { useParams } from "react-router-dom";
 import { ProjectHeader } from "@/components/ProjectHeader";
 import { IssueCard } from "@/components/IssueCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,10 +15,18 @@ import {
 
 const ProjectIssues = () => {
   const { projectId = "" } = useParams();
-  const { getIssuesByProject, getEpicsByProject } = useAppStore();
+  const { getIssuesByProject, getEpicsByProject, fetchIssues, loading } = useAppStore();
   
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
+
+  // Add useEffect hook to fetch issues when component mounts
+  useEffect(() => {
+    if (projectId) {
+      console.log("ProjectIssues: Fetching issues for project", projectId);
+      fetchIssues(projectId);
+    }
+  }, [projectId, fetchIssues]);
 
   const issues = getIssuesByProject(projectId);
   const epics = getEpicsByProject(projectId);
@@ -66,19 +74,25 @@ const ProjectIssues = () => {
           </div>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {filteredIssues.map(issue => (
-            <div key={issue.id} className="bg-white rounded-md shadow p-1">
-              <IssueCard issue={issue} />
-            </div>
-          ))}
-          
-          {filteredIssues.length === 0 && (
-            <div className="col-span-full py-8 text-center">
-              <p className="text-gray-500">No issues match your search criteria.</p>
-            </div>
-          )}
-        </div>
+        {loading.issues ? (
+          <div className="text-center py-8">
+            <p className="text-gray-500">Loading issues...</p>
+          </div>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {filteredIssues.map(issue => (
+              <div key={issue.id} className="bg-white rounded-md shadow p-1">
+                <IssueCard issue={issue} />
+              </div>
+            ))}
+            
+            {filteredIssues.length === 0 && !loading.issues && (
+              <div className="col-span-full py-8 text-center">
+                <p className="text-gray-500">No issues match your search criteria.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { Epic, Issue, Project, Status, User, Sprint } from '@/types';
 import { firestore } from '@/lib/firebase';
@@ -69,14 +68,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     set(state => ({ loading: { ...state.loading, projects: true }}));
     try {
       const projects = await firestore.getAllProjects() as Project[];
-      set({ projects, loading: { ...get().loading, projects: false } });
+      // Filter out deleted projects
+      const activeProjects = projects.filter(project => !project.deleted);
+      set({ projects: activeProjects, loading: { ...get().loading, projects: false } });
       
       // If there are projects and no selected project, select the first non-deleted one
-      if (projects.length > 0 && !get().selectedProject) {
-        const activeProjects = projects.filter(p => !p.deleted);
-        if (activeProjects.length > 0) {
-          set({ selectedProject: activeProjects[0] });
-        }
+      if (activeProjects.length > 0 && !get().selectedProject) {
+        set({ selectedProject: activeProjects[0] });
       }
     } catch (error) {
       console.error("Error fetching projects:", error);
@@ -96,9 +94,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   fetchIssues: async (projectId: string) => {
+    console.log("Fetching issues for project:", projectId);
     set(state => ({ loading: { ...state.loading, issues: true }}));
     try {
       const issues = await firestore.getIssuesByProject(projectId) as Issue[];
+      console.log("Fetched issues:", issues);
       set({ issues, loading: { ...get().loading, issues: false } });
     } catch (error) {
       console.error("Error fetching issues:", error);
@@ -255,7 +255,10 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   
   getIssuesByProject: (projectId) => {
-    return get().issues.filter((issue) => issue.projectId === projectId);
+    const issues = get().issues;
+    const filtered = issues.filter((issue) => issue.projectId === projectId);
+    console.log(`Getting issues for project ${projectId}:`, filtered);
+    return filtered;
   },
   
   getEpicsByProject: (projectId) => {
