@@ -131,13 +131,13 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
             <Button 
               variant="ghost" 
               size="icon"
-              className="h-7 w-7"
+              className="h-7 w-7 hover:text-white"
               onClick={() => setIsExpanded(!isExpanded)}
             >
               {isExpanded ? (
-                <ChevronUp className="h-4 w-4 text-gray-500" />
+                <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-white" />
               ) : (
-                <ChevronDown className="h-4 w-4 text-gray-500" />
+                <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-white" />
               )}
             </Button>
           </div>

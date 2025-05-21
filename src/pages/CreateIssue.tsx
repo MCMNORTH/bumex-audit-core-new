@@ -53,6 +53,7 @@ const CreateIssue = () => {
   const [status, setStatus] = useState<Status>("todo");
   const [assigneeId, setAssigneeId] = useState<string | undefined>(undefined);
   const [epicId, setEpicId] = useState<string | undefined>(undefined);
+  const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -111,6 +112,8 @@ const CreateIssue = () => {
         projectId,
         // Only include epicId if it's not undefined or "no-epic"
         ...(epicId && epicId !== "no-epic" ? { epicId } : { epicId: null }),
+        // Only include parentId if it's provided and not "no-parent"
+        ...(parentId && parentId !== "no-parent" ? { parentId } : { parentId: null }),
       };
 
       await addIssue(newIssue);
@@ -234,25 +237,52 @@ const CreateIssue = () => {
           </div>
         </div>
 
-        {type !== "epic" && epics.length > 0 && (
-          <div className="space-y-2">
-            <Label htmlFor="epic">Epic</Label>
-            <Select
-              value={epicId || "no-epic"}
-              onValueChange={(value) => setEpicId(value === "no-epic" ? null : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select epic" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="no-epic">No epic</SelectItem>
-                {epics.map((epic) => (
-                  <SelectItem key={epic.id} value={epic.id}>
-                    {epic.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {type !== "epic" && (
+          <div className="grid md:grid-cols-2 gap-4">
+            {epics.length > 0 && (
+              <div className="space-y-2">
+                <Label htmlFor="epic">Epic</Label>
+                <Select
+                  value={epicId || "no-epic"}
+                  onValueChange={(value) => setEpicId(value === "no-epic" ? null : value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select epic" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="no-epic">No epic</SelectItem>
+                    {epics.map((epic) => (
+                      <SelectItem key={epic.id} value={epic.id}>
+                        {epic.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* New parent epic selection */}
+            {type === "task" && epics.length > 0 && (
+              <div className="space-y-2">
+                <Label htmlFor="parent">Parent Epic</Label>
+                <Select
+                  value={parentId || "no-parent"}
+                  onValueChange={(value) => setParentId(value === "no-parent" ? null : value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select parent epic" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="no-parent">No parent</SelectItem>
+                    {epics.map((epic) => (
+                      <SelectItem key={epic.id} value={epic.id}>
+                        {epic.title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
         )}
 
@@ -277,7 +307,7 @@ const CreateIssue = () => {
           </Button>
           <Button
             type="submit"
-            className="bg-jira-blue hover:bg-jira-blue-dark"
+            className="bg-[#459ed7] hover:bg-[#3688bd]"
           >
             Create Issue
           </Button>
