@@ -84,11 +84,15 @@ export interface InvoiceItem {
   price: number;
 }
 
+export type Currency = "MRU" | "USD" | "EUR";
+
 export interface Invoice {
   id: string;
   userId: string;
+  clientName: string; // For storage/display of the client name
   items: InvoiceItem[];
   total: number;
+  currency: Currency;
   status: "draft" | "pending" | "paid" | "overdue" | "cancelled";
   issueDate: string;
   dueDate: string;

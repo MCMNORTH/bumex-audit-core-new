@@ -27,6 +27,7 @@ export const epicsCollection = collection(db, "epics");
 export const issuesCollection = collection(db, "issues");
 export const usersCollection = collection(db, "users");
 export const sprintsCollection = collection(db, "sprints");
+export const invoicesCollection = collection(db, "invoices");
 
 // Export query functions needed for client queries
 export { query, where };
@@ -39,6 +40,7 @@ export const firestore = {
   issuesCollection,
   usersCollection,
   sprintsCollection,
+  invoicesCollection,
   query,
   where,
   getDocs,
@@ -72,6 +74,12 @@ export const firestore = {
     const sprintRef = doc(sprintsCollection, sprintData.id);
     await setDoc(sprintRef, sprintData);
     return sprintData;
+  },
+  
+  createInvoice: async (invoiceData: any) => {
+    const invoiceRef = doc(invoicesCollection, invoiceData.id);
+    await setDoc(invoiceRef, invoiceData);
+    return invoiceData;
   },
   
   // Read
@@ -133,6 +141,22 @@ export const firestore = {
     const userSnap = await getDoc(userRef);
     return userSnap.exists() ? userSnap.data() : null;
   },
+
+  getAllUsers: async () => {
+    const usersSnap = await getDocs(usersCollection);
+    return usersSnap.docs.map(doc => doc.data());
+  },
+
+  getInvoice: async (invoiceId: string) => {
+    const invoiceRef = doc(invoicesCollection, invoiceId);
+    const invoiceSnap = await getDoc(invoiceRef);
+    return invoiceSnap.exists() ? invoiceSnap.data() : null;
+  },
+
+  getAllInvoices: async () => {
+    const invoicesSnap = await getDocs(invoicesCollection);
+    return invoicesSnap.docs.map(doc => doc.data());
+  },
   
   // Update
   updateProject: async (projectId: string, data: any) => {
@@ -158,6 +182,12 @@ export const firestore = {
     await updateDoc(sprintRef, data);
     return { id: sprintId, ...data };
   },
+
+  updateInvoice: async (invoiceId: string, data: any) => {
+    const invoiceRef = doc(invoicesCollection, invoiceId);
+    await updateDoc(invoiceRef, data);
+    return { id: invoiceId, ...data };
+  },
   
   // Delete
   deleteProject: async (projectId: string) => {
@@ -178,6 +208,11 @@ export const firestore = {
   deleteSprint: async (sprintId: string) => {
     await deleteDoc(doc(sprintsCollection, sprintId));
     return sprintId;
+  },
+
+  deleteInvoice: async (invoiceId: string) => {
+    await deleteDoc(doc(invoicesCollection, invoiceId));
+    return invoiceId;
   },
 };
 

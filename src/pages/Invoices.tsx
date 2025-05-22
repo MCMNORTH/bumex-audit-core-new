@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Table, 
@@ -12,39 +12,48 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, FileText } from "lucide-react";
-import { User } from "@/types";
-
-// Temporary mock data for invoices
-const mockInvoices = [
-  {
-    id: "INV-001",
-    userId: "user1",
-    userName: "John Doe",
-    amount: 250.00,
-    date: "2025-05-20",
-    status: "paid"
-  },
-  {
-    id: "INV-002",
-    userId: "user2",
-    userName: "Jane Smith",
-    amount: 450.00,
-    date: "2025-05-18",
-    status: "pending"
-  },
-  {
-    id: "INV-003",
-    userId: "user3",
-    userName: "Robert Johnson",
-    amount: 125.50,
-    date: "2025-05-15",
-    status: "overdue"
-  }
-];
+import { Invoice } from "@/types";
+import { firestore } from "@/lib/firebase";
+import { toast } from "@/components/ui/use-toast";
 
 export default function Invoices() {
   const navigate = useNavigate();
-  const [invoices, setInvoices] = useState(mockInvoices);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      try {
+        setLoading(true);
+        const fetchedInvoices = await firestore.getAllInvoices() as Invoice[];
+        setInvoices(fetchedInvoices);
+      } catch (error) {
+        console.error("Error fetching invoices:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load invoices. Please try again.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInvoices();
+  }, []);
+
+  const formatCurrency = (amount: number, currency: string) => {
+    return `${currency} ${amount.toFixed(2)}`;
+  };
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat("en-US").format(date);
+    } catch (error) {
+      return dateString;
+    }
+  };
 
   return (
     <div className="container mx-auto py-8">
@@ -60,47 +69,67 @@ export default function Invoices() {
       </div>
 
       <div className="bg-white rounded-md shadow">
-        <Table>
-          <TableCaption>A list of all invoices</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Invoice ID</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {invoices.map((invoice) => (
-              <TableRow key={invoice.id}>
-                <TableCell>{invoice.id}</TableCell>
-                <TableCell>{invoice.userName}</TableCell>
-                <TableCell>{invoice.date}</TableCell>
-                <TableCell>${invoice.amount.toFixed(2)}</TableCell>
-                <TableCell>
-                  <span className={`inline-block px-2 py-1 text-xs rounded-full ${
-                    invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                    invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}>
-                    {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => navigate(`/invoices/${invoice.id}`)}
-                  >
-                    <FileText className="h-4 w-4 mr-1" /> View
-                  </Button>
-                </TableCell>
+        {loading ? (
+          <div className="p-8 text-center">Loading invoices...</div>
+        ) : invoices.length === 0 ? (
+          <div className="p-8 text-center">
+            <p className="text-gray-500 mb-4">No invoices found</p>
+            <Button 
+              onClick={() => navigate('/create-invoice')} 
+              variant="outline"
+              className="gap-2"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Create your first invoice
+            </Button>
+          </div>
+        ) : (
+          <Table>
+            <TableCaption>A list of all invoices</TableCaption>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Invoice ID</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {invoices.map((invoice) => (
+                <TableRow key={invoice.id}>
+                  <TableCell>{invoice.id.substring(0, 8)}</TableCell>
+                  <TableCell>{invoice.clientName}</TableCell>
+                  <TableCell>{formatDate(invoice.issueDate)}</TableCell>
+                  <TableCell>{formatDate(invoice.dueDate)}</TableCell>
+                  <TableCell>{formatCurrency(invoice.total, invoice.currency)}</TableCell>
+                  <TableCell>
+                    <span className={`inline-block px-2 py-1 text-xs rounded-full ${
+                      invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
+                      invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      invoice.status === 'draft' ? 'bg-gray-100 text-gray-800' :
+                      invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => navigate(`/invoices/${invoice.id}`)}
+                    >
+                      <FileText className="h-4 w-4 mr-1" /> View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );
