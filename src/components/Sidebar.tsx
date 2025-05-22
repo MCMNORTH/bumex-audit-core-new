@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
@@ -34,10 +33,22 @@ export const Sidebar = () => {
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || "User";
   return <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
-        <h1 className={cn("font-semibold", !isOpen && "hidden")}>OVERCODE</h1>
-        <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
-          {isOpen ? "◀" : "▶"}
-        </button>
+        {isOpen ? (
+          <img 
+            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" 
+            alt="OVERCODE" 
+            className="h-7"
+          />
+        ) : (
+          <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
+            ▶
+          </button>
+        )}
+        {isOpen && (
+          <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
+            ◀
+          </button>
+        )}
       </div>
       
       <div className="p-2">
