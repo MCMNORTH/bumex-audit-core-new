@@ -57,6 +57,7 @@ export interface Project {
   key: string;
   description?: string;
   lead: string; // User ID
+  owner?: string; // User ID of the project owner (client)
   createdAt: string;
   updatedAt: string;
   avatarUrl?: string;

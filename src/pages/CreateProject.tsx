@@ -20,6 +20,7 @@ const CreateProject = () => {
   const [key, setKey] = useState("");
   const [description, setDescription] = useState("");
   const [lead, setLead] = useState("");
+  const [owner, setOwner] = useState("");
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   
@@ -37,6 +38,7 @@ const CreateProject = () => {
         setAvailableUsers(usersData);
         if (usersData.length > 0) {
           setLead(usersData[0].id);
+          setOwner(usersData[0].id);
         }
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -71,6 +73,7 @@ const CreateProject = () => {
       key: key.toUpperCase(),
       description,
       lead,
+      owner,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -87,6 +90,7 @@ const CreateProject = () => {
   
   // Helper function to get user display name
   const getUserDisplayName = (user: User): string => {
+    if (user.fullName) return user.fullName;
     if (user.name) return user.name;
     if (user.displayName) return user.displayName;
     if (user.email) return user.email.split('@')[0];
@@ -134,6 +138,29 @@ const CreateProject = () => {
             placeholder="Enter project description"
             rows={4}
           />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="owner">Project Owner</Label>
+          <select
+            id="owner"
+            value={owner}
+            onChange={(e) => setOwner(e.target.value)}
+            className="w-full border border-input rounded-md px-3 py-2 bg-background"
+            disabled={loading}
+          >
+            {loading ? (
+              <option>Loading users...</option>
+            ) : availableUsers.length > 0 ? (
+              availableUsers.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {getUserDisplayName(user)}
+                </option>
+              ))
+            ) : (
+              <option value="">No users available</option>
+            )}
+          </select>
         </div>
         
         <div className="space-y-2">

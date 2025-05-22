@@ -43,8 +43,8 @@ const ClientDetail = () => {
 
   useEffect(() => {
     if (projects.length && client) {
-      // Find projects where this client is the lead
-      const filteredProjects = projects.filter(project => project.lead === client.id);
+      // Find projects where this client is the owner
+      const filteredProjects = projects.filter(project => project.owner === client.id);
       setClientProjects(filteredProjects);
       setIsLoading(false);
     } else if (!loading.projects) {

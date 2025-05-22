@@ -25,6 +25,7 @@ const EditProject = () => {
   const [key, setKey] = useState("");
   const [description, setDescription] = useState("");
   const [lead, setLead] = useState("");
+  const [owner, setOwner] = useState("");
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -44,6 +45,7 @@ const EditProject = () => {
     setKey(project.key);
     setDescription(project.description || "");
     setLead(project.lead);
+    setOwner(project.owner || "");
 
     const fetchUsers = async () => {
       setLoading(true);
@@ -90,6 +92,7 @@ const EditProject = () => {
         key,
         description,
         lead,
+        owner,
         updatedAt: new Date().toISOString(),
       });
 
@@ -137,6 +140,7 @@ const EditProject = () => {
 
   // Helper function to get user display name
   const getUserDisplayName = (user: User): string => {
+    if (user.fullName) return user.fullName;
     if (user.name) return user.name;
     if (user.displayName) return user.displayName;
     if (user.email) return user.email.split('@')[0];
@@ -188,6 +192,27 @@ const EditProject = () => {
             placeholder="Enter project description"
             rows={4}
           />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="owner">Project Owner</Label>
+          <select
+            id="owner"
+            value={owner}
+            onChange={(e) => setOwner(e.target.value)}
+            className="w-full border border-gray-300 rounded-md p-2 bg-background"
+            disabled={loading}
+          >
+            {loading ? (
+              <option>Loading users...</option>
+            ) : (
+              users.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {getUserDisplayName(user)}
+                </option>
+              ))
+            )}
+          </select>
         </div>
 
         <div className="space-y-2">
