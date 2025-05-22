@@ -49,10 +49,11 @@ const ClientDetail = () => {
             return;
           }
           
-          setClient({ ...userData, id: clientId });
+          // Make sure we use the ID from the URL parameter
+          setClient({ ...userData, id: clientId, uid: clientId });
           toast({
             title: "Client loaded",
-            description: `Successfully loaded client: ${userData.fullName || userData.name}`,
+            description: `Successfully loaded client: ${userData.fullName || userData.name || userData.email}`,
           });
         } else {
           console.error("Client document does not exist for ID:", clientId);
@@ -114,7 +115,7 @@ const ClientDetail = () => {
           {client.avatarUrl ? (
             <img 
               src={client.avatarUrl} 
-              alt={client.fullName || client.name} 
+              alt={client.fullName || client.name || "Client"} 
               className="w-16 h-16 rounded-full"
             />
           ) : (
@@ -123,10 +124,13 @@ const ClientDetail = () => {
             </div>
           )}
           <div>
-            <h1 className="text-2xl font-bold">{client.fullName || client.name}</h1>
+            <h1 className="text-2xl font-bold">{client.fullName || client.name || client.email}</h1>
             <p className="text-gray-600">{client.email}</p>
             {client.contactNumber && (
               <p className="text-sm text-gray-500">Contact: {client.contactNumber}</p>
+            )}
+            {client.company && (
+              <p className="text-sm text-gray-500">Company: {client.company}</p>
             )}
           </div>
         </div>

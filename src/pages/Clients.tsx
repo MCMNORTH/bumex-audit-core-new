@@ -45,10 +45,10 @@ const Clients = () => {
             console.log("Client in loop:", client);
             return (
               <Link 
-                to={`/clients/${client.id}`} 
-                key={client.id} 
+                to={`/clients/${client.uid || client.id}`} 
+                key={client.id || client.uid} 
                 className="block"
-                onClick={() => console.log("Clicked on client:", client)}
+                onClick={() => console.log("Clicked on client:", client, "ID used for route:", client.uid || client.id)}
               >
                 <Card className="hover:shadow-md transition-all duration-200 cursor-pointer">
                   <CardHeader className="pb-2">
