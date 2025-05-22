@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppStore } from "@/store";
 import { useParams } from "react-router-dom";
 import { ProjectHeader } from "@/components/ProjectHeader";
@@ -7,6 +7,7 @@ import { SprintBoard } from "@/components/SprintBoard";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { CreateSprintDialog } from "@/components/CreateSprintDialog";
+import { useState } from "react";
 
 const ProjectSprints = () => {
   const { projectId = "" } = useParams();

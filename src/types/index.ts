@@ -65,6 +65,7 @@ export interface Project {
   avatarUrl?: string;
   deleted?: boolean;
   imageUrl?: string;
+  starred?: boolean;
 }
 
 export interface Epic {
