@@ -1,8 +1,9 @@
+
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User, Home, LayoutDashboard, Users } from "lucide-react";
+import { PlusCircle, User, Home, LayoutDashboard, Users, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
@@ -15,6 +16,7 @@ export const Sidebar = () => {
     projects,
     selectedProject,
     setSelectedProject,
+    recentProjects
   } = useAppStore();
   const navigate = useNavigate();
   const {
@@ -77,11 +79,19 @@ export const Sidebar = () => {
 
       <div className="p-2 overflow-y-auto flex-1">
         <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
-          Projects
+          Recent Projects
         </div>
-        <ul className="space-y-1">
-          {projects.filter(project => !project.deleted).map(project => <li key={project.id}>
-              <button onClick={() => handleProjectSelect(project)} className={cn("w-full text-left p-2 rounded-md flex items-center gap-2", "hover:bg-sidebar-accent transition-colors", selectedProject?.id === project.id && "bg-sidebar-accent")}>
+        <ul className="space-y-1 mb-4">
+          {recentProjects.map(project => (
+            <li key={project.id}>
+              <button 
+                onClick={() => handleProjectSelect(project)} 
+                className={cn(
+                  "w-full text-left p-2 rounded-md flex items-center gap-2",
+                  "hover:bg-sidebar-accent transition-colors", 
+                  selectedProject?.id === project.id && "bg-sidebar-accent"
+                )}
+              >
                 {project.imageUrl ? (
                   <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
                     <AspectRatio ratio={1/1}>
@@ -99,7 +109,43 @@ export const Sidebar = () => {
                 )}
                 {isOpen && <span>{project.name}</span>}
               </button>
-            </li>)}
+            </li>
+          ))}
+        </ul>
+        
+        <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
+          All Projects
+        </div>
+        <ul className="space-y-1">
+          {projects.filter(project => !project.deleted).map(project => (
+            <li key={project.id}>
+              <button 
+                onClick={() => handleProjectSelect(project)} 
+                className={cn(
+                  "w-full text-left p-2 rounded-md flex items-center gap-2",
+                  "hover:bg-sidebar-accent transition-colors", 
+                  selectedProject?.id === project.id && "bg-sidebar-accent"
+                )}
+              >
+                {project.imageUrl ? (
+                  <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
+                    <AspectRatio ratio={1/1}>
+                      <img 
+                        src={project.imageUrl} 
+                        alt={project.name}
+                        className="object-cover w-full h-full"
+                      />
+                    </AspectRatio>
+                  </div>
+                ) : (
+                  <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                    {project.key.substring(0, 2).toUpperCase()}
+                  </div>
+                )}
+                {isOpen && <span>{project.name}</span>}
+              </button>
+            </li>
+          ))}
         </ul>
       </div>
       
