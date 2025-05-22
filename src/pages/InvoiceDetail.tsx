@@ -39,7 +39,16 @@ export default function InvoiceDetail() {
   }, [invoiceId]);
 
   const handlePrint = () => {
-    window.print();
+    const printContent = document.getElementById('invoice-printable');
+    const originalBody = document.body.innerHTML;
+    
+    if (printContent) {
+      document.body.innerHTML = printContent.innerHTML;
+      window.print();
+      document.body.innerHTML = originalBody;
+      // Re-initialize the page after printing
+      window.location.reload();
+    }
   };
 
   const handleSendEmail = () => {
@@ -127,6 +136,9 @@ export default function InvoiceDetail() {
           <div>
             <h3 className="text-gray-500 font-medium mb-2">Bill To:</h3>
             <p className="font-bold">{invoice.clientName}</p>
+            {invoice.clientContact && (
+              <p className="text-sm text-gray-500">{invoice.clientContact}</p>
+            )}
             {invoice.userId && (
               <p className="text-sm text-gray-500">Client ID: {invoice.userId}</p>
             )}

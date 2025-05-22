@@ -30,6 +30,7 @@ import { PlusCircle, MinusCircle } from "lucide-react";
 const invoiceFormSchema = z.object({
   userId: z.string().optional(),
   clientName: z.string().min(1, "Client name is required"),
+  clientContact: z.string().optional(),
   dueDate: z.string().min(1, "Due date is required"),
   currency: z.enum(["MRU", "USD", "EUR"]).default("MRU"),
   items: z.array(z.object({
@@ -70,6 +71,7 @@ export default function CreateInvoice() {
 
   const defaultValues: Partial<InvoiceFormValues> = {
     clientName: "",
+    clientContact: "",
     dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
     currency: "MRU",
     items: [{
@@ -108,6 +110,7 @@ export default function CreateInvoice() {
   const selectUser = (user: User) => {
     form.setValue("clientName", user.fullName || user.name || user.email);
     form.setValue("userId", user.id);
+    form.setValue("clientContact", user.email || "");
     setSearchTerm(user.fullName || user.name || user.email);
     setShowSuggestions(false);
   };
@@ -143,6 +146,7 @@ export default function CreateInvoice() {
         id: uuidv4(),
         userId: data.userId || "",
         clientName: data.clientName,
+        clientContact: data.clientContact || "",
         items: data.items as InvoiceItem[],
         total,
         currency: data.currency as Currency,
@@ -189,70 +193,120 @@ export default function CreateInvoice() {
         <div className="bg-white p-6 rounded-lg shadow">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative">
+                  <FormField
+                    control={form.control}
+                    name="clientName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Client Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Search for a client..." 
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            onFocus={() => setShowSuggestions(true)}
+                            onBlur={() => {
+                              // Delay hiding suggestions to allow click
+                              setTimeout(() => setShowSuggestions(false), 200);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {showSuggestions && filteredUsers.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-md max-h-60 overflow-y-auto shadow-lg">
+                      {filteredUsers.map((user) => (
+                        <div 
+                          key={user.id} 
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => selectUser(user)}
+                        >
+                          <div>{user.fullName || user.name}</div>
+                          <div className="text-xs text-gray-500">{user.email}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <FormField
                   control={form.control}
-                  name="clientName"
+                  name="clientContact"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Client Name</FormLabel>
+                      <FormLabel>Client Contact (Email/Phone)</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Search for a client..." 
-                          value={searchTerm}
-                          onChange={handleSearchChange}
-                          onFocus={() => setShowSuggestions(true)}
-                          onBlur={() => {
-                            // Delay hiding suggestions to allow click
-                            setTimeout(() => setShowSuggestions(false), 200);
-                          }}
+                          placeholder="client@example.com or +123456789" 
+                          {...field} 
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                {showSuggestions && filteredUsers.length > 0 && (
-                  <div className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-md max-h-60 overflow-y-auto shadow-lg">
-                    {filteredUsers.map((user) => (
-                      <div 
-                        key={user.id} 
-                        className="p-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => selectUser(user)}
-                      >
-                        <div>{user.fullName || user.name}</div>
-                        <div className="text-xs text-gray-500">{user.email}</div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
               
-              <FormField
-                control={form.control}
-                name="currency"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Currency</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select currency" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="MRU">MRU - Mauritanian Ouguiya</SelectItem>
-                        <SelectItem value="USD">USD - US Dollar</SelectItem>
-                        <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="userId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link to User (Optional)</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a user" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="">None</SelectItem>
+                          {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>
+                              {user.fullName || user.name || user.email}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="MRU">MRU - Mauritanian Ouguiya</SelectItem>
+                          <SelectItem value="USD">USD - US Dollar</SelectItem>
+                          <SelectItem value="EUR">EUR - Euro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <div>
                 <div className="flex items-center justify-between mb-2">

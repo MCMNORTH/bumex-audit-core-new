@@ -1,4 +1,3 @@
-
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -90,6 +89,7 @@ export interface Invoice {
   id: string;
   userId: string;
   clientName: string; // For storage/display of the client name
+  clientContact?: string; // New field for email or phone contact
   items: InvoiceItem[];
   total: number;
   currency: Currency;
