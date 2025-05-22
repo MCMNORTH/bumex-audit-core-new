@@ -4,10 +4,16 @@ import { useEffect, useState } from "react";
 import { User, Project } from "@/types";
 import { db, firestore } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { ProjectCard } from "@/components/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 const UserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -124,7 +130,17 @@ const UserDetail = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <Card key={project.id} className="cursor-pointer hover:shadow-md" onClick={() => navigate(`/projects/${project.id}`)}>
+              <CardHeader className="pb-2">
+                <CardTitle>{project.name}</CardTitle>
+                <CardDescription>{project.key}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-500 line-clamp-2">
+                  {project.description || "No description"}
+                </p>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
