@@ -5,6 +5,7 @@ import { PlusCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface ProjectHeaderProps {
   projectId: string;
@@ -23,9 +24,21 @@ export function ProjectHeader({ projectId }: { projectId: string }) {
     <div className="bg-white border-b p-4 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-jira-blue-dark rounded flex items-center justify-center text-white font-semibold">
-            {project?.key.substring(0, 2).toUpperCase()}
-          </div>
+          {project.imageUrl ? (
+            <div className="w-10 h-10 rounded overflow-hidden">
+              <AspectRatio ratio={1/1}>
+                <img 
+                  src={project.imageUrl} 
+                  alt={project.name}
+                  className="object-cover w-full h-full"
+                />
+              </AspectRatio>
+            </div>
+          ) : (
+            <div className="w-10 h-10 bg-jira-blue-dark rounded flex items-center justify-center text-white font-semibold">
+              {project?.key.substring(0, 2).toUpperCase()}
+            </div>
+          )}
           <div>
             <h1 className="text-xl font-semibold">{project?.name}</h1>
             <p className="text-sm text-muted-foreground">
