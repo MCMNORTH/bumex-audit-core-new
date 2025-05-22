@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { useAppStore } from "@/store";
 import {
   Card,
@@ -21,19 +21,30 @@ const ClientDetail = () => {
   const [client, setClient] = useState<UserType | null>(null);
   const [clientProjects, setClientProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchClient = async () => {
-      if (!clientId) return;
+      if (!clientId) {
+        setError("No client ID provided");
+        setIsLoading(false);
+        return;
+      }
       
       setIsLoading(true);
       try {
         const clientDoc = await getDoc(doc(db, "users", clientId));
         if (clientDoc.exists()) {
-          setClient(clientDoc.data() as UserType);
+          const userData = clientDoc.data() as UserType;
+          setClient({ ...userData, id: clientId });
+        } else {
+          setError("Client not found");
         }
       } catch (error) {
         console.error("Error fetching client:", error);
+        setError("Error loading client data");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -44,13 +55,14 @@ const ClientDetail = () => {
   useEffect(() => {
     if (projects.length && client) {
       // Find projects where this client is the owner
-      const filteredProjects = projects.filter(project => project.owner === client.id);
+      const filteredProjects = projects.filter(project => project.owner === clientId);
       setClientProjects(filteredProjects);
-      setIsLoading(false);
-    } else if (!loading.projects) {
-      setIsLoading(false);
     }
-  }, [projects, client, loading.projects]);
+  }, [projects, client, clientId]);
+
+  if (error === "No client ID provided") {
+    return <Navigate to="/clients" replace />;
+  }
 
   if (isLoading) {
     return (
@@ -62,12 +74,12 @@ const ClientDetail = () => {
     );
   }
 
-  if (!client) {
+  if (error || !client) {
     return (
       <div className="p-6 max-w-6xl mx-auto">
         <div className="text-center py-8">
           <h2 className="text-xl font-semibold mb-2">Client Not Found</h2>
-          <p className="text-gray-500">The client you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-500">{error || "The client you're looking for doesn't exist or has been removed."}</p>
           <Button asChild className="mt-4">
             <Link to="/clients">Back to Clients</Link>
           </Button>
