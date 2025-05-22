@@ -11,6 +11,7 @@ export interface User {
   email: string;
   displayName?: string;
   avatarUrl?: string;
+  userType?: "admin" | "user" | "client";
 }
 
 export type Sprint = {

@@ -26,8 +26,21 @@ export const issuesCollection = collection(db, "issues");
 export const usersCollection = collection(db, "users");
 export const sprintsCollection = collection(db, "sprints");
 
+// Export query functions needed for client queries
+export { query, where };
+
 // Helper functions for Firestore operations
 export const firestore = {
+  // Export collection references and query functions
+  projectsCollection,
+  epicsCollection,
+  issuesCollection,
+  usersCollection,
+  sprintsCollection,
+  query,
+  where,
+  getDocs,
+
   // Create
   createProject: async (projectData: any) => {
     const projectRef = doc(projectsCollection, projectData.id);

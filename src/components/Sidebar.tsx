@@ -3,18 +3,24 @@ import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User, Home, LayoutDashboard } from "lucide-react";
+import { PlusCircle, User, Home, LayoutDashboard, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useEffect } from "react";
 
 export const Sidebar = () => {
-  const { projects, selectedProject, setSelectedProject } = useAppStore();
+  const { projects, selectedProject, setSelectedProject, clients, fetchClients } = useAppStore();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { state, toggleSidebar } = useSidebar();
   const isOpen = state !== "collapsed";
+
+  useEffect(() => {
+    // Fetch clients when sidebar mounts
+    fetchClients();
+  }, [fetchClients]);
 
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
@@ -55,6 +61,36 @@ export const Sidebar = () => {
           <PlusCircle className="h-4 w-4" />
           {isOpen && <span>Create Project</span>}
         </Button>
+      </div>
+
+      {/* Clients Section */}
+      <div className="p-2 overflow-y-auto">
+        <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
+          Clients
+        </div>
+        <div className="mb-4">
+          <Button 
+            onClick={() => navigate('/clients')} 
+            className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2"
+          >
+            <Users className="h-4 w-4" />
+            {isOpen && <span>View Clients</span>}
+          </Button>
+          
+          {isOpen && clients && clients.length > 0 && (
+            <ul className="mt-2 space-y-1 pl-2">
+              {clients.map((client) => (
+                <li key={client.id} className="text-sm truncate py-1">
+                  {client.name || client.displayName || client.email}
+                </li>
+              ))}
+            </ul>
+          )}
+          
+          {isOpen && (!clients || clients.length === 0) && (
+            <p className="text-xs text-gray-400 mt-1 pl-2">No clients found</p>
+          )}
+        </div>
       </div>
 
       <div className="p-2 overflow-y-auto flex-1">

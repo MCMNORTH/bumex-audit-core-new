@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface AppState {
   users: User[];
+  clients: User[];
   projects: Project[];
   epics: Epic[];
   issues: Issue[];
@@ -16,6 +17,7 @@ interface AppState {
     epics: boolean;
     issues: boolean;
     sprints: boolean;
+    clients: boolean;
   };
 
   // Actions
@@ -23,6 +25,7 @@ interface AppState {
   fetchEpics: (projectId: string) => Promise<void>;
   fetchIssues: (projectId: string) => Promise<void>;
   fetchSprints: (projectId: string) => Promise<void>;
+  fetchClients: () => Promise<void>;
   
   setSelectedProject: (project: Project | null) => void;
   setSelectedIssue: (issue: Issue | null) => void;
@@ -51,6 +54,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set, get) => ({
   users: [],
+  clients: [],
   projects: [],
   epics: [],
   issues: [],
@@ -62,6 +66,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     epics: false,
     issues: false,
     sprints: false,
+    clients: false,
   },
 
   fetchProjects: async () => {
@@ -124,6 +129,22 @@ export const useAppStore = create<AppState>((set, get) => ({
     } catch (error) {
       console.error("Error fetching sprints:", error);
       set(state => ({ loading: { ...state.loading, sprints: false }}));
+    }
+  },
+
+  fetchClients: async () => {
+    set(state => ({ loading: { ...state.loading, clients: true }}));
+    try {
+      const usersCollection = firestore.usersCollection;
+      const q = firestore.query(usersCollection, firestore.where("userType", "==", "client"));
+      const clientsSnap = await firestore.getDocs(q);
+      const clients = clientsSnap.docs.map(doc => doc.data()) as User[];
+      
+      set({ clients, loading: { ...get().loading, clients: false } });
+      console.log("Fetched clients:", clients);
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+      set(state => ({ loading: { ...state.loading, clients: false }}));
     }
   },
 
