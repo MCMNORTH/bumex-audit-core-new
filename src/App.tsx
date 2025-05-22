@@ -20,8 +20,7 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
-import Clients from "./pages/Clients";
-import ClientDetail from "./pages/ClientDetail";
+import Users from "./pages/Users";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -52,8 +51,7 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/clients/:clientId" element={<ClientDetail />} />
+        <Route path="/users" element={<Users />} />
         <Route path="/create-project" element={<CreateProject />} />
         <Route path="/projects/:projectId" element={<ProjectBoard />} />
         <Route path="/projects/:projectId/board" element={<ProjectBoard />} />

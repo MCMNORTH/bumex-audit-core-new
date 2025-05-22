@@ -16,8 +16,6 @@ export const Sidebar = () => {
     projects,
     selectedProject,
     setSelectedProject,
-    clients,
-    fetchClients
   } = useAppStore();
   const navigate = useNavigate();
   const {
@@ -28,10 +26,7 @@ export const Sidebar = () => {
     toggleSidebar
   } = useSidebar();
   const isOpen = state !== "collapsed";
-  useEffect(() => {
-    // Fetch clients when sidebar mounts
-    fetchClients();
-  }, [fetchClients]);
+  
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}`);
@@ -56,24 +51,16 @@ export const Sidebar = () => {
         </Button>
       </div>
 
-      {/* Clients Section */}
-      <div className="p-2 overflow-y-auto">
+      {/* Users Section */}
+      <div className="p-2">
         <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
-          Clients
+          Users
         </div>
         <div className="mb-4">
-          <Button onClick={() => navigate('/clients')} className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2">
+          <Button onClick={() => navigate('/users')} className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2">
             <Users className="h-4 w-4" />
-            {isOpen && <span>View Clients</span>}
+            {isOpen && <span>View Users</span>}
           </Button>
-          
-          {isOpen && clients && clients.length > 0 && <ul className="mt-2 space-y-1 pl-2">
-              {clients.map(client => <li key={client.id} className="text-sm truncate py-1">
-                  {client.name || client.displayName || client.email}
-                </li>)}
-            </ul>}
-          
-          {isOpen && (!clients || clients.length === 0) && <p className="text-xs text-gray-400 mt-1 pl-2">No clients found</p>}
         </div>
       </div>
 
