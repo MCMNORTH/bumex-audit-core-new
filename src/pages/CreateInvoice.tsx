@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Currency, InvoiceItem } from "@/types";
@@ -84,7 +84,11 @@ export default function CreateInvoice() {
     defaultValues
   });
 
-  const { fields, append, remove } = form.control._fields.items || { fields: [], append: () => {}, remove: () => {} };
+  // Using useFieldArray hook to handle dynamic form fields
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "items"
+  });
 
   // Filter users based on search term
   useEffect(() => {
@@ -175,7 +179,7 @@ export default function CreateInvoice() {
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center mb-8">
           <img 
-            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" 
+            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
             alt="OVERCODE" 
             className="h-8 mr-4"
           />
@@ -265,8 +269,8 @@ export default function CreateInvoice() {
                 </div>
 
                 <div className="space-y-4">
-                  {form.watch("items")?.map((item, index) => (
-                    <div key={index} className="grid grid-cols-12 gap-4 items-end border p-4 rounded-md bg-gray-50">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="grid grid-cols-12 gap-4 items-end border p-4 rounded-md bg-gray-50">
                       <div className="col-span-6">
                         <FormField
                           control={form.control}
@@ -318,7 +322,7 @@ export default function CreateInvoice() {
                           variant="ghost"
                           size="icon"
                           onClick={() => removeItem(index)}
-                          disabled={form.watch("items")?.length <= 1}
+                          disabled={fields.length <= 1}
                         >
                           <MinusCircle className="h-5 w-5 text-red-500" />
                         </Button>

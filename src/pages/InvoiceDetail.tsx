@@ -101,12 +101,12 @@ export default function InvoiceDetail() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <img 
-              src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" 
+              src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
               alt="OVERCODE" 
               className="h-12"
             />
-            <p className="text-sm text-gray-500 mt-1">OVERCODE Technologies Inc.</p>
-            <p className="text-sm text-gray-500">123 Tech Lane, Innovation City</p>
+            <p className="text-sm text-gray-500 mt-1">OVERCODE MAURITANIE SARL</p>
+            <p className="text-sm text-gray-500">support@overcode.dev</p>
           </div>
           <div className="text-right">
             <h2 className="text-2xl font-bold text-gray-800">INVOICE</h2>
@@ -187,7 +187,7 @@ export default function InvoiceDetail() {
 
         <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
           <p>Thank you for your business!</p>
-          <p>For questions regarding this invoice, please contact billing@overcode.com</p>
+          <p>For questions regarding this invoice, please contact support@overcode.dev</p>
         </div>
       </div>
     </div>
