@@ -43,9 +43,33 @@ export default function InvoiceDetail() {
     const originalBody = document.body.innerHTML;
     
     if (printContent) {
+      // Set document title for the print job
+      const invoiceNumber = invoice?.id.substring(0, 8) || "";
+      const originalTitle = document.title;
+      document.title = `Invoice #${invoiceNumber}`;
+      
+      // Create a style element for print styling
+      const style = document.createElement('style');
+      style.innerHTML = `
+        @media print {
+          body {
+            padding: 20mm !important;
+            margin: 0 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+      
       document.body.innerHTML = printContent.innerHTML;
       window.print();
+      
+      // Restore the original document
       document.body.innerHTML = originalBody;
+      document.title = originalTitle;
+      document.head.removeChild(style);
+      
       // Re-initialize the page after printing
       window.location.reload();
     }
