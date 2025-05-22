@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { Project, User as UserType } from "@/types";
+import { toast } from "@/components/ui/use-toast";
 
 const ClientDetail = () => {
   const { clientId } = useParams<{ clientId: string }>();
@@ -26,6 +27,7 @@ const ClientDetail = () => {
   useEffect(() => {
     const fetchClient = async () => {
       if (!clientId) {
+        console.error("No client ID provided, clientId is:", clientId);
         setError("No client ID provided");
         setIsLoading(false);
         return;
@@ -33,19 +35,27 @@ const ClientDetail = () => {
       
       setIsLoading(true);
       try {
+        console.log("Fetching client with ID:", clientId);
         const clientDoc = await getDoc(doc(db, "users", clientId));
         if (clientDoc.exists()) {
           const userData = clientDoc.data() as UserType;
+          console.log("Fetched user data:", userData);
           
           // Verify this user is actually a client
           if (userData.userType !== "client") {
+            console.error("User is not a client:", userData);
             setError("User is not a client");
             setIsLoading(false);
             return;
           }
           
           setClient({ ...userData, id: clientId });
+          toast({
+            title: "Client loaded",
+            description: `Successfully loaded client: ${userData.fullName || userData.name}`,
+          });
         } else {
+          console.error("Client document does not exist for ID:", clientId);
           setError("Client not found");
         }
       } catch (error) {
@@ -61,9 +71,10 @@ const ClientDetail = () => {
   }, [clientId, fetchProjects]);
 
   useEffect(() => {
-    if (projects.length && client) {
+    if (projects.length && client && clientId) {
       // Find projects where this client is the owner
       const filteredProjects = projects.filter(project => project.owner === clientId);
+      console.log("Filtered projects for client:", clientId, filteredProjects);
       setClientProjects(filteredProjects);
     }
   }, [projects, client, clientId]);
