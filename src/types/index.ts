@@ -15,6 +15,8 @@ export interface User {
   contactNumber?: string;
   fullName?: string;
   createdAt?: string;
+  company?: string;
+  uid?: string;
 }
 
 export type Sprint = {
@@ -62,6 +64,7 @@ export interface Project {
   updatedAt: string;
   avatarUrl?: string;
   deleted?: boolean;
+  imageUrl?: string;
 }
 
 export interface Epic {

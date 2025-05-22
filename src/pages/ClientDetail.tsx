@@ -50,7 +50,7 @@ const ClientDetail = () => {
           }
           
           // Make sure we use the ID from the URL parameter
-          setClient({ ...userData, id: clientId, uid: clientId });
+          setClient({ ...userData, id: clientId });
           toast({
             title: "Client loaded",
             description: `Successfully loaded client: ${userData.fullName || userData.name || userData.email}`,

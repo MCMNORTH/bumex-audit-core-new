@@ -1,9 +1,11 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
+import ProjectProgress from "@/components/ProjectProgress";
 
 const Dashboard = () => {
   const { projects, issues, epics, fetchProjects, fetchIssues, fetchEpics } = useAppStore();
@@ -110,16 +112,27 @@ const Dashboard = () => {
                   >
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-[#459ed7] rounded flex items-center justify-center text-white font-semibold">
-                          {project.key.substring(0, 2).toUpperCase()}
-                        </div>
+                        {project.imageUrl ? (
+                          <img 
+                            src={project.imageUrl} 
+                            alt={project.name} 
+                            className="w-8 h-8 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 bg-[#459ed7] rounded flex items-center justify-center text-white font-semibold">
+                            {project.key.substring(0, 2).toUpperCase()}
+                          </div>
+                        )}
                         <CardTitle>{project.name}</CardTitle>
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-500 line-clamp-2">
+                      <p className="text-sm text-gray-500 line-clamp-2 mb-3">
                         {project.description || "No description available."}
                       </p>
+                      
+                      <ProjectProgress project={project} showDetails />
+                      
                       <div className="mt-4 flex items-center justify-between">
                         <span className="text-xs text-gray-500">
                           Created: {new Date(project.createdAt).toLocaleDateString()}

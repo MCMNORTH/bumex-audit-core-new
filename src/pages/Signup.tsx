@@ -12,11 +12,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { toast } from "sonner";
-import { Mail, Lock, User, Phone } from "lucide-react";
+import { Mail, Lock, User, Phone, Building } from "lucide-react";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
   contactNumber: z.string().min(5, { message: "Please enter a valid contact number." }),
+  company: z.string().optional(),
   email: z.string().email({ message: "Please enter a valid email address." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
   confirmPassword: z.string(),
@@ -37,6 +38,7 @@ const Signup = () => {
     defaultValues: {
       fullName: "",
       contactNumber: "",
+      company: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -56,6 +58,7 @@ const Signup = () => {
           name: data.fullName,
           email: data.email,
           contactNumber: data.contactNumber,
+          company: data.company || null,
           userType: "client", // Default to client
           createdAt: new Date().toISOString(),
         });
@@ -132,6 +135,23 @@ const Signup = () => {
                   )}
                 />
               </div>
+              
+              <FormField
+                control={form.control}
+                name="company"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company (Optional)</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input placeholder="Company Name" className="pl-10" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
               <FormField
                 control={form.control}

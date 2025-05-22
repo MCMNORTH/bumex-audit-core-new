@@ -5,11 +5,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { User } from "@/types";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const CreateProject = () => {
   const { addProject, users } = useAppStore();
@@ -23,6 +24,9 @@ const CreateProject = () => {
   const [owner, setOwner] = useState("");
   const [availableUsers, setAvailableUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
+  const [projectImage, setProjectImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Fetch users from Firestore
   useEffect(() => {
@@ -54,8 +58,45 @@ const CreateProject = () => {
     
     fetchUsers();
   }, [toast]);
+
+  // Handle image upload
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Preview the image
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    setProjectImage(file);
+  };
+
+  const uploadImage = async (projectId: string): Promise<string | null> => {
+    if (!projectImage) return null;
+    
+    try {
+      setIsUploading(true);
+      const storage = getStorage();
+      const imageRef = ref(storage, `project-images/${projectId}`);
+      await uploadBytes(imageRef, projectImage);
+      const imageUrl = await getDownloadURL(imageRef);
+      return imageUrl;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Error",
+        description: "Failed to upload project image",
+        variant: "destructive"
+      });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!name || !key) {
@@ -67,25 +108,46 @@ const CreateProject = () => {
       return;
     }
     
-    const newProject = {
-      id: `project-${Date.now()}`,
-      name,
-      key: key.toUpperCase(),
-      description,
-      lead,
-      owner,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    
-    addProject(newProject);
-    
-    toast({
-      title: "Project created",
-      description: `${name} has been created successfully.`,
-    });
-    
-    navigate(`/projects/${newProject.id}`);
+    setLoading(true);
+    try {
+      const projectId = `project-${Date.now()}`;
+      
+      // Upload image if provided
+      let imageUrl = null;
+      if (projectImage) {
+        imageUrl = await uploadImage(projectId);
+      }
+      
+      const newProject = {
+        id: projectId,
+        name,
+        key: key.toUpperCase(),
+        description,
+        lead,
+        owner,
+        imageUrl,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      
+      await addProject(newProject);
+      
+      toast({
+        title: "Project created",
+        description: `${name} has been created successfully.`,
+      });
+      
+      navigate(`/projects/${newProject.id}`);
+    } catch (error) {
+      console.error("Error creating project:", error);
+      toast({
+        title: "Error",
+        description: "Failed to create project",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
   };
   
   // Helper function to get user display name
@@ -138,6 +200,26 @@ const CreateProject = () => {
             placeholder="Enter project description"
             rows={4}
           />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="projectImage">Project Image (Optional)</Label>
+          <Input
+            id="projectImage"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="cursor-pointer"
+          />
+          {previewImage && (
+            <div className="mt-2">
+              <img 
+                src={previewImage} 
+                alt="Project preview" 
+                className="max-h-40 rounded-md border border-gray-200"
+              />
+            </div>
+          )}
         </div>
         
         <div className="space-y-2">
@@ -197,8 +279,9 @@ const CreateProject = () => {
           <Button
             type="submit"
             className="bg-jira-blue hover:bg-jira-blue-dark"
+            disabled={loading || isUploading}
           >
-            Create Project
+            {loading || isUploading ? "Creating Project..." : "Create Project"}
           </Button>
         </div>
       </form>

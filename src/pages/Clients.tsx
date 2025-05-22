@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { User } from "lucide-react";
+import { User, Building } from "lucide-react";
 
 const Clients = () => {
   const { clients, fetchClients, loading } = useAppStore();
@@ -45,10 +45,10 @@ const Clients = () => {
             console.log("Client in loop:", client);
             return (
               <Link 
-                to={`/clients/${client.uid || client.id}`} 
-                key={client.id || client.uid} 
+                to={`/clients/${client.id}`} 
+                key={client.id} 
                 className="block"
-                onClick={() => console.log("Clicked on client:", client, "ID used for route:", client.uid || client.id)}
+                onClick={() => console.log("Clicked on client:", client, "ID used for route:", client.id)}
               >
                 <Card className="hover:shadow-md transition-all duration-200 cursor-pointer">
                   <CardHeader className="pb-2">
@@ -75,6 +75,12 @@ const Clients = () => {
                       {client.contactNumber && (
                         <p className="flex items-center gap-2">
                           Contact: {client.contactNumber}
+                        </p>
+                      )}
+                      {client.company && (
+                        <p className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-gray-400" />
+                          {client.company}
                         </p>
                       )}
                     </div>

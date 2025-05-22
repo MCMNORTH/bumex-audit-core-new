@@ -6,12 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { User } from "@/types";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertTriangle } from "lucide-react";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const EditProject = () => {
   const { projectId = "" } = useParams();
@@ -29,6 +30,9 @@ const EditProject = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [projectImage, setProjectImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     if (!project) {
@@ -46,6 +50,9 @@ const EditProject = () => {
     setDescription(project.description || "");
     setLead(project.lead);
     setOwner(project.owner || "");
+    if (project.imageUrl) {
+      setPreviewImage(project.imageUrl);
+    }
 
     const fetchUsers = async () => {
       setLoading(true);
@@ -71,6 +78,43 @@ const EditProject = () => {
     fetchUsers();
   }, [project, navigate, toast]);
 
+  // Handle image upload
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Preview the image
+    const reader = new FileReader();
+    reader.onload = () => {
+      setPreviewImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+    setProjectImage(file);
+  };
+
+  const uploadImage = async (): Promise<string | null> => {
+    if (!projectImage) return project?.imageUrl || null;
+    
+    try {
+      setIsUploading(true);
+      const storage = getStorage();
+      const imageRef = ref(storage, `project-images/${projectId}`);
+      await uploadBytes(imageRef, projectImage);
+      const imageUrl = await getDownloadURL(imageRef);
+      return imageUrl;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast({
+        title: "Error",
+        description: "Failed to upload project image",
+        variant: "destructive"
+      });
+      return project?.imageUrl || null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -86,6 +130,14 @@ const EditProject = () => {
     try {
       if (!project) return;
 
+      setLoading(true);
+      
+      // Upload image if provided
+      let imageUrl = project.imageUrl;
+      if (projectImage) {
+        imageUrl = await uploadImage();
+      }
+
       await updateProject({
         ...project,
         name,
@@ -93,6 +145,7 @@ const EditProject = () => {
         description,
         lead,
         owner,
+        imageUrl,
         updatedAt: new Date().toISOString(),
       });
 
@@ -109,6 +162,8 @@ const EditProject = () => {
         description: "Failed to update project",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -195,6 +250,26 @@ const EditProject = () => {
         </div>
 
         <div className="space-y-2">
+          <Label htmlFor="projectImage">Project Image (Optional)</Label>
+          <Input
+            id="projectImage"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="cursor-pointer"
+          />
+          {previewImage && (
+            <div className="mt-2">
+              <img 
+                src={previewImage} 
+                alt="Project preview" 
+                className="max-h-40 rounded-md border border-gray-200"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="owner">Project Owner</Label>
           <select
             id="owner"
@@ -272,8 +347,12 @@ const EditProject = () => {
             >
               Cancel
             </Button>
-            <Button type="submit" className="bg-jira-blue hover:bg-jira-blue-dark">
-              Save Changes
+            <Button 
+              type="submit" 
+              className="bg-jira-blue hover:bg-jira-blue-dark"
+              disabled={loading || isUploading}
+            >
+              {loading || isUploading ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>
