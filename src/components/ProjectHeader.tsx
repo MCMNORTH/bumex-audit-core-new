@@ -1,10 +1,11 @@
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppStore } from "@/store";
 import { Edit, Star } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface ProjectHeaderProps {
   projectId: string;
@@ -12,21 +13,40 @@ interface ProjectHeaderProps {
 
 export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { getProjectById, toggleStarProject } = useAppStore();
   const project = getProjectById(projectId);
+  const [activeTab, setActiveTab] = useState<string>("");
+  
+  useEffect(() => {
+    // Set the active tab based on the current route
+    if (location.pathname === `/projects/${projectId}`) {
+      setActiveTab("board");
+    } else if (location.pathname === `/projects/${projectId}/issues`) {
+      setActiveTab("issues");
+    } else if (location.pathname === `/projects/${projectId}/sprints`) {
+      setActiveTab("sprints");
+    } else if (location.pathname === `/projects/${projectId}/timeline`) {
+      setActiveTab("timeline");
+    }
+  }, [location.pathname, projectId]);
   
   if (!project) {
     return <div className="bg-accent border-b border-border p-4">Project not found</div>;
   }
   
-  const isActiveRoute = (path: string) => {
-    return location.pathname === path;
-  };
-  
   const handleStarClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     await toggleStarProject(projectId);
+  };
+
+  const handleTabClick = (value: string) => {
+    let route = `/projects/${projectId}`;
+    if (value !== "board") {
+      route += `/${value}`;
+    }
+    navigate(route);
   };
 
   return (
@@ -75,33 +95,29 @@ export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
           </Button>
         </div>
 
-        <Tabs defaultValue="board" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabClick} className="w-full">
           <TabsList>
             <TabsTrigger
               value="board"
-              className={isActiveRoute(`/projects/${projectId}`) ? "data-[state=active]" : ""}
-              onClick={() => navigate(`/projects/${projectId}`)}
+              className="focus:outline-none"
             >
               Board
             </TabsTrigger>
             <TabsTrigger
               value="issues"
-              className={isActiveRoute(`/projects/${projectId}/issues`) ? "data-[state=active]" : ""}
-              onClick={() => navigate(`/projects/${projectId}/issues`)}
+              className="focus:outline-none"
             >
               List
             </TabsTrigger>
             <TabsTrigger
               value="sprints"
-              className={isActiveRoute(`/projects/${projectId}/sprints`) ? "data-[state=active]" : ""}
-              onClick={() => navigate(`/projects/${projectId}/sprints`)}
+              className="focus:outline-none"
             >
               Sprints
             </TabsTrigger>
             <TabsTrigger
               value="timeline"
-              className={isActiveRoute(`/projects/${projectId}/timeline`) ? "data-[state=active]" : ""}
-              onClick={() => navigate(`/projects/${projectId}/timeline`)}
+              className="focus:outline-none"
             >
               Timeline
             </TabsTrigger>
