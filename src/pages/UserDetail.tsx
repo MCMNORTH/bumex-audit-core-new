@@ -1,203 +1,165 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { User as UserType, Project } from "@/types";
-import { db } from "@/lib/firebase";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
-import { toast } from "@/components/ui/use-toast";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Building, ArrowLeft, Folder } from "lucide-react";
+import { firestore } from "@/lib/firebase";
+import { User, Project } from "@/types";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft, Mail, Phone, Building, Calendar } from "lucide-react";
+import { format } from "date-fns";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const UserDetail = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId = "" } = useParams();
   const navigate = useNavigate();
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserAndProjects = async () => {
-      if (!userId) return;
-      
+    const fetchUserDetails = async () => {
       setLoading(true);
       try {
-        // Fetch user details
-        const userDoc = doc(db, "users", userId);
-        const userSnap = await getDoc(userDoc);
-        
-        if (userSnap.exists()) {
-          const userData = { id: userSnap.id, ...userSnap.data() } as UserType;
-          setUser(userData);
+        // Fetch user data
+        const userDoc = await firestore.getDoc(firestore.doc(firestore.usersCollection, userId));
+        if (userDoc.exists()) {
+          setUser(userDoc.data() as User);
           
-          // Fetch projects where this user is the owner
-          const projectsCollection = collection(db, "projects");
-          const q = query(projectsCollection, where("owner", "==", userId));
-          const projectsSnap = await getDocs(q);
+          // Fetch user's projects
+          const projectsQuery = firestore.query(
+            firestore.projectsCollection,
+            firestore.where("owner", "==", userId)
+          );
+          const projectsSnapshot = await firestore.getDocs(projectsQuery);
+          const userProjects = projectsSnapshot.docs
+            .map(doc => doc.data() as Project)
+            .filter(project => project && !project.deleted); // Fix the error by filtering only if project exists
           
-          const projectsData = projectsSnap.docs
-            .map(doc => ({ id: doc.id, ...doc.data() }))
-            .filter(project => !project.deleted) as Project[];
-          
-          setProjects(projectsData);
+          setProjects(userProjects);
         } else {
-          toast({
-            variant: "destructive",
-            title: "User not found",
-            description: "The requested user could not be found.",
-          });
-          navigate('/users');
+          console.error("User not found");
         }
       } catch (error) {
-        console.error("Error fetching user data:", error);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to load user data. Please try again later.",
-        });
+        console.error("Error fetching user details:", error);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchUserAndProjects();
-  }, [userId, navigate]);
+    
+    if (userId) {
+      fetchUserDetails();
+    }
+  }, [userId]);
 
   if (loading) {
     return (
-      <div className="p-6 flex justify-center items-center h-64">
-        <p>Loading user data...</p>
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Loading user details...</p>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="p-6">
-        <p>User not found</p>
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <p className="text-lg mb-4">User not found</p>
+        <Button onClick={() => navigate("/users")}>Back to Users</Button>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <div className="mb-6">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={() => navigate('/users')}
-          className="flex items-center gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Users
-        </Button>
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <Button 
+        variant="outline" 
+        className="mb-6" 
+        onClick={() => navigate("/users")}
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Users
+      </Button>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* User Information Card */}
-        <Card className="md:col-span-1">
-          <CardHeader>
-            <CardTitle className="mb-2">Client Information</CardTitle>
-            <div className="flex items-center gap-3 mb-4">
-              {user.avatarUrl ? (
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-gray-50 p-6 flex items-center border-b">
+          <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200 mr-6 flex-shrink-0">
+            {user.avatarUrl ? (
+              <AspectRatio ratio={1/1}>
                 <img 
                   src={user.avatarUrl} 
-                  alt={user.fullName || user.name || user.email} 
-                  className="w-20 h-20 rounded-full"
+                  alt={user.name} 
+                  className="object-cover w-full h-full"
                 />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center">
-                  <User className="h-10 w-10 text-gray-500" />
-                </div>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Name</h3>
-                <p>{user.fullName || user.name || "N/A"}</p>
-              </div>
-              
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-                <p>{user.email}</p>
-              </div>
-              
-              {user.contactNumber && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Contact</h3>
-                  <p>{user.contactNumber}</p>
-                </div>
-              )}
-              
-              {user.company && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Company</h3>
-                  <div className="flex items-center gap-2">
-                    <Building className="h-4 w-4 text-gray-400" />
-                    <span>{user.company}</span>
-                  </div>
-                </div>
-              )}
-              
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Account Type</h3>
-                <p>Client</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* Projects Card */}
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle>Client Projects</CardTitle>
-            <CardDescription>
-              Projects owned by {user.fullName || user.name || user.email}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {projects.length > 0 ? (
-              <div className="space-y-4">
-                {projects.map(project => (
-                  <Card 
-                    key={project.id} 
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => navigate(`/projects/${project.id}`)}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        {project.imageUrl ? (
-                          <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
-                            <img 
-                              src={project.imageUrl} 
-                              alt={project.name}
-                              className="object-cover w-full h-full"
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-10 h-10 bg-primary/20 rounded-md flex items-center justify-center flex-shrink-0">
-                            <Folder className="h-5 w-5 text-primary" />
-                          </div>
-                        )}
-                        <div>
-                          <h3 className="font-medium">{project.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {project.key}
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              </AspectRatio>
             ) : (
-              <div className="py-8 text-center text-muted-foreground">
-                No projects found for this client.
+              <div className="w-full h-full flex items-center justify-center text-2xl font-semibold text-gray-400">
+                {(user.fullName || user.name || user.email || "").charAt(0).toUpperCase()}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+          
+          <div>
+            <h1 className="text-2xl font-bold mb-1">
+              {user.fullName || user.name || user.email?.split('@')[0]}
+            </h1>
+            <p className="text-gray-500">Client</p>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          <h2 className="text-lg font-semibold mb-4">Contact Information</h2>
+          <div className="space-y-3">
+            <div className="flex items-center">
+              <Mail className="h-5 w-5 text-gray-400 mr-3" />
+              <span>{user.email}</span>
+            </div>
+            {user.contactNumber && (
+              <div className="flex items-center">
+                <Phone className="h-5 w-5 text-gray-400 mr-3" />
+                <span>{user.contactNumber}</span>
+              </div>
+            )}
+            {user.company && (
+              <div className="flex items-center">
+                <Building className="h-5 w-5 text-gray-400 mr-3" />
+                <span>{user.company}</span>
+              </div>
+            )}
+            {user.createdAt && (
+              <div className="flex items-center">
+                <Calendar className="h-5 w-5 text-gray-400 mr-3" />
+                <span>Joined on {format(new Date(user.createdAt), "MMMM dd, yyyy")}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        <div className="p-6 border-t">
+          <h2 className="text-lg font-semibold mb-4">Projects ({projects.length})</h2>
+          
+          {projects.length === 0 ? (
+            <div className="text-center py-6 bg-gray-50 rounded">
+              <p className="text-gray-500">This client does not have any projects yet.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {projects.map((project) => (
+                <div 
+                  key={project.id}
+                  className="border rounded-md p-4 hover:border-primary cursor-pointer"
+                  onClick={() => navigate(`/projects/${project.id}`)}
+                >
+                  <div className="flex items-center mb-2">
+                    <div className="w-8 h-8 rounded-md bg-[#459ed7] flex items-center justify-center text-white font-semibold text-sm mr-3">
+                      {project.key.substring(0, 2).toUpperCase()}
+                    </div>
+                    <h3 className="font-medium">{project.name}</h3>
+                  </div>
+                  {project.description && (
+                    <p className="text-sm text-gray-500 line-clamp-2">{project.description}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
