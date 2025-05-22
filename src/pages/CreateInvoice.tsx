@@ -268,7 +268,8 @@ export default function CreateInvoice() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          {/* Fix: Changed the empty string value to a non-empty string */}
+                          <SelectItem value="none">None</SelectItem>
                           {users.map((user) => (
                             <SelectItem key={user.id} value={user.id}>
                               {user.fullName || user.name || user.email}
