@@ -18,6 +18,7 @@ import EditIssue from "./pages/EditIssue";
 import IssueDetail from "./pages/IssueDetail";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Clients from "./pages/Clients";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -44,7 +45,7 @@ const AppRoutes = () => {
     <Routes>
       {/* Auth routes */}
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Navigate to="/login" replace />} />
+      <Route path="/signup" element={<Signup />} />
       
       {/* Protected routes */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>

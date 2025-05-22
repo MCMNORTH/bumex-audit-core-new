@@ -12,6 +12,9 @@ export interface User {
   displayName?: string;
   avatarUrl?: string;
   userType?: "admin" | "user" | "client";
+  contactNumber?: string;
+  fullName?: string;
+  createdAt?: string;
 }
 
 export type Sprint = {

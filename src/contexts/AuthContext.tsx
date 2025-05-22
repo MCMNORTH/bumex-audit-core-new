@@ -6,7 +6,8 @@ import {
   signInWithEmailAndPassword, 
   signOut, 
   onAuthStateChanged,
-  updatePassword
+  updatePassword,
+  UserCredential
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
@@ -15,7 +16,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>; // Added for compatibility
+  signup: (email: string, password: string) => Promise<UserCredential>;
   changePassword: (newPassword: string) => Promise<void>;
 }
 
@@ -41,10 +42,9 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     await signOut(auth);
   };
 
-  // This function is added only for compatibility with existing code
-  // Since signup is disabled, we'll make it throw an error
+  // Updated to return the UserCredential
   const signup = async (email: string, password: string) => {
-    throw new Error("Signup is disabled. Please login with an existing account.");
+    return await createUserWithEmailAndPassword(auth, email, password);
   };
 
   const changePassword = async (newPassword: string) => {
@@ -66,7 +66,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
     loading,
     login,
     logout,
-    signup, // Include in context
+    signup,
     changePassword
   };
 
