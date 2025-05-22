@@ -47,7 +47,7 @@ export const ProjectHeader = ({ projectId }: ProjectHeaderProps) => {
             )}
             <div>
               <h1 className="text-2xl font-bold">{project.name}</h1>
-              <span className="text-sm text-gray-500">{project.key}</span>
+              <span className="text-sm text-white">{project.key}</span>
             </div>
             <Button
               variant="ghost"
