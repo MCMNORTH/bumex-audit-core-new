@@ -77,3 +77,21 @@ export interface Epic {
   updatedAt: string;
   status: Status;
 }
+
+export interface InvoiceItem {
+  description: string;
+  quantity: number;
+  price: number;
+}
+
+export interface Invoice {
+  id: string;
+  userId: string;
+  items: InvoiceItem[];
+  total: number;
+  status: "draft" | "pending" | "paid" | "overdue" | "cancelled";
+  issueDate: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+}

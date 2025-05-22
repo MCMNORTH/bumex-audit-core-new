@@ -22,6 +22,9 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Users from "./pages/Users";
 import UserDetail from "./pages/UserDetail";
+import Invoices from "./pages/Invoices";
+import CreateInvoice from "./pages/CreateInvoice";
+import InvoiceDetail from "./pages/InvoiceDetail";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -54,6 +57,12 @@ const AppRoutes = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:userId" element={<UserDetail />} />
+        
+        {/* Invoice Routes */}
+        <Route path="/invoices" element={<Invoices />} />
+        <Route path="/create-invoice" element={<CreateInvoice />} />
+        <Route path="/invoices/:invoiceId" element={<InvoiceDetail />} />
+        
         <Route path="/create-project" element={<CreateProject />} />
         <Route path="/projects/:projectId" element={<ProjectBoard />} />
         <Route path="/projects/:projectId/board" element={<ProjectBoard />} />
