@@ -79,7 +79,6 @@ const Signup = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
       <div className="w-full max-w-md flex flex-col items-center mb-6">
-        {/* New logo */}
         <img 
           src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
           alt="Jira Management Logo"
