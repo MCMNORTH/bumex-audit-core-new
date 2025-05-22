@@ -1,9 +1,8 @@
-
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User, LayoutDashboard, Users, Invoice } from "lucide-react";
+import { PlusCircle, User, LayoutDashboard, Users, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
@@ -72,7 +71,7 @@ export const Sidebar = () => {
         </div>
         <div className="mb-4">
           <Button onClick={() => navigate('/invoices')} className="w-full bg-jira-blue hover:bg-jira-blue-dark justify-start gap-2">
-            <Invoice className="h-4 w-4" />
+            <FileText className="h-4 w-4" />
             {isOpen && <span>View Invoices</span>}
           </Button>
         </div>
