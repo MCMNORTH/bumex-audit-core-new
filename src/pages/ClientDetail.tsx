@@ -36,6 +36,14 @@ const ClientDetail = () => {
         const clientDoc = await getDoc(doc(db, "users", clientId));
         if (clientDoc.exists()) {
           const userData = clientDoc.data() as UserType;
+          
+          // Verify this user is actually a client
+          if (userData.userType !== "client") {
+            setError("User is not a client");
+            setIsLoading(false);
+            return;
+          }
+          
           setClient({ ...userData, id: clientId });
         } else {
           setError("Client not found");
