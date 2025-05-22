@@ -1,12 +1,24 @@
+
 import { useAppStore } from "@/store";
 import { Sprint } from "@/types";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarClock, ChevronDown, ChevronUp, Edit, Play, CheckCircle2 } from "lucide-react";
+import { CalendarClock, ChevronDown, ChevronUp, Edit, Play, CheckCircle2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { IssueCard } from "./IssueCard";
 import { Button } from "./ui/button";
 import { SprintEditDialog } from "./SprintEditDialog";
+import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface SprintCardProps {
   sprint: Sprint;
@@ -18,9 +30,11 @@ interface SprintCardProps {
 
 export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart }: SprintCardProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
-  const { getIssuesBySprint, updateSprint } = useAppStore();
+  const { getIssuesBySprint, updateSprint, deleteSprint, updateIssueSprint } = useAppStore();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [sprintStatus, setSprintStatus] = useState(sprint.status);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const { toast } = useToast();
   
   const issues = getIssuesBySprint(sprint.id);
   
@@ -66,6 +80,32 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
       setSprintStatus("completed");
     } catch (error) {
       console.error("Error completing sprint:", error);
+    }
+  };
+
+  const handleDeleteSprint = async () => {
+    try {
+      // Move all issues in this sprint back to backlog
+      for (const issue of issues) {
+        await updateIssueSprint(issue.id, null);
+      }
+      
+      // Delete the sprint
+      await deleteSprint(sprint.id);
+      
+      toast({
+        title: "Sprint deleted",
+        description: "Sprint has been successfully deleted"
+      });
+    } catch (error) {
+      console.error("Error deleting sprint:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete sprint",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleteDialogOpen(false);
     }
   };
   
@@ -129,6 +169,18 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
             
             <Button 
               variant="ghost" 
+              size="sm"
+              className="text-xs h-7 text-red-500 hover:text-red-700 hover:bg-red-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsDeleteDialogOpen(true);
+              }}
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+            
+            <Button 
+              variant="ghost" 
               size="icon"
               className="h-7 w-7 hover:bg-gray-200 group"
               onClick={() => setIsExpanded(!isExpanded)}
@@ -175,6 +227,24 @@ export const SprintCard = ({ sprint, projectId, onDragOver, onDrop, onDragStart 
         onOpenChange={setIsEditDialogOpen}
         sprint={sprint}
       />
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will delete the sprint "{sprint.name}". All issues in this sprint will be moved back to the backlog.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteSprint} className="bg-red-500 hover:bg-red-600">
+              Delete Sprint
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

@@ -42,6 +42,7 @@ interface AppState {
   
   addSprint: (sprint: Omit<Sprint, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Sprint>;
   updateSprint: (sprint: Sprint) => Promise<void>;
+  deleteSprint: (sprintId: string) => Promise<void>;
   
   getIssuesByProject: (projectId: string) => Issue[];
   getEpicsByProject: (projectId: string) => Epic[];
@@ -284,6 +285,13 @@ export const useAppStore = create<AppState>((set, get) => ({
     // Immediately update the state with the updated sprint
     set((state) => ({
       sprints: state.sprints.map((s) => (s.id === sprint.id ? updatedSprint : s)),
+    }));
+  },
+  
+  deleteSprint: async (sprintId) => {
+    await firestore.deleteSprint(sprintId);
+    set((state) => ({
+      sprints: state.sprints.filter((sprint) => sprint.id !== sprintId),
     }));
   },
   
