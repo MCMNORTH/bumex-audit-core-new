@@ -11,7 +11,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { Invoice, InvoiceStatus } from "@/types";
 import { firestore } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
@@ -82,13 +82,6 @@ export default function MyInvoices() {
     <div className="container mx-auto py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">My Invoices</h1>
-        <Button 
-          onClick={() => navigate('/create-invoice')} 
-          className="bg-jira-blue hover:bg-jira-blue-dark gap-2"
-        >
-          <PlusCircle className="h-4 w-4" />
-          Create Invoice
-        </Button>
       </div>
 
       <div className="bg-white rounded-md shadow">
@@ -97,14 +90,6 @@ export default function MyInvoices() {
         ) : invoices.length === 0 ? (
           <div className="p-8 text-center">
             <p className="text-gray-500 mb-4">You don't have any invoices yet</p>
-            <Button 
-              onClick={() => navigate('/create-invoice')} 
-              variant="outline"
-              className="gap-2"
-            >
-              <PlusCircle className="h-4 w-4" />
-              Create your first invoice
-            </Button>
           </div>
         ) : (
           <Table>
