@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { firestore } from "@/lib/firebase";
+
 const loginSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address."
@@ -20,6 +21,7 @@ const loginSchema = z.object({
   })
 });
 type LoginFormData = z.infer<typeof loginSchema>;
+
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -95,7 +97,7 @@ const Login = () => {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input placeholder="you@example.com" className="pl-10" />
+                        <Input placeholder="you@example.com" className="pl-10" {...field} />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -129,4 +131,5 @@ const Login = () => {
       </Card>
     </div>;
 };
+
 export default Login;
