@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Printer, Send, FileText, Plus, CreditCard } from "lucide-react";
-import { Invoice } from "@/types";
-import { firestore } from "@/lib/firebase";
+import { Invoice, User } from "@/types";
+import { firestore, auth } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { InvoicePaymentDialog } from "@/components/InvoicePaymentDialog";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,8 @@ export default function InvoiceDetail() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -56,6 +58,23 @@ export default function InvoiceDetail() {
     fetchInvoice();
   }, [invoiceId]);
 
+  // Fetch current user data
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const currentAuthUser = auth.currentUser;
+      if (currentAuthUser) {
+        try {
+          const userData = await firestore.getUser(currentAuthUser.uid) as User;
+          setCurrentUser(userData);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+    
+    fetchCurrentUser();
+  }, []);
+
   const handlePrint = () => {
     const printContent = document.getElementById('invoice-printable');
     const originalBody = document.body.innerHTML;
@@ -93,12 +112,44 @@ export default function InvoiceDetail() {
     }
   };
 
-  const handleSendEmail = () => {
-    // In a real app, this would trigger an API call to send an email
-    toast({
-      title: "Email Sent",
-      description: `Invoice was sent to the client.`,
-    });
+  const handleSendEmail = async () => {
+    if (!invoice || !invoice.clientContact) {
+      toast({
+        title: "Error",
+        description: "Client email is not available. Please add client contact information.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSending(true);
+    
+    try {
+      // Here we would typically call a backend API or Cloud Function
+      // For demo purposes, we'll simulate sending by showing a success toast
+      
+      // In a real implementation, you would:
+      // 1. Create a serverless function (Firebase Cloud Function, etc)
+      // 2. Call that function with the invoice data and recipient email
+      // 3. The function would use a service like SendGrid, Nodemailer, etc.
+      
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      toast({
+        title: "Email Sent",
+        description: `Invoice was sent to ${invoice.clientContact}`,
+      });
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast({
+        title: "Failed to Send",
+        description: "There was a problem sending the email. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSending(false);
+    }
   };
   
   const handlePaymentAdded = (updatedInvoice: Invoice) => {
@@ -140,6 +191,9 @@ export default function InvoiceDetail() {
   const isPartiallyPaid = invoice.status === 'partial';
   const canAddPayment = !isPaid && invoice.status !== 'draft' && invoice.status !== 'cancelled';
 
+  // Check if the current user is a client
+  const isClient = currentUser?.client === true;
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6 flex justify-between items-center">
@@ -151,13 +205,22 @@ export default function InvoiceDetail() {
           <Button variant="outline" onClick={handlePrint}>
             <Printer className="h-4 w-4 mr-2" /> Print
           </Button>
-          <Button variant="outline" onClick={handleSendEmail}>
-            <Send className="h-4 w-4 mr-2" /> Send to Client
-          </Button>
-          {canAddPayment && (
-            <Button onClick={() => setShowPaymentDialog(true)}>
-              <CreditCard className="h-4 w-4 mr-2" /> Record Payment
-            </Button>
+          {!isClient && (
+            <>
+              <Button 
+                variant="outline" 
+                onClick={handleSendEmail} 
+                disabled={isSending}
+              >
+                <Send className="h-4 w-4 mr-2" /> 
+                {isSending ? "Sending..." : "Send to Client"}
+              </Button>
+              {canAddPayment && (
+                <Button onClick={() => setShowPaymentDialog(true)}>
+                  <CreditCard className="h-4 w-4 mr-2" /> Record Payment
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -17,6 +16,8 @@ export interface User {
   createdAt?: string;
   company?: string;
   uid?: string;
+  admin?: boolean; // Added boolean flag for admin users
+  client?: boolean; // Added boolean flag for client users
 }
 
 export type Sprint = {
