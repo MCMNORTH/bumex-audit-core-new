@@ -12,6 +12,8 @@ export interface User {
   displayName?: string;
   avatarUrl?: string;
   userType?: "admin" | "user" | "client";
+  admin?: boolean;
+  client?: boolean;
   contactNumber?: string;
   fullName?: string;
   createdAt?: string;

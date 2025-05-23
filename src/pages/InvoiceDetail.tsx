@@ -119,9 +119,9 @@ export default function InvoiceDetail() {
     }
   };
 
-  // Check if user is NOT a client (so we show admin/dev buttons to all non-client users)
-  const isNotClientUser = currentUser && 
-    (currentUser as any).userType !== "client";
+  // Check if user is a client user based on the client boolean flag
+  const isClientUser = currentUser && 
+    (currentUser as any).client === true;
 
   if (loading) {
     return <div className="container mx-auto py-8">Loading invoice...</div>;
@@ -157,7 +157,7 @@ export default function InvoiceDetail() {
             <Printer className="h-4 w-4 mr-2" /> Print
           </Button>
           
-          {isNotClientUser && (
+          {!isClientUser && (
             <>
               <Button variant="outline" onClick={handleSendEmail}>
                 <Send className="h-4 w-4 mr-2" /> Send to Client
