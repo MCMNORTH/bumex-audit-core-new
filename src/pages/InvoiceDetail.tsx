@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { firestore } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { InvoicePaymentDialog } from "@/components/InvoicePaymentDialog";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function InvoiceDetail() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
@@ -15,6 +15,7 @@ export default function InvoiceDetail() {
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -118,6 +119,9 @@ export default function InvoiceDetail() {
     }
   };
 
+  // Check if the current user is a developer
+  const isDeveloper = currentUser?.userType === "admin";
+
   if (loading) {
     return <div className="container mx-auto py-8">Loading invoice...</div>;
   }
@@ -151,13 +155,18 @@ export default function InvoiceDetail() {
           <Button variant="outline" onClick={handlePrint}>
             <Printer className="h-4 w-4 mr-2" /> Print
           </Button>
-          <Button variant="outline" onClick={handleSendEmail}>
-            <Send className="h-4 w-4 mr-2" /> Send to Client
-          </Button>
-          {canAddPayment && (
-            <Button onClick={() => setShowPaymentDialog(true)}>
-              <CreditCard className="h-4 w-4 mr-2" /> Record Payment
-            </Button>
+          
+          {isDeveloper && (
+            <>
+              <Button variant="outline" onClick={handleSendEmail}>
+                <Send className="h-4 w-4 mr-2" /> Send to Client
+              </Button>
+              {canAddPayment && (
+                <Button onClick={() => setShowPaymentDialog(true)}>
+                  <CreditCard className="h-4 w-4 mr-2" /> Record Payment
+                </Button>
+              )}
+            </>
           )}
         </div>
       </div>
