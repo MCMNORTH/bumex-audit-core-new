@@ -65,11 +65,14 @@ export const SignupForm = () => {
         });
       }
       
-      toast("Account created", {
-        description: "Welcome to Jira Management!"
+      // Show success toast
+      toast("Account created successfully", {
+        description: "You can now log in with your credentials",
+        duration: 5000
       });
       
-      navigate("/");
+      // Redirect to login page instead of home
+      navigate("/login");
     } catch (error: any) {
       console.error("Signup error:", error);
       toast("Signup failed", {
