@@ -60,6 +60,8 @@ export const SignupForm = () => {
           company: data.company || null,
           userType: "client", // Default to client
           createdAt: new Date().toISOString(),
+          admin: false,  // Set admin flag to false by default
+          client: true   // Set client flag to true by default
         });
       }
       

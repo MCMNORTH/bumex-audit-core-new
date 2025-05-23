@@ -140,7 +140,11 @@ export const Sidebar = () => {
         <div className="p-2">
           <Button onClick={() => navigate('/profile')} variant="ghost" size="sm" className="w-full justify-start text-muted-foreground hover:text-foreground">
             <User className="mr-2 h-4 w-4" />
-            {isOpen && <span>{displayName}</span>}
+            {isOpen && (
+              <span className="truncate max-w-[180px]" title={displayName}>
+                {displayName}
+              </span>
+            )}
           </Button>
           {isOpen ? <LogoutButton /> : <div className="flex justify-center p-2">
               <LogoutButton />
