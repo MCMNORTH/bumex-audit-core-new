@@ -72,82 +72,84 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
-      <div className="w-full max-w-md flex flex-col items-center mb-8">
-        <img 
-          src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
-          alt="Jira Management Logo"
-          className="w-full max-w-[280px] mb-6"
-        />
-        <p className="text-gray-500 text-sm mb-2">Project management made simple</p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
+      <div className="w-full max-w-md mx-auto">
+        <div className="w-full max-w-md flex flex-col items-center mb-8">
+          <img 
+            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
+            alt="Jira Management Logo"
+            className="w-full max-w-[280px] mb-6"
+          />
+          <p className="text-gray-500 text-sm mb-2">Project management made simple</p>
+        </div>
+        
+        <Card className="w-full shadow-lg border-0">
+          <CardHeader className="pb-2">
+            <div className="text-center">
+              <h2 className="text-xl font-medium">Welcome back</h2>
+              <p className="text-sm text-gray-500">Sign in to your account</p>
+            </div>
+          </CardHeader>
+          <CardContent className="pt-4">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                {authError && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                    {authError}
+                  </div>
+                )}
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input placeholder="you@example.com" className="pl-10" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button 
+                  type="submit" 
+                  className="w-full bg-primary hover:bg-primary/90"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing in..." : "Sign In"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+          <CardFooter className="flex justify-center pt-0">
+            <p className="text-sm text-gray-500">
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-primary hover:underline font-medium">
+                Sign up
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
       </div>
-      
-      <Card className="w-full max-w-md shadow-lg border-0">
-        <CardHeader className="pb-2">
-          <div className="text-center">
-            <h2 className="text-xl font-medium">Welcome back</h2>
-            <p className="text-sm text-gray-500">Sign in to your account</p>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {authError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
-                  {authError}
-                </div>
-              )}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input placeholder="you@example.com" className="pl-10" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button 
-                type="submit" 
-                className="w-full bg-primary hover:bg-primary/90"
-                disabled={isLoading}
-              >
-                {isLoading ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex justify-center pt-0">
-          <p className="text-sm text-gray-500">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
     </div>
   );
 };

@@ -15,19 +15,21 @@ const Signup = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
-      <FormHeader 
-        title="Create account" 
-        subtitle="Project management made simple" 
-      />
-      
-      <AuthCard 
-        title="Create an account" 
-        subtitle="Fill in your details to get started" 
-        footer={footerContent}
-      >
-        <SignupForm />
-      </AuthCard>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 px-4">
+      <div className="w-full max-w-md mx-auto">
+        <FormHeader 
+          title="Create account" 
+          subtitle="Project management made simple" 
+        />
+        
+        <AuthCard 
+          title="Create an account" 
+          subtitle="Fill in your details to get started" 
+          footer={footerContent}
+        >
+          <SignupForm />
+        </AuthCard>
+      </div>
     </div>
   );
 };
