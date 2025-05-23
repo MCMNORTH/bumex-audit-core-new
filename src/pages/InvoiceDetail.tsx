@@ -261,9 +261,6 @@ export default function InvoiceDetail() {
             {invoice.clientContact && (
               <p className="text-sm text-gray-500">{invoice.clientContact}</p>
             )}
-            {invoice.userId && (
-              <p className="text-sm text-gray-500">Client ID: {invoice.userId}</p>
-            )}
           </div>
           <div className="text-right">
             <div className="mb-2">
