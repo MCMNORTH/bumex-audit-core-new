@@ -95,7 +95,7 @@ const Login = () => {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input placeholder="you@example.com" className="pl-10 px-[80px]" />
+                        <Input placeholder="you@example.com" className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
