@@ -1,13 +1,22 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Printer, Send, FileText, Plus, CreditCard } from "lucide-react";
+import { ArrowLeft, Printer, FileText, Plus, CreditCard, Trash2 } from "lucide-react";
 import { Invoice, User } from "@/types";
 import { firestore, auth } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { InvoicePaymentDialog } from "@/components/InvoicePaymentDialog";
 import { Badge } from "@/components/ui/badge";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function InvoiceDetail() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
@@ -16,7 +25,8 @@ export default function InvoiceDetail() {
   const [loading, setLoading] = useState(true);
   const [showPaymentDialog, setShowPaymentDialog] = useState(false);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isSending, setIsSending] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -112,43 +122,35 @@ export default function InvoiceDetail() {
     }
   };
 
-  const handleSendEmail = async () => {
-    if (!invoice || !invoice.clientContact) {
-      toast({
-        title: "Error",
-        description: "Client email is not available. Please add client contact information.",
-        variant: "destructive"
-      });
-      return;
-    }
+  const handleDeleteInvoice = async () => {
+    if (!invoiceId) return;
     
-    setIsSending(true);
+    setIsDeleting(true);
     
     try {
-      // Here we would typically call a backend API or Cloud Function
-      // For demo purposes, we'll simulate sending by showing a success toast
-      
-      // In a real implementation, you would:
-      // 1. Create a serverless function (Firebase Cloud Function, etc)
-      // 2. Call that function with the invoice data and recipient email
-      // 3. The function would use a service like SendGrid, Nodemailer, etc.
-      
-      // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      toast({
-        title: "Email Sent",
-        description: `Invoice was sent to ${invoice.clientContact}`,
+      // Update invoice to mark it as deleted
+      await firestore.updateInvoice(invoiceId, {
+        deleted: true,
+        updatedAt: new Date().toISOString()
       });
-    } catch (error) {
-      console.error("Error sending email:", error);
+      
       toast({
-        title: "Failed to Send",
-        description: "There was a problem sending the email. Please try again.",
+        title: "Invoice Deleted",
+        description: "The invoice has been marked as deleted."
+      });
+      
+      // Navigate back to invoices list
+      navigate('/invoices');
+    } catch (error) {
+      console.error("Error deleting invoice:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete invoice. Please try again.",
         variant: "destructive"
       });
     } finally {
-      setIsSending(false);
+      setIsDeleting(false);
+      setShowDeleteConfirmation(false);
     }
   };
   
@@ -209,11 +211,11 @@ export default function InvoiceDetail() {
             <>
               <Button 
                 variant="outline" 
-                onClick={handleSendEmail} 
-                disabled={isSending}
+                onClick={() => setShowDeleteConfirmation(true)}
+                disabled={isDeleting}
               >
-                <Send className="h-4 w-4 mr-2" /> 
-                {isSending ? "Sending..." : "Send to Client"}
+                <Trash2 className="h-4 w-4 mr-2" /> 
+                {isDeleting ? "Deleting..." : "Delete Invoice"}
               </Button>
               {canAddPayment && (
                 <Button onClick={() => setShowPaymentDialog(true)}>
@@ -368,6 +370,28 @@ export default function InvoiceDetail() {
         onOpenChange={setShowPaymentDialog}
         onPaymentAdded={handlePaymentAdded}
       />
+
+      {/* Delete confirmation dialog */}
+      <AlertDialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action will mark this invoice as deleted. The invoice data will still be stored in the database but will no longer appear in the list.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteInvoice} 
+              className="bg-red-600 text-white hover:bg-red-700"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

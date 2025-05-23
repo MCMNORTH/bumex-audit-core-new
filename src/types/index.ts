@@ -1,3 +1,4 @@
+
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -112,4 +113,5 @@ export interface Invoice {
   updatedAt: string;
   payments?: Payment[];
   amountPaid?: number;
+  deleted?: boolean; // Added deleted flag
 }

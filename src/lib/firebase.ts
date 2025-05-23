@@ -154,7 +154,8 @@ export const firestore = {
   },
 
   getAllInvoices: async () => {
-    const invoicesSnap = await getDocs(invoicesCollection);
+    const q = query(invoicesCollection, where("deleted", "!=", true));
+    const invoicesSnap = await getDocs(q);
     return invoicesSnap.docs.map(doc => doc.data());
   },
   
