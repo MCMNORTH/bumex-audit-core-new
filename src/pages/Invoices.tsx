@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, FileText } from "lucide-react";
-import { Invoice, Status } from "@/types";
+import { Invoice, InvoiceStatus } from "@/types";
 import { firestore } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 
@@ -36,8 +36,8 @@ export default function Invoices() {
             
             // Set to overdue if due date is in the past
             if (dueDate < today && invoice.status !== 'overdue') {
-              // Explicitly cast to the Status type to satisfy TypeScript
-              return { ...invoice, status: 'overdue' as Status };
+              // Explicitly cast to the InvoiceStatus type to satisfy TypeScript
+              return { ...invoice, status: 'overdue' as InvoiceStatus };
             }
           }
           return invoice;
