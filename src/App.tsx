@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,7 +8,7 @@ import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import CreateProject from "./pages/CreateProject";
 import EditProject from "./pages/EditProject";
-import ProjectBoard from "./pages/ProjectBoard"; 
+import ProjectBoard from "./pages/ProjectBoard";
 import ProjectIssues from "./pages/ProjectIssues";
 import ProjectSprints from "./pages/ProjectSprints";
 import ProjectTimeline from "./pages/ProjectTimeline";
@@ -27,27 +26,28 @@ import MyInvoices from "./pages/MyInvoices";
 import CreateInvoice from "./pages/CreateInvoice";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-
 const queryClient = new QueryClient();
 
 // Protected route component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { currentUser, loading } = useAuth();
-  
+const ProtectedRoute = ({
+  children
+}: {
+  children: React.ReactNode;
+}) => {
+  const {
+    currentUser,
+    loading
+  } = useAuth();
   if (loading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
-  
   if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
-  
   return <>{children}</>;
 };
-
 const AppRoutes = () => {
-  return (
-    <Routes>
+  return <Routes>
       {/* Auth routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
@@ -78,15 +78,12 @@ const AppRoutes = () => {
       </Route>
       
       <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
+    </Routes>;
 };
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const App = () => <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <SidebarProvider>
+        <SidebarProvider className="flex min-h-screen w-full items-center justify-center bg-background px-4 py-12">
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -95,7 +92,5 @@ const App = () => (
         </SidebarProvider>
       </TooltipProvider>
     </AuthProvider>
-  </QueryClientProvider>
-);
-
+  </QueryClientProvider>;
 export default App;
