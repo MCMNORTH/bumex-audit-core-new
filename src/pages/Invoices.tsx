@@ -26,7 +26,24 @@ export default function Invoices() {
       try {
         setLoading(true);
         const fetchedInvoices = await firestore.getAllInvoices() as Invoice[];
-        setInvoices(fetchedInvoices);
+        
+        // Check for overdue invoices
+        const updatedInvoices = fetchedInvoices.map(invoice => {
+          // Only update if not already paid or partially paid
+          if (invoice.status !== 'paid' && invoice.status !== 'partial') {
+            const dueDate = new Date(invoice.dueDate);
+            const today = new Date();
+            
+            // Set to overdue if due date is in the past
+            if (dueDate < today && invoice.status !== 'overdue') {
+              // Only update in state, actual DB update will happen when we update the invoice
+              return { ...invoice, status: 'overdue' };
+            }
+          }
+          return invoice;
+        });
+        
+        setInvoices(updatedInvoices);
       } catch (error) {
         console.error("Error fetching invoices:", error);
         toast({
@@ -93,6 +110,7 @@ export default function Invoices() {
                 <TableHead>Date</TableHead>
                 <TableHead>Due Date</TableHead>
                 <TableHead>Amount</TableHead>
+                <TableHead>Paid</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
@@ -106,9 +124,13 @@ export default function Invoices() {
                   <TableCell>{formatDate(invoice.dueDate)}</TableCell>
                   <TableCell>{formatCurrency(invoice.total, invoice.currency)}</TableCell>
                   <TableCell>
+                    {invoice.amountPaid ? formatCurrency(invoice.amountPaid, invoice.currency) : "-"}
+                  </TableCell>
+                  <TableCell>
                     <span className={`inline-block px-2 py-1 text-xs rounded-full ${
                       invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
                       invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      invoice.status === 'partial' ? 'bg-blue-100 text-blue-800' :
                       invoice.status === 'draft' ? 'bg-gray-100 text-gray-800' :
                       invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
                       'bg-gray-100 text-gray-800'

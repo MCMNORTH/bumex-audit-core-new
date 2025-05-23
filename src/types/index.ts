@@ -1,3 +1,4 @@
+
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -85,6 +86,13 @@ export interface InvoiceItem {
 
 export type Currency = "MRU" | "USD" | "EUR";
 
+export interface Payment {
+  id: string;
+  amount: number;
+  date: string;
+  note?: string;
+}
+
 export interface Invoice {
   id: string;
   userId: string;
@@ -93,9 +101,12 @@ export interface Invoice {
   items: InvoiceItem[];
   total: number;
   currency: Currency;
-  status: "draft" | "pending" | "paid" | "overdue" | "cancelled";
+  status: "draft" | "pending" | "paid" | "partial" | "overdue" | "cancelled";
   issueDate: string;
   dueDate: string;
   createdAt: string;
   updatedAt: string;
+  payments?: Payment[];
+  amountPaid?: number;
 }
+

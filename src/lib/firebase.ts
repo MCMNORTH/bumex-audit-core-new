@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where } from "firebase/firestore";
@@ -187,6 +186,43 @@ export const firestore = {
     const invoiceRef = doc(invoicesCollection, invoiceId);
     await updateDoc(invoiceRef, data);
     return { id: invoiceId, ...data };
+  },
+  
+  addPaymentToInvoice: async (invoiceId: string, payment: any) => {
+    const invoiceRef = doc(invoicesCollection, invoiceId);
+    const invoiceSnap = await getDoc(invoiceRef);
+    
+    if (invoiceSnap.exists()) {
+      const invoiceData = invoiceSnap.data();
+      const payments = invoiceData.payments || [];
+      const amountPaid = (invoiceData.amountPaid || 0) + payment.amount;
+      const total = invoiceData.total || 0;
+      
+      // Determine status based on payment
+      let status = invoiceData.status;
+      if (amountPaid >= total) {
+        status = "paid";
+      } else if (amountPaid > 0) {
+        status = "partial";
+      }
+      
+      await updateDoc(invoiceRef, {
+        payments: [...payments, payment],
+        amountPaid,
+        status,
+        updatedAt: new Date().toISOString()
+      });
+      
+      return {
+        id: invoiceId,
+        payments: [...payments, payment],
+        amountPaid,
+        status,
+        updatedAt: new Date().toISOString()
+      };
+    }
+    
+    throw new Error("Invoice not found");
   },
   
   // Delete

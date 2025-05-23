@@ -2,16 +2,19 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Printer, Send, FileText } from "lucide-react";
+import { ArrowLeft, Printer, Send, FileText, Plus, CreditCard } from "lucide-react";
 import { Invoice } from "@/types";
 import { firestore } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
+import { InvoicePaymentDialog } from "@/components/InvoicePaymentDialog";
+import { Badge } from "@/components/ui/badge";
 
 export default function InvoiceDetail() {
   const { invoiceId } = useParams<{ invoiceId: string }>();
   const navigate = useNavigate();
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -21,6 +24,21 @@ export default function InvoiceDetail() {
         setLoading(true);
         const fetchedInvoice = await firestore.getInvoice(invoiceId) as Invoice;
         if (fetchedInvoice) {
+          // Check if the invoice is overdue
+          if (fetchedInvoice.status !== 'paid' && fetchedInvoice.status !== 'partial') {
+            const dueDate = new Date(fetchedInvoice.dueDate);
+            const today = new Date();
+            
+            if (dueDate < today && fetchedInvoice.status !== 'overdue') {
+              // Update the invoice status in the database
+              await firestore.updateInvoice(invoiceId, { 
+                status: 'overdue',
+                updatedAt: new Date().toISOString()
+              });
+              fetchedInvoice.status = 'overdue';
+            }
+          }
+          
           setInvoice(fetchedInvoice);
         }
       } catch (error) {
@@ -82,6 +100,10 @@ export default function InvoiceDetail() {
       description: `Invoice was sent to the client.`,
     });
   };
+  
+  const handlePaymentAdded = (updatedInvoice: Invoice) => {
+    setInvoice(updatedInvoice);
+  };
 
   const formatCurrency = (amount: number, currency: string) => {
     return `${currency} ${amount.toFixed(2)}`;
@@ -112,6 +134,11 @@ export default function InvoiceDetail() {
       </div>
     );
   }
+  
+  const remainingAmount = invoice.total - (invoice.amountPaid || 0);
+  const isPaid = invoice.status === 'paid';
+  const isPartiallyPaid = invoice.status === 'partial';
+  const canAddPayment = !isPaid && invoice.status !== 'draft' && invoice.status !== 'cancelled';
 
   return (
     <div className="container mx-auto py-8">
@@ -124,9 +151,14 @@ export default function InvoiceDetail() {
           <Button variant="outline" onClick={handlePrint}>
             <Printer className="h-4 w-4 mr-2" /> Print
           </Button>
-          <Button onClick={handleSendEmail}>
+          <Button variant="outline" onClick={handleSendEmail}>
             <Send className="h-4 w-4 mr-2" /> Send to Client
           </Button>
+          {canAddPayment && (
+            <Button onClick={() => setShowPaymentDialog(true)}>
+              <CreditCard className="h-4 w-4 mr-2" /> Record Payment
+            </Button>
+          )}
         </div>
       </div>
 
@@ -147,6 +179,7 @@ export default function InvoiceDetail() {
             <div className={`mt-1 inline-block px-2 py-1 text-xs rounded-full ${
               invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
               invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+              invoice.status === 'partial' ? 'bg-blue-100 text-blue-800' :
               invoice.status === 'draft' ? 'bg-gray-100 text-gray-800' :
               invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
               'bg-gray-100 text-gray-800'
@@ -218,14 +251,60 @@ export default function InvoiceDetail() {
               <span className="font-bold">Total:</span>
               <span className="font-bold">{formatCurrency(invoice.total, invoice.currency)}</span>
             </div>
+            
+            {(isPartiallyPaid || isPaid) && (
+              <div className="mt-2">
+                <div className="flex justify-between pb-2">
+                  <span className="font-medium">Paid:</span>
+                  <span className="text-green-600">{formatCurrency(invoice.amountPaid || 0, invoice.currency)}</span>
+                </div>
+                {!isPaid && (
+                  <div className="flex justify-between pt-2 border-t border-gray-200">
+                    <span className="font-bold">Balance Due:</span>
+                    <span className="font-bold text-red-600">{formatCurrency(remainingAmount, invoice.currency)}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
+
+        {invoice.payments && invoice.payments.length > 0 && (
+          <div className="mt-8 pt-4 border-t border-gray-200">
+            <h3 className="text-lg font-medium mb-4">Payment History</h3>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200 text-sm">
+                  <th className="py-2 text-left text-gray-500">Date</th>
+                  <th className="py-2 text-left text-gray-500">Amount</th>
+                  <th className="py-2 text-left text-gray-500">Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                {invoice.payments.map((payment) => (
+                  <tr key={payment.id} className="border-b border-gray-100 text-sm">
+                    <td className="py-3">{formatDate(payment.date)}</td>
+                    <td className="py-3 text-green-600">{formatCurrency(payment.amount, invoice.currency)}</td>
+                    <td className="py-3 text-gray-600">{payment.note || "-"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <div className="mt-8 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
           <p>Thank you for your business!</p>
           <p>For questions regarding this invoice, please contact support@overcode.dev</p>
         </div>
       </div>
+      
+      <InvoicePaymentDialog
+        invoice={invoice}
+        open={showPaymentDialog}
+        onOpenChange={setShowPaymentDialog}
+        onPaymentAdded={handlePaymentAdded}
+      />
     </div>
   );
 }

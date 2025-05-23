@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Epic, Issue, Project, Status, User, Sprint } from '@/types';
+import { Epic, Issue, Project, Status, User, Sprint, Invoice } from '@/types';
 import { firestore } from '@/lib/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
@@ -11,6 +11,7 @@ interface AppState {
   epics: Epic[];
   issues: Issue[];
   sprints: Sprint[];
+  invoices: Invoice[];
   selectedProject: Project | null;
   selectedIssue: Issue | null;
   recentProjects: Project[];
@@ -57,6 +58,12 @@ interface AppState {
   getUserById: (userId: string) => User | undefined;
   getSprintsByProject: (projectId: string) => Sprint[];
   getIssuesBySprint: (sprintId: string) => Issue[];
+  
+  // Invoice specific actions
+  getInvoice: (invoiceId: string) => Promise<Invoice | null>;
+  getAllInvoices: () => Promise<Invoice[]>;
+  updateInvoice: (invoice: Invoice) => Promise<void>;
+  addPaymentToInvoice: (invoiceId: string, payment: any) => Promise<any>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -68,6 +75,7 @@ export const useAppStore = create<AppState>()(
       epics: [],
       issues: [],
       sprints: [],
+      invoices: [],
       selectedProject: null,
       selectedIssue: null,
       recentProjects: [],
@@ -377,6 +385,42 @@ export const useAppStore = create<AppState>()(
 
       getIssuesBySprint: (sprintId) => {
         return get().issues.filter((issue) => issue.sprintId === sprintId);
+      },
+      
+      // Invoice Functions
+      getInvoice: async (invoiceId: string) => {
+        try {
+          return await firestore.getInvoice(invoiceId) as Invoice | null;
+        } catch (error) {
+          console.error("Error fetching invoice:", error);
+          return null;
+        }
+      },
+      
+      getAllInvoices: async () => {
+        try {
+          return await firestore.getAllInvoices() as Invoice[];
+        } catch (error) {
+          console.error("Error fetching all invoices:", error);
+          return [];
+        }
+      },
+      
+      updateInvoice: async (invoice: Invoice) => {
+        const updatedInvoice = {
+          ...invoice,
+          updatedAt: new Date().toISOString()
+        };
+        await firestore.updateInvoice(invoice.id, updatedInvoice);
+      },
+      
+      addPaymentToInvoice: async (invoiceId: string, payment: any) => {
+        try {
+          return await firestore.addPaymentToInvoice(invoiceId, payment);
+        } catch (error) {
+          console.error("Error adding payment:", error);
+          throw error;
+        }
       },
     }),
     {
