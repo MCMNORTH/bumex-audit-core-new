@@ -23,6 +23,7 @@ import Profile from "./pages/Profile";
 import Users from "./pages/Users";
 import UserDetail from "./pages/UserDetail";
 import Invoices from "./pages/Invoices";
+import MyInvoices from "./pages/MyInvoices";
 import CreateInvoice from "./pages/CreateInvoice";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -60,6 +61,7 @@ const AppRoutes = () => {
         
         {/* Invoice Routes */}
         <Route path="/invoices" element={<Invoices />} />
+        <Route path="/my-invoices" element={<MyInvoices />} />
         <Route path="/create-invoice" element={<CreateInvoice />} />
         <Route path="/invoices/:invoiceId" element={<InvoiceDetail />} />
         
