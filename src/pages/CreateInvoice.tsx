@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -141,7 +140,7 @@ export default function CreateInvoice() {
     try {
       const total = calculateTotal();
       
-      // Create invoice document
+      // Create invoice document with deleted: false by default
       const invoiceData = {
         id: uuidv4(),
         userId: data.userId || "",
@@ -154,7 +153,8 @@ export default function CreateInvoice() {
         issueDate: new Date().toISOString().split('T')[0],
         dueDate: data.dueDate,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
+        deleted: false // Explicitly set deleted to false
       };
       
       await firestore.createInvoice(invoiceData);
