@@ -52,11 +52,12 @@ export function InvoicePaymentDialog({
     try {
       setLoading(true);
       
+      // Create a new payment object with a valid ID and required fields
       const newPayment: Payment = {
         id: uuidv4(),
         amount: paymentAmount,
         date: new Date().toISOString(),
-        note: note || undefined
+        note: note || "" // Ensure note is never undefined
       };
       
       // Calculate the new amount paid
@@ -70,16 +71,13 @@ export function InvoicePaymentDialog({
         newStatus = "partial";
       }
       
-      // Create the update payload with all required fields defined
-      const updatePayload = {
+      // Update Firestore with the new payment
+      await firestore.updateInvoice(invoice.id, {
         payments: [...(invoice.payments || []), newPayment],
         amountPaid: newAmountPaid,
         status: newStatus,
         updatedAt: new Date().toISOString()
-      };
-      
-      // Send the update to Firebase
-      const result = await firestore.addPaymentToInvoice(invoice.id, newPayment);
+      });
       
       toast({
         title: "Payment added",
@@ -92,11 +90,16 @@ export function InvoicePaymentDialog({
         payments: [...(invoice.payments || []), newPayment],
         amountPaid: newAmountPaid,
         status: newStatus,
-        updatedAt: updatePayload.updatedAt
+        updatedAt: new Date().toISOString()
       };
       
+      // Update the UI
       onPaymentAdded(updatedInvoice);
       onOpenChange(false);
+      
+      // Reset form fields
+      setAmount("");
+      setNote("");
       
     } catch (error) {
       console.error("Error adding payment:", error);
