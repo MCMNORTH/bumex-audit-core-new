@@ -23,7 +23,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const navigate = useNavigate();
 
   const form = useForm<LoginFormData>({
@@ -52,8 +52,8 @@ const Login = () => {
           });
           navigate("/");
         } else {
-          // If not admin, sign them out and show error
-          await userCredential.user.auth.signOut();
+          // If not admin, sign them out using the logout function from AuthContext
+          await logout();
           setAuthError("Access denied. Only administrators can access this application.");
           toast("Access denied", {
             description: "Only administrators can access this application.",
