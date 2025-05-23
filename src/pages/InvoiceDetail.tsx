@@ -119,11 +119,11 @@ export default function InvoiceDetail() {
     }
   };
 
-  // Fix the type error by using a safer check for admin privileges
-  // The Firebase User type doesn't have the userType property, so we need to check differently
-  const isDeveloper = currentUser ? 
-    // Check if the user is an admin
-    (currentUser as any).userType === "admin" : false;
+  // Updated check for admin/developer privileges
+  // Since the Firebase User type and our User type might not match exactly,
+  // we need to check the userType property in a way that works for our app
+  const isAdmin = currentUser && 
+    ((currentUser as any).userType === "admin" || (currentUser as any).userType === "dev");
 
   if (loading) {
     return <div className="container mx-auto py-8">Loading invoice...</div>;
@@ -159,7 +159,7 @@ export default function InvoiceDetail() {
             <Printer className="h-4 w-4 mr-2" /> Print
           </Button>
           
-          {isDeveloper && (
+          {isAdmin && (
             <>
               <Button variant="outline" onClick={handleSendEmail}>
                 <Send className="h-4 w-4 mr-2" /> Send to Client
