@@ -84,7 +84,7 @@ const Login = () => {
         </CardHeader>
         <CardContent className="pt-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-[40px]">
               {authError && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
                   {authError}
                 </div>}
