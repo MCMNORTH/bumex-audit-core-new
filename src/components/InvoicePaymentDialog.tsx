@@ -59,6 +59,26 @@ export function InvoicePaymentDialog({
         note: note || undefined
       };
       
+      // Calculate the new amount paid
+      const newAmountPaid = (invoice.amountPaid || 0) + paymentAmount;
+      
+      // Determine the new status based on payment
+      let newStatus: InvoiceStatus = invoice.status;
+      if (newAmountPaid >= invoice.total) {
+        newStatus = "paid";
+      } else if (newAmountPaid > 0) {
+        newStatus = "partial";
+      }
+      
+      // Create the update payload with all required fields defined
+      const updatePayload = {
+        payments: [...(invoice.payments || []), newPayment],
+        amountPaid: newAmountPaid,
+        status: newStatus,
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Send the update to Firebase
       const result = await firestore.addPaymentToInvoice(invoice.id, newPayment);
       
       toast({
@@ -70,9 +90,9 @@ export function InvoicePaymentDialog({
       const updatedInvoice = {
         ...invoice,
         payments: [...(invoice.payments || []), newPayment],
-        amountPaid: (invoice.amountPaid || 0) + paymentAmount,
-        status: result.status as InvoiceStatus,
-        updatedAt: result.updatedAt
+        amountPaid: newAmountPaid,
+        status: newStatus,
+        updatedAt: updatePayload.updatedAt
       };
       
       onPaymentAdded(updatedInvoice);

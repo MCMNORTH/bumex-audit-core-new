@@ -1,4 +1,3 @@
-
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where } from "firebase/firestore";
@@ -208,19 +207,21 @@ export const firestore = {
         status = "partial";
       }
       
-      await updateDoc(invoiceRef, {
+      const updateData = {
         payments: [...payments, payment],
         amountPaid,
         status,
         updatedAt: new Date().toISOString()
-      });
+      };
+      
+      await updateDoc(invoiceRef, updateData);
       
       return {
         id: invoiceId,
         payments: [...payments, payment],
         amountPaid,
         status,
-        updatedAt: new Date().toISOString()
+        updatedAt: updateData.updatedAt
       };
     }
     
