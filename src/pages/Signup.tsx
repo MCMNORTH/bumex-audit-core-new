@@ -1,33 +1,33 @@
 
-import { Link } from "react-router-dom";
-import { FormHeader } from "@/components/auth/FormHeader";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { SignupForm } from "@/components/auth/SignupForm";
-import { AuthCard } from "@/components/auth/AuthCard";
+import { Card, CardContent } from "@/components/ui/card";
 
 const Signup = () => {
-  const footerContent = (
-    <p className="text-sm text-gray-500">
-      Already have an account?{" "}
-      <Link to="/login" className="text-primary hover:underline font-medium">
-        Log in
-      </Link>
-    </p>
-  );
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
-      <FormHeader 
-        title="Create account" 
-        subtitle="Project management made simple" 
-      />
-      
-      <AuthCard 
-        title="Create an account" 
-        subtitle="Fill in your details to get started" 
-        footer={footerContent}
-      >
-        <SignupForm />
-      </AuthCard>
+    <div className="h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-md px-4">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Create an account</h1>
+          <p className="text-gray-500 mt-2">Get started with project management made simple</p>
+        </div>
+        
+        <Card className="shadow-lg border-0">
+          <CardContent className="pt-6">
+            <SignupForm />
+            
+            <div className="mt-6 text-center">
+              <p className="text-sm text-gray-500">
+                Already have an account?{" "}
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  Log in
+                </Link>
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

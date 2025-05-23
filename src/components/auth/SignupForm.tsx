@@ -11,7 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { toast } from "sonner";
-import { Mail, Lock, User, Phone, Building } from "lucide-react";
+import { Mail, Lock, User, Phone, Building, Eye, EyeOff } from "lucide-react";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -29,6 +29,8 @@ type SignupFormData = z.infer<typeof signupSchema>;
 
 export const SignupForm = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -80,13 +82,139 @@ export const SignupForm = () => {
     }
   };
 
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <PersonalInfoFields control={form.control} />
-        <CompanyField control={form.control} />
-        <EmailField control={form.control} />
-        <PasswordFields control={form.control} />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Full Name</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input placeholder="John Doe" className="pl-10" {...field} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="contactNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Contact Number</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input placeholder="+1 (555) 123-4567" className="pl-10" {...field} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="company"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Company (Optional)</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input placeholder="Company Name" className="pl-10" {...field} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gray-700">Email</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input placeholder="you@example.com" className="pl-10" {...field} />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="space-y-5">
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      className="pl-10 pr-10" 
+                      {...field} 
+                    />
+                    <button 
+                      type="button"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      onClick={toggleShowPassword}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-gray-700">Confirm Password</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                    <Input 
+                      type={showConfirmPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      className="pl-10 pr-10" 
+                      {...field} 
+                    />
+                    <button 
+                      type="button"
+                      className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                      onClick={toggleShowConfirmPassword}
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         
         <Button 
           type="submit" 
@@ -99,118 +227,3 @@ export const SignupForm = () => {
     </Form>
   );
 };
-
-// Form field components
-const PersonalInfoFields = ({ control }: { control: any }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <FormField
-      control={control}
-      name="fullName"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Full Name</FormLabel>
-          <FormControl>
-            <div className="relative">
-              <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input placeholder="John Doe" className="pl-10" {...field} />
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-    
-    <FormField
-      control={control}
-      name="contactNumber"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Contact Number</FormLabel>
-          <FormControl>
-            <div className="relative">
-              <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input placeholder="+1 (555) 123-4567" className="pl-10" {...field} />
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  </div>
-);
-
-const CompanyField = ({ control }: { control: any }) => (
-  <FormField
-    control={control}
-    name="company"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>Company (Optional)</FormLabel>
-        <FormControl>
-          <div className="relative">
-            <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input placeholder="Company Name" className="pl-10" {...field} />
-          </div>
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-);
-
-const EmailField = ({ control }: { control: any }) => (
-  <FormField
-    control={control}
-    name="email"
-    render={({ field }) => (
-      <FormItem>
-        <FormLabel>Email</FormLabel>
-        <FormControl>
-          <div className="relative">
-            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-            <Input placeholder="you@example.com" className="pl-10" {...field} />
-          </div>
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    )}
-  />
-);
-
-const PasswordFields = ({ control }: { control: any }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <FormField
-      control={control}
-      name="password"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Password</FormLabel>
-          <FormControl>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-    
-    <FormField
-      control={control}
-      name="confirmPassword"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Confirm Password</FormLabel>
-          <FormControl>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
-            </div>
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
-  </div>
-);
