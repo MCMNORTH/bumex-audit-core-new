@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Invoice, Payment } from "@/types";
+import { Invoice, Payment, InvoiceStatus } from "@/types";
 import { firestore } from "@/lib/firebase";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "@/components/ui/use-toast";
@@ -71,7 +71,7 @@ export function InvoicePaymentDialog({
         ...invoice,
         payments: [...(invoice.payments || []), newPayment],
         amountPaid: (invoice.amountPaid || 0) + paymentAmount,
-        status: result.status,
+        status: result.status as InvoiceStatus,
         updatedAt: result.updatedAt
       };
       

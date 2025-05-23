@@ -93,6 +93,9 @@ export interface Payment {
   note?: string;
 }
 
+// Define a separate type for invoice statuses
+export type InvoiceStatus = "draft" | "pending" | "paid" | "partial" | "overdue" | "cancelled";
+
 export interface Invoice {
   id: string;
   userId: string;
@@ -101,7 +104,7 @@ export interface Invoice {
   items: InvoiceItem[];
   total: number;
   currency: Currency;
-  status: "draft" | "pending" | "paid" | "partial" | "overdue" | "cancelled";
+  status: InvoiceStatus;
   issueDate: string;
   dueDate: string;
   createdAt: string;
@@ -109,4 +112,3 @@ export interface Invoice {
   payments?: Payment[];
   amountPaid?: number;
 }
-

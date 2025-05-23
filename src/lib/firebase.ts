@@ -1,7 +1,9 @@
+
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, query, where } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { InvoiceStatus } from "@/types";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCmezG-Mcl94IV3w1gxDt-6OHI9R6fGh2Y",
@@ -199,7 +201,7 @@ export const firestore = {
       const total = invoiceData.total || 0;
       
       // Determine status based on payment
-      let status = invoiceData.status;
+      let status: InvoiceStatus = invoiceData.status;
       if (amountPaid >= total) {
         status = "paid";
       } else if (amountPaid > 0) {
