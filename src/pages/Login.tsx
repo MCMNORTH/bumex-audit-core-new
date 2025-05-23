@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,7 +11,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { firestore } from "@/lib/firebase";
-
 const loginSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address."
@@ -21,9 +19,7 @@ const loginSchema = z.object({
     message: "Password must be at least 6 characters."
   })
 });
-
 type LoginFormData = z.infer<typeof loginSchema>;
-
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -32,7 +28,6 @@ const Login = () => {
     logout
   } = useAuth();
   const navigate = useNavigate();
-
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -40,7 +35,6 @@ const Login = () => {
       password: ""
     }
   });
-
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setAuthError(null);
@@ -75,11 +69,10 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
-  return <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent">
+  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-white to-gray-50 p-4">
       <div className="w-full max-w-md flex flex-col items-center mb-8">
         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
-        
+        <p className="text-gray-500 text-sm mb-2">Project management made simple</p>
       </div>
       
       <Card className="w-full max-w-md shadow-lg border-0 px-[30px]">
@@ -91,7 +84,7 @@ const Login = () => {
         </CardHeader>
         <CardContent className="pt-4">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-[40px]">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {authError && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
                   {authError}
                 </div>}
@@ -102,7 +95,7 @@ const Login = () => {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input placeholder="you@example.com" className="pl-10" {...field} />
+                        <Input placeholder="you@example.com" className="pl-10 px-[80px]" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -136,5 +129,4 @@ const Login = () => {
       </Card>
     </div>;
 };
-
 export default Login;
