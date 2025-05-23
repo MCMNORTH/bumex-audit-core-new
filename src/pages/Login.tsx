@@ -72,7 +72,7 @@ const Login = () => {
   return <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-transparent">
       <div className="w-full max-w-md flex flex-col items-center mb-8">
         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
-        <p className="text-gray-500 text-sm mb-2">Project management made simple</p>
+        
       </div>
       
       <Card className="w-full max-w-md shadow-lg border-0 px-[30px]">
@@ -95,7 +95,7 @@ const Login = () => {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                        <Input placeholder="you@example.com" className="pl-10 px-[80px]" />
+                        <Input placeholder="you@example.com" className="pl-10 px-[40px]" />
                       </div>
                     </FormControl>
                     <FormMessage />
