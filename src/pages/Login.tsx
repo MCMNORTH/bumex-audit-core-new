@@ -11,7 +11,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { firestore } from "@/lib/firebase";
-
 const loginSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address."
@@ -21,7 +20,6 @@ const loginSchema = z.object({
   })
 });
 type LoginFormData = z.infer<typeof loginSchema>;
-
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -74,7 +72,7 @@ const Login = () => {
   return <div className="h-screen w-screen flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md flex flex-col items-center mb-8">
         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
-        <p className="text-gray-500 text-sm mb-2">Project management made simple</p>
+        
       </div>
       
       <Card className="w-full max-w-md shadow-lg border-0 px-[30px]">
@@ -131,5 +129,4 @@ const Login = () => {
       </Card>
     </div>;
 };
-
 export default Login;
