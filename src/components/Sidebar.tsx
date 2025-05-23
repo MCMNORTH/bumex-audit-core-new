@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
@@ -9,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
 import { useSidebar } from "@/components/ui/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { useEffect, useState } from "react";
+import { firestore } from "@/lib/firebase";
 
 export const Sidebar = () => {
   const {
@@ -25,13 +26,37 @@ export const Sidebar = () => {
     toggleSidebar
   } = useSidebar();
   const isOpen = state !== "collapsed";
+  const [userName, setUserName] = useState("");
+  
+  // Fetch user data from Firestore when currentUser changes
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser?.uid) {
+        try {
+          const userData = await firestore.getUser(currentUser.uid);
+          if (userData && userData.name) {
+            setUserName(userData.name);
+          } else {
+            // Fallback to email or default display name if name is not available
+            setUserName(currentUser?.displayName || currentUser?.email?.split('@')[0] || "User");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setUserName(currentUser?.displayName || currentUser?.email?.split('@')[0] || "User");
+        }
+      }
+    };
+    
+    fetchUserData();
+  }, [currentUser]);
   
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}`);
   };
   
-  const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || "User";
+  // Use the fetched userName or fall back to email
+  const displayName = userName || currentUser?.email?.split('@')[0] || "User";
   const starredProjects = getStarredProjects();
   
   return <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>

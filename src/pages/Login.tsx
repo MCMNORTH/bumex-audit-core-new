@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
+import { firestore } from "@/lib/firebase";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -21,6 +22,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -34,14 +36,33 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+    setAuthError(null);
+    
     try {
-      await login(data.email, data.password);
-      toast("Login successful", {
-        description: "Welcome back!"
-      });
-      navigate("/");
+      // First authenticate the user with Firebase
+      const userCredential = await login(data.email, data.password);
+      
+      // Then check if the user is an admin
+      if (userCredential.user) {
+        const userData = await firestore.getUser(userCredential.user.uid);
+        
+        if (userData && userData.admin === true) {
+          toast("Login successful", {
+            description: "Welcome back!"
+          });
+          navigate("/");
+        } else {
+          // If not admin, sign them out and show error
+          await userCredential.user.auth.signOut();
+          setAuthError("Access denied. Only administrators can access this application.");
+          toast("Access denied", {
+            description: "Only administrators can access this application.",
+          });
+        }
+      }
     } catch (error) {
       console.error("Login error:", error);
+      setAuthError("Invalid email or password. Please try again.");
       toast("Login failed", {
         description: "Invalid email or password. Please try again.",
       });
@@ -71,6 +92,11 @@ const Login = () => {
         <CardContent className="pt-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {authError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                  {authError}
+                </div>
+              )}
               <FormField
                 control={form.control}
                 name="email"

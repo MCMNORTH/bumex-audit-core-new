@@ -14,7 +14,7 @@ import { auth } from "@/lib/firebase";
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<UserCredential>;
   logout: () => Promise<void>;
   signup: (email: string, password: string) => Promise<UserCredential>;
   changePassword: (newPassword: string) => Promise<void>;
@@ -34,15 +34,15 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Modified to return the UserCredential
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    return await signInWithEmailAndPassword(auth, email, password);
   };
 
   const logout = async () => {
     await signOut(auth);
   };
 
-  // Updated to return the UserCredential
   const signup = async (email: string, password: string) => {
     return await createUserWithEmailAndPassword(auth, email, password);
   };
