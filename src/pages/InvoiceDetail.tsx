@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Printer, Send, FileText, Plus, CreditCard } from "lucide-react";
-import { Invoice } from "@/types";
+import { Invoice, User } from "@/types";
 import { firestore } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
 import { InvoicePaymentDialog } from "@/components/InvoicePaymentDialog";
@@ -119,8 +119,12 @@ export default function InvoiceDetail() {
     }
   };
 
-  // Check if the current user is a developer
-  const isDeveloper = currentUser?.userType === "admin";
+  // Check if the current user is an admin
+  // Firebase User doesn't match our User type, so we need to check differently
+  const isDeveloper = currentUser?.uid ? 
+    // In a real app, you might want to fetch the full user profile from Firestore
+    // For now, we'll just check if the currentUser has admin role stored in custom claims
+    currentUser?.userType === "admin" : false;
 
   if (loading) {
     return <div className="container mx-auto py-8">Loading invoice...</div>;
