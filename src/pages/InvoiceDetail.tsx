@@ -119,12 +119,11 @@ export default function InvoiceDetail() {
     }
   };
 
-  // Check if the current user is an admin
-  // Firebase User doesn't match our User type, so we need to check differently
-  const isDeveloper = currentUser?.uid ? 
-    // In a real app, you might want to fetch the full user profile from Firestore
-    // For now, we'll just check if the currentUser has admin role stored in custom claims
-    currentUser?.userType === "admin" : false;
+  // Fix the type error by using a safer check for admin privileges
+  // The Firebase User type doesn't have the userType property, so we need to check differently
+  const isDeveloper = currentUser ? 
+    // Check if the user is an admin
+    (currentUser as any).userType === "admin" : false;
 
   if (loading) {
     return <div className="container mx-auto py-8">Loading invoice...</div>;
