@@ -119,11 +119,9 @@ export default function InvoiceDetail() {
     }
   };
 
-  // Updated check for admin/developer privileges
-  // Since the Firebase User type and our User type might not match exactly,
-  // we need to check the userType property in a way that works for our app
-  const isAdmin = currentUser && 
-    ((currentUser as any).userType === "admin" || (currentUser as any).userType === "dev");
+  // Check if user is NOT a client (so we show admin/dev buttons to all non-client users)
+  const isNotClientUser = currentUser && 
+    (currentUser as any).userType !== "client";
 
   if (loading) {
     return <div className="container mx-auto py-8">Loading invoice...</div>;
@@ -159,7 +157,7 @@ export default function InvoiceDetail() {
             <Printer className="h-4 w-4 mr-2" /> Print
           </Button>
           
-          {isAdmin && (
+          {isNotClientUser && (
             <>
               <Button variant="outline" onClick={handleSendEmail}>
                 <Send className="h-4 w-4 mr-2" /> Send to Client
