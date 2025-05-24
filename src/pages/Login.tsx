@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { firestore } from "@/lib/firebase";
+
 const loginSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address."
@@ -20,6 +21,7 @@ const loginSchema = z.object({
   })
 });
 type LoginFormData = z.infer<typeof loginSchema>;
+
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -35,6 +37,7 @@ const Login = () => {
       password: ""
     }
   });
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setAuthError(null);
@@ -42,20 +45,20 @@ const Login = () => {
       // First authenticate the user with Firebase
       const userCredential = await login(data.email, data.password);
 
-      // Then check if the user is an admin
+      // Then check if the user is a client
       if (userCredential.user) {
         const userData = await firestore.getUser(userCredential.user.uid);
-        if (userData && userData.admin === true) {
+        if (userData && userData.client === true) {
           toast("Login successful", {
             description: "Welcome back!"
           });
           navigate("/");
         } else {
-          // If not admin, sign them out using the logout function from AuthContext
+          // If not client, sign them out using the logout function from AuthContext
           await logout();
-          setAuthError("Access denied. Only administrators can access this application.");
+          setAuthError("Access denied. Only clients can access this application.");
           toast("Access denied", {
-            description: "Only administrators can access this application."
+            description: "Only clients can access this application."
           });
         }
       }
@@ -69,6 +72,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+
   return <div className="h-screen w-screen flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md flex flex-col items-center mb-8">
         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
@@ -129,4 +133,5 @@ const Login = () => {
       </Card>
     </div>;
 };
+
 export default Login;
