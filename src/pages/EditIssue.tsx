@@ -53,7 +53,7 @@ const EditIssue = () => {
   const [type, setType] = useState<IssueType>("task");
   const [priority, setPriority] = useState<Priority>("medium");
   const [status, setStatus] = useState<Status>("todo");
-  const [assigneeId, setAssigneeId] = useState<string | undefined>(undefined);
+  const [assignee, setAssignee] = useState<string>("");
   const [epicId, setEpicId] = useState<string | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
@@ -76,7 +76,7 @@ const EditIssue = () => {
     setType(issue.type);
     setPriority(issue.priority);
     setStatus(issue.status);
-    setAssigneeId(issue.assigneeId);
+    setAssignee(issue.assignee || "");
     setEpicId(issue.epicId);
 
     const fetchUsers = async () => {
@@ -126,7 +126,7 @@ const EditIssue = () => {
         type,
         status,
         priority,
-        assigneeId: assigneeId || null, // Use null instead of undefined
+        assignee: assignee || undefined,
         updatedAt: new Date().toISOString(),
         // Handle epic ID properly
         ...(epicId && epicId !== "no-epic" ? { epicId } : { epicId: null }),
@@ -238,8 +238,8 @@ const EditIssue = () => {
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
             <Select
-              value={assigneeId || "unassigned"}
-              onValueChange={(value) => setAssigneeId(value === "unassigned" ? null : value)}
+              value={assignee || "unassigned"}
+              onValueChange={(value) => setAssignee(value === "unassigned" ? "" : value)}
               disabled={loading}
             >
               <SelectTrigger>
@@ -248,7 +248,7 @@ const EditIssue = () => {
               <SelectContent>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 {users.map((user) => (
-                  <SelectItem key={user.id} value={user.id}>
+                  <SelectItem key={user.id} value={user.name}>
                     {getUserDisplayName(user)}
                   </SelectItem>
                 ))}

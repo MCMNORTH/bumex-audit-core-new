@@ -51,7 +51,7 @@ const CreateIssue = () => {
   const [type, setType] = useState<IssueType>("task");
   const [priority, setPriority] = useState<Priority>("medium");
   const [status, setStatus] = useState<Status>("todo");
-  const [assigneeId, setAssigneeId] = useState<string | undefined>(undefined);
+  const [assignee, setAssignee] = useState<string>("");
   const [epicId, setEpicId] = useState<string | undefined>(undefined);
   const [parentId, setParentId] = useState<string | undefined>(undefined);
   const [users, setUsers] = useState<User[]>([]);
@@ -70,7 +70,7 @@ const CreateIssue = () => {
         })) as User[];
         setUsers(usersData);
         if (usersData.length > 0) {
-          setAssigneeId(usersData[0].id);
+          setAssignee(usersData[0].name);
         }
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -107,7 +107,7 @@ const CreateIssue = () => {
         type,
         status,
         priority,
-        assigneeId: assigneeId || null, // Use null instead of undefined
+        assignee: assignee || undefined,
         reporterId: localStorage.getItem("userId") || "",
         projectId,
         // Only include epicId if it's not undefined or "no-epic"
@@ -234,8 +234,8 @@ const CreateIssue = () => {
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
             <Select
-              value={assigneeId || "unassigned"}
-              onValueChange={(value) => setAssigneeId(value === "unassigned" ? null : value)}
+              value={assignee || "unassigned"}
+              onValueChange={(value) => setAssignee(value === "unassigned" ? "" : value)}
               disabled={loading}
             >
               <SelectTrigger>
@@ -244,7 +244,7 @@ const CreateIssue = () => {
               <SelectContent>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
                 {users.map((user) => (
-                  <SelectItem key={user.id} value={user.id}>
+                  <SelectItem key={user.id} value={user.name}>
                     {getUserDisplayName(user)}
                   </SelectItem>
                 ))}

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,7 +34,7 @@ import { db } from "@/lib/firebase";
 
 const IssueDetail = () => {
   const { issueId = "" } = useParams();
-  const { issues, getUserById, getProjectById, updateIssueStatus, deleteIssue, fetchIssues, updateIssue } = useAppStore();
+  const { issues, getProjectById, updateIssueStatus, deleteIssue, fetchIssues, updateIssue } = useAppStore();
   const navigate = useNavigate();
 
   // Edit mode states
@@ -46,7 +45,7 @@ const IssueDetail = () => {
   // Edit values
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editAssigneeId, setEditAssigneeId] = useState<string | null>(null);
+  const [editAssignee, setEditAssignee] = useState<string>("");
   
   // Users for assignee dropdown
   const [users, setUsers] = useState<User[]>([]);
@@ -99,8 +98,6 @@ const IssueDetail = () => {
   // Don't show subtask list for subtasks themselves
   const isSubtask = issue.type === "subtask";
 
-  const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
-  const reporter = issue.reporterId ? getUserById(issue.reporterId) : null;
   const project = getProjectById(issue.projectId);
 
   // Helper function to get user display name
@@ -164,16 +161,16 @@ const IssueDetail = () => {
   };
 
   const handleAssigneeEdit = () => {
-    setEditAssigneeId(issue.assigneeId || null);
+    setEditAssignee(issue.assignee || "");
     setEditingAssignee(true);
   };
 
   const handleAssigneeSave = async () => {
-    if (editAssigneeId !== issue.assigneeId) {
+    if (editAssignee !== issue.assignee) {
       try {
         await updateIssue({
           ...issue,
-          assigneeId: editAssigneeId
+          assignee: editAssignee || undefined
         });
         toast("Assignee updated successfully");
       } catch (error) {
@@ -185,7 +182,7 @@ const IssueDetail = () => {
   };
 
   const handleAssigneeCancel = () => {
-    setEditAssigneeId(issue.assigneeId || null);
+    setEditAssignee(issue.assignee || "");
     setEditingAssignee(false);
   };
 
@@ -411,8 +408,8 @@ const IssueDetail = () => {
                 {editingAssignee ? (
                   <div className="flex items-center gap-2 flex-1">
                     <Select
-                      value={editAssigneeId || "unassigned"}
-                      onValueChange={(value) => setEditAssigneeId(value === "unassigned" ? null : value)}
+                      value={editAssignee || "unassigned"}
+                      onValueChange={(value) => setEditAssignee(value === "unassigned" ? "" : value)}
                     >
                       <SelectTrigger className="w-48">
                         <SelectValue placeholder="Select assignee" />
@@ -420,7 +417,7 @@ const IssueDetail = () => {
                       <SelectContent>
                         <SelectItem value="unassigned">Unassigned</SelectItem>
                         {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
+                          <SelectItem key={user.id} value={user.name}>
                             {getUserDisplayName(user)}
                           </SelectItem>
                         ))}
@@ -439,20 +436,12 @@ const IssueDetail = () => {
                     onClick={handleAssigneeEdit}
                     title="Click to edit assignee"
                   >
-                    {assignee ? (
+                    {issue.assignee ? (
                       <>
                         <div className="h-6 w-6 rounded-full bg-[#459ed7] text-white flex items-center justify-center text-xs">
-                          {assignee.avatarUrl ? (
-                            <img 
-                              src={assignee.avatarUrl} 
-                              alt={assignee.name} 
-                              className="h-full w-full rounded-full object-cover" 
-                            />
-                          ) : (
-                            assignee.name.substring(0, 2).toUpperCase()
-                          )}
+                          {issue.assignee.charAt(0).toUpperCase()}
                         </div>
-                        <span className="text-sm">{assignee.name}</span>
+                        <span className="text-sm">{issue.assignee}</span>
                       </>
                     ) : (
                       <span className="text-sm text-gray-500">Unassigned</span>

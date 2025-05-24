@@ -9,8 +9,7 @@ interface IssueCardProps {
 }
 
 export function IssueCard({ issue }: IssueCardProps) {
-  const { getUserById, issues } = useAppStore();
-  const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
+  const { issues } = useAppStore();
   const navigate = useNavigate();
   
   // Get subtask count and completion
@@ -69,15 +68,12 @@ export function IssueCard({ issue }: IssueCardProps) {
       
       <div className="flex justify-between items-center mt-2">
         <div className="flex items-center">
-          {assignee ? (
-            <div className="flex items-center">
+          {issue.assignee ? (
+            <div className="flex items-center gap-1">
               <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs overflow-hidden">
-                {assignee.avatarUrl ? (
-                  <img src={assignee.avatarUrl} alt={assignee.name} className="w-full h-full object-cover" />
-                ) : (
-                  (assignee.name || assignee.email || "U").charAt(0).toUpperCase()
-                )}
+                {issue.assignee.charAt(0).toUpperCase()}
               </div>
+              <span className="text-xs text-gray-600">{issue.assignee}</span>
             </div>
           ) : (
             <div className="w-5 h-5 rounded-full border border-dashed border-gray-300 flex items-center justify-center">

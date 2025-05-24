@@ -1,3 +1,4 @@
+
 export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
 
 export type Status = "todo" | "in-progress" | "in-review" | "done";
@@ -39,7 +40,7 @@ export interface Issue {
   type: "bug" | "task" | "story" | "epic" | "subtask";
   status: Status;
   priority: "highest" | "high" | "medium" | "low" | "lowest";
-  assigneeId?: string;
+  assignee?: string; // Changed from assigneeId to assignee (stores name)
   reporterId: string;
   epicId?: string;
   sprintId?: string;
