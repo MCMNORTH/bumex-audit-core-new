@@ -109,7 +109,17 @@ export const Sidebar = () => {
       </div>
 
       {/* Users Section */}
-      
+      <div className="p-2">
+        <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
+          Users
+        </div>
+        <div className="mb-4">
+          <Button onClick={() => navigate('/users')} className={cn("w-full justify-start gap-2", isRouteActive('/users') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
+            <Users className="h-4 w-4" />
+            {isOpen && <span>View Users</span>}
+          </Button>
+        </div>
+      </div>
 
       
       <div className="p-2 overflow-y-auto flex-1">
