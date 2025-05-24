@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
@@ -107,6 +106,25 @@ export const Sidebar = () => {
           <PlusCircle className="h-4 w-4" />
           {isOpen && <span>Create Project</span>}
         </Button>
+      </div>
+
+      {/* Quotes Section */}
+      <div className="p-2">
+        <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
+          Quotes
+        </div>
+        <div className="mb-4">
+          <Button 
+            onClick={() => navigate('/quotes')}
+            className={cn(
+              "w-full justify-start gap-2",
+              isRouteActive('/quotes') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
+            )}
+          >
+            <FileText className="h-4 w-4" />
+            {isOpen && <span>View Quotes</span>}
+          </Button>
+        </div>
       </div>
 
       {/* Invoices Section */}

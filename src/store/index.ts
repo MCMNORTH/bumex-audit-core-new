@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Epic, Issue, Project, Status, User, Sprint, Invoice } from '@/types';
+import { Epic, Issue, Project, Status, User, Sprint, Invoice, Quote } from '@/types';
 import { firestore } from '@/lib/firebase';
 import { v4 as uuidv4 } from 'uuid';
 import { persist } from 'zustand/middleware';
@@ -12,6 +12,7 @@ interface AppState {
   issues: Issue[];
   sprints: Sprint[];
   invoices: Invoice[];
+  quotes: Quote[];
   selectedProject: Project | null;
   selectedIssue: Issue | null;
   recentProjects: Project[];
@@ -64,6 +65,11 @@ interface AppState {
   getAllInvoices: () => Promise<Invoice[]>;
   updateInvoice: (invoice: Invoice) => Promise<void>;
   addPaymentToInvoice: (invoiceId: string, payment: any) => Promise<any>;
+  
+  // Quote specific actions
+  getQuote: (quoteId: string) => Promise<Quote | null>;
+  getAllQuotes: () => Promise<Quote[]>;
+  updateQuote: (quote: Quote) => Promise<void>;
 }
 
 export const useAppStore = create<AppState>()(
@@ -76,6 +82,7 @@ export const useAppStore = create<AppState>()(
       issues: [],
       sprints: [],
       invoices: [],
+      quotes: [],
       selectedProject: null,
       selectedIssue: null,
       recentProjects: [],
@@ -421,6 +428,33 @@ export const useAppStore = create<AppState>()(
           console.error("Error adding payment:", error);
           throw error;
         }
+      },
+      
+      // Quote Functions
+      getQuote: async (quoteId: string) => {
+        try {
+          return await firestore.getQuote(quoteId) as Quote | null;
+        } catch (error) {
+          console.error("Error fetching quote:", error);
+          return null;
+        }
+      },
+      
+      getAllQuotes: async () => {
+        try {
+          return await firestore.getAllQuotes() as Quote[];
+        } catch (error) {
+          console.error("Error fetching all quotes:", error);
+          return [];
+        }
+      },
+      
+      updateQuote: async (quote: Quote) => {
+        const updatedQuote = {
+          ...quote,
+          updatedAt: new Date().toISOString()
+        };
+        await firestore.updateQuote(quote.id, updatedQuote);
       },
     }),
     {

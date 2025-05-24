@@ -28,6 +28,7 @@ export const issuesCollection = collection(db, "issues");
 export const usersCollection = collection(db, "users");
 export const sprintsCollection = collection(db, "sprints");
 export const invoicesCollection = collection(db, "invoices");
+export const quotesCollection = collection(db, "quotes");
 
 // Export query functions needed for client queries
 export { query, where };
@@ -41,6 +42,7 @@ export const firestore = {
   usersCollection,
   sprintsCollection,
   invoicesCollection,
+  quotesCollection,
   query,
   where,
   getDocs,
@@ -80,6 +82,12 @@ export const firestore = {
     const invoiceRef = doc(invoicesCollection, invoiceData.id);
     await setDoc(invoiceRef, invoiceData);
     return invoiceData;
+  },
+  
+  createQuote: async (quoteData: any) => {
+    const quoteRef = doc(quotesCollection, quoteData.id);
+    await setDoc(quoteRef, quoteData);
+    return quoteData;
   },
   
   // Read
@@ -159,6 +167,18 @@ export const firestore = {
     return invoicesSnap.docs.map(doc => doc.data());
   },
   
+  getQuote: async (quoteId: string) => {
+    const quoteRef = doc(quotesCollection, quoteId);
+    const quoteSnap = await getDoc(quoteRef);
+    return quoteSnap.exists() ? quoteSnap.data() : null;
+  },
+
+  getAllQuotes: async () => {
+    const q = query(quotesCollection, where("deleted", "!=", true));
+    const quotesSnap = await getDocs(q);
+    return quotesSnap.docs.map(doc => doc.data());
+  },
+  
   // Update
   updateProject: async (projectId: string, data: any) => {
     const projectRef = doc(projectsCollection, projectId);
@@ -188,6 +208,12 @@ export const firestore = {
     const invoiceRef = doc(invoicesCollection, invoiceId);
     await updateDoc(invoiceRef, data);
     return { id: invoiceId, ...data };
+  },
+  
+  updateQuote: async (quoteId: string, data: any) => {
+    const quoteRef = doc(quotesCollection, quoteId);
+    await updateDoc(quoteRef, data);
+    return { id: quoteId, ...data };
   },
   
   addPaymentToInvoice: async (invoiceId: string, payment: any) => {
@@ -253,6 +279,11 @@ export const firestore = {
   deleteInvoice: async (invoiceId: string) => {
     await deleteDoc(doc(invoicesCollection, invoiceId));
     return invoiceId;
+  },
+  
+  deleteQuote: async (quoteId: string) => {
+    await deleteDoc(doc(quotesCollection, quoteId));
+    return quoteId;
   },
 };
 
