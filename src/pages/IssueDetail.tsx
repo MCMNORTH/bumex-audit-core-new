@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -445,14 +444,14 @@ const IssueDetail = () => {
                           {assignee.avatarUrl ? (
                             <img 
                               src={assignee.avatarUrl} 
-                              alt={assignee.name} 
+                              alt={getUserDisplayName(assignee)} 
                               className="h-full w-full rounded-full object-cover" 
                             />
                           ) : (
-                            assignee.name.substring(0, 2).toUpperCase()
+                            getUserDisplayName(assignee).substring(0, 2).toUpperCase()
                           )}
                         </div>
-                        <span className="text-sm">{assignee.name}</span>
+                        <span className="text-sm">{getUserDisplayName(assignee)}</span>
                       </>
                     ) : (
                       <span className="text-sm text-gray-500">Unassigned</span>
@@ -469,14 +468,14 @@ const IssueDetail = () => {
                       {reporter.avatarUrl ? (
                         <img 
                           src={reporter.avatarUrl} 
-                          alt={reporter.name} 
+                          alt={getUserDisplayName(reporter)} 
                           className="h-full w-full rounded-full object-cover" 
                         />
                       ) : (
-                        reporter.name.substring(0, 2).toUpperCase()
+                        getUserDisplayName(reporter).substring(0, 2).toUpperCase()
                       )}
                     </div>
-                    <span className="text-sm">{reporter.name}</span>
+                    <span className="text-sm">{getUserDisplayName(reporter)}</span>
                   </div>
                 ) : (
                   <span className="text-sm text-gray-500">None</span>

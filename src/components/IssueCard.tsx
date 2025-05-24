@@ -2,7 +2,7 @@
 import { useAppStore } from "@/store";
 import { Bug, CheckCircle2, FileText, Award, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Issue } from "@/types";
+import { Issue, User } from "@/types";
 
 interface IssueCardProps {
   issue: Issue;
@@ -17,6 +17,14 @@ export function IssueCard({ issue }: IssueCardProps) {
   const subtasks = issues.filter(i => i.parentId === issue.id && i.type === "subtask");
   const completedSubtasks = subtasks.filter(i => i.status === "done").length;
   const hasSubtasks = subtasks.length > 0;
+  
+  // Helper function to get user display name
+  const getUserDisplayName = (user: User): string => {
+    if (user.name) return user.name;
+    if (user.displayName) return user.displayName;
+    if (user.email) return user.email.split('@')[0];
+    return "Unknown User";
+  };
   
   // Map priority to colors
   const priorityColors = {
@@ -65,7 +73,14 @@ export function IssueCard({ issue }: IssueCardProps) {
         </button>
       </div>
       
-      <h3 className="font-medium text-sm line-clamp-2">{issue.title}</h3>
+      <h3 className="font-medium text-sm line-clamp-2 mb-2">{issue.title}</h3>
+      
+      {/* Assignee name display */}
+      {assignee && (
+        <div className="text-xs text-gray-600 mb-2">
+          Assigned to: {getUserDisplayName(assignee)}
+        </div>
+      )}
       
       <div className="flex justify-between items-center mt-2">
         <div className="flex items-center">
@@ -73,9 +88,9 @@ export function IssueCard({ issue }: IssueCardProps) {
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs overflow-hidden">
                 {assignee.avatarUrl ? (
-                  <img src={assignee.avatarUrl} alt={assignee.name} className="w-full h-full object-cover" />
+                  <img src={assignee.avatarUrl} alt={getUserDisplayName(assignee)} className="w-full h-full object-cover" />
                 ) : (
-                  (assignee.name || assignee.email || "U").charAt(0).toUpperCase()
+                  getUserDisplayName(assignee).charAt(0).toUpperCase()
                 )}
               </div>
             </div>
