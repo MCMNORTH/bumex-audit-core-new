@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -10,20 +9,25 @@ import { Quote } from "@/types";
 import { useAppStore } from "@/store";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-
 const QuoteDetail = () => {
-  const { quoteId } = useParams<{ quoteId: string }>();
+  const {
+    quoteId
+  } = useParams<{
+    quoteId: string;
+  }>();
   const navigate = useNavigate();
-  const { getQuote, updateQuote } = useAppStore();
-  const { toast } = useToast();
-  
+  const {
+    getQuote,
+    updateQuote
+  } = useAppStore();
+  const {
+    toast
+  } = useToast();
   const [quote, setQuote] = useState<Quote | null>(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     const fetchQuote = async () => {
       if (!quoteId) return;
-      
       setLoading(true);
       try {
         const fetchedQuote = await getQuote(quoteId);
@@ -33,7 +37,7 @@ const QuoteDetail = () => {
           toast({
             title: "Error",
             description: "Quote not found",
-            variant: "destructive",
+            variant: "destructive"
           });
           navigate('/quotes');
         }
@@ -42,16 +46,14 @@ const QuoteDetail = () => {
         toast({
           title: "Error",
           description: "Failed to load quote",
-          variant: "destructive",
+          variant: "destructive"
         });
       } finally {
         setLoading(false);
       }
     };
-
     fetchQuote();
   }, [quoteId, getQuote, navigate, toast]);
-
   const getStatusColor = (status: Quote['status']) => {
     switch (status) {
       case 'draft':
@@ -68,64 +70,51 @@ const QuoteDetail = () => {
         return 'bg-gray-500';
     }
   };
-
   const canEdit = quote && (quote.status === 'draft' || quote.status === 'pending');
-
   const handleEditQuote = () => {
     if (quote && canEdit) {
       navigate(`/quotes/${quote.id}/edit`);
     }
   };
-
   const handleStatusChange = async (newStatus: Quote['status']) => {
     if (!quote) return;
-
     try {
-      const updatedQuote = await updateQuote(quote.id, { 
+      const updatedQuote = await updateQuote(quote.id, {
         status: newStatus,
         updatedAt: new Date().toISOString()
       });
       setQuote(updatedQuote);
       toast({
         title: "Success",
-        description: "Quote status updated successfully",
+        description: "Quote status updated successfully"
       });
     } catch (error) {
       console.error("Error updating quote status:", error);
       toast({
         title: "Error",
         description: "Failed to update quote status",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const handlePrint = () => {
     window.print();
   };
-
   if (loading) {
-    return (
-      <div className="container mx-auto py-8">
+    return <div className="container mx-auto py-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-lg">Loading quote...</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (!quote) {
-    return (
-      <div className="container mx-auto py-8">
+    return <div className="container mx-auto py-8">
         <div className="flex items-center justify-center h-64">
           <div className="text-lg">Quote not found</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <>
+  return <>
       <style jsx>{`
         @media print {
           body * {
@@ -154,41 +143,24 @@ const QuoteDetail = () => {
       <div className="container mx-auto py-8 no-print">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center mb-8">
-            <img 
-              src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
-              alt="OVERCODE" 
-              className="h-8 mr-4"
-            />
+            
             <h1 className="text-3xl font-bold">Quote Detail</h1>
           </div>
 
           <div className="flex items-center justify-between mb-6">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/quotes')}
-              className="flex items-center"
-            >
+            <Button variant="outline" onClick={() => navigate('/quotes')} className="flex items-center">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Quotes
             </Button>
             <div className="flex items-center space-x-2">
-              <Button 
-                onClick={handlePrint}
-                variant="outline"
-                className="flex items-center"
-              >
+              <Button onClick={handlePrint} variant="outline" className="flex items-center">
                 <Printer className="mr-2 h-4 w-4" />
                 Print Quote
               </Button>
-              {canEdit && (
-                <Button 
-                  onClick={handleEditQuote}
-                  className="flex items-center bg-jira-blue hover:bg-jira-blue-dark"
-                >
+              {canEdit && <Button onClick={handleEditQuote} className="flex items-center bg-jira-blue hover:bg-jira-blue-dark">
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Quote
-                </Button>
-              )}
+                </Button>}
             </div>
           </div>
 
@@ -214,11 +186,7 @@ const QuoteDetail = () => {
 
           <div className="printable-area bg-white rounded-lg shadow p-8">
             <div className="mb-8">
-              <img 
-                src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
-                alt="OVERCODE" 
-                className="print-logo h-12 mb-6"
-              />
+              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="OVERCODE" className="print-logo h-12 mb-6" />
             </div>
 
             <div className="border-b pb-6 mb-6">
@@ -244,12 +212,10 @@ const QuoteDetail = () => {
                 </h3>
                 <div className="space-y-2">
                   <p><strong>Name:</strong> {quote.clientName}</p>
-                  {quote.clientContact && (
-                    <p className="flex items-center">
+                  {quote.clientContact && <p className="flex items-center">
                       <Mail className="mr-2 h-4 w-4" />
                       <strong>Contact:</strong> {quote.clientContact}
-                    </p>
-                  )}
+                    </p>}
                 </div>
               </div>
               <div>
@@ -287,14 +253,12 @@ const QuoteDetail = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {quote.items.map((item, index) => (
-                      <tr key={index}>
+                    {quote.items.map((item, index) => <tr key={index}>
                         <td className="border border-gray-200 px-4 py-2">{item.description}</td>
                         <td className="border border-gray-200 px-4 py-2 text-center">{item.quantity}</td>
                         <td className="border border-gray-200 px-4 py-2 text-right">{item.price.toFixed(2)} {quote.currency}</td>
                         <td className="border border-gray-200 px-4 py-2 text-right">{(item.quantity * item.price).toFixed(2)} {quote.currency}</td>
-                      </tr>
-                    ))}
+                      </tr>)}
                   </tbody>
                   <tfoot>
                     <tr className="bg-gray-50 font-semibold">
@@ -308,8 +272,6 @@ const QuoteDetail = () => {
           </div>
         </div>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default QuoteDetail;
