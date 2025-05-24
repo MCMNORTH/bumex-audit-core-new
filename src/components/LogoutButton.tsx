@@ -33,7 +33,7 @@ export const LogoutButton = () => {
       });
     }
   };
-  return <Button variant="ghost" size="sm" onClick={handleLogout} className="">
+  return <Button variant="ghost" size="sm" onClick={handleLogout} className="w-full justify-start text-muted-foreground hover:text-foreground">
       <LogOut className="mr-2 h-4 w-4" />
       {!isCollapsed && <span>Logout</span>}
     </Button>;
