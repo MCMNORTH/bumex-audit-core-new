@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,9 +70,7 @@ const CreateIssue = () => {
           ...doc.data()
         })) as User[];
         setUsers(usersData);
-        if (usersData.length > 0) {
-          setAssignee(usersData[0].name);
-        }
+        // Don't automatically set assignee - leave it empty by default
       } catch (error) {
         console.error("Error fetching users:", error);
         toast({
@@ -239,7 +238,7 @@ const CreateIssue = () => {
               disabled={loading}
             >
               <SelectTrigger>
-                <SelectValue placeholder={loading ? "Loading users..." : "Select assignee"} />
+                <SelectValue placeholder={loading ? "Loading users..." : "Select assignee (optional)"} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="unassigned">Unassigned</SelectItem>
