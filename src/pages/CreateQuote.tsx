@@ -1,300 +1,432 @@
 
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, ArrowLeft } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { InvoiceItem, Currency, Quote } from "@/types";
+import { 
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage 
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useForm, useFieldArray } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { User, Currency, InvoiceItem } from "@/types";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { firestore } from "@/lib/firebase";
-import { v4 as uuidv4 } from 'uuid';
-import { useToast } from "@/hooks/use-toast";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "@/components/ui/use-toast";
+import { PlusCircle, MinusCircle } from "lucide-react";
 
-const CreateQuote = () => {
+const quoteFormSchema = z.object({
+  userId: z.string().optional(),
+  clientName: z.string().min(1, "Client name is required"),
+  clientContact: z.string().optional(),
+  validUntil: z.string().min(1, "Valid until date is required"),
+  currency: z.enum(["MRU", "USD", "EUR"]).default("MRU"),
+  items: z.array(z.object({
+    description: z.string().min(1, "Description is required"),
+    quantity: z.coerce.number().positive("Quantity must be positive"),
+    price: z.coerce.number().positive("Price must be positive")
+  })).min(1, "At least one item is required"),
+});
+
+type QuoteFormValues = z.infer<typeof quoteFormSchema>;
+
+export default function CreateQuote() {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
-  const { toast } = useToast();
+  const [users, setUsers] = useState<User[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const [clientName, setClientName] = useState('');
-  const [clientContact, setClientContact] = useState('');
-  const [items, setItems] = useState<InvoiceItem[]>([
-    { description: '', quantity: 1, price: 0 }
-  ]);
-  const [currency, setCurrency] = useState<Currency>('USD');
-  const [issueDate, setIssueDate] = useState(new Date().toISOString().split('T')[0]);
-  const [validUntil, setValidUntil] = useState('');
-  const [loading, setLoading] = useState(false);
+  // Fetch users from Firestore
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const fetchedUsers = await firestore.getAllUsers() as User[];
+        setUsers(fetchedUsers);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load users. Please try again.",
+          variant: "destructive"
+        });
+      }
+    };
+    
+    fetchUsers();
+  }, []);
 
-  const addItem = () => {
-    setItems([...items, { description: '', quantity: 1, price: 0 }]);
+  const defaultValues: Partial<QuoteFormValues> = {
+    clientName: "",
+    clientContact: "",
+    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
+    currency: "MRU",
+    items: [{
+      description: "",
+      quantity: 1,
+      price: 0
+    }]
   };
 
-  const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
+  const form = useForm<QuoteFormValues>({
+    resolver: zodResolver(quoteFormSchema),
+    defaultValues
+  });
+
+  // Using useFieldArray hook to handle dynamic form fields
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "items"
+  });
+
+  // Filter users based on search term
+  useEffect(() => {
+    if (searchTerm) {
+      const filtered = users.filter(user => 
+        (user.fullName || user.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.email || "").toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredUsers(filtered);
+      setShowSuggestions(true);
+    } else {
+      setFilteredUsers([]);
+      setShowSuggestions(false);
+    }
+  }, [searchTerm, users]);
+
+  const selectUser = (user: User) => {
+    form.setValue("clientName", user.fullName || user.name || user.email);
+    form.setValue("userId", user.id);
+    form.setValue("clientContact", user.email || "");
+    setSearchTerm(user.fullName || user.name || user.email);
+    setShowSuggestions(false);
   };
 
-  const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
-    const updatedItems = items.map((item, i) => 
-      i === index ? { ...item, [field]: value } : item
-    );
-    setItems(updatedItems);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    form.setValue("clientName", e.target.value);
   };
 
   const calculateTotal = () => {
+    const items = form.getValues("items") || [];
     return items.reduce((total, item) => total + (item.quantity * item.price), 0);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const addItem = () => {
+    append({ description: "", quantity: 1, price: 0 });
+  };
+
+  const removeItem = (index: number) => {
+    if (fields.length > 1) {
+      remove(index);
+    }
+  };
+
+  const onSubmit = async (data: QuoteFormValues) => {
+    setIsGenerating(true);
     
-    if (!currentUser) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to create a quote",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!clientName.trim()) {
-      toast({
-        title: "Error",
-        description: "Client name is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!validUntil) {
-      toast({
-        title: "Error",
-        description: "Valid until date is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (items.some(item => !item.description.trim() || item.quantity <= 0 || item.price < 0)) {
-      toast({
-        title: "Error",
-        description: "All items must have a description, positive quantity, and non-negative price",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-
     try {
-      const quote: Quote = {
+      const total = calculateTotal();
+      
+      // Create quote document with deleted: false by default
+      const quoteData = {
         id: uuidv4(),
-        userId: currentUser.uid,
-        clientName: clientName.trim(),
-        clientContact: clientContact.trim() || undefined,
-        items,
-        total: calculateTotal(),
-        currency,
-        status: 'draft',
-        issueDate,
-        validUntil,
+        userId: data.userId || "",
+        clientName: data.clientName,
+        clientContact: data.clientContact || "",
+        items: data.items as InvoiceItem[],
+        total,
+        currency: data.currency as Currency,
+        status: "draft" as const,
+        issueDate: new Date().toISOString().split('T')[0],
+        validUntil: data.validUntil,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        deleted: false,
+        deleted: false // Explicitly set deleted to false
       };
-
-      await firestore.createQuote(quote);
-
+      
+      await firestore.createQuote(quoteData);
+      
       toast({
         title: "Success",
-        description: "Quote created successfully",
+        description: "Quote created successfully!",
       });
-
+      
+      // Redirect to the quotes list
       navigate('/quotes');
     } catch (error) {
       console.error("Error creating quote:", error);
       toast({
         title: "Error",
         description: "Failed to create quote. Please try again.",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
-      setLoading(false);
+      setIsGenerating(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto max-w-4xl">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="outline" size="sm" onClick={() => navigate('/quotes')}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Quotes
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold">Create Quote</h1>
-            <p className="text-muted-foreground">Create a new quote for your client</p>
-          </div>
+    <div className="container mx-auto py-8">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center mb-8">
+          <img 
+            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
+            alt="OVERCODE" 
+            className="h-8 mr-4"
+          />
+          <h1 className="text-3xl font-bold">Create New Quote</h1>
         </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="relative">
+                  <FormField
+                    control={form.control}
+                    name="clientName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Client Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Search for a client..." 
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            onFocus={() => setShowSuggestions(true)}
+                            onBlur={() => {
+                              // Delay hiding suggestions to allow click
+                              setTimeout(() => setShowSuggestions(false), 200);
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {showSuggestions && filteredUsers.length > 0 && (
+                    <div className="absolute z-10 w-full bg-white border border-gray-200 mt-1 rounded-md max-h-60 overflow-y-auto shadow-lg">
+                      {filteredUsers.map((user) => (
+                        <div 
+                          key={user.id} 
+                          className="p-2 hover:bg-gray-100 cursor-pointer"
+                          onClick={() => selectUser(user)}
+                        >
+                          <div>{user.fullName || user.name}</div>
+                          <div className="text-xs text-gray-500">{user.email}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Client Information</CardTitle>
-              <CardDescription>Enter your client's details</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="clientName">Client Name *</Label>
-                  <Input
-                    id="clientName"
-                    value={clientName}
-                    onChange={(e) => setClientName(e.target.value)}
-                    placeholder="Enter client name"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="clientContact">Client Contact</Label>
-                  <Input
-                    id="clientContact"
-                    value={clientContact}
-                    onChange={(e) => setClientContact(e.target.value)}
-                    placeholder="Email or phone"
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="clientContact"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Client Contact (Email/Phone)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="client@example.com or +123456789" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Quote Details</CardTitle>
-              <CardDescription>Set the quote dates and currency</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="issueDate">Issue Date</Label>
-                  <Input
-                    id="issueDate"
-                    type="date"
-                    value={issueDate}
-                    onChange={(e) => setIssueDate(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="validUntil">Valid Until *</Label>
-                  <Input
-                    id="validUntil"
-                    type="date"
-                    value={validUntil}
-                    onChange={(e) => setValidUntil(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="currency">Currency</Label>
-                  <Select value={currency} onValueChange={(value: Currency) => setCurrency(value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="USD">USD</SelectItem>
-                      <SelectItem value="EUR">EUR</SelectItem>
-                      <SelectItem value="MRU">MRU</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Items</CardTitle>
-              <CardDescription>Add items to your quote</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {items.map((item, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 border rounded-lg">
-                    <div className="md:col-span-2">
-                      <Label>Description</Label>
-                      <Textarea
-                        value={item.description}
-                        onChange={(e) => updateItem(index, 'description', e.target.value)}
-                        placeholder="Item description"
-                        className="min-h-[80px]"
-                      />
-                    </div>
-                    <div>
-                      <Label>Quantity</Label>
-                      <Input
-                        type="number"
-                        min="1"
-                        value={item.quantity}
-                        onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
-                      />
-                    </div>
-                    <div>
-                      <Label>Price</Label>
-                      <Input
-                        type="number"
-                        min="0"
-                        step="0.01"
-                        value={item.price}
-                        onChange={(e) => updateItem(index, 'price', parseFloat(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div className="flex items-end">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeItem(index)}
-                        disabled={items.length === 1}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="userId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Link to User (Optional)</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        value={field.value}
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a user" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {users.map((user) => (
+                            <SelectItem key={user.id} value={user.id}>
+                              {user.fullName || user.name || user.email}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="MRU">MRU - Mauritanian Ouguiya</SelectItem>
+                          <SelectItem value="USD">USD - US Dollar</SelectItem>
+                          <SelectItem value="EUR">EUR - Euro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-medium">Quote Items</h3>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={addItem}
+                    className="flex items-center"
+                  >
+                    <PlusCircle className="h-4 w-4 mr-1" /> Add Item
+                  </Button>
+                </div>
+
+                <div className="space-y-4">
+                  {fields.map((field, index) => (
+                    <div key={field.id} className="grid grid-cols-12 gap-4 items-end border p-4 rounded-md bg-gray-50">
+                      <div className="col-span-6">
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.description`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Description</FormLabel>
+                              <FormControl>
+                                <Input {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.quantity`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Qty</FormLabel>
+                              <FormControl>
+                                <Input type="number" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.price`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Price</FormLabel>
+                              <FormControl>
+                                <Input type="number" step="0.01" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className="col-span-1 flex justify-end">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeItem(index)}
+                          disabled={fields.length <= 1}
+                        >
+                          <MinusCircle className="h-5 w-5 text-red-500" />
+                        </Button>
+                      </div>
                     </div>
+                  ))}
+                </div>
+
+                <div className="flex justify-end mt-4">
+                  <div className="text-lg font-semibold">
+                    Total: {form.watch("currency")} {calculateTotal().toFixed(2)}
                   </div>
-                ))}
-                
-                <Button type="button" variant="outline" onClick={addItem}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Item
+                </div>
+              </div>
+              
+              <FormField
+                control={form.control}
+                name="validUntil"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Valid Until</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end space-x-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => navigate('/quotes')}
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={isGenerating}
+                  className="bg-jira-blue hover:bg-jira-blue-dark"
+                >
+                  {isGenerating ? "Generating..." : "Generate Quote"}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex justify-between items-center text-lg font-semibold">
-                <span>Total:</span>
-                <span>{calculateTotal().toFixed(2)} {currency}</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-end gap-4">
-            <Button type="button" variant="outline" onClick={() => navigate('/quotes')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Quote"}
-            </Button>
-          </div>
-        </form>
+            </form>
+          </Form>
+        </div>
       </div>
     </div>
   );
-};
-
-export default CreateQuote;
+}
