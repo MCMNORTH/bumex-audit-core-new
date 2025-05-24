@@ -1,8 +1,17 @@
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAppStore } from "@/store";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { 
   Bug, 
   CheckSquare, 
@@ -13,17 +22,34 @@ import {
   Edit, 
   Trash2,
   ArrowLeft,
-  ArrowRight
+  ArrowRight,
+  Check,
+  X
 } from "lucide-react";
 import { toast } from "sonner";
-import { Status } from "@/types";
+import { Status, User } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { SubTaskList } from "@/components/SubTaskList";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 const IssueDetail = () => {
   const { issueId = "" } = useParams();
-  const { issues, getUserById, getProjectById, updateIssueStatus, deleteIssue, fetchIssues } = useAppStore();
+  const { issues, getUserById, getProjectById, updateIssueStatus, deleteIssue, fetchIssues, updateIssue } = useAppStore();
   const navigate = useNavigate();
+
+  // Edit mode states
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [editingAssignee, setEditingAssignee] = useState(false);
+  
+  // Edit values
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editAssigneeId, setEditAssigneeId] = useState<string | null>(null);
+  
+  // Users for assignee dropdown
+  const [users, setUsers] = useState<User[]>([]);
 
   // Fetch issues to ensure we have the latest data
   useEffect(() => {
@@ -32,6 +58,24 @@ const IssueDetail = () => {
       fetchIssues(issue.projectId);
     }
   }, [issueId, issues, fetchIssues]);
+
+  // Fetch users for assignee selection
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const usersData = usersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        })) as User[];
+        setUsers(usersData);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const issue = useMemo(() => {
     return issues.find(i => i.id === issueId);
@@ -58,6 +102,92 @@ const IssueDetail = () => {
   const assignee = issue.assigneeId ? getUserById(issue.assigneeId) : null;
   const reporter = issue.reporterId ? getUserById(issue.reporterId) : null;
   const project = getProjectById(issue.projectId);
+
+  // Helper function to get user display name
+  const getUserDisplayName = (user: User): string => {
+    if (user.name) return user.name;
+    if (user.displayName) return user.displayName;
+    if (user.email) return user.email.split('@')[0];
+    return "Unknown User";
+  };
+
+  const handleTitleEdit = () => {
+    setEditTitle(issue.title);
+    setEditingTitle(true);
+  };
+
+  const handleTitleSave = async () => {
+    if (editTitle.trim() && editTitle !== issue.title) {
+      try {
+        await updateIssue({
+          ...issue,
+          title: editTitle.trim()
+        });
+        toast("Title updated successfully");
+      } catch (error) {
+        console.error("Error updating title:", error);
+        toast("Failed to update title");
+      }
+    }
+    setEditingTitle(false);
+  };
+
+  const handleTitleCancel = () => {
+    setEditTitle(issue.title);
+    setEditingTitle(false);
+  };
+
+  const handleDescriptionEdit = () => {
+    setEditDescription(issue.description || "");
+    setEditingDescription(true);
+  };
+
+  const handleDescriptionSave = async () => {
+    if (editDescription !== issue.description) {
+      try {
+        await updateIssue({
+          ...issue,
+          description: editDescription
+        });
+        toast("Description updated successfully");
+      } catch (error) {
+        console.error("Error updating description:", error);
+        toast("Failed to update description");
+      }
+    }
+    setEditingDescription(false);
+  };
+
+  const handleDescriptionCancel = () => {
+    setEditDescription(issue.description || "");
+    setEditingDescription(false);
+  };
+
+  const handleAssigneeEdit = () => {
+    setEditAssigneeId(issue.assigneeId || null);
+    setEditingAssignee(true);
+  };
+
+  const handleAssigneeSave = async () => {
+    if (editAssigneeId !== issue.assigneeId) {
+      try {
+        await updateIssue({
+          ...issue,
+          assigneeId: editAssigneeId
+        });
+        toast("Assignee updated successfully");
+      } catch (error) {
+        console.error("Error updating assignee:", error);
+        toast("Failed to update assignee");
+      }
+    }
+    setEditingAssignee(false);
+  };
+
+  const handleAssigneeCancel = () => {
+    setEditAssigneeId(issue.assigneeId || null);
+    setEditingAssignee(false);
+  };
 
   const getIssueTypeIcon = () => {
     switch (issue.type) {
@@ -151,7 +281,37 @@ const IssueDetail = () => {
           )}
         </div>
         
-        <h1 className="text-2xl font-bold mb-4">{issue.title}</h1>
+        {/* Editable Title */}
+        <div className="mb-4">
+          {editingTitle ? (
+            <div className="flex items-center gap-2">
+              <Input
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                className="text-2xl font-bold"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') handleTitleSave();
+                  if (e.key === 'Escape') handleTitleCancel();
+                }}
+                autoFocus
+              />
+              <Button size="sm" onClick={handleTitleSave}>
+                <Check className="h-4 w-4" />
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleTitleCancel}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <h1 
+              className="text-2xl font-bold cursor-pointer hover:bg-gray-50 p-2 rounded"
+              onClick={handleTitleEdit}
+              title="Click to edit title"
+            >
+              {issue.title}
+            </h1>
+          )}
+        </div>
         
         <div className="flex flex-wrap gap-4 mb-6">
           <div className="flex items-center gap-1">
@@ -172,9 +332,36 @@ const IssueDetail = () => {
           </div>
         </div>
         
+        {/* Editable Description */}
         <div className="bg-gray-50 p-4 rounded-md mb-6">
           <h2 className="text-sm font-medium mb-2">Description</h2>
-          <p className="text-sm whitespace-pre-wrap">{issue.description || "No description provided."}</p>
+          {editingDescription ? (
+            <div className="space-y-2">
+              <Textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                rows={6}
+                placeholder="No description provided."
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <Button size="sm" onClick={handleDescriptionSave}>
+                  <Check className="h-4 w-4 mr-1" /> Save
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleDescriptionCancel}>
+                  <X className="h-4 w-4 mr-1" /> Cancel
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <p 
+              className="text-sm whitespace-pre-wrap cursor-pointer hover:bg-gray-100 p-2 rounded min-h-[60px]"
+              onClick={handleDescriptionEdit}
+              title="Click to edit description"
+            >
+              {issue.description || "No description provided."}
+            </p>
+          )}
         </div>
         
         <div className="grid md:grid-cols-2 gap-4">
@@ -221,23 +408,56 @@ const IssueDetail = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium w-20">Assignee:</span>
-                {assignee ? (
-                  <div className="flex items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-[#459ed7] text-white flex items-center justify-center text-xs">
-                      {assignee.avatarUrl ? (
-                        <img 
-                          src={assignee.avatarUrl} 
-                          alt={assignee.name} 
-                          className="h-full w-full rounded-full object-cover" 
-                        />
-                      ) : (
-                        assignee.name.substring(0, 2).toUpperCase()
-                      )}
-                    </div>
-                    <span className="text-sm">{assignee.name}</span>
+                {editingAssignee ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <Select
+                      value={editAssigneeId || "unassigned"}
+                      onValueChange={(value) => setEditAssigneeId(value === "unassigned" ? null : value)}
+                    >
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Select assignee" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unassigned">Unassigned</SelectItem>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {getUserDisplayName(user)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button size="sm" onClick={handleAssigneeSave}>
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={handleAssigneeCancel}>
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
                 ) : (
-                  <span className="text-sm text-gray-500">Unassigned</span>
+                  <div 
+                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded flex-1"
+                    onClick={handleAssigneeEdit}
+                    title="Click to edit assignee"
+                  >
+                    {assignee ? (
+                      <>
+                        <div className="h-6 w-6 rounded-full bg-[#459ed7] text-white flex items-center justify-center text-xs">
+                          {assignee.avatarUrl ? (
+                            <img 
+                              src={assignee.avatarUrl} 
+                              alt={assignee.name} 
+                              className="h-full w-full rounded-full object-cover" 
+                            />
+                          ) : (
+                            assignee.name.substring(0, 2).toUpperCase()
+                          )}
+                        </div>
+                        <span className="text-sm">{assignee.name}</span>
+                      </>
+                    ) : (
+                      <span className="text-sm text-gray-500">Unassigned</span>
+                    )}
+                  </div>
                 )}
               </div>
               
