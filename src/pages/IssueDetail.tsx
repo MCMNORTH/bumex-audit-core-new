@@ -80,6 +80,12 @@ const IssueDetail = () => {
     return issues.find(i => i.id === issueId);
   }, [issues, issueId]);
 
+  // Find reporter user based on reporterId
+  const reporter = useMemo(() => {
+    if (!issue?.reporterId) return null;
+    return users.find(user => user.id === issue.reporterId);
+  }, [issue?.reporterId, users]);
+
   if (!issue) {
     return (
       <div className="p-6 text-center">
@@ -418,7 +424,7 @@ const IssueDetail = () => {
                         <SelectItem value="unassigned">Unassigned</SelectItem>
                         {users.map((user) => (
                           <SelectItem key={user.id} value={user.name}>
-                            {getUserDisplayName(user)}
+                            {user.name}
                           </SelectItem>
                         ))}
                       </SelectContent>

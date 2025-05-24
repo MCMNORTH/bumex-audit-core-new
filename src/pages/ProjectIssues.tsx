@@ -34,7 +34,7 @@ const ProjectIssues = () => {
   const filteredIssues = issues.filter(issue => {
     const matchesSearch = issue.title.toLowerCase().includes(search.toLowerCase());
     if (filter === "all") return matchesSearch;
-    if (filter === "unassigned") return matchesSearch && !issue.assigneeId;
+    if (filter === "unassigned") return matchesSearch && !issue.assignee;
     if (filter.startsWith("type-")) return matchesSearch && issue.type === filter.replace("type-", "");
     if (filter.startsWith("epic-")) return matchesSearch && issue.epicId === filter.replace("epic-", "");
     return matchesSearch;
