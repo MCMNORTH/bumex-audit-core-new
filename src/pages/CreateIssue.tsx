@@ -106,7 +106,7 @@ const CreateIssue = () => {
         type,
         status,
         priority,
-        assignee: assignee || undefined,
+        assignee: assignee && assignee !== "unassigned" ? assignee : undefined,
         reporterId: localStorage.getItem("userId") || "",
         projectId,
         // Only include epicId if it's not undefined or "no-epic"
@@ -233,15 +233,15 @@ const CreateIssue = () => {
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
             <Select
-              value={assignee || ""}
-              onValueChange={(value) => setAssignee(value === "" ? "" : value)}
+              value={assignee || "unassigned"}
+              onValueChange={(value) => setAssignee(value === "unassigned" ? "" : value)}
               disabled={loading}
             >
               <SelectTrigger>
                 <SelectValue placeholder={loading ? "Loading users..." : "Select assignee (optional)"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Unassigned</SelectItem>
+                <SelectItem value="unassigned">Unassigned</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.name}>
                     {getUserDisplayName(user)}
