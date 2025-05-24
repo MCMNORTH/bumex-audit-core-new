@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, FileText, Calendar, DollarSign, User, Mail, Phone } from "lucide-react";
+import { ArrowLeft, Edit, FileText, Calendar, DollarSign, User, Mail } from "lucide-react";
 import { Quote } from "@/types";
 import { useAppStore } from "@/store";
 import { format } from "date-fns";
@@ -68,13 +68,19 @@ const QuoteDetail = () => {
     }
   };
 
+  const canEdit = quote && (quote.status === 'draft' || quote.status === 'pending');
+
+  const handleEditQuote = () => {
+    if (quote && canEdit) {
+      navigate(`/quotes/${quote.id}/edit`);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-lg">Loading quote...</div>
-          </div>
+      <div className="container mx-auto py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Loading quote...</div>
         </div>
       </div>
     );
@@ -82,123 +88,135 @@ const QuoteDetail = () => {
 
   if (!quote) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="container mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-lg">Quote not found</div>
-          </div>
+      <div className="container mx-auto py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-lg">Quote not found</div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="container mx-auto max-w-4xl">
+    <div className="container mx-auto py-8">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center mb-8">
+          <img 
+            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
+            alt="OVERCODE" 
+            className="h-8 mr-4"
+          />
+          <h1 className="text-3xl font-bold">Quote Detail</h1>
+        </div>
+
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigate('/quotes')}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Quotes
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Quote #{quote.id.slice(-8)}</h1>
-              <p className="text-muted-foreground">Quote details and information</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge className={getStatusColor(quote.status)}>
-              {quote.status}
-            </Badge>
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/quotes')}
+            className="flex items-center"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Quotes
+          </Button>
+          <div className="flex items-center space-x-2">
+            {canEdit && (
+              <Button 
+                onClick={handleEditQuote}
+                className="flex items-center bg-jira-blue hover:bg-jira-blue-dark"
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Edit Quote
+              </Button>
+            )}
           </div>
         </div>
 
-        <div className="grid gap-6">
-          {/* Quote Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                Quote Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Client:</span>
-                    <span>{quote.clientName}</span>
-                  </div>
-                  {quote.clientContact && (
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">Contact:</span>
-                      <span>{quote.clientContact}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Total:</span>
-                    <span className="font-semibold">{quote.total} {quote.currency}</span>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Issue Date:</span>
-                    <span>{format(new Date(quote.issueDate), 'MMM dd, yyyy')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Valid Until:</span>
-                    <span>{format(new Date(quote.validUntil), 'MMM dd, yyyy')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Status:</span>
-                    <Badge className={getStatusColor(quote.status)}>
-                      {quote.status}
-                    </Badge>
-                  </div>
+        <div className="bg-white rounded-lg shadow">
+          <div className="p-6 border-b">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-bold mb-2">Quote #{quote.id.slice(-8)}</h2>
+                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                  <span>Issue Date: {format(new Date(quote.issueDate), 'MMM dd, yyyy')}</span>
+                  <span>Valid Until: {format(new Date(quote.validUntil), 'MMM dd, yyyy')}</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              <Badge className={getStatusColor(quote.status)}>
+                {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
+              </Badge>
+            </div>
+          </div>
 
-          {/* Items */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Items</CardTitle>
-              <CardDescription>Quote line items</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {quote.items.map((item, index) => (
-                  <div key={index} className="flex justify-between items-start p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <h4 className="font-medium">{item.description}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Quantity: {item.quantity} × {item.price} {quote.currency}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-medium">
-                        {(item.quantity * item.price).toFixed(2)} {quote.currency}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center text-lg font-semibold">
-                    <span>Total:</span>
-                    <span>{quote.total.toFixed(2)} {quote.currency}</span>
-                  </div>
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <h3 className="font-semibold mb-4 flex items-center">
+                  <User className="mr-2 h-4 w-4" />
+                  Client Information
+                </h3>
+                <div className="space-y-2">
+                  <p><strong>Name:</strong> {quote.clientName}</p>
+                  {quote.clientContact && (
+                    <p className="flex items-center">
+                      <Mail className="mr-2 h-4 w-4" />
+                      <strong>Contact:</strong> {quote.clientContact}
+                    </p>
+                  )}
                 </div>
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h3 className="font-semibold mb-4 flex items-center">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Quote Details
+                </h3>
+                <div className="space-y-2">
+                  <p className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    <strong>Issue Date:</strong> {format(new Date(quote.issueDate), 'MMM dd, yyyy')}
+                  </p>
+                  <p className="flex items-center">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    <strong>Valid Until:</strong> {format(new Date(quote.validUntil), 'MMM dd, yyyy')}
+                  </p>
+                  <p className="flex items-center">
+                    <DollarSign className="mr-2 h-4 w-4" />
+                    <strong>Currency:</strong> {quote.currency}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h3 className="font-semibold mb-4">Quote Items</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse border border-gray-200">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="border border-gray-200 px-4 py-2 text-left">Description</th>
+                      <th className="border border-gray-200 px-4 py-2 text-center">Quantity</th>
+                      <th className="border border-gray-200 px-4 py-2 text-right">Price</th>
+                      <th className="border border-gray-200 px-4 py-2 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {quote.items.map((item, index) => (
+                      <tr key={index}>
+                        <td className="border border-gray-200 px-4 py-2">{item.description}</td>
+                        <td className="border border-gray-200 px-4 py-2 text-center">{item.quantity}</td>
+                        <td className="border border-gray-200 px-4 py-2 text-right">{item.price.toFixed(2)} {quote.currency}</td>
+                        <td className="border border-gray-200 px-4 py-2 text-right">{(item.quantity * item.price).toFixed(2)} {quote.currency}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-gray-50 font-semibold">
+                      <td colSpan={3} className="border border-gray-200 px-4 py-2 text-right">Total:</td>
+                      <td className="border border-gray-200 px-4 py-2 text-right">{quote.total.toFixed(2)} {quote.currency}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

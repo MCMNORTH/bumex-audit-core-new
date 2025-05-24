@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +28,7 @@ import InvoiceDetail from "./pages/InvoiceDetail";
 import Quotes from "./pages/Quotes";
 import CreateQuote from "./pages/CreateQuote";
 import QuoteDetail from "./pages/QuoteDetail";
+import EditQuote from "./pages/EditQuote";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -66,6 +66,7 @@ const AppRoutes = () => {
         <Route path="/quotes" element={<Quotes />} />
         <Route path="/create-quote" element={<CreateQuote />} />
         <Route path="/quotes/:quoteId" element={<QuoteDetail />} />
+        <Route path="/quotes/:quoteId/edit" element={<EditQuote />} />
         
         {/* Invoice Routes */}
         <Route path="/invoices" element={<Invoices />} />
