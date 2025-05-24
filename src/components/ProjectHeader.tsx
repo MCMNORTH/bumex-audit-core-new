@@ -67,7 +67,7 @@ export const ProjectHeader = ({
               <FilePlus className="h-4 w-4" />
               Create Issue
             </Button>
-            <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => navigate(`/projects/${projectId}/edit`)}>
+            <Button variant="outline" size="sm" onClick={() => navigate(`/projects/${projectId}/edit`)} className="flex items-center gap-1 bg-orange-500 hover:bg-orange-400">
               <Edit className="h-4 w-4" />
               Edit
             </Button>
