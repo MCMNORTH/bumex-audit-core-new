@@ -44,19 +44,43 @@ const Login = () => {
     try {
       // First authenticate the user with Firebase
       const userCredential = await login(data.email, data.password);
+      console.log("User authenticated successfully:", userCredential.user.uid);
 
       // Then check if the user is a client
       if (userCredential.user) {
         const userData = await firestore.getUser(userCredential.user.uid);
+        console.log("User data retrieved:", userData);
+        console.log("Client field value:", userData?.client);
+        console.log("Client field type:", typeof userData?.client);
+
+        // Strict check for client access - must be explicitly true
         if (userData && userData.client === true) {
+          console.log("Client verification passed - allowing login");
           toast("Login successful", {
             description: "Welcome back!"
           });
           navigate("/");
         } else {
+          // Handle different failure cases
+          console.log("Client verification failed - denying access");
+          
+          if (!userData) {
+            console.log("No user data found in Firestore");
+            setAuthError("User profile not found. Please contact support.");
+          } else if (userData.client === false) {
+            console.log("User has client = false");
+            setAuthError("Access denied. Only clients can access this application.");
+          } else if (userData.client === undefined || userData.client === null) {
+            console.log("User has no client field set");
+            setAuthError("Access denied. User account not properly configured.");
+          } else {
+            console.log("Unknown client field value:", userData.client);
+            setAuthError("Access denied. Invalid account configuration.");
+          }
+
           // If not client, sign them out using the logout function from AuthContext
           await logout();
-          setAuthError("Access denied. Only clients can access this application.");
+          
           toast("Access denied", {
             description: "Only clients can access this application."
           });
@@ -64,10 +88,18 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
-      setAuthError("Invalid email or password. Please try again.");
-      toast("Login failed", {
-        description: "Invalid email or password. Please try again."
-      });
+      // Check if it's a Firebase auth error or a client verification error
+      if (error instanceof Error && error.message.includes("auth/")) {
+        setAuthError("Invalid email or password. Please try again.");
+        toast("Login failed", {
+          description: "Invalid email or password. Please try again."
+        });
+      } else {
+        setAuthError("An error occurred during login. Please try again.");
+        toast("Login failed", {
+          description: "An error occurred during login. Please try again."
+        });
+      }
     } finally {
       setIsLoading(false);
     }
