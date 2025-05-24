@@ -1,3 +1,4 @@
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -5,9 +6,11 @@ import { useAppStore } from "@/store";
 import { Edit, Star, FilePlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+
 interface ProjectHeaderProps {
   projectId: string;
 }
+
 export const ProjectHeader = ({
   projectId
 }: ProjectHeaderProps) => {
@@ -17,8 +20,10 @@ export const ProjectHeader = ({
     getProjectById,
     toggleStarProject
   } = useAppStore();
+  
   const project = getProjectById(projectId);
   const [activeTab, setActiveTab] = useState<string>("");
+
   useEffect(() => {
     // Set the active tab based on the current route
     if (location.pathname === `/projects/${projectId}`) {
@@ -31,14 +36,17 @@ export const ProjectHeader = ({
       setActiveTab("timeline");
     }
   }, [location.pathname, projectId]);
+
   if (!project) {
-    return <div className="bg-accent border-b border-border p-4">Project not found</div>;
+    return <div className="bg-white border-b border-border p-4">Project not found</div>;
   }
+
   const handleStarClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     await toggleStarProject(projectId);
   };
+
   const handleTabClick = (value: string) => {
     let route = `/projects/${projectId}`;
     if (value !== "board") {
@@ -46,33 +54,35 @@ export const ProjectHeader = ({
     }
     navigate(route);
   };
+
   const handleCreateIssueClick = () => {
     navigate(`/projects/${projectId}/create-issue`, {
       state: { from: location.pathname }
     });
   };
-  return <div className="bg-accent border-b border-border">
-      <div className="container py-4 mx-auto bg-[jira-dark-sidebar] bg-orange-500">
+
+  return <div className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="container py-4 mx-auto">
         <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-3">
             {project.imageUrl ? <img src={project.imageUrl} alt={project.name} className="w-10 h-10 rounded-md object-cover" /> : <div className="w-10 h-10 bg-blue-600 rounded-md flex items-center justify-center text-white font-semibold">
                 {project.key.substring(0, 2).toUpperCase()}
               </div>}
             <div>
-              <h1 className="text-2xl font-bold">{project.name}</h1>
-              <span className="text-sm text-white">{project.key}</span>
+              <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
+              <span className="text-sm text-gray-600">{project.key}</span>
             </div>
-            <Button variant="ghost" size="icon" className="text-white hover:text-yellow-500" onClick={handleStarClick}>
+            <Button variant="ghost" size="icon" className="text-gray-600 hover:text-yellow-500" onClick={handleStarClick}>
               <Star className={cn("h-5 w-5", project.starred ? "fill-yellow-400 text-yellow-400" : "fill-none")} />
               <span className="sr-only">{project.starred ? "Unstar" : "Star"} project</span>
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleCreateIssueClick} className="flex items-center gap-1 bg-[jira-dark-sidebar] bg-orange-500 hover:bg-orange-400">
+            <Button variant="outline" size="sm" onClick={handleCreateIssueClick} className="flex items-center gap-1 bg-blue-600 text-white border-blue-600 hover:bg-blue-700">
               <FilePlus className="h-4 w-4" />
               Create Issue
             </Button>
-            <Button variant="outline" size="sm" onClick={() => navigate(`/projects/${projectId}/edit`)} className="flex items-center gap-1 bg-orange-500 hover:bg-orange-400">
+            <Button variant="outline" size="sm" onClick={() => navigate(`/projects/${projectId}/edit`)} className="flex items-center gap-1 border-gray-300 hover:bg-gray-50">
               <Edit className="h-4 w-4" />
               Edit
             </Button>
@@ -80,7 +90,7 @@ export const ProjectHeader = ({
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabClick} className="w-full">
-          <TabsList>
+          <TabsList className="bg-gray-100">
             <TabsTrigger value="board" className="focus:outline-none">
               Board
             </TabsTrigger>
