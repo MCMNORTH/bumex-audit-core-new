@@ -233,15 +233,15 @@ const CreateIssue = () => {
           <div className="space-y-2">
             <Label htmlFor="assignee">Assignee</Label>
             <Select
-              value={assignee || "unassigned"}
-              onValueChange={(value) => setAssignee(value === "unassigned" ? "" : value)}
+              value={assignee || ""}
+              onValueChange={(value) => setAssignee(value === "" ? "" : value)}
               disabled={loading}
             >
               <SelectTrigger>
                 <SelectValue placeholder={loading ? "Loading users..." : "Select assignee (optional)"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="unassigned">Unassigned</SelectItem>
+                <SelectItem value="">Unassigned</SelectItem>
                 {users.map((user) => (
                   <SelectItem key={user.id} value={user.name}>
                     {getUserDisplayName(user)}
