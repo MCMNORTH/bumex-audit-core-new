@@ -4,7 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Edit, FileText, Calendar, DollarSign, User, Mail } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowLeft, Edit, FileText, Calendar, DollarSign, User, Mail, Printer } from "lucide-react";
 import { Quote } from "@/types";
 import { useAppStore } from "@/store";
 import { format } from "date-fns";
@@ -13,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 const QuoteDetail = () => {
   const { quoteId } = useParams<{ quoteId: string }>();
   const navigate = useNavigate();
-  const { getQuote } = useAppStore();
+  const { getQuote, updateQuote } = useAppStore();
   const { toast } = useToast();
   
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -76,6 +77,33 @@ const QuoteDetail = () => {
     }
   };
 
+  const handleStatusChange = async (newStatus: Quote['status']) => {
+    if (!quote) return;
+
+    try {
+      const updatedQuote = await updateQuote(quote.id, { 
+        status: newStatus,
+        updatedAt: new Date().toISOString()
+      });
+      setQuote(updatedQuote);
+      toast({
+        title: "Success",
+        description: "Quote status updated successfully",
+      });
+    } catch (error) {
+      console.error("Error updating quote status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update quote status",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto py-8">
@@ -97,56 +125,117 @@ const QuoteDetail = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex items-center mb-8">
-          <img 
-            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
-            alt="OVERCODE" 
-            className="h-8 mr-4"
-          />
-          <h1 className="text-3xl font-bold">Quote Detail</h1>
-        </div>
-
-        <div className="flex items-center justify-between mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate('/quotes')}
-            className="flex items-center"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Quotes
-          </Button>
-          <div className="flex items-center space-x-2">
-            {canEdit && (
-              <Button 
-                onClick={handleEditQuote}
-                className="flex items-center bg-jira-blue hover:bg-jira-blue-dark"
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit Quote
-              </Button>
-            )}
+    <>
+      <style jsx>{`
+        @media print {
+          body * {
+            visibility: hidden;
+          }
+          .printable-area, .printable-area * {
+            visibility: visible;
+          }
+          .printable-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 40px !important;
+          }
+          .no-print {
+            display: none !important;
+          }
+          .print-logo {
+            max-height: 80px !important;
+            margin-bottom: 24px !important;
+          }
+        }
+      `}</style>
+      
+      <div className="container mx-auto py-8 no-print">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center mb-8">
+            <img 
+              src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
+              alt="OVERCODE" 
+              className="h-8 mr-4"
+            />
+            <h1 className="text-3xl font-bold">Quote Detail</h1>
           </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">Quote #{quote.id.slice(-8)}</h2>
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
-                  <span>Issue Date: {format(new Date(quote.issueDate), 'MMM dd, yyyy')}</span>
-                  <span>Valid Until: {format(new Date(quote.validUntil), 'MMM dd, yyyy')}</span>
-                </div>
-              </div>
-              <Badge className={getStatusColor(quote.status)}>
-                {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
-              </Badge>
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/quotes')}
+              className="flex items-center"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Quotes
+            </Button>
+            <div className="flex items-center space-x-2">
+              <Button 
+                onClick={handlePrint}
+                variant="outline"
+                className="flex items-center"
+              >
+                <Printer className="mr-2 h-4 w-4" />
+                Print Quote
+              </Button>
+              {canEdit && (
+                <Button 
+                  onClick={handleEditQuote}
+                  className="flex items-center bg-jira-blue hover:bg-jira-blue-dark"
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit Quote
+                </Button>
+              )}
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="mb-6">
+            <div className="flex items-center space-x-4">
+              <label htmlFor="status" className="text-sm font-medium">
+                Status:
+              </label>
+              <Select value={quote.status} onValueChange={handleStatusChange}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="accepted">Accepted</SelectItem>
+                  <SelectItem value="rejected">Rejected</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="printable-area bg-white rounded-lg shadow p-8">
+            <div className="mb-8">
+              <img 
+                src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" 
+                alt="OVERCODE" 
+                className="print-logo h-12 mb-6"
+              />
+            </div>
+
+            <div className="border-b pb-6 mb-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-2xl font-bold mb-2">Quote #{quote.id.slice(-8)}</h2>
+                  <div className="flex items-center space-x-4 text-sm text-gray-600">
+                    <span>Issue Date: {format(new Date(quote.issueDate), 'MMM dd, yyyy')}</span>
+                    <span>Valid Until: {format(new Date(quote.validUntil), 'MMM dd, yyyy')}</span>
+                  </div>
+                </div>
+                <Badge className={`no-print ${getStatusColor(quote.status)}`}>
+                  {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
+                </Badge>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               <div>
                 <h3 className="font-semibold mb-4 flex items-center">
@@ -219,7 +308,7 @@ const QuoteDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
