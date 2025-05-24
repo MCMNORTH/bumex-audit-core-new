@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -150,10 +149,9 @@ const EditIssue = () => {
     }
   };
 
-  // Helper function to get user display name
+  // Helper function to get user display name - now uses name field directly
   const getUserDisplayName = (user: User): string => {
     if (user.name) return user.name;
-    if (user.displayName) return user.displayName;
     if (user.email) return user.email.split('@')[0];
     return "Unknown User";
   };

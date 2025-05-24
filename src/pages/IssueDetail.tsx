@@ -420,7 +420,7 @@ const IssueDetail = () => {
                         <SelectItem value="unassigned">Unassigned</SelectItem>
                         {users.map((user) => (
                           <SelectItem key={user.id} value={user.id}>
-                            {getUserDisplayName(user)}
+                            {user.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -444,14 +444,14 @@ const IssueDetail = () => {
                           {assignee.avatarUrl ? (
                             <img 
                               src={assignee.avatarUrl} 
-                              alt={getUserDisplayName(assignee)} 
+                              alt={assignee.name} 
                               className="h-full w-full rounded-full object-cover" 
                             />
                           ) : (
-                            getUserDisplayName(assignee).substring(0, 2).toUpperCase()
+                            assignee.name.substring(0, 2).toUpperCase()
                           )}
                         </div>
-                        <span className="text-sm">{getUserDisplayName(assignee)}</span>
+                        <span className="text-sm">{assignee.name}</span>
                       </>
                     ) : (
                       <span className="text-sm text-gray-500">Unassigned</span>
@@ -468,14 +468,14 @@ const IssueDetail = () => {
                       {reporter.avatarUrl ? (
                         <img 
                           src={reporter.avatarUrl} 
-                          alt={getUserDisplayName(reporter)} 
+                          alt={reporter.name} 
                           className="h-full w-full rounded-full object-cover" 
                         />
                       ) : (
-                        getUserDisplayName(reporter).substring(0, 2).toUpperCase()
+                        reporter.name.substring(0, 2).toUpperCase()
                       )}
                     </div>
-                    <span className="text-sm">{getUserDisplayName(reporter)}</span>
+                    <span className="text-sm">{reporter.name}</span>
                   </div>
                 ) : (
                   <span className="text-sm text-gray-500">None</span>

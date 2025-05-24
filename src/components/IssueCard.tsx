@@ -18,14 +18,6 @@ export function IssueCard({ issue }: IssueCardProps) {
   const completedSubtasks = subtasks.filter(i => i.status === "done").length;
   const hasSubtasks = subtasks.length > 0;
   
-  // Helper function to get user display name
-  const getUserDisplayName = (user: User): string => {
-    if (user.name) return user.name;
-    if (user.displayName) return user.displayName;
-    if (user.email) return user.email.split('@')[0];
-    return "Unknown User";
-  };
-  
   // Map priority to colors
   const priorityColors = {
     highest: "bg-[#f04f3a]",
@@ -78,7 +70,7 @@ export function IssueCard({ issue }: IssueCardProps) {
       {/* Assignee name display */}
       {assignee && (
         <div className="text-xs text-gray-600 mb-2">
-          Assigned to: {getUserDisplayName(assignee)}
+          Assigned to: {assignee.name}
         </div>
       )}
       
@@ -88,9 +80,9 @@ export function IssueCard({ issue }: IssueCardProps) {
             <div className="flex items-center">
               <div className="w-5 h-5 rounded-full bg-gray-300 flex items-center justify-center text-xs overflow-hidden">
                 {assignee.avatarUrl ? (
-                  <img src={assignee.avatarUrl} alt={getUserDisplayName(assignee)} className="w-full h-full object-cover" />
+                  <img src={assignee.avatarUrl} alt={assignee.name} className="w-full h-full object-cover" />
                 ) : (
-                  getUserDisplayName(assignee).charAt(0).toUpperCase()
+                  assignee.name.charAt(0).toUpperCase()
                 )}
               </div>
             </div>
