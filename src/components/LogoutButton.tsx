@@ -1,18 +1,21 @@
-
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useSidebar } from "@/components/ui/sidebar";
-
 export const LogoutButton = () => {
-  const { logout } = useAuth();
+  const {
+    logout
+  } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const { state } = useSidebar();
+  const {
+    toast
+  } = useToast();
+  const {
+    state
+  } = useSidebar();
   const isCollapsed = state === "collapsed";
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -30,16 +33,8 @@ export const LogoutButton = () => {
       });
     }
   };
-
-  return (
-    <Button 
-      variant="ghost" 
-      size="sm" 
-      onClick={handleLogout}
-      className="w-full justify-start text-muted-foreground hover:text-foreground"
-    >
+  return <Button variant="ghost" size="sm" onClick={handleLogout} className="">
       <LogOut className="mr-2 h-4 w-4" />
       {!isCollapsed && <span>Logout</span>}
-    </Button>
-  );
+    </Button>;
 };
