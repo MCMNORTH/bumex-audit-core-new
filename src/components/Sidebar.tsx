@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, User, LayoutDashboard, Users, FileText, ClipboardList } from "lucide-react";
+import { PlusCircle, User, LayoutDashboard, Users, FileText, ClipboardList, Quote } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
@@ -113,7 +113,7 @@ export const Sidebar = () => {
         <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
           Quotes
         </div>
-        <div className="mb-4">
+        <div className="mb-4 space-y-2">
           <Button 
             onClick={() => navigate('/quotes')}
             className={cn(
@@ -121,8 +121,18 @@ export const Sidebar = () => {
               isRouteActive('/quotes') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
             )}
           >
-            <FileText className="h-4 w-4" />
+            <Quote className="h-4 w-4" />
             {isOpen && <span>View Quotes</span>}
+          </Button>
+          <Button 
+            onClick={() => navigate('/create-quote')}
+            className={cn(
+              "w-full justify-start gap-2",
+              isRouteActive('/create-quote') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
+            )}
+          >
+            <PlusCircle className="h-4 w-4" />
+            {isOpen && <span>Create Quote</span>}
           </Button>
         </div>
       </div>
