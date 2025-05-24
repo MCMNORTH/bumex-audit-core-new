@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAppStore } from "@/store";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { IssueType, Priority, Status, User } from "@/types";
 import { collection, getDocs } from "firebase/firestore";
@@ -45,6 +44,7 @@ const CreateIssue = () => {
   const { addIssue, getEpicsByProject } = useAppStore();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -123,7 +123,13 @@ const CreateIssue = () => {
         description: `"${title}" has been created successfully.`,
       });
 
-      navigate(`/projects/${projectId}`);
+      // Navigate back to where the user came from, or default to board
+      const referrer = location.state?.from;
+      if (referrer) {
+        navigate(referrer);
+      } else {
+        navigate(`/projects/${projectId}`);
+      }
     } catch (error) {
       console.error("Error creating issue:", error);
       toast({
@@ -131,6 +137,16 @@ const CreateIssue = () => {
         description: "Failed to create issue",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleCancel = () => {
+    // Navigate back to where the user came from, or default to board
+    const referrer = location.state?.from;
+    if (referrer) {
+      navigate(referrer);
+    } else {
+      navigate(`/projects/${projectId}`);
     }
   };
 
@@ -301,7 +317,7 @@ const CreateIssue = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate(`/projects/${projectId}`)}
+            onClick={handleCancel}
           >
             Cancel
           </Button>

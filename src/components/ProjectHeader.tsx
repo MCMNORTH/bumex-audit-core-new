@@ -46,6 +46,11 @@ export const ProjectHeader = ({
     }
     navigate(route);
   };
+  const handleCreateIssueClick = () => {
+    navigate(`/projects/${projectId}/create-issue`, {
+      state: { from: location.pathname }
+    });
+  };
   return <div className="bg-accent border-b border-border">
       <div className="container py-4 mx-auto bg-[jira-dark-sidebar] bg-orange-500">
         <div className="flex justify-between items-center mb-4">
@@ -63,7 +68,7 @@ export const ProjectHeader = ({
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => navigate(`/projects/${projectId}/create-issue`)} className="flex items-center gap-1 bg-[jira-dark-sidebar] bg-orange-500 hover:bg-orange-400">
+            <Button variant="outline" size="sm" onClick={handleCreateIssueClick} className="flex items-center gap-1 bg-[jira-dark-sidebar] bg-orange-500 hover:bg-orange-400">
               <FilePlus className="h-4 w-4" />
               Create Issue
             </Button>
