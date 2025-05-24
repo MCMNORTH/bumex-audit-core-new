@@ -2,7 +2,7 @@
 import { useAppStore } from "@/store";
 import { Bug, CheckCircle2, FileText, Award, CheckSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Issue, User } from "@/types";
+import { Issue } from "@/types";
 
 interface IssueCardProps {
   issue: Issue;
@@ -65,14 +65,7 @@ export function IssueCard({ issue }: IssueCardProps) {
         </button>
       </div>
       
-      <h3 className="font-medium text-sm line-clamp-2 mb-2">{issue.title}</h3>
-      
-      {/* Assignee name display */}
-      {assignee && (
-        <div className="text-xs text-gray-600 mb-2">
-          Assigned to: {assignee.name}
-        </div>
-      )}
+      <h3 className="font-medium text-sm line-clamp-2">{issue.title}</h3>
       
       <div className="flex justify-between items-center mt-2">
         <div className="flex items-center">
@@ -82,7 +75,7 @@ export function IssueCard({ issue }: IssueCardProps) {
                 {assignee.avatarUrl ? (
                   <img src={assignee.avatarUrl} alt={assignee.name} className="w-full h-full object-cover" />
                 ) : (
-                  assignee.name.charAt(0).toUpperCase()
+                  (assignee.name || assignee.email || "U").charAt(0).toUpperCase()
                 )}
               </div>
             </div>

@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -420,7 +421,7 @@ const IssueDetail = () => {
                         <SelectItem value="unassigned">Unassigned</SelectItem>
                         {users.map((user) => (
                           <SelectItem key={user.id} value={user.id}>
-                            {user.name}
+                            {getUserDisplayName(user)}
                           </SelectItem>
                         ))}
                       </SelectContent>
