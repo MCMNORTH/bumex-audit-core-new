@@ -114,7 +114,7 @@ const QuoteDetail = () => {
         items: quote.items,
         total: quote.total,
         currency: quote.currency,
-        status: 'draft',
+        status: 'pending', // Changed from 'draft' to 'pending'
         issueDate: new Date().toISOString(),
         dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
         payments: [],
