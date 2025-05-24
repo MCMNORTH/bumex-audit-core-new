@@ -100,20 +100,28 @@ const CreateIssue = () => {
 
     try {
       // Create a new issue object, ensuring no undefined values are passed to Firestore
-      const newIssue = {
+      const newIssue: any = {
         title,
         description,
         type,
         status,
         priority,
-        assignee: assignee && assignee !== "unassigned" ? assignee : undefined,
         reporterId: localStorage.getItem("userId") || "",
         projectId,
-        // Only include epicId if it's not undefined or "no-epic"
-        ...(epicId && epicId !== "no-epic" ? { epicId } : { epicId: null }),
-        // Only include parentId if it's provided and not "no-parent"
-        ...(parentId && parentId !== "no-parent" ? { parentId } : { parentId: null }),
       };
+
+      // Only add optional fields if they have valid values
+      if (assignee && assignee !== "unassigned") {
+        newIssue.assignee = assignee;
+      }
+
+      if (epicId && epicId !== "no-epic") {
+        newIssue.epicId = epicId;
+      }
+
+      if (parentId && parentId !== "no-parent") {
+        newIssue.parentId = parentId;
+      }
 
       await addIssue(newIssue);
 
