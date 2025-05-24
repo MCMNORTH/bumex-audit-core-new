@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
@@ -78,13 +77,16 @@ const QuoteDetail = () => {
     if (!quote) return;
     
     try {
-      await updateQuote(quote.id, {
+      const updatedQuote = {
+        ...quote,
         status: newStatus,
         updatedAt: new Date().toISOString()
-      });
+      };
+      
+      await updateQuote(updatedQuote);
       
       // Update local state
-      setQuote(prev => prev ? { ...prev, status: newStatus, updatedAt: new Date().toISOString() } : null);
+      setQuote(updatedQuote);
       
       toast({
         title: "Success",
