@@ -10,7 +10,6 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useState } from "react";
 import { firestore } from "@/lib/firebase";
-
 export const Sidebar = () => {
   const {
     selectedProject,
@@ -28,7 +27,7 @@ export const Sidebar = () => {
   } = useSidebar();
   const isOpen = state !== "collapsed";
   const [userName, setUserName] = useState("");
-  
+
   // Fetch user data from Firestore when currentUser changes
   useEffect(() => {
     const fetchUserData = async () => {
@@ -47,62 +46,37 @@ export const Sidebar = () => {
         }
       }
     };
-    
     fetchUserData();
   }, [currentUser]);
-  
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}`);
   };
-  
+
   // Use the fetched userName or fall back to email
   const displayName = userName || currentUser?.email?.split('@')[0] || "User";
   const starredProjects = getStarredProjects();
-  
+
   // Check current route for highlighting active links
   const isRouteActive = (path: string) => {
     return location.pathname === path;
   };
-  
   return <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
-        {isOpen ? (
-          <img 
-            src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" 
-            alt="OVERCODE" 
-            className="h-7"
-          />
-        ) : (
-          <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
+        {isOpen ? <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" alt="OVERCODE" className="h-7" /> : <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
             ▶
-          </button>
-        )}
-        {isOpen && (
-          <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
+          </button>}
+        {isOpen && <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
             ◀
-          </button>
-        )}
+          </button>}
       </div>
       
       <div className="p-2">
-        <Button 
-          onClick={() => navigate('/')} 
-          className={cn(
-            "w-full justify-start gap-2 mb-2",
-            isRouteActive('/') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-          )}
-        >
+        <Button onClick={() => navigate('/')} className={cn("w-full justify-start gap-2 mb-2", isRouteActive('/') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
           <LayoutDashboard className="h-4 w-4" />
           {isOpen && <span>Dashboard</span>}
         </Button>
-        <Button 
-          onClick={() => navigate('/create-project')}
-          className={cn(
-            "w-full justify-start gap-2",
-            isRouteActive('/create-project') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-          )}
-        >
+        <Button onClick={() => navigate('/create-project')} className={cn("w-full justify-start gap-2", isRouteActive('/create-project') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
           <PlusCircle className="h-4 w-4" />
           {isOpen && <span>Create Project</span>}
         </Button>
@@ -114,26 +88,11 @@ export const Sidebar = () => {
           Quotes
         </div>
         <div className="mb-4 space-y-2">
-          <Button 
-            onClick={() => navigate('/quotes')}
-            className={cn(
-              "w-full justify-start gap-2",
-              isRouteActive('/quotes') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-            )}
-          >
+          <Button onClick={() => navigate('/quotes')} className={cn("w-full justify-start gap-2", isRouteActive('/quotes') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
             <Quote className="h-4 w-4" />
             {isOpen && <span>View Quotes</span>}
           </Button>
-          <Button 
-            onClick={() => navigate('/create-quote')}
-            className={cn(
-              "w-full justify-start gap-2",
-              isRouteActive('/create-quote') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-            )}
-          >
-            <PlusCircle className="h-4 w-4" />
-            {isOpen && <span>Create Quote</span>}
-          </Button>
+          
         </div>
       </div>
 
@@ -143,23 +102,11 @@ export const Sidebar = () => {
           Invoices
         </div>
         <div className="mb-4 space-y-2">
-          <Button 
-            onClick={() => navigate('/invoices')}
-            className={cn(
-              "w-full justify-start gap-2",
-              isRouteActive('/invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-            )}
-          >
+          <Button onClick={() => navigate('/invoices')} className={cn("w-full justify-start gap-2", isRouteActive('/invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
             <FileText className="h-4 w-4" />
             {isOpen && <span>View Invoices</span>}
           </Button>
-          <Button 
-            onClick={() => navigate('/my-invoices')}
-            className={cn(
-              "w-full justify-start gap-2",
-              isRouteActive('/my-invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-            )}
-          >
+          <Button onClick={() => navigate('/my-invoices')} className={cn("w-full justify-start gap-2", isRouteActive('/my-invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
             <ClipboardList className="h-4 w-4" />
             {isOpen && <span>My Invoices</span>}
           </Button>
@@ -172,13 +119,7 @@ export const Sidebar = () => {
           Users
         </div>
         <div className="mb-4">
-          <Button 
-            onClick={() => navigate('/users')}
-            className={cn(
-              "w-full justify-start gap-2",
-              isRouteActive('/users') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground"
-            )}
-          >
+          <Button onClick={() => navigate('/users')} className={cn("w-full justify-start gap-2", isRouteActive('/users') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
             <Users className="h-4 w-4" />
             {isOpen && <span>View Users</span>}
           </Button>
@@ -190,59 +131,28 @@ export const Sidebar = () => {
           Starred Projects
         </div>
         <ul className="space-y-1">
-          {starredProjects.length > 0 ? (
-            starredProjects.map(project => (
-              <li key={project.id}>
-                <button 
-                  onClick={() => handleProjectSelect(project)} 
-                  className={cn(
-                    "w-full text-left p-2 rounded-md flex items-center gap-2",
-                    "hover:bg-sidebar-accent transition-colors", 
-                    selectedProject?.id === project.id ? "bg-sidebar-accent" : "bg-transparent"
-                  )}
-                >
-                  {project.imageUrl ? (
-                    <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
-                      <AspectRatio ratio={1/1}>
-                        <img 
-                          src={project.imageUrl} 
-                          alt={project.name}
-                          className="object-cover w-full h-full"
-                        />
+          {starredProjects.length > 0 ? starredProjects.map(project => <li key={project.id}>
+                <button onClick={() => handleProjectSelect(project)} className={cn("w-full text-left p-2 rounded-md flex items-center gap-2", "hover:bg-sidebar-accent transition-colors", selectedProject?.id === project.id ? "bg-sidebar-accent" : "bg-transparent")}>
+                  {project.imageUrl ? <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
+                      <AspectRatio ratio={1 / 1}>
+                        <img src={project.imageUrl} alt={project.name} className="object-cover w-full h-full" />
                       </AspectRatio>
-                    </div>
-                  ) : (
-                    <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                    </div> : <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
                       {project.key.substring(0, 2).toUpperCase()}
-                    </div>
-                  )}
+                    </div>}
                   {isOpen && <span>{project.name}</span>}
                 </button>
-              </li>
-            ))
-          ) : (
-            isOpen && <li className="text-sm text-gray-500 p-2">No starred projects</li>
-          )}
+              </li>) : isOpen && <li className="text-sm text-gray-500 p-2">No starred projects</li>}
         </ul>
       </div>
       
       <div className="mt-auto border-t border-sidebar-border">
         <div className="p-2">
-          <Button 
-            onClick={() => navigate('/profile')} 
-            variant="ghost" 
-            size="sm"
-            className={cn(
-              "w-full justify-start text-muted-foreground hover:text-foreground",
-              isRouteActive('/profile') ? "bg-sidebar-accent text-sidebar-foreground" : ""
-            )}
-          >
+          <Button onClick={() => navigate('/profile')} variant="ghost" size="sm" className={cn("w-full justify-start text-muted-foreground hover:text-foreground", isRouteActive('/profile') ? "bg-sidebar-accent text-sidebar-foreground" : "")}>
             <User className="mr-2 h-4 w-4" />
-            {isOpen && (
-              <span className="truncate max-w-[180px]" title={displayName}>
+            {isOpen && <span className="truncate max-w-[180px]" title={displayName}>
                 {displayName}
-              </span>
-            )}
+              </span>}
           </Button>
           {isOpen ? <LogoutButton /> : <div className="flex justify-center p-2">
               <LogoutButton />
