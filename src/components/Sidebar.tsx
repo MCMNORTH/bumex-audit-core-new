@@ -10,6 +10,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useState } from "react";
 import { firestore } from "@/lib/firebase";
+
 export const Sidebar = () => {
   const {
     selectedProject,
@@ -48,6 +49,7 @@ export const Sidebar = () => {
     };
     fetchUserData();
   }, [currentUser]);
+
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}`);
@@ -61,7 +63,9 @@ export const Sidebar = () => {
   const isRouteActive = (path: string) => {
     return location.pathname === path;
   };
-  return <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>
+
+  return (
+    <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
         {isOpen ? <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" alt="OVERCODE" className="h-7" /> : <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
             ▶
@@ -70,6 +74,7 @@ export const Sidebar = () => {
             ◀
           </button>}
       </div>
+
       
       <div className="p-2">
         <Button onClick={() => navigate('/')} className={cn("w-full justify-start gap-2 mb-2", isRouteActive('/') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
@@ -126,6 +131,7 @@ export const Sidebar = () => {
         </div>
       </div>
 
+      
       <div className="p-2 overflow-y-auto flex-1">
         <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
           Starred Projects
@@ -148,16 +154,15 @@ export const Sidebar = () => {
       
       <div className="mt-auto border-t border-sidebar-border">
         <div className="p-2">
-          <Button onClick={() => navigate('/profile')} variant="ghost" size="sm" className={cn("w-full justify-start text-muted-foreground hover:text-foreground", isRouteActive('/profile') ? "bg-sidebar-accent text-sidebar-foreground" : "")}>
+          <Button onClick={() => navigate('/profile')} variant="ghost" size="sm" className={cn("w-full justify-start text-muted-foreground hover:text-foreground mb-2", isRouteActive('/profile') ? "bg-sidebar-accent text-sidebar-foreground" : "")}>
             <User className="mr-2 h-4 w-4" />
             {isOpen && <span className="truncate max-w-[180px]" title={displayName}>
                 {displayName}
               </span>}
           </Button>
-          {isOpen ? <LogoutButton /> : <div className="flex justify-center p-2">
-              <LogoutButton />
-            </div>}
+          <LogoutButton />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
