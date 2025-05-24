@@ -10,6 +10,7 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useState } from "react";
 import { firestore } from "@/lib/firebase";
+
 export const Sidebar = () => {
   const {
     selectedProject,
@@ -48,6 +49,7 @@ export const Sidebar = () => {
     };
     fetchUserData();
   }, [currentUser]);
+
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}`);
@@ -61,7 +63,9 @@ export const Sidebar = () => {
   const isRouteActive = (path: string) => {
     return location.pathname === path;
   };
-  return <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>
+
+  return (
+    <div className={cn("h-screen bg-sidebar text-sidebar-foreground flex flex-col transition-all duration-300", isOpen ? "w-60" : "w-16")}>
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
         {isOpen ? <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" alt="OVERCODE" className="h-7" /> : <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
             ▶
@@ -77,7 +81,10 @@ export const Sidebar = () => {
           <LayoutDashboard className="h-4 w-4" />
           {isOpen && <span>Dashboard</span>}
         </Button>
-        
+        <Button onClick={() => navigate('/create-project')} className={cn("w-full justify-start gap-2", isRouteActive('/create-project') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
+          <PlusCircle className="h-4 w-4" />
+          {isOpen && <span>Create Project</span>}
+        </Button>
       </div>
 
       {/* Quotes Section */}
@@ -100,7 +107,10 @@ export const Sidebar = () => {
           Invoices
         </div>
         <div className="mb-4 space-y-2">
-          
+          <Button onClick={() => navigate('/invoices')} className={cn("w-full justify-start gap-2", isRouteActive('/invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
+            <FileText className="h-4 w-4" />
+            {isOpen && <span>View Invoices</span>}
+          </Button>
           <Button onClick={() => navigate('/my-invoices')} className={cn("w-full justify-start gap-2", isRouteActive('/my-invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
             <ClipboardList className="h-4 w-4" />
             {isOpen && <span>My Invoices</span>}
@@ -153,5 +163,6 @@ export const Sidebar = () => {
           <LogoutButton />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
