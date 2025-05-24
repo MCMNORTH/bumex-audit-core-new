@@ -63,7 +63,7 @@ export const ProjectHeader = ({
             </Button>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="flex items-center gap-1" onClick={() => navigate(`/projects/${projectId}/create-issue`)}>
+            <Button variant="outline" size="sm" onClick={() => navigate(`/projects/${projectId}/create-issue`)} className="flex items-center gap-1 bg-[jira-dark-sidebar] bg-orange-500 hover:bg-orange-400">
               <FilePlus className="h-4 w-4" />
               Create Issue
             </Button>
