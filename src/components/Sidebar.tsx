@@ -36,7 +36,7 @@ export const Sidebar = () => {
     if (isMobile && isOpen) {
       toggleSidebar();
     }
-  }, [isMobile]);
+  }, [isMobile, isOpen, toggleSidebar]);
 
   // Fetch user data from Firestore when currentUser changes
   useEffect(() => {
