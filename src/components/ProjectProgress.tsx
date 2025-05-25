@@ -1,5 +1,4 @@
 
-import { Progress } from "@/components/ui/progress";
 import { useAppStore } from "@/store";
 import { Project } from "@/types";
 import { useEffect, useState } from "react";
@@ -13,9 +12,13 @@ interface ProjectProgressProps {
 const ProjectProgress = ({ project, showDetails = false }: ProjectProgressProps) => {
   const { issues, fetchIssues } = useAppStore();
   const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [statusCounts, setStatusCounts] = useState({
+    todo: 0,
+    'in-progress': 0,
+    'in-review': 0,
+    done: 0
+  });
   const [totalIssues, setTotalIssues] = useState(0);
-  const [completedIssues, setCompletedIssues] = useState(0);
 
   useEffect(() => {
     const loadIssues = async () => {
@@ -35,18 +38,23 @@ const ProjectProgress = ({ project, showDetails = false }: ProjectProgressProps)
   useEffect(() => {
     // Filter issues for this project
     const projectIssues = issues.filter(issue => issue.projectId === project.id);
-    const completed = projectIssues.filter(issue => issue.status === "done").length;
     
+    const counts = {
+      todo: projectIssues.filter(issue => issue.status === "todo").length,
+      'in-progress': projectIssues.filter(issue => issue.status === "in-progress").length,
+      'in-review': projectIssues.filter(issue => issue.status === "in-review").length,
+      done: projectIssues.filter(issue => issue.status === "done").length
+    };
+    
+    setStatusCounts(counts);
     setTotalIssues(projectIssues.length);
-    setCompletedIssues(completed);
-    
-    // Calculate progress percentage
-    const progressPercentage = projectIssues.length > 0
-      ? Math.round((completed / projectIssues.length) * 100)
-      : 0;
-    
-    setProgress(progressPercentage);
   }, [issues, project.id]);
+
+  const getPercentage = (count: number) => {
+    return totalIssues > 0 ? (count / totalIssues) * 100 : 0;
+  };
+
+  const overallProgress = totalIssues > 0 ? Math.round((statusCounts.done / totalIssues) * 100) : 0;
 
   return (
     <div className="w-full">
@@ -55,16 +63,62 @@ const ProjectProgress = ({ project, showDetails = false }: ProjectProgressProps)
           <Percent className="h-4 w-4" />
           <span>Progress</span>
         </div>
-        <span className="text-sm font-medium">{progress}%</span>
+        <span className="text-sm font-medium">{overallProgress}%</span>
       </div>
-      <Progress value={progress} className="h-2" />
+      
+      {/* Colorful status progress bar */}
+      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden flex">
+        {totalIssues > 0 ? (
+          <>
+            {/* To Do - Gray */}
+            <div 
+              className="h-full bg-gray-400 transition-all"
+              style={{ width: `${getPercentage(statusCounts.todo)}%` }}
+            />
+            {/* In Progress - Blue */}
+            <div 
+              className="h-full bg-blue-500 transition-all"
+              style={{ width: `${getPercentage(statusCounts['in-progress'])}%` }}
+            />
+            {/* In Review - Orange */}
+            <div 
+              className="h-full bg-orange-500 transition-all"
+              style={{ width: `${getPercentage(statusCounts['in-review'])}%` }}
+            />
+            {/* Done - Green */}
+            <div 
+              className="h-full bg-green-500 transition-all"
+              style={{ width: `${getPercentage(statusCounts.done)}%` }}
+            />
+          </>
+        ) : (
+          <div className="h-full w-full bg-gray-200" />
+        )}
+      </div>
       
       {showDetails && (
         <div className="mt-1 text-xs text-gray-500">
           {loading ? (
             <span>Loading issues...</span>
           ) : (
-            <span>{completedIssues} of {totalIssues} issues completed</span>
+            <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                <span>To Do: {statusCounts.todo}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <span>In Progress: {statusCounts['in-progress']}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <span>In Review: {statusCounts['in-review']}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span>Done: {statusCounts.done}</span>
+              </div>
+            </div>
           )}
         </div>
       )}
