@@ -54,7 +54,7 @@ const ProjectDetail = () => {
     return (
       <div className="p-6 max-w-7xl mx-auto">
         <div className="text-center py-12">
-          <p className="text-muted-foreground">Project not found</p>
+          <p className="text-gray-500">Project not found</p>
         </div>
       </div>
     );
@@ -81,14 +81,14 @@ const ProjectDetail = () => {
               </div>
             )}
             <div>
-              <h1 className="text-3xl font-bold">{project.name}</h1>
-              <p className="text-lg text-muted-foreground">{project.key}</p>
+              <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
+              <p className="text-lg text-gray-600">{project.key}</p>
             </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="h-10 w-10 text-muted-foreground hover:text-yellow-500"
+            className="h-10 w-10 text-gray-400 hover:text-yellow-500"
             onClick={handleStarClick}
           >
             <Star 
@@ -103,7 +103,7 @@ const ProjectDetail = () => {
         </div>
         
         {project.description && (
-          <p className="text-muted-foreground text-lg leading-relaxed">{project.description}</p>
+          <p className="text-gray-700 text-lg leading-relaxed">{project.description}</p>
         )}
       </div>
 
@@ -111,7 +111,7 @@ const ProjectDetail = () => {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
               <Target className="h-4 w-4" />
               Total Issues
             </CardTitle>
@@ -123,7 +123,7 @@ const ProjectDetail = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
               <Target className="h-4 w-4" />
               In Progress
             </CardTitle>
@@ -135,7 +135,7 @@ const ProjectDetail = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
               <Target className="h-4 w-4" />
               In Review
             </CardTitle>
@@ -147,7 +147,7 @@ const ProjectDetail = () => {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
               <Target className="h-4 w-4" />
               Done
             </CardTitle>
@@ -165,7 +165,7 @@ const ProjectDetail = () => {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-muted-foreground">Loading progress...</div>
+            <div className="text-gray-500">Loading progress...</div>
           ) : (
             <ProjectProgress project={project} showDetails />
           )}
@@ -178,15 +178,15 @@ const ProjectDetail = () => {
           <CardTitle>Project Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-gray-600">
             <Calendar className="h-4 w-4" />
             <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-gray-600">
             <Calendar className="h-4 w-4" />
             <span>Last Updated: {new Date(project.updatedAt).toLocaleDateString()}</span>
           </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="flex items-center gap-2 text-gray-600">
             <User className="h-4 w-4" />
             <span>Project Key: {project.key}</span>
           </div>

@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import ProjectDetail from "./pages/ProjectDetail";
@@ -47,17 +46,9 @@ const AppRoutes = () => {
         {/* Project Routes */}
         <Route path="/projects/:projectId/details" element={<ProjectDetail />} />
         
-        {/* Invoice Routes - wrapped with light theme */}
-        <Route path="/my-invoices" element={
-          <div className="bg-white text-black min-h-screen">
-            <MyInvoices />
-          </div>
-        } />
-        <Route path="/invoices/:invoiceId" element={
-          <div className="bg-white text-black min-h-screen">
-            <InvoiceDetail />
-          </div>
-        } />
+        {/* Invoice Routes */}
+        <Route path="/my-invoices" element={<MyInvoices />} />
+        <Route path="/invoices/:invoiceId" element={<InvoiceDetail />} />
       </Route>
       
       <Route path="*" element={<NotFound />} />
@@ -67,19 +58,17 @@ const AppRoutes = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="dark">
-      <AuthProvider>
-        <TooltipProvider>
-          <SidebarProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </SidebarProvider>
-        </TooltipProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <SidebarProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </SidebarProvider>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
