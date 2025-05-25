@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,29 +7,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
-import CreateProject from "./pages/CreateProject";
-import EditProject from "./pages/EditProject";
-import ProjectBoard from "./pages/ProjectBoard"; 
-import ProjectIssues from "./pages/ProjectIssues";
-import ProjectSprints from "./pages/ProjectSprints";
-import ProjectTimeline from "./pages/ProjectTimeline";
-import CreateIssue from "./pages/CreateIssue";
-import EditIssue from "./pages/EditIssue";
-import IssueDetail from "./pages/IssueDetail";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
-import Users from "./pages/Users";
-import UserDetail from "./pages/UserDetail";
-import Invoices from "./pages/Invoices";
 import MyInvoices from "./pages/MyInvoices";
-import CreateInvoice from "./pages/CreateInvoice";
 import InvoiceDetail from "./pages/InvoiceDetail";
-import Quotes from "./pages/Quotes";
-import CreateQuote from "./pages/CreateQuote";
-import QuoteDetail from "./pages/QuoteDetail";
-import EditQuote from "./pages/EditQuote";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 const queryClient = new QueryClient();
@@ -53,37 +36,15 @@ const AppRoutes = () => {
     <Routes>
       {/* Auth routes */}
       <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
       
       {/* Protected routes */}
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/users/:userId" element={<UserDetail />} />
-        
-        {/* Quote Routes */}
-        <Route path="/quotes" element={<Quotes />} />
-        <Route path="/create-quote" element={<CreateQuote />} />
-        <Route path="/quotes/:quoteId" element={<QuoteDetail />} />
-        <Route path="/quotes/:quoteId/edit" element={<EditQuote />} />
         
         {/* Invoice Routes */}
-        <Route path="/invoices" element={<Invoices />} />
         <Route path="/my-invoices" element={<MyInvoices />} />
-        <Route path="/create-invoice" element={<CreateInvoice />} />
         <Route path="/invoices/:invoiceId" element={<InvoiceDetail />} />
-        
-        <Route path="/create-project" element={<CreateProject />} />
-        <Route path="/projects/:projectId" element={<ProjectBoard />} />
-        <Route path="/projects/:projectId/board" element={<ProjectBoard />} />
-        <Route path="/projects/:projectId/issues" element={<ProjectIssues />} />
-        <Route path="/projects/:projectId/timeline" element={<ProjectTimeline />} />
-        <Route path="/projects/:projectId/sprints" element={<ProjectSprints />} />
-        <Route path="/projects/:projectId/create-issue" element={<CreateIssue />} />
-        <Route path="/projects/:projectId/edit" element={<EditProject />} />
-        <Route path="/issues/:issueId" element={<IssueDetail />} />
-        <Route path="/issues/:issueId/edit" element={<EditIssue />} />
       </Route>
       
       <Route path="*" element={<NotFound />} />
