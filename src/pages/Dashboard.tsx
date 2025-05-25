@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProjectProgress from "@/components/ProjectProgress";
 import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
 
 const Dashboard = () => {
   const {
@@ -15,7 +16,8 @@ const Dashboard = () => {
     epics,
     fetchProjects,
     fetchIssues,
-    fetchEpics
+    fetchEpics,
+    toggleStarProject
   } = useAppStore();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -60,6 +62,12 @@ const Dashboard = () => {
   const totalIssues = issues.length;
   const completedIssues = issues.filter(issue => issue.status === 'done').length;
 
+  const handleStarClick = async (e: React.MouseEvent, projectId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await toggleStarProject(projectId);
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -83,15 +91,32 @@ const Dashboard = () => {
                 {userProjects.map(project => (
                   <Card key={project.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
-                      <div className="flex items-center gap-2">
-                        {project.imageUrl ? (
-                          <img src={project.imageUrl} alt={project.name} className="w-8 h-8 object-cover rounded" />
-                        ) : (
-                          <div className="w-8 h-8 bg-[#459ed7] rounded flex items-center justify-center text-white font-semibold">
-                            {project.key.substring(0, 2).toUpperCase()}
-                          </div>
-                        )}
-                        <CardTitle>{project.name}</CardTitle>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          {project.imageUrl ? (
+                            <img src={project.imageUrl} alt={project.name} className="w-8 h-8 object-cover rounded" />
+                          ) : (
+                            <div className="w-8 h-8 bg-[#459ed7] rounded flex items-center justify-center text-white font-semibold">
+                              {project.key.substring(0, 2).toUpperCase()}
+                            </div>
+                          )}
+                          <CardTitle>{project.name}</CardTitle>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-gray-400 hover:text-yellow-500"
+                          onClick={(e) => handleStarClick(e, project.id)}
+                        >
+                          <Star 
+                            className={cn(
+                              "h-4 w-4",
+                              project.starred 
+                                ? "fill-yellow-400 text-yellow-400" 
+                                : "fill-none"
+                            )} 
+                          />
+                        </Button>
                       </div>
                     </CardHeader>
                     <CardContent>
