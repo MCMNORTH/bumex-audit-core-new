@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import MyInvoices from "./pages/MyInvoices";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { useIsMobile } from "./hooks/use-mobile";
+import MobileRestriction from "./components/MobileRestriction";
 
 const queryClient = new QueryClient();
 
@@ -56,17 +58,31 @@ const AppRoutes = () => {
   );
 };
 
+const AppContent = () => {
+  const isMobile = useIsMobile();
+
+  // Show mobile restriction on mobile devices
+  if (isMobile) {
+    return <MobileRestriction />;
+  }
+
+  // Show normal app on desktop
+  return (
+    <SidebarProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </SidebarProvider>
+  );
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>
-        <SidebarProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </SidebarProvider>
+        <AppContent />
       </TooltipProvider>
     </AuthProvider>
   </QueryClientProvider>
