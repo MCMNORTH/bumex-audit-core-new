@@ -25,18 +25,20 @@ export const Sidebar = () => {
   } = useAuth();
   const {
     state,
-    toggleSidebar
+    toggleSidebar,
+    openMobile,
+    setOpenMobile
   } = useSidebar();
   const isMobile = useIsMobile();
-  const isOpen = state !== "collapsed";
+  const isOpen = isMobile ? openMobile : state !== "collapsed";
   const [userName, setUserName] = useState("");
 
   // Auto-collapse sidebar on mobile when component mounts
   useEffect(() => {
-    if (isMobile && isOpen) {
-      toggleSidebar();
+    if (isMobile && openMobile) {
+      setOpenMobile(false);
     }
-  }, [isMobile, isOpen, toggleSidebar]);
+  }, [isMobile, openMobile, setOpenMobile]);
 
   // Fetch user data from Firestore when currentUser changes
   useEffect(() => {
@@ -62,13 +64,21 @@ export const Sidebar = () => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}/details`);
     if (isMobile && isOpen) {
-      toggleSidebar();
+      setOpenMobile(false);
     }
   };
 
   const handleNavigation = (path: string) => {
     navigate(path);
     if (isMobile && isOpen) {
+      setOpenMobile(false);
+    }
+  };
+
+  const handleToggle = () => {
+    if (isMobile) {
+      setOpenMobile(!openMobile);
+    } else {
       toggleSidebar();
     }
   };
@@ -88,7 +98,7 @@ export const Sidebar = () => {
       {isMobile && isOpen && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-          onClick={toggleSidebar}
+          onClick={() => setOpenMobile(false)}
         />
       )}
       
@@ -105,7 +115,7 @@ export const Sidebar = () => {
             />
           ) : (
             <button 
-              onClick={toggleSidebar} 
+              onClick={handleToggle} 
               className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent"
             >
               <Menu className="h-5 w-5" />
@@ -113,7 +123,7 @@ export const Sidebar = () => {
           )}
           {isOpen && (
             <button 
-              onClick={toggleSidebar} 
+              onClick={handleToggle} 
               className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent"
             >
               {isMobile ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -214,7 +224,7 @@ export const Sidebar = () => {
       {/* Mobile menu button - show when sidebar is closed on mobile */}
       {isMobile && !isOpen && (
         <Button
-          onClick={toggleSidebar}
+          onClick={handleToggle}
           className="fixed top-4 left-4 z-50 md:hidden bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent"
           size="icon"
         >
