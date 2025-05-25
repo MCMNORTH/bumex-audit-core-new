@@ -57,7 +57,7 @@ const Dashboard = () => {
     if (currentUser?.uid) {
       loadData();
     }
-  }, [currentUser?.uid]); // Add dependency on currentUser
+  }, [currentUser?.uid]);
 
   const totalIssues = issues.length;
   const completedIssues = issues.filter(issue => issue.status === 'done').length;
@@ -73,9 +73,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
+    <div className="p-4 md:p-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h1 className="text-xl md:text-2xl font-bold">Dashboard</h1>
       </div>
 
       {isLoading ? (
@@ -86,12 +86,12 @@ const Dashboard = () => {
         <>
           <div className="mb-8">
             {userProjects.length === 0 ? (
-              <div className="text-center p-8 bg-gray-50 rounded-md border">
+              <div className="text-center p-6 md:p-8 bg-gray-50 rounded-md border">
                 <p className="text-gray-500 mb-2">No projects found</p>
                 <p className="text-sm text-gray-400">You don't have any projects assigned to you yet.</p>
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {userProjects.map(project => (
                   <Card 
                     key={project.id} 
@@ -100,20 +100,20 @@ const Dashboard = () => {
                   >
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
                           {project.imageUrl ? (
-                            <img src={project.imageUrl} alt={project.name} className="w-8 h-8 object-cover rounded" />
+                            <img src={project.imageUrl} alt={project.name} className="w-8 h-8 object-cover rounded flex-shrink-0" />
                           ) : (
-                            <div className="w-8 h-8 bg-[#459ed7] rounded flex items-center justify-center text-white font-semibold">
+                            <div className="w-8 h-8 bg-[#459ed7] rounded flex items-center justify-center text-white font-semibold flex-shrink-0">
                               {project.key.substring(0, 2).toUpperCase()}
                             </div>
                           )}
-                          <CardTitle>{project.name}</CardTitle>
+                          <CardTitle className="truncate text-sm md:text-base">{project.name}</CardTitle>
                         </div>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-gray-400 hover:text-yellow-500"
+                          className="h-8 w-8 text-gray-400 hover:text-yellow-500 flex-shrink-0"
                           onClick={(e) => handleStarClick(e, project.id)}
                         >
                           <Star 

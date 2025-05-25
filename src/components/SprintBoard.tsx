@@ -77,22 +77,22 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
   }
   
   return (
-    <div className="p-4">
+    <div className="p-2 md:p-4">
       {/* Backlog */}
       <div 
         className="mb-6" 
         onDragOver={handleDragOver}
         onDrop={(e) => handleDrop(e, "backlog")}
       >
-        <h3 className="text-lg font-semibold mb-3 flex items-center justify-between">
+        <h3 className="text-base md:text-lg font-semibold mb-3 flex items-center justify-between">
           Backlog
           <span className="bg-gray-200 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full">
             {backlogIssues.length}
           </span>
         </h3>
-        <div className="bg-gray-50 p-4 rounded-md min-h-[100px]">
+        <div className="bg-gray-50 p-3 md:p-4 rounded-md min-h-[100px]">
           {backlogIssues.length === 0 ? (
-            <div className="text-gray-500 text-center">No issues in backlog</div>
+            <div className="text-gray-500 text-center text-sm">No issues in backlog</div>
           ) : (
             <div className="space-y-2">
               {backlogIssues.map((issue) => (
@@ -115,19 +115,21 @@ export const SprintBoard = ({ projectId }: SprintBoardProps) => {
       </div>
       
       {/* Sprints */}
-      {sprints.map((sprint) => (
-        <SprintCard 
-          key={sprint.id} 
-          sprint={sprint} 
-          projectId={projectId}
-          onDragOver={handleDragOver}
-          onDrop={(e) => handleDrop(e, sprint.id)}
-          onDragStart={handleDragStart}
-        />
-      ))}
+      <div className="space-y-4">
+        {sprints.map((sprint) => (
+          <SprintCard 
+            key={sprint.id} 
+            sprint={sprint} 
+            projectId={projectId}
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, sprint.id)}
+            onDragStart={handleDragStart}
+          />
+        ))}
+      </div>
       
       {sprints.length === 0 && (
-        <div className="text-center p-8 bg-gray-50 rounded-md">
+        <div className="text-center p-6 md:p-8 bg-gray-50 rounded-md">
           <p className="text-gray-500">No sprints created yet.</p>
           <p className="text-sm text-gray-400">Create a sprint to start planning your work.</p>
         </div>

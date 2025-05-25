@@ -28,14 +28,15 @@ const ProjectSprints = () => {
     <div className="h-full flex flex-col">
       <ProjectHeader projectId={projectId} />
       <div className="p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Sprint Planning</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <h2 className="text-lg md:text-xl font-semibold">Sprint Planning</h2>
           <Button 
             onClick={() => setIsCreateDialogOpen(true)}
-            className="bg-[#459ed7] hover:bg-[#3688bd] flex gap-1"
+            className="bg-[#459ed7] hover:bg-[#3688bd] flex gap-1 w-full sm:w-auto"
           >
             <PlusCircle className="h-4 w-4" />
-            Create Sprint
+            <span className="sm:hidden">Create</span>
+            <span className="hidden sm:inline">Create Sprint</span>
           </Button>
         </div>
         
