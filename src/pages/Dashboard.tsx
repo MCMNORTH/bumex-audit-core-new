@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProjectProgress from "@/components/ProjectProgress";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
   const {
@@ -16,8 +17,12 @@ const Dashboard = () => {
     fetchIssues,
     fetchEpics
   } = useAppStore();
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+
+  // Filter projects to only show those owned by the current user
+  const userProjects = projects.filter(project => project.owner === currentUser?.uid);
 
   useEffect(() => {
     const loadData = async () => {
@@ -26,13 +31,15 @@ const Dashboard = () => {
         // Fetch projects first
         await fetchProjects();
 
-        // Get all project IDs
-        const projectIds = projects.map(project => project.id);
+        // Get all project IDs for user's projects only
+        const userProjectIds = projects
+          .filter(project => project.owner === currentUser?.uid)
+          .map(project => project.id);
 
-        // Fetch all issues and epics for each project in parallel
-        if (projectIds.length > 0) {
+        // Fetch all issues and epics for each user project in parallel
+        if (userProjectIds.length > 0) {
           const promises = [];
-          for (const projectId of projectIds) {
+          for (const projectId of userProjectIds) {
             promises.push(fetchIssues(projectId));
             promises.push(fetchEpics(projectId));
           }
@@ -44,8 +51,11 @@ const Dashboard = () => {
         setIsLoading(false);
       }
     };
-    loadData();
-  }, []); // Only run this effect once on component mount
+    
+    if (currentUser?.uid) {
+      loadData();
+    }
+  }, [currentUser?.uid]); // Add dependency on currentUser
 
   const totalIssues = issues.length;
   const completedIssues = issues.filter(issue => issue.status === 'done').length;
@@ -63,16 +73,14 @@ const Dashboard = () => {
       ) : (
         <>
           <div className="mb-8">
-            {projects.length === 0 ? (
+            {userProjects.length === 0 ? (
               <div className="text-center p-8 bg-gray-50 rounded-md border">
                 <p className="text-gray-500 mb-2">No projects found</p>
-                <Button onClick={() => navigate('/create-project')} variant="outline">
-                  Create Your First Project
-                </Button>
+                <p className="text-sm text-gray-400">You don't have any projects assigned to you yet.</p>
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {projects.map(project => (
+                {userProjects.map(project => (
                   <Card key={project.id} className="hover:shadow-md transition-shadow">
                     <CardHeader className="pb-2">
                       <div className="flex items-center gap-2">
