@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Printer, FileText, Plus, CreditCard, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, Plus, CreditCard, Trash2 } from "lucide-react";
 import { Invoice, User } from "@/types";
 import { firestore, auth } from "@/lib/firebase";
 import { toast } from "@/components/ui/use-toast";
@@ -121,7 +121,7 @@ export default function InvoiceDetail() {
       });
 
       // Navigate back to invoices list
-      navigate('/invoices');
+      navigate('/my-invoices');
     } catch (error) {
       console.error("Error deleting invoice:", error);
       toast({
@@ -155,7 +155,7 @@ export default function InvoiceDetail() {
     return <div className="container mx-auto py-8">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-4">Invoice not found</h2>
-          <Button onClick={() => navigate('/invoices')}>
+          <Button onClick={() => navigate('/my-invoices')}>
             Back to Invoices
           </Button>
         </div>
@@ -170,14 +170,11 @@ export default function InvoiceDetail() {
   const isClient = currentUser?.client === true;
   return <div className="container mx-auto py-8">
       <div className="mb-6 flex justify-between items-center">
-        <Button variant="outline" onClick={() => navigate('/invoices')}>
+        <Button variant="outline" onClick={() => navigate('/my-invoices')}>
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Invoices
+          Back to My Invoices
         </Button>
         <div className="space-x-2">
-          <Button variant="outline" onClick={handlePrint}>
-            <Printer className="h-4 w-4 mr-2" /> Print
-          </Button>
           {!isClient && <>
               <Button variant="outline" onClick={() => setShowDeleteConfirmation(true)} disabled={isDeleting}>
                 <Trash2 className="h-4 w-4 mr-2" /> 

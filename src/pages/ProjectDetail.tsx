@@ -61,7 +61,7 @@ const ProjectDetail = () => {
   }
 
   const statusCounts = {
-    todo: issues.filter(issue => issue.status === "todo").length,
+    total: issues.length,
     'in-progress': issues.filter(issue => issue.status === "in-progress").length,
     'in-review': issues.filter(issue => issue.status === "in-review").length,
     done: issues.filter(issue => issue.status === "done").length
@@ -117,19 +117,7 @@ const ProjectDetail = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{issues.length}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Completed
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{statusCounts.done}</div>
+            <div className="text-2xl font-bold">{statusCounts.total}</div>
           </CardContent>
         </Card>
 
@@ -149,11 +137,23 @@ const ProjectDetail = () => {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
               <Target className="h-4 w-4" />
-              Epics
+              In Review
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{epics.length}</div>
+            <div className="text-2xl font-bold text-yellow-600">{statusCounts['in-review']}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              Done
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">{statusCounts.done}</div>
           </CardContent>
         </Card>
       </div>
