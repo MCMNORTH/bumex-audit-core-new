@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { Layout } from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
+import ProjectDetail from "./pages/ProjectDetail";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
@@ -41,6 +42,9 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        
+        {/* Project Routes */}
+        <Route path="/projects/:projectId/details" element={<ProjectDetail />} />
         
         {/* Invoice Routes */}
         <Route path="/my-invoices" element={<MyInvoices />} />

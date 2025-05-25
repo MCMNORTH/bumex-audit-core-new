@@ -68,6 +68,10 @@ const Dashboard = () => {
     await toggleStarProject(projectId);
   };
 
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/projects/${projectId}/details`);
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -89,7 +93,11 @@ const Dashboard = () => {
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {userProjects.map(project => (
-                  <Card key={project.id} className="hover:shadow-md transition-shadow">
+                  <Card 
+                    key={project.id} 
+                    className="hover:shadow-md transition-shadow cursor-pointer"
+                    onClick={() => handleProjectClick(project.id)}
+                  >
                     <CardHeader className="pb-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">

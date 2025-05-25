@@ -53,7 +53,7 @@ export const Sidebar = () => {
 
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
-    navigate(`/projects/${project.id}`);
+    navigate(`/projects/${project.id}/details`);
   };
 
   // Use the fetched userName or fall back to email
