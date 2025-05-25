@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
@@ -32,10 +31,10 @@ export const Sidebar = () => {
   const isOpen = state !== "collapsed";
   const [userName, setUserName] = useState("");
 
-  // Auto-collapse sidebar on mobile
+  // Auto-collapse sidebar on mobile when component mounts
   useEffect(() => {
     if (isMobile && isOpen) {
-      // Auto-collapse on mobile by default
+      toggleSidebar();
     }
   }, [isMobile]);
 
@@ -48,7 +47,6 @@ export const Sidebar = () => {
           if (userData && userData.name) {
             setUserName(userData.name);
           } else {
-            // Fallback to email or default display name if name is not available
             setUserName(currentUser?.displayName || currentUser?.email?.split('@')[0] || "User");
           }
         } catch (error) {
@@ -63,7 +61,6 @@ export const Sidebar = () => {
   const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     navigate(`/projects/${project.id}/details`);
-    // Close sidebar on mobile after navigation
     if (isMobile && isOpen) {
       toggleSidebar();
     }
@@ -71,7 +68,6 @@ export const Sidebar = () => {
 
   const handleNavigation = (path: string) => {
     navigate(path);
-    // Close sidebar on mobile after navigation
     if (isMobile && isOpen) {
       toggleSidebar();
     }
