@@ -47,48 +47,6 @@
     --sidebar-border: 229 44% 12%;
     --sidebar-ring: 205 66% 56%; /* #459ED7 */
   }
-
-  .dark {
-    --background: 222 84% 4.9%; /* Very dark background */
-    --foreground: 210 40% 98%; /* Light text */
-
-    --card: 222 84% 4.9%; /* Dark card background */
-    --card-foreground: 210 40% 98%; /* Light card text */
-
-    --popover: 222 84% 4.9%; /* Dark popover */
-    --popover-foreground: 210 40% 98%; /* Light popover text */
-
-    --primary: 205 66% 56%; /* #459ED7 - keep primary blue */
-    --primary-foreground: 210 40% 98%; /* Light text on primary */
-
-    --secondary: 217 32% 17%; /* Dark secondary */
-    --secondary-foreground: 210 40% 98%; /* Light text on secondary */
-
-    --muted: 217 32% 17%; /* Dark muted */
-    --muted-foreground: 215 20% 65%; /* Muted text */
-
-    --accent: 217 32% 17%; /* Dark accent */
-    --accent-foreground: 210 40% 98%; /* Light accent text */
-
-    --destructive: 0 62.8% 30.6%; /* Dark destructive */
-    --destructive-foreground: 210 40% 98%; /* Light destructive text */
-
-    --success: 144 56% 46%; /* Keep success green */
-    --warning: 42 100% 50%; /* Keep warning yellow */
-
-    --border: 217 32% 17%; /* Dark border */
-    --input: 217 32% 17%; /* Dark input */
-    --ring: 205 66% 56%; /* Keep ring blue */
-
-    --sidebar-background: 228 44% 7%; /* Keep sidebar dark */
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 205 66% 56%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 229 44% 12%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 229 44% 12%;
-    --sidebar-ring: 205 66% 56%;
-  }
 }
 
 @layer base {
@@ -106,7 +64,7 @@
 }
 
 .task-card {
-  @apply bg-white dark:bg-card rounded-md shadow-sm p-3 mb-2 cursor-pointer hover:shadow-md transition-shadow;
+  @apply bg-white rounded-md shadow-sm p-3 mb-2 cursor-pointer hover:shadow-md transition-shadow;
 }
 
 .fade-in {
