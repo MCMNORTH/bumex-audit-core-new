@@ -80,15 +80,15 @@ const Dashboard = () => {
 
       {isLoading ? (
         <div className="text-center py-12">
-          <p className="text-gray-500">Loading data...</p>
+          <p className="text-muted-foreground">Loading data...</p>
         </div>
       ) : (
         <>
           <div className="mb-8">
             {userProjects.length === 0 ? (
-              <div className="text-center p-8 bg-gray-50 rounded-md border">
-                <p className="text-gray-500 mb-2">No projects found</p>
-                <p className="text-sm text-gray-400">You don't have any projects assigned to you yet.</p>
+              <div className="text-center p-8 bg-muted rounded-md border">
+                <p className="text-muted-foreground mb-2">No projects found</p>
+                <p className="text-sm text-muted-foreground">You don't have any projects assigned to you yet.</p>
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -113,7 +113,7 @@ const Dashboard = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-gray-400 hover:text-yellow-500"
+                          className="h-8 w-8 text-muted-foreground hover:text-yellow-500"
                           onClick={(e) => handleStarClick(e, project.id)}
                         >
                           <Star 
@@ -128,14 +128,14 @@ const Dashboard = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-sm text-gray-500 line-clamp-2 mb-3">
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
                         {project.description || "No description available."}
                       </p>
                       
                       <ProjectProgress project={project} showDetails />
                       
                       <div className="mt-4">
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-muted-foreground">
                           Created: {new Date(project.createdAt).toLocaleDateString()}
                         </span>
                       </div>

@@ -7,6 +7,7 @@ import { User, LayoutDashboard, ClipboardList } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
+import { ThemeToggle } from "./ThemeToggle";
 import { useSidebar } from "@/components/ui/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useState } from "react";
@@ -71,9 +72,12 @@ export const Sidebar = () => {
         {isOpen ? <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/2dgtj37xrkp6/Logo_wide_transparent.png" alt="OVERCODE" className="h-7" /> : <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
             ▶
           </button>}
-        {isOpen && <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
-            ◀
-          </button>}
+        {isOpen && <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button onClick={toggleSidebar} className="text-sidebar-foreground p-1 rounded hover:bg-sidebar-accent">
+              ◀
+            </button>
+          </div>}
       </div>
 
       
