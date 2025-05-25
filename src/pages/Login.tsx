@@ -11,7 +11,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { firestore } from "@/lib/firebase";
-
 const loginSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address."
@@ -21,7 +20,6 @@ const loginSchema = z.object({
   })
 });
 type LoginFormData = z.infer<typeof loginSchema>;
-
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -37,7 +35,6 @@ const Login = () => {
       password: ""
     }
   });
-
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     setAuthError(null);
@@ -63,7 +60,6 @@ const Login = () => {
         } else {
           // Handle different failure cases
           console.log("Client verification failed - denying access");
-          
           if (!userData) {
             console.log("No user data found in Firestore");
             setAuthError("User profile not found. Please contact support.");
@@ -80,7 +76,6 @@ const Login = () => {
 
           // If not client, sign them out using the logout function from AuthContext
           await logout();
-          
           toast("Access denied", {
             description: "Only clients can access this application."
           });
@@ -104,7 +99,6 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
   return <div className="h-screen w-screen flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md flex flex-col items-center mb-8">
         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
@@ -155,15 +149,9 @@ const Login = () => {
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center pt-0">
-          <p className="text-sm text-gray-500">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
+          
         </CardFooter>
       </Card>
     </div>;
 };
-
 export default Login;
