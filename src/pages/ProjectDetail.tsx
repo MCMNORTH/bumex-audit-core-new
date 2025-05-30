@@ -122,7 +122,7 @@ const ProjectDetail = () => {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
                 <Target className="h-4 w-4" />
-                {t('totalIssues')}
+                {t('totalTasks')}
               </CardTitle>
             </CardHeader>
             <CardContent>

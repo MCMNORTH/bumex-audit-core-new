@@ -18,6 +18,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import MobileHeader from "@/components/MobileHeader";
 import MobileInvoiceCard from "@/components/MobileInvoiceCard";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function MyInvoices() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function MyInvoices() {
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const fetchInvoices = async () => {
@@ -86,7 +88,7 @@ export default function MyInvoices() {
       <MobileHeader />
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">My Invoices</h1>
+          <h1 className="text-3xl font-bold">{t('myInvoices')}</h1>
         </div>
 
         <div className="bg-white rounded-md shadow">
@@ -115,10 +117,10 @@ export default function MyInvoices() {
                 <TableRow>
                   <TableHead>Invoice ID</TableHead>
                   <TableHead>Client</TableHead>
-                  <TableHead>Date</TableHead>
+                  <TableHead>{t('date')}</TableHead>
                   <TableHead>Due Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Paid</TableHead>
+                  <TableHead>{t('amount')}</TableHead>
+                  <TableHead>{t('paid')}</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>

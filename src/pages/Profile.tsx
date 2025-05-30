@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -25,6 +24,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Eye, EyeOff } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const passwordSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
@@ -40,6 +40,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { t } = useLanguage();
 
   const displayName = currentUser?.displayName || currentUser?.email?.split('@')[0] || "User";
   const initials = displayName.charAt(0).toUpperCase();
@@ -75,7 +76,7 @@ const Profile = () => {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
-      <h1 className="text-2xl font-bold mb-6">Profile</h1>
+      <h1 className="text-2xl font-bold mb-6">{t('profile')}</h1>
       
       <Card className="mb-8">
         <CardHeader>
@@ -92,7 +93,7 @@ const Profile = () => {
           
           <div className="space-y-3 w-full">
             <div className="grid w-full gap-2.5">
-              <label htmlFor="email" className="text-sm font-medium">Email</label>
+              <label htmlFor="email" className="text-sm font-medium">{t('email')}</label>
               <Input id="email" value={currentUser?.email || ""} disabled className="bg-gray-50" />
             </div>
           </div>

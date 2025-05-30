@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-type Language = 'en' | 'fr' | 'ar';
+type Language = 'en' | 'fr';
 
 interface LanguageContextType {
   language: Language;
@@ -30,7 +30,7 @@ const translations = {
     
     // Project
     projectNotFound: 'Project not found',
-    totalIssues: 'Total Issues',
+    totalTasks: 'Total Tasks',
     inProgress: 'In Progress',
     inReview: 'In Review',
     done: 'Done',
@@ -68,8 +68,7 @@ const translations = {
     // Languages
     language: 'Language',
     english: 'English',
-    french: 'Français',
-    arabic: 'العربية'
+    french: 'Français'
   },
   fr: {
     // Navigation
@@ -89,7 +88,7 @@ const translations = {
     
     // Project
     projectNotFound: 'Projet non trouvé',
-    totalIssues: 'Total des Problèmes',
+    totalTasks: 'Tâches Totales',
     inProgress: 'En Cours',
     inReview: 'En Révision',
     done: 'Terminé',
@@ -127,67 +126,7 @@ const translations = {
     // Languages
     language: 'Langue',
     english: 'English',
-    french: 'Français',
-    arabic: 'العربية'
-  },
-  ar: {
-    // Navigation
-    dashboard: 'لوحة التحكم',
-    myInvoices: 'فواتيري',
-    starredProjects: 'المشاريع المفضلة',
-    noStarredProjects: 'لا توجد مشاريع مفضلة',
-    profile: 'الملف الشخصي',
-    
-    // Auth
-    welcomeBack: 'مرحباً بعودتك',
-    signInToYourAccount: 'تسجيل الدخول إلى حسابك',
-    email: 'البريد الإلكتروني',
-    password: 'كلمة المرور',
-    signIn: 'تسجيل الدخول',
-    signingIn: 'جاري تسجيل الدخول...',
-    
-    // Project
-    projectNotFound: 'المشروع غير موجود',
-    totalIssues: 'إجمالي المشاكل',
-    inProgress: 'قيد التقدم',
-    inReview: 'قيد المراجعة',
-    done: 'مكتمل',
-    projectProgress: 'تقدم المشروع',
-    projectInformation: 'معلومات المشروع',
-    created: 'تم الإنشاء',
-    lastUpdated: 'آخر تحديث',
-    projectKey: 'مفتاح المشروع',
-    
-    // Invoice
-    backToMyInvoices: 'العودة إلى فواتيري',
-    deleteInvoice: 'حذف الفاتورة',
-    deleting: 'جاري الحذف...',
-    recordPayment: 'تسجيل الدفع',
-    invoice: 'فاتورة',
-    billTo: 'إرسال الفاتورة إلى:',
-    issueDate: 'تاريخ الإصدار:',
-    dueDate: 'تاريخ الاستحقاق:',
-    currency: 'العملة:',
-    description: 'الوصف',
-    qty: 'الكمية',
-    price: 'السعر',
-    amount: 'المبلغ',
-    subtotal: 'المجموع الفرعي:',
-    tax: 'الضريبة (0%):',
-    total: 'الإجمالي:',
-    paid: 'مدفوع:',
-    balanceDue: 'الرصيد المستحق:',
-    paymentHistory: 'تاريخ المدفوعات',
-    date: 'التاريخ',
-    note: 'ملاحظة',
-    thankYou: 'شكراً لك على عملك!',
-    questionsContact: 'للأسئلة المتعلقة بهذه الفاتورة، يرجى التواصل مع support@overcode.dev',
-    
-    // Languages
-    language: 'اللغة',
-    english: 'English',
-    french: 'Français',
-    arabic: 'العربية'
+    french: 'Français'
   }
 };
 
@@ -196,7 +135,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && ['en', 'fr', 'ar'].includes(savedLanguage)) {
+    if (savedLanguage && ['en', 'fr'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
     }
   }, []);
@@ -205,8 +144,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
     
-    // Set document direction for Arabic
-    document.documentElement.dir = newLanguage === 'ar' ? 'rtl' : 'ltr';
+    // Set document language
     document.documentElement.lang = newLanguage;
   };
 

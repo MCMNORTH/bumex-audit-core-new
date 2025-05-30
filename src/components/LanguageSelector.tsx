@@ -20,14 +20,13 @@ export const LanguageSelector = ({ showIcon = true, variant = "sidebar" }: Langu
 
   const languages = [
     { value: 'en', label: t('english'), flag: '🇺🇸' },
-    { value: 'fr', label: t('french'), flag: '🇫🇷' },
-    { value: 'ar', label: t('arabic'), flag: '🇸🇦' }
+    { value: 'fr', label: t('french'), flag: '🇫🇷' }
   ];
 
   if (variant === "login") {
     return (
       <div className="mb-4">
-        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr' | 'ar')}>
+        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr')}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder={t('language')} />
           </SelectTrigger>
@@ -52,7 +51,7 @@ export const LanguageSelector = ({ showIcon = true, variant = "sidebar" }: Langu
         <div className="mb-2 text-xs uppercase font-semibold text-gray-400">
           {t('language')}
         </div>
-        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr' | 'ar')}>
+        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr')}>
           <SelectTrigger className="w-full bg-sidebar border-sidebar-border">
             <SelectValue />
           </SelectTrigger>
@@ -76,7 +75,7 @@ export const LanguageSelector = ({ showIcon = true, variant = "sidebar" }: Langu
       <div className="mb-2 text-xs uppercase font-semibold text-gray-400">
         {t('language')}
       </div>
-      <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr' | 'ar')}>
+      <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr')}>
         <SelectTrigger className="w-full bg-sidebar border-sidebar-border text-sidebar-foreground">
           <SelectValue />
         </SelectTrigger>

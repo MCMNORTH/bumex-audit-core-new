@@ -8,8 +8,10 @@ import ProjectProgress from "@/components/ProjectProgress";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import MobileHeader from "@/components/MobileHeader";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Dashboard = () => {
+  const { t } = useLanguage();
   const {
     projects,
     issues,
@@ -77,7 +79,7 @@ const Dashboard = () => {
       <MobileHeader />
       <div className="p-6 max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">{t('dashboard')}</h1>
         </div>
 
         {isLoading ? (
@@ -138,7 +140,7 @@ const Dashboard = () => {
                         
                         <div className="mt-4">
                           <span className="text-xs text-gray-500">
-                            Created: {new Date(project.createdAt).toLocaleDateString()}
+                            {t('created')}: {new Date(project.createdAt).toLocaleDateString()}
                           </span>
                         </div>
                       </CardContent>
