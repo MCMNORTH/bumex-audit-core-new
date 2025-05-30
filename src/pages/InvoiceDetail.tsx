@@ -25,6 +25,7 @@ export default function InvoiceDetail() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
   useEffect(() => {
     const fetchInvoice = async () => {
       if (!invoiceId) return;
@@ -333,8 +334,9 @@ export default function InvoiceDetail() {
                 {isDeleting ? "Deleting..." : "Delete"}
               </AlertDialogAction>
             </AlertDialogFooter>
-          </AlertDialog>
-        </div>
-      </>
-    );
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
+    </>
+  );
 }
