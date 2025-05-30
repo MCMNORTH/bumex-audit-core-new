@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/store";
@@ -7,8 +6,13 @@ import { Calendar, User, Target, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProjectProgress from "@/components/ProjectProgress";
 import { cn } from "@/lib/utils";
+import MobileHeader from "@/components/MobileHeader";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const ProjectDetail = () => {
+  const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const { projectId = "" } = useParams();
   const { 
     getProjectById, 
@@ -52,11 +56,14 @@ const ProjectDetail = () => {
 
   if (!project) {
     return (
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="text-center py-12">
-          <p className="text-gray-500">Project not found</p>
+      <>
+        {isMobile && <MobileHeader />}
+        <div className="p-6 max-w-7xl mx-auto">
+          <div className="text-center py-12">
+            <p className="text-gray-500">{t('projectNotFound')}</p>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -68,131 +75,134 @@ const ProjectDetail = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      {/* Project Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-4">
-            {project.imageUrl ? (
-              <img src={project.imageUrl} alt={project.name} className="w-16 h-16 object-cover rounded-lg" />
-            ) : (
-              <div className="w-16 h-16 bg-[#459ed7] rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                {project.key.substring(0, 2).toUpperCase()}
+    <>
+      {isMobile && <MobileHeader />}
+      <div className="p-6 max-w-7xl mx-auto">
+        {/* Project Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              {project.imageUrl ? (
+                <img src={project.imageUrl} alt={project.name} className="w-16 h-16 object-cover rounded-lg" />
+              ) : (
+                <div className="w-16 h-16 bg-[#459ed7] rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                  {project.key.substring(0, 2).toUpperCase()}
+                </div>
+              )}
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
+                <p className="text-lg text-gray-600">{project.key}</p>
               </div>
-            )}
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
-              <p className="text-lg text-gray-600">{project.key}</p>
             </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-gray-400 hover:text-yellow-500"
+              onClick={handleStarClick}
+            >
+              <Star 
+                className={cn(
+                  "h-6 w-6",
+                  project.starred 
+                    ? "fill-yellow-400 text-yellow-400" 
+                    : "fill-none"
+                )} 
+              />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-10 w-10 text-gray-400 hover:text-yellow-500"
-            onClick={handleStarClick}
-          >
-            <Star 
-              className={cn(
-                "h-6 w-6",
-                project.starred 
-                  ? "fill-yellow-400 text-yellow-400" 
-                  : "fill-none"
-              )} 
-            />
-          </Button>
-        </div>
-        
-        {project.description && (
-          <p className="text-gray-700 text-lg leading-relaxed">{project.description}</p>
-        )}
-      </div>
-
-      {/* Project Stats */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Total Issues
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{statusCounts.total}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              In Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{statusCounts['in-progress']}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              In Review
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{statusCounts['in-review']}</div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Done
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{statusCounts.done}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Progress Section */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Project Progress</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="text-gray-500">Loading progress...</div>
-          ) : (
-            <ProjectProgress project={project} showDetails />
+          
+          {project.description && (
+            <p className="text-gray-700 text-lg leading-relaxed">{project.description}</p>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Project Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Project Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>Created: {new Date(project.createdAt).toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="h-4 w-4" />
-            <span>Last Updated: {new Date(project.updatedAt).toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <User className="h-4 w-4" />
-            <span>Project Key: {project.key}</span>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+        {/* Project Stats */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                {t('totalIssues')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{statusCounts.total}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                {t('inProgress')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-600">{statusCounts['in-progress']}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                {t('inReview')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-yellow-600">{statusCounts['in-review']}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Target className="h-4 w-4" />
+                {t('done')}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{statusCounts.done}</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Progress Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>{t('projectProgress')}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="text-gray-500">Loading progress...</div>
+            ) : (
+              <ProjectProgress project={project} showDetails />
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Project Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{t('projectInformation')}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Calendar className="h-4 w-4" />
+              <span>{t('created')}: {new Date(project.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Calendar className="h-4 w-4" />
+              <span>{t('lastUpdated')}: {new Date(project.updatedAt).toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <User className="h-4 w-4" />
+              <span>{t('projectKey')}: {project.key}</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 };
 

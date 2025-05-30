@@ -10,9 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import MobileHeader from "@/components/MobileHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function InvoiceDetail() {
   const isMobile = useIsMobile();
+  const { t } = useLanguage();
   const {
     invoiceId
   } = useParams<{
@@ -180,18 +182,22 @@ export default function InvoiceDetail() {
         <div className="mb-6 flex justify-between items-center">
           <Button variant="outline" onClick={() => navigate('/my-invoices')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to My Invoices
+            {t('backToMyInvoices')}
           </Button>
           <div className="space-x-2">
-            {!isClient && <>
+            {!isClient && (
+              <>
                 <Button variant="outline" onClick={() => setShowDeleteConfirmation(true)} disabled={isDeleting}>
                   <Trash2 className="h-4 w-4 mr-2" /> 
-                  {isDeleting ? "Deleting..." : "Delete Invoice"}
+                  {isDeleting ? t('deleting') : t('deleteInvoice')}
                 </Button>
-                {canAddPayment && <Button onClick={() => setShowPaymentDialog(true)}>
-                    <CreditCard className="h-4 w-4 mr-2" /> Record Payment
-                  </Button>}
-              </>}
+                {canAddPayment && (
+                  <Button onClick={() => setShowPaymentDialog(true)}>
+                    <CreditCard className="h-4 w-4 mr-2" /> {t('recordPayment')}
+                  </Button>
+                )}
+              </>
+            )}
           </div>
         </div>
 
@@ -203,28 +209,28 @@ export default function InvoiceDetail() {
               <p className="text-xs md:text-sm text-gray-500">support@overcode.dev</p>
             </div>
             <div className="text-right">
-              <h2 className="text-lg md:text-2xl font-bold text-gray-800">INVOICE</h2>
+              <h2 className="text-lg md:text-2xl font-bold text-gray-800">{t('invoice')}</h2>
               <p className="text-xs md:text-base text-gray-500">#{invoice.id.substring(0, 8)}</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-4 md:mb-8">
             <div>
-              <h3 className="text-gray-500 font-medium mb-2 text-sm md:text-base">Bill To:</h3>
+              <h3 className="text-gray-500 font-medium mb-2 text-sm md:text-base">{t('billTo')}</h3>
               <p className="font-bold text-sm md:text-base">{invoice.clientName}</p>
               {invoice.clientContact && <p className="text-xs md:text-sm text-gray-500">{invoice.clientContact}</p>}
             </div>
             <div className="text-left md:text-right">
               <div className="mb-1 md:mb-2">
-                <span className="text-gray-500 text-xs md:text-sm">Issue Date: </span>
+                <span className="text-gray-500 text-xs md:text-sm">{t('issueDate')} </span>
                 <span className="text-xs md:text-sm">{formatDate(invoice.issueDate)}</span>
               </div>
               <div className="mb-1 md:mb-2">
-                <span className="text-gray-500 text-xs md:text-sm">Due Date: </span>
+                <span className="text-gray-500 text-xs md:text-sm">{t('dueDate')} </span>
                 <span className="text-xs md:text-sm">{formatDate(invoice.dueDate)}</span>
               </div>
               <div className="mb-1 md:mb-2">
-                <span className="text-gray-500 text-xs md:text-sm">Currency: </span>
+                <span className="text-gray-500 text-xs md:text-sm">{t('currency')} </span>
                 <span className="text-xs md:text-sm">{invoice.currency}</span>
               </div>
             </div>
@@ -234,10 +240,10 @@ export default function InvoiceDetail() {
             <table className="w-full text-xs md:text-sm">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="py-1 md:py-2 text-left text-gray-500">Description</th>
-                  <th className="py-1 md:py-2 text-right text-gray-500">Qty</th>
-                  <th className="py-1 md:py-2 text-right text-gray-500">Price</th>
-                  <th className="py-1 md:py-2 text-right text-gray-500">Amount</th>
+                  <th className="py-1 md:py-2 text-left text-gray-500">{t('description')}</th>
+                  <th className="py-1 md:py-2 text-right text-gray-500">{t('qty')}</th>
+                  <th className="py-1 md:py-2 text-right text-gray-500">{t('price')}</th>
+                  <th className="py-1 md:py-2 text-right text-gray-500">{t('amount')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -256,27 +262,27 @@ export default function InvoiceDetail() {
           <div className="flex justify-end">
             <div className="w-full md:w-1/3">
               <div className="flex justify-between pb-1 md:pb-2 text-xs md:text-sm">
-                <span className="font-medium">Subtotal:</span>
+                <span className="font-medium">{t('subtotal')}</span>
                 <span>{formatCurrency(invoice.total, invoice.currency)}</span>
               </div>
               <div className="flex justify-between pb-1 md:pb-2 text-xs md:text-sm">
-                <span className="font-medium">Tax (0%):</span>
+                <span className="font-medium">{t('tax')}</span>
                 <span>{formatCurrency(0, invoice.currency)}</span>
               </div>
               <div className="flex justify-between pt-1 md:pt-2 border-t border-gray-200 text-xs md:text-sm">
-                <span className="font-bold">Total:</span>
+                <span className="font-bold">{t('total')}</span>
                 <span className="font-bold">{formatCurrency(invoice.total, invoice.currency)}</span>
               </div>
               
               {(isPartiallyPaid || isPaid) && (
                 <div className="mt-2">
                   <div className="flex justify-between pb-1 md:pb-2 text-xs md:text-sm">
-                    <span className="font-medium">Paid:</span>
+                    <span className="font-medium">{t('paid')}</span>
                     <span className="text-green-600">{formatCurrency(invoice.amountPaid || 0, invoice.currency)}</span>
                   </div>
                   {!isPaid && (
                     <div className="flex justify-between pt-1 md:pt-2 border-t border-gray-200 text-xs md:text-sm">
-                      <span className="font-bold">Balance Due:</span>
+                      <span className="font-bold">{t('balanceDue')}</span>
                       <span className="font-bold text-red-600">{formatCurrency(remainingAmount, invoice.currency)}</span>
                     </div>
                   )}
@@ -287,14 +293,14 @@ export default function InvoiceDetail() {
 
           {invoice.payments && invoice.payments.length > 0 && (
             <div className="mt-4 md:mt-8 pt-2 md:pt-4 border-t border-gray-200">
-              <h3 className="text-base md:text-lg font-medium mb-2 md:mb-4">Payment History</h3>
+              <h3 className="text-base md:text-lg font-medium mb-2 md:mb-4">{t('paymentHistory')}</h3>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200 text-xs md:text-sm">
-                      <th className="py-1 md:py-2 text-left text-gray-500">Date</th>
-                      <th className="py-1 md:py-2 text-left text-gray-500">Amount</th>
-                      <th className="py-1 md:py-2 text-left text-gray-500">Note</th>
+                      <th className="py-1 md:py-2 text-left text-gray-500">{t('date')}</th>
+                      <th className="py-1 md:py-2 text-left text-gray-500">{t('amount')}</th>
+                      <th className="py-1 md:py-2 text-left text-gray-500">{t('note')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -312,8 +318,8 @@ export default function InvoiceDetail() {
           )}
 
           <div className="mt-4 md:mt-8 pt-4 md:pt-8 border-t border-gray-200 text-center text-gray-500 text-xs md:text-sm">
-            <p>Thank you for your business!</p>
-            <p>For questions regarding this invoice, please contact support@overcode.dev</p>
+            <p>{t('thankYou')}</p>
+            <p>{t('questionsContact')}</p>
           </div>
         </div>
         

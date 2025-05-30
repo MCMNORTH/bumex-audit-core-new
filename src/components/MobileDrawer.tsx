@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, ClipboardList, Star, User } from "lucide-react";
@@ -7,12 +6,15 @@ import { useAppStore } from "@/store";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogoutButton } from "./LogoutButton";
 import { cn } from "@/lib/utils";
+import { LanguageSelector } from "./LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const MobileDrawer = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { getStarredProjects } = useAppStore();
   const { currentUser } = useAuth();
+  const { t } = useLanguage();
   
   const starredProjects = getStarredProjects();
 
@@ -46,7 +48,7 @@ export const MobileDrawer = () => {
             )}
           >
             <LayoutDashboard className="h-4 w-4" />
-            Dashboard
+            {t('dashboard')}
           </Button>
 
           <Button 
@@ -59,13 +61,13 @@ export const MobileDrawer = () => {
             )}
           >
             <ClipboardList className="h-4 w-4" />
-            My Invoices
+            {t('myInvoices')}
           </Button>
         </div>
 
         <div className="p-4">
           <div className="mb-2 text-xs uppercase font-semibold text-gray-400">
-            Starred Projects
+            {t('starredProjects')}
           </div>
           <div className="space-y-1">
             {starredProjects.length > 0 ? (
@@ -92,11 +94,14 @@ export const MobileDrawer = () => {
                 </button>
               ))
             ) : (
-              <div className="text-sm text-gray-500 p-2">No starred projects</div>
+              <div className="text-sm text-gray-500 p-2">{t('noStarredProjects')}</div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Language Selector */}
+      <LanguageSelector variant="mobile" />
 
       <div className="mt-auto border-t border-sidebar-border p-4 space-y-2">
         <Button 
@@ -109,7 +114,7 @@ export const MobileDrawer = () => {
           )}
         >
           <User className="mr-2 h-4 w-4" />
-          Profile
+          {t('profile')}
         </Button>
         <LogoutButton />
       </div>

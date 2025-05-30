@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Project } from "@/types";
 import { useAppStore } from "@/store";
@@ -11,8 +10,11 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useEffect, useState } from "react";
 import { firestore } from "@/lib/firebase";
+import { LanguageSelector } from "./LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Sidebar = () => {
+  const { t } = useLanguage();
   const {
     selectedProject,
     setSelectedProject,
@@ -80,7 +82,7 @@ export const Sidebar = () => {
       <div className="p-2">
         <Button onClick={() => navigate('/')} className={cn("w-full justify-start gap-2 mb-2", isRouteActive('/') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
           <LayoutDashboard className="h-4 w-4" />
-          {isOpen && <span>Dashboard</span>}
+          {isOpen && <span>{t('dashboard')}</span>}
         </Button>
       </div>
 
@@ -92,7 +94,7 @@ export const Sidebar = () => {
         <div className="mb-4 space-y-2">
           <Button onClick={() => navigate('/my-invoices')} className={cn("w-full justify-start gap-2", isRouteActive('/my-invoices') ? "bg-jira-blue hover:bg-jira-blue-dark" : "bg-transparent hover:bg-sidebar-accent text-sidebar-foreground")}>
             <ClipboardList className="h-4 w-4" />
-            {isOpen && <span>My Invoices</span>}
+            {isOpen && <span>{t('myInvoices')}</span>}
           </Button>
         </div>
       </div>
@@ -100,23 +102,28 @@ export const Sidebar = () => {
       
       <div className="p-2 overflow-y-auto flex-1">
         <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
-          Starred Projects
+          {t('starredProjects')}
         </div>
         <ul className="space-y-1">
-          {starredProjects.length > 0 ? starredProjects.map(project => <li key={project.id}>
-                <button onClick={() => handleProjectSelect(project)} className={cn("w-full text-left p-2 rounded-md flex items-center gap-2", "hover:bg-sidebar-accent transition-colors", selectedProject?.id === project.id ? "bg-sidebar-accent" : "bg-transparent")}>
-                  {project.imageUrl ? <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
-                      <AspectRatio ratio={1 / 1}>
-                        <img src={project.imageUrl} alt={project.name} className="object-cover w-full h-full" />
-                      </AspectRatio>
-                    </div> : <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                      {project.key.substring(0, 2).toUpperCase()}
-                    </div>}
-                  {isOpen && <span>{project.name}</span>}
-                </button>
-              </li>) : isOpen && <li className="text-sm text-gray-500 p-2">No starred projects</li>}
+          {starredProjects.length > 0 ? starredProjects.map(project => 
+            <li key={project.id}>
+              <button onClick={() => handleProjectSelect(project)} className={cn("w-full text-left p-2 rounded-md flex items-center gap-2", "hover:bg-sidebar-accent transition-colors", selectedProject?.id === project.id ? "bg-sidebar-accent" : "bg-transparent")}>
+                {project.imageUrl ? <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
+                    <AspectRatio ratio={1 / 1}>
+                      <img src={project.imageUrl} alt={project.name} className="object-cover w-full h-full" />
+                    </AspectRatio>
+                  </div> : <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
+                    {project.key.substring(0, 2).toUpperCase()}
+                  </div>}
+                {isOpen && <span>{project.name}</span>}
+              </button>
+            </li>
+          ) : isOpen && <li className="text-sm text-gray-500 p-2">{t('noStarredProjects')}</li>}
         </ul>
       </div>
+      
+      {/* Language Selector */}
+      {isOpen && <LanguageSelector />}
       
       <div className="mt-auto border-t border-sidebar-border">
         <div className="p-2">

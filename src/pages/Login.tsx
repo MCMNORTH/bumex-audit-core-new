@@ -11,6 +11,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Mail, Lock } from "lucide-react";
 import { firestore } from "@/lib/firebase";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
+
 const loginSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address."
@@ -19,8 +22,11 @@ const loginSchema = z.object({
     message: "Password must be at least 6 characters."
   })
 });
+
 type LoginFormData = z.infer<typeof loginSchema>;
+
 const Login = () => {
+  const { t } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const {
@@ -99,29 +105,34 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-  return <div className="h-screen w-screen flex flex-col items-center justify-center p-4">
+  return (
+    <div className="h-screen w-screen flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md flex flex-col items-center mb-8">
         <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
-        
       </div>
       
       <Card className="w-full max-w-md shadow-lg border-0 px-[30px]">
         <CardHeader className="pb-2">
           <div className="text-center">
-            <h2 className="text-xl font-medium">Welcome back</h2>
-            <p className="text-sm text-gray-500">Sign in to your account</p>
+            <h2 className="text-xl font-medium">{t('welcomeBack')}</h2>
+            <p className="text-sm text-gray-500">{t('signInToYourAccount')}</p>
           </div>
         </CardHeader>
         <CardContent className="pt-4">
+          <LanguageSelector variant="login" />
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {authError && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+              {authError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
                   {authError}
-                </div>}
-              <FormField control={form.control} name="email" render={({
-              field
-            }) => <FormItem>
-                    <FormLabel>Email</FormLabel>
+                </div>
+              )}
+              <FormField 
+                control={form.control} 
+                name="email" 
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('email')}</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -129,11 +140,15 @@ const Login = () => {
                       </div>
                     </FormControl>
                     <FormMessage />
-                  </FormItem>} />
-              <FormField control={form.control} name="password" render={({
-              field
-            }) => <FormItem>
-                    <FormLabel>Password</FormLabel>
+                  </FormItem>
+                )}
+              />
+              <FormField 
+                control={form.control} 
+                name="password" 
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('password')}</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -141,17 +156,20 @@ const Login = () => {
                       </div>
                     </FormControl>
                     <FormMessage />
-                  </FormItem>} />
+                  </FormItem>
+                )}
+              />
               <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? t('signingIn') : t('signIn')}
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="flex justify-center pt-0">
-          
         </CardFooter>
       </Card>
-    </div>;
+    </div>
+  );
 };
+
 export default Login;

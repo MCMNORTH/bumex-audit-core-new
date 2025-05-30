@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +14,7 @@ import Profile from "./pages/Profile";
 import MyInvoices from "./pages/MyInvoices";
 import InvoiceDetail from "./pages/InvoiceDetail";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { useIsMobile } from "./hooks/use-mobile";
 
 const queryClient = new QueryClient();
@@ -71,9 +73,11 @@ const AppContent = () => {
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <AppContent />
-      </TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <AppContent />
+        </TooltipProvider>
+      </LanguageProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
