@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,9 +9,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Plus, Trash2, Upload, Download, X } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { storage } from '@/lib/firebase';
 
 interface DocumentFile {
   name: string;
@@ -70,18 +67,26 @@ interface EngagementScopeSectionProps {
   formData: FormData;
   onFormDataChange: (updates: Partial<FormData>) => void;
   projectId?: string;
+  // MRR file upload props
+  mrrUploadedFile?: File | null;
+  mrrUploadStatus?: 'idle' | 'uploading' | 'success' | 'error';
+  onMRRFileUpload?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveMRRFile?: () => void;
+  onDownloadMRRFile?: () => void;
+  mrrFileInputRef?: React.RefObject<HTMLInputElement>;
 }
 
 const EngagementScopeSection = ({
   formData,
   onFormDataChange,
-  projectId
+  projectId,
+  mrrUploadedFile,
+  mrrUploadStatus = 'idle',
+  onMRRFileUpload,
+  onRemoveMRRFile,
+  onDownloadMRRFile,
+  mrrFileInputRef
 }: EngagementScopeSectionProps) => {
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
-  const [uploadedFileName, setUploadedFileName] = useState<string>('');
-
   const handleAddAuditingStandard = () => {
     const newStandards = [...formData.auditing_standards, ''];
     onFormDataChange({ auditing_standards: newStandards });
@@ -137,95 +142,9 @@ const EngagementScopeSection = ({
     onFormDataChange({ specialist_teams: newTeams });
   };
 
-  const handleMRRFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !projectId) {
-      console.log('No file selected or no project ID:', { file: !!file, projectId });
-      return;
-    }
-
-    if (file.type !== 'application/pdf') {
-      toast({
-        title: 'Invalid file type',
-        description: 'Please select a PDF file',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      toast({
-        title: 'File too large',
-        description: 'Please select a file smaller than 10MB',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setUploadStatus('uploading');
-    console.log('Starting MRR file upload:', file.name);
-    
-    try {
-      const fileName = `mrr-files/${projectId}/${Date.now()}-${file.name}`;
-      const storageRef = ref(storage, fileName);
-      
-      console.log('Uploading to Firebase Storage:', fileName);
-      await uploadBytes(storageRef, file);
-      const downloadURL = await getDownloadURL(storageRef);
-      
-      console.log('Upload successful, download URL:', downloadURL);
-      setUploadedFileName(file.name);
-      setUploadStatus('success');
-      onFormDataChange({ mrr_file: downloadURL });
-      
-      toast({
-        title: 'File uploaded',
-        description: `${file.name} has been uploaded successfully`,
-      });
-    } catch (error) {
-      console.error('Error uploading MRR file:', error);
-      setUploadStatus('error');
-      toast({
-        title: 'Upload failed',
-        description: 'Failed to upload the file. Please try again.',
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleRemoveMRRFile = async () => {
-    if (formData.mrr_file && formData.mrr_file.startsWith('https://')) {
-      try {
-        const storageRef = ref(storage, formData.mrr_file);
-        await deleteObject(storageRef);
-      } catch (error) {
-        console.error('Error deleting file from storage:', error);
-      }
-    }
-
-    setUploadedFileName('');
-    setUploadStatus('idle');
-    onFormDataChange({ mrr_file: '' });
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleDownloadMRRFile = () => {
-    if (formData.mrr_file) {
-      const link = document.createElement('a');
-      link.href = formData.mrr_file;
-      link.download = uploadedFileName || 'mrr-file.pdf';
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-  };
-
-  const triggerFileUpload = () => {
-    console.log('Triggering file upload, input ref:', fileInputRef.current);
-    fileInputRef.current?.click();
+  const triggerMRRFileUpload = () => {
+    console.log('Triggering MRR file upload, input ref:', mrrFileInputRef?.current);
+    mrrFileInputRef?.current?.click();
   };
 
   return (
@@ -660,12 +579,12 @@ const EngagementScopeSection = ({
             </p>
             
             <div className="space-y-2 mb-6">
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">1.4 Communications</button>
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.1.2 Materiality</button>
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.2.1 Entity and its environment</button>
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.2.4 RAPD</button>
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.3.1 CERAMIC</button>
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">3.2 Litigation claims and assessments</button>
+              <div className="text-blue-600 hover:text-blue-800 text-sm font-medium">1.4 Communications</div>
+              <div className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.1.2 Materiality</div>
+              <div className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.2.1 Entity and its environment</div>
+              <div className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.2.4 RAPD</div>
+              <div className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.3.1 CERAMIC</div>
+              <div className="text-blue-600 hover:text-blue-800 text-sm font-medium">3.2 Litigation claims and assessments</div>
             </div>
           </div>
 
@@ -750,12 +669,12 @@ const EngagementScopeSection = ({
               
               {formData.mrr_file ? (
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">{uploadedFileName || 'MRR file uploaded'}</span>
+                  <span className="text-sm text-gray-600">{mrrUploadedFile?.name || 'MRR file uploaded'}</span>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={handleDownloadMRRFile}
+                    onClick={onDownloadMRRFile}
                   >
                     <Download className="h-4 w-4" />
                   </Button>
@@ -763,7 +682,7 @@ const EngagementScopeSection = ({
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={handleRemoveMRRFile}
+                    onClick={onRemoveMRRFile}
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -773,23 +692,23 @@ const EngagementScopeSection = ({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={triggerFileUpload}
-                  disabled={uploadStatus === 'uploading'}
+                  onClick={triggerMRRFileUpload}
+                  disabled={mrrUploadStatus === 'uploading'}
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  {uploadStatus === 'uploading' ? 'Uploading...' : 'Upload PDF'}
+                  {mrrUploadStatus === 'uploading' ? 'Uploading...' : 'Upload PDF'}
                 </Button>
               )}
               
               <input
-                ref={fileInputRef}
+                ref={mrrFileInputRef}
                 type="file"
                 accept=".pdf"
-                onChange={handleMRRFileUpload}
+                onChange={onMRRFileUpload}
                 className="hidden"
               />
               
-              {uploadStatus === 'error' && (
+              {mrrUploadStatus === 'error' && (
                 <span className="text-sm text-red-600">Upload failed. Please try again.</span>
               )}
             </div>

@@ -29,11 +29,23 @@ const ProjectEdit = () => {
   const {
     uploadedFile,
     uploadStatus,
+    fileInputRef,
     handleFileUpload,
     handleRemoveFile,
     handleDownloadFile,
     initializeExistingFile
   } = useFileUpload(id || '', (url) => handleFormDataChange({ engagement_structure_file: url }));
+
+  // Create a separate file upload hook for MRR files
+  const {
+    uploadedFile: mrrUploadedFile,
+    uploadStatus: mrrUploadStatus,
+    fileInputRef: mrrFileInputRef,
+    handleFileUpload: handleMRRFileUpload,
+    handleRemoveFile: handleRemoveMRRFile,
+    handleDownloadFile: handleDownloadMRRFile,
+    initializeExistingFile: initializeMRRFile
+  } = useFileUpload(id || '', (url) => handleFormDataChange({ mrr_file: url }));
 
   const sidebarSections = [
     { id: 'engagement-profile', title: 'Engagement Profile', active: true },
@@ -48,7 +60,10 @@ const ProjectEdit = () => {
     if (formData.engagement_structure_file) {
       initializeExistingFile(formData.engagement_structure_file);
     }
-  }, [formData.engagement_structure_file]);
+    if (formData.mrr_file) {
+      initializeMRRFile(formData.mrr_file);
+    }
+  }, [formData.engagement_structure_file, formData.mrr_file]);
 
   const handleRemoveFileWrapper = () => {
     handleRemoveFile(formData.engagement_structure_file);
@@ -56,6 +71,14 @@ const ProjectEdit = () => {
 
   const handleDownloadFileWrapper = () => {
     handleDownloadFile(formData.engagement_structure_file);
+  };
+
+  const handleRemoveMRRFileWrapper = () => {
+    handleRemoveMRRFile(formData.mrr_file);
+  };
+
+  const handleDownloadMRRFileWrapper = () => {
+    handleDownloadMRRFile(formData.mrr_file);
   };
 
   if (loading) {
@@ -82,6 +105,7 @@ const ProjectEdit = () => {
         saving={saving}
         uploadedFile={uploadedFile}
         uploadStatus={uploadStatus}
+        fileInputRef={fileInputRef}
         onBack={() => navigate('/projects')}
         onSave={handleSave}
         onFormDataChange={handleFormDataChange}
@@ -90,6 +114,13 @@ const ProjectEdit = () => {
         onRemoveFile={handleRemoveFileWrapper}
         onDownloadFile={handleDownloadFileWrapper}
         projectId={id}
+        // MRR file upload props
+        mrrUploadedFile={mrrUploadedFile}
+        mrrUploadStatus={mrrUploadStatus}
+        mrrFileInputRef={mrrFileInputRef}
+        onMRRFileUpload={handleMRRFileUpload}
+        onRemoveMRRFile={handleRemoveMRRFileWrapper}
+        onDownloadMRRFile={handleDownloadMRRFileWrapper}
       />
     </div>
   );
