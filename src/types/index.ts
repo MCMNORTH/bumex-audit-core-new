@@ -50,12 +50,6 @@ export interface Project {
   sentinel_approval_email_files?: string[];
   ceac_approval_email_files?: string[];
   other_documents_files?: string[];
-  // Engagement scope and scale fields
-  financial_statement_audit_report?: boolean;
-  auditing_standards_files?: string[];
-  financial_reporting_framework_files?: string[];
-  audit_report_date?: string;
-  required_audit_file_closeout_date?: string;
 }
 
 export interface Log {
