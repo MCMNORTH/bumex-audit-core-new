@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
+import DocumentAttachmentSection from './DocumentAttachmentSection';
 
 interface TCWGCommunicationsSectionProps {
   formData: ProjectFormData;
@@ -17,6 +18,7 @@ interface CommunicationItem {
   topic: string;
   included: boolean;
   date: string;
+  attachments: Array<{name: string, url: string, type: string}>;
 }
 
 const TCWGCommunicationsSection = ({
@@ -32,12 +34,20 @@ const TCWGCommunicationsSection = ({
     onFormDataChange({ tcwg_communications: updatedCommunications } as any);
   };
 
+  const handleAttachmentsChange = (id: string, attachments: Array<{name: string, url: string, type: string}>) => {
+    const updatedCommunications = communications.map((comm: CommunicationItem) =>
+      comm.id === id ? { ...comm, attachments } : comm
+    );
+    onFormDataChange({ tcwg_communications: updatedCommunications } as any);
+  };
+
   const addNewCommunication = () => {
     const newCommunication: CommunicationItem = {
       id: Date.now().toString(),
       topic: '',
       included: false,
-      date: ''
+      date: '',
+      attachments: []
     };
     onFormDataChange({ tcwg_communications: [...communications, newCommunication] } as any);
   };
@@ -63,9 +73,14 @@ const TCWGCommunicationsSection = ({
             Add
           </Button>
         </div>
-        <p className="text-sm text-gray-600 mt-2">
-          We communicate the following:
-        </p>
+        <div className="space-y-3">
+          <p className="text-sm text-gray-600">
+            We communicate the following:
+          </p>
+          <p className="text-sm text-gray-700 font-medium">
+            Attach the signed engagement letter and any other documents relevant to understanding the terms of the audit.
+          </p>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -89,12 +104,21 @@ const TCWGCommunicationsSection = ({
                 communications.map((comm: CommunicationItem, index: number) => (
                   <tr key={comm.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                     <td className="p-4 border">
-                      <Textarea
-                        value={comm.topic}
-                        onChange={(e) => handleCommunicationChange(comm.id, 'topic', e.target.value)}
-                        placeholder="Enter communication topic..."
-                        className="min-h-[80px] resize-none"
-                      />
+                      <div className="space-y-4">
+                        <Textarea
+                          value={comm.topic}
+                          onChange={(e) => handleCommunicationChange(comm.id, 'topic', e.target.value)}
+                          placeholder="Enter communication topic..."
+                          className="min-h-[80px] resize-none"
+                        />
+                        <DocumentAttachmentSection
+                          title="Attachments"
+                          files={comm.attachments || []}
+                          onFilesChange={(files) => handleAttachmentsChange(comm.id, files)}
+                          projectId={formData.project_id || 'unknown'}
+                          storagePrefix={`tcwg-communications/${comm.id}`}
+                        />
+                      </div>
                     </td>
                     <td className="p-6 text-center border">
                       <Checkbox
@@ -130,6 +154,17 @@ const TCWGCommunicationsSection = ({
             </tbody>
           </table>
         </div>
+
+        {communications.length > 0 && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="flex items-start space-x-2">
+              <Checkbox className="mt-1" />
+              <p className="text-sm text-blue-800">
+                When appropriate, attach a copy of either (i) written communications, (ii) materials related to oral communications (including when and to whom it was communicated) and/or (ii) matter not covered by our engagement.
+              </p>
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
