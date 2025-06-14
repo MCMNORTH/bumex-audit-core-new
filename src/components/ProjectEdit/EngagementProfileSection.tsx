@@ -64,6 +64,17 @@ interface FormData {
   other_reviewer: boolean;
   governance_management_same_persons: boolean;
   entity_has_internal_audit_function: boolean;
+  // New involvement of others fields
+  entity_uses_service_organization: boolean;
+  plan_to_involve_specialists: boolean;
+  specialist_teams: Array<{
+    id: string;
+    description: string;
+    name: string;
+    title: string;
+  }>;
+  // IT environment field
+  entity_highly_dependent_on_it: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -498,6 +509,12 @@ const EngagementProfileSection = ({
           other_reviewer: formData.other_reviewer || false,
           governance_management_same_persons: formData.governance_management_same_persons || false,
           entity_has_internal_audit_function: formData.entity_has_internal_audit_function || false,
+          // New involvement of others fields
+          entity_uses_service_organization: formData.entity_uses_service_organization || false,
+          plan_to_involve_specialists: formData.plan_to_involve_specialists || false,
+          specialist_teams: formData.specialist_teams || [],
+          // IT environment field
+          entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it || 'Not selected',
         }}
         onFormDataChange={onFormDataChange}
       />

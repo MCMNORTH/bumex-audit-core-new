@@ -78,6 +78,17 @@ const ProjectEdit = () => {
     other_reviewer: false,
     governance_management_same_persons: false,
     entity_has_internal_audit_function: false,
+    // New involvement of others fields
+    entity_uses_service_organization: false,
+    plan_to_involve_specialists: false,
+    specialist_teams: [] as Array<{
+      id: string;
+      description: string;
+      name: string;
+      title: string;
+    }>,
+    // IT environment field
+    entity_highly_dependent_on_it: 'Not selected',
   });
 
   const sidebarSections = [
@@ -167,6 +178,12 @@ const ProjectEdit = () => {
         other_reviewer: (projectData as any).other_reviewer || false,
         governance_management_same_persons: (projectData as any).governance_management_same_persons || false,
         entity_has_internal_audit_function: (projectData as any).entity_has_internal_audit_function || false,
+        // New involvement of others fields with defaults
+        entity_uses_service_organization: (projectData as any).entity_uses_service_organization || false,
+        plan_to_involve_specialists: (projectData as any).plan_to_involve_specialists || false,
+        specialist_teams: (projectData as any).specialist_teams || [],
+        // IT environment field with default
+        entity_highly_dependent_on_it: (projectData as any).entity_highly_dependent_on_it || 'Not selected',
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display

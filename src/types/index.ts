@@ -65,6 +65,17 @@ export interface Project {
   other_reviewer?: boolean;
   governance_management_same_persons?: boolean;
   entity_has_internal_audit_function?: boolean;
+  // New involvement of others fields
+  entity_uses_service_organization?: boolean;
+  plan_to_involve_specialists?: boolean;
+  specialist_teams?: Array<{
+    id: string;
+    description: string;
+    name: string;
+    title: string;
+  }>;
+  // IT environment field
+  entity_highly_dependent_on_it?: string;
 }
 
 export interface Log {
