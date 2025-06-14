@@ -85,6 +85,10 @@ interface FormData {
   prior_period_method: string;
   minimum_review_requirement: string;
   mrr_file: string;
+  // New entity profile fields
+  entity_revenue_greater_than_billion: string;
+  entity_meets_international_criteria: boolean;
+  using_sats_not_on_firm_list: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -542,6 +546,10 @@ const EngagementProfileSection = ({
           prior_period_method: (formData as any).prior_period_method || '',
           minimum_review_requirement: (formData as any).minimum_review_requirement || '',
           mrr_file: (formData as any).mrr_file || '',
+          // New entity profile fields
+          entity_revenue_greater_than_billion: (formData as any).entity_revenue_greater_than_billion || '',
+          entity_meets_international_criteria: (formData as any).entity_meets_international_criteria || false,
+          using_sats_not_on_firm_list: (formData as any).using_sats_not_on_firm_list || '',
         }}
         onFormDataChange={onFormDataChange}
       />
