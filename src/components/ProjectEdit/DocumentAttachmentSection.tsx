@@ -149,27 +149,25 @@ const DocumentAttachmentSection = ({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <Label className="text-sm font-medium">{title}</Label>
-        <div>
-          <input
-            type="file"
-            multiple
-            accept=".pdf,.doc,.docx"
-            onChange={handleFileUpload}
-            className="hidden"
-            id={`file-input-${storagePrefix}`}
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => document.getElementById(`file-input-${storagePrefix}`)?.click()}
-            disabled={uploading}
-          >
-            <Paperclip className="mr-2 h-4 w-4" />
-            {uploading ? 'Uploading...' : 'Attach Files'}
-          </Button>
-        </div>
+      <Label className="text-sm font-medium">{title}</Label>
+      <div>
+        <input
+          type="file"
+          multiple
+          accept=".pdf,.doc,.docx"
+          onChange={handleFileUpload}
+          className="hidden"
+          id={`file-input-${storagePrefix}`}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => document.getElementById(`file-input-${storagePrefix}`)?.click()}
+          disabled={uploading}
+        >
+          <Paperclip className="mr-2 h-4 w-4" />
+          {uploading ? 'Uploading...' : 'Attach Files'}
+        </Button>
       </div>
       
       {files.length > 0 && (
