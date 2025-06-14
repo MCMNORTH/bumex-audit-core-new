@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Upload, X, FileText, Download, Paperclip } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 interface DocumentFile {
   name: string;
@@ -60,13 +62,25 @@ const DocumentAttachmentSection = ({
     setUploading(true);
     
     try {
-      // For now, we'll create mock URLs since we don't have Firebase Storage implementation
-      // In a real implementation, you would upload to Firebase Storage here
-      const newFiles: DocumentFile[] = validFiles.map(file => ({
-        name: file.name,
-        url: `https://example.com/${storagePrefix}/${projectId}/${Date.now()}-${file.name}`,
-        type: file.type
-      }));
+      const newFiles: DocumentFile[] = [];
+      
+      for (const file of validFiles) {
+        // Create a reference to the file in Firebase Storage
+        const fileName = `${storagePrefix}/${projectId}/${Date.now()}-${file.name}`;
+        const storageRef = ref(storage, fileName);
+        
+        // Upload the file
+        await uploadBytes(storageRef, file);
+        
+        // Get the download URL
+        const downloadURL = await getDownloadURL(storageRef);
+        
+        newFiles.push({
+          name: file.name,
+          url: downloadURL,
+          type: file.type
+        });
+      }
       
       const updatedFiles = [...files, ...newFiles];
       onFilesChange(updatedFiles);
@@ -89,7 +103,21 @@ const DocumentAttachmentSection = ({
     }
   };
 
-  const handleRemoveFile = (index: number) => {
+  const handleRemoveFile = async (index: number) => {
+    const fileToRemove = files[index];
+    
+    // Try to delete the file from Firebase Storage if it's a Firebase URL
+    if (fileToRemove.url.startsWith('https://firebasestorage.googleapis.com') || 
+        fileToRemove.url.startsWith('https://storage.googleapis.com')) {
+      try {
+        const storageRef = ref(storage, fileToRemove.url);
+        await deleteObject(storageRef);
+      } catch (error) {
+        console.error('Error deleting file from storage:', error);
+        // Continue with removing the reference even if storage deletion fails
+      }
+    }
+    
     const updatedFiles = files.filter((_, i) => i !== index);
     onFilesChange(updatedFiles);
   };
