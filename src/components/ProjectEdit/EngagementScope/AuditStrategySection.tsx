@@ -3,7 +3,6 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Upload, Download, X } from 'lucide-react';
-
 interface AuditStrategySectionProps {
   formData: {
     gaap_conversion_activity: boolean;
@@ -21,7 +20,6 @@ interface AuditStrategySectionProps {
   onDownloadMRRFile?: () => void;
   mrrFileInputRef?: React.RefObject<HTMLInputElement>;
 }
-
 const AuditStrategySection = ({
   formData,
   onFormDataChange,
@@ -36,17 +34,14 @@ const AuditStrategySection = ({
     console.log('Triggering MRR file upload');
     console.log('mrrFileInputRef:', mrrFileInputRef);
     console.log('mrrFileInputRef.current:', mrrFileInputRef?.current);
-    
     if (!mrrFileInputRef) {
       console.error('MRR file input ref is not provided');
       return;
     }
-    
     if (!mrrFileInputRef.current) {
       console.error('MRR file input ref current is null');
       return;
     }
-    
     try {
       mrrFileInputRef.current.click();
       console.log('File input clicked successfully');
@@ -54,9 +49,7 @@ const AuditStrategySection = ({
       console.error('Error clicking file input:', error);
     }
   };
-
-  return (
-    <div className="space-y-6 border-t pt-6">
+  return <div className="space-y-6 border-t pt-6">
       <div>
         <p className="text-sm text-gray-700 mb-4">
           We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, risks and response for each business process and in the following locations:
@@ -77,20 +70,16 @@ const AuditStrategySection = ({
         
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
-            <Checkbox
-              id="gaap_conversion_activity"
-              checked={formData.gaap_conversion_activity || false}
-              onCheckedChange={(checked) => onFormDataChange({ gaap_conversion_activity: checked as boolean })}
-            />
+            <Checkbox id="gaap_conversion_activity" checked={formData.gaap_conversion_activity || false} onCheckedChange={checked => onFormDataChange({
+            gaap_conversion_activity: checked as boolean
+          })} />
             <Label htmlFor="gaap_conversion_activity">GAAP conversion activity</Label>
           </div>
           
           <div className="flex items-center space-x-2">
-            <Checkbox
-              id="gaas_conversion_activity"
-              checked={formData.gaas_conversion_activity || false}
-              onCheckedChange={(checked) => onFormDataChange({ gaas_conversion_activity: checked as boolean })}
-            />
+            <Checkbox id="gaas_conversion_activity" checked={formData.gaas_conversion_activity || false} onCheckedChange={checked => onFormDataChange({
+            gaas_conversion_activity: checked as boolean
+          })} />
             <Label htmlFor="gaas_conversion_activity">GAAS conversion activity</Label>
           </div>
         </div>
@@ -102,7 +91,9 @@ const AuditStrategySection = ({
         <div className="grid grid-cols-2 gap-6">
           <div>
             <Label className="text-sm font-medium mb-2 block">Current period</Label>
-            <Select value={formData.current_period_method || ''} onValueChange={(value) => onFormDataChange({ current_period_method: value })}>
+            <Select value={formData.current_period_method || ''} onValueChange={value => onFormDataChange({
+            current_period_method: value
+          })}>
               <SelectTrigger>
                 <SelectValue placeholder="Dual method" />
               </SelectTrigger>
@@ -116,7 +107,9 @@ const AuditStrategySection = ({
           
           <div>
             <Label className="text-sm font-medium mb-2 block">Prior period</Label>
-            <Select value={formData.prior_period_method || ''} onValueChange={(value) => onFormDataChange({ prior_period_method: value })}>
+            <Select value={formData.prior_period_method || ''} onValueChange={value => onFormDataChange({
+            prior_period_method: value
+          })}>
               <SelectTrigger>
                 <SelectValue placeholder="Dual method" />
               </SelectTrigger>
@@ -133,7 +126,9 @@ const AuditStrategySection = ({
       <div className="space-y-4">
         <div>
           <Label className="text-sm font-medium mb-2 block">Minimum Review Requirement</Label>
-          <Select value={formData.minimum_review_requirement || ''} onValueChange={(value) => onFormDataChange({ minimum_review_requirement: value })}>
+          <Select value={formData.minimum_review_requirement || ''} onValueChange={value => onFormDataChange({
+          minimum_review_requirement: value
+        })}>
             <SelectTrigger className="max-w-sm">
               <SelectValue placeholder="Global - No EQCR" />
             </SelectTrigger>
@@ -148,58 +143,13 @@ const AuditStrategySection = ({
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center space-x-4">
-          <Label className="text-sm font-medium">Change MRR</Label>
-          
-          {formData.mrr_file ? (
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">{mrrUploadedFile?.name || 'MRR file uploaded'}</span>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onDownloadMRRFile}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={onRemoveMRRFile}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          ) : (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={triggerMRRFileUpload}
-              disabled={mrrUploadStatus === 'uploading'}
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              {mrrUploadStatus === 'uploading' ? 'Uploading...' : 'Upload PDF'}
-            </Button>
-          )}
-          
-          {mrrUploadStatus === 'error' && (
-            <span className="text-sm text-red-600">Upload failed. Please try again.</span>
-          )}
-        </div>
+        
         
         {/* Always render the file input - this is crucial for the ref to work */}
-        <input
-          ref={mrrFileInputRef}
-          type="file"
-          accept=".pdf"
-          onChange={onMRRFileUpload}
-          style={{ display: 'none' }}
-        />
+        <input ref={mrrFileInputRef} type="file" accept=".pdf" onChange={onMRRFileUpload} style={{
+        display: 'none'
+      }} />
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AuditStrategySection;
