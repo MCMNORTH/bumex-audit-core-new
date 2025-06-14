@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
-interface FormData {
+interface IndependenceFormData {
   ethics_breaches_identified: string;
   local_quality_manual_compliance: string;
   member_firm_independence_work_paper: string;
@@ -11,7 +11,7 @@ interface FormData {
 }
 
 interface IndependenceRequirementsSectionProps {
-  formData: FormData;
+  formData: IndependenceFormData;
   onFormDataChange: (updates: any) => void;
 }
 
