@@ -1,9 +1,11 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import { ProjectFormData } from '@/types/formData';
 import ProjectHeader from './ProjectHeader';
 import EngagementProfileSection from './EngagementProfileSection';
 import IndependenceRequirementsSection from './IndependenceRequirementsSection';
+import { Separator } from '@/components/ui/separator';
 
 interface ProjectEditContentProps {
   project: Project | null;
@@ -77,6 +79,109 @@ const ProjectEditContent = ({
     </Card>
   );
 
+  const renderSectionHeader = (title: string, number?: string) => (
+    <div className="mb-6">
+      <h3 className="text-lg font-semibold text-gray-900">
+        {number && `${number} `}{title}
+      </h3>
+      <Separator className="mt-2" />
+    </div>
+  );
+
+  const renderEngagementProfileContent = () => (
+    <div className="space-y-6">
+      {renderSectionHeader('Engagement Profile & Strategy', '1.')}
+      <EngagementProfileSection
+        formData={formData}
+        clients={clients}
+        users={users}
+        uploadedFile={uploadedFile}
+        uploadStatus={uploadStatus}
+        onFormDataChange={onFormDataChange}
+        onAssignmentChange={handleAssignmentChange}
+        onFileUpload={onFileUpload}
+        onRemoveFile={onRemoveFile}
+        onDownloadFile={onDownloadFile}
+        projectId={projectId}
+        mrrUploadedFile={mrrUploadedFile}
+        mrrUploadStatus={mrrUploadStatus}
+        mrrFileInputRef={mrrFileInputRef}
+        onMRRFileUpload={onMRRFileUpload}
+        onRemoveMRRFile={onRemoveMRRFile}
+        onDownloadMRRFile={onDownloadMRRFile}
+      />
+    </div>
+  );
+
+  const renderSignOffContent = (title: string = 'Sign-off') => (
+    <div className="space-y-4">
+      {renderSectionHeader(title)}
+      {renderPlaceholderSection('Sign-off')}
+    </div>
+  );
+
+  const renderSPSpecialistsContent = () => (
+    <div className="space-y-6">
+      {renderSectionHeader('SP. Specialists')}
+      {renderPlaceholderSection('SP. Specialists Overview')}
+      
+      <div className="ml-4 space-y-4">
+        {renderSectionHeader('Tech Risk Corp - IT Audit')}
+        {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+      </div>
+    </div>
+  );
+
+  const renderIndependenceContent = () => (
+    <div className="space-y-6">
+      {renderSectionHeader('Independence', '2.')}
+      {renderPlaceholderSection('Independence Overview')}
+      
+      <div className="ml-4 space-y-6">
+        {renderSectionHeader('Initial independence and conclusion', '1.')}
+        <IndependenceRequirementsSection
+          formData={formData}
+          onFormDataChange={onFormDataChange}
+        />
+        
+        <div className="mt-6">
+          {renderSignOffContent()}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderCommunicationsContent = () => (
+    <div className="space-y-6">
+      {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
+      {renderPlaceholderSection('Communications, Inquiries and Minutes Overview')}
+      
+      <div className="ml-4 space-y-4">
+        {renderSignOffContent()}
+      </div>
+    </div>
+  );
+
+  const renderEngagementManagementContent = () => (
+    <div className="space-y-8">
+      {renderSectionHeader('Engagement Management', '1.')}
+      {renderPlaceholderSection('Engagement Management Overview')}
+      
+      <div className="ml-4 space-y-8">
+        {renderEngagementProfileContent()}
+        <div className="ml-4">
+          {renderSignOffContent()}
+        </div>
+        
+        {renderSPSpecialistsContent()}
+        
+        {renderIndependenceContent()}
+        
+        {renderCommunicationsContent()}
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="p-8">
@@ -92,55 +197,48 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
-          {/* Main parent section */}
-          {activeSection === 'engagement-management' && renderPlaceholderSection('Engagement Management')}
+          {/* Main parent section - shows all nested content */}
+          {activeSection === 'engagement-management' && renderEngagementManagementContent()}
 
-          {/* Engagement Profile parent section - now contains the actual content */}
+          {/* Engagement Profile parent section - shows its content and children */}
           {activeSection === 'engagement-profile-section' && (
-            <EngagementProfileSection
-              formData={formData}
-              clients={clients}
-              users={users}
-              uploadedFile={uploadedFile}
-              uploadStatus={uploadStatus}
-              onFormDataChange={onFormDataChange}
-              onAssignmentChange={handleAssignmentChange}
-              onFileUpload={onFileUpload}
-              onRemoveFile={onRemoveFile}
-              onDownloadFile={onDownloadFile}
-              projectId={projectId}
-              mrrUploadedFile={mrrUploadedFile}
-              mrrUploadStatus={mrrUploadStatus}
-              mrrFileInputRef={mrrFileInputRef}
-              onMRRFileUpload={onMRRFileUpload}
-              onRemoveMRRFile={onRemoveMRRFile}
-              onDownloadMRRFile={onDownloadMRRFile}
-            />
+            <div className="space-y-8">
+              {renderEngagementProfileContent()}
+              <div className="ml-4">
+                {renderSignOffContent()}
+              </div>
+            </div>
           )}
 
-          {/* SP Specialists parent section */}
-          {activeSection === 'sp-specialists-section' && renderPlaceholderSection('SP. Specialists Overview')}
+          {/* SP Specialists parent section - shows its content and children */}
+          {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
 
-          {/* Independence parent section */}
-          {activeSection === 'independence-section' && renderPlaceholderSection('Independence Overview')}
+          {/* Independence parent section - shows its content and children */}
+          {activeSection === 'independence-section' && renderIndependenceContent()}
 
-          {/* Communications parent section */}
-          {activeSection === 'communications-section' && renderPlaceholderSection('Communications, Inquiries and Minutes Overview')}
+          {/* Communications parent section - shows its content and children */}
+          {activeSection === 'communications-section' && renderCommunicationsContent()}
 
-          {/* Sign-off sections */}
-          {activeSection === 'sign-off-1' && renderPlaceholderSection('Sign-off')}
-          {activeSection === 'sign-off-2' && renderPlaceholderSection('Sign-off')}
-          {activeSection === 'sign-off-3' && renderPlaceholderSection('Sign-off')}
+          {/* Individual leaf sections */}
+          {activeSection === 'sign-off-1' && renderSignOffContent()}
+          {activeSection === 'sign-off-2' && renderSignOffContent()}
+          {activeSection === 'sign-off-3' && renderSignOffContent()}
 
-          {/* Tech Risk Corp - IT Audit */}
-          {activeSection === 'tech-risk-corp' && renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+          {activeSection === 'tech-risk-corp' && (
+            <div className="space-y-4">
+              {renderSectionHeader('Tech Risk Corp - IT Audit')}
+              {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+            </div>
+          )}
 
-          {/* Initial independence and conclusion */}
           {activeSection === 'initial-independence' && (
-            <IndependenceRequirementsSection
-              formData={formData}
-              onFormDataChange={onFormDataChange}
-            />
+            <div className="space-y-4">
+              {renderSectionHeader('Initial independence and conclusion', '1.')}
+              <IndependenceRequirementsSection
+                formData={formData}
+                onFormDataChange={onFormDataChange}
+              />
+            </div>
           )}
         </div>
       </div>
