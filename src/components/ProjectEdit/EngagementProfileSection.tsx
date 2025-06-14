@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -94,7 +93,6 @@ interface EngagementProfileSectionProps {
   users: User[];
   uploadedFile: File | null;
   uploadStatus: 'idle' | 'uploading' | 'success' | 'error';
-  fileInputRef: React.RefObject<HTMLInputElement>;
   onFormDataChange: (updates: Partial<FormData>) => void;
   onAssignmentChange: (userId: string, checked: boolean) => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -109,7 +107,6 @@ const EngagementProfileSection = ({
   users,
   uploadedFile,
   uploadStatus,
-  fileInputRef,
   onFormDataChange,
   onAssignmentChange,
   onFileUpload,
@@ -342,7 +339,6 @@ const EngagementProfileSection = ({
           <FileUploadSection
             uploadedFile={uploadedFile}
             uploadStatus={uploadStatus}
-            fileInputRef={fileInputRef}
             onFileUpload={onFileUpload}
             onRemoveFile={onRemoveFile}
             onDownloadFile={onDownloadFile}
