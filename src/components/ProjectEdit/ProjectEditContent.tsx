@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -73,6 +74,15 @@ interface FormData {
   entity_revenue_greater_than_billion: string;
   entity_meets_international_criteria: boolean;
   using_sats_not_on_firm_list: string;
+  // New multi-reporting fields
+  planning_to_use_multi_reporting: string;
+  reports: Array<{
+    id: string;
+    report_id: string;
+    report_name: string;
+    legal_entity: string;
+    is_primary_report: boolean;
+  }>;
   // Team assignment fields
   engagement_partner_id: string;
   engagement_manager_id: string;
