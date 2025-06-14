@@ -3,8 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
+interface FormData {
+  ethics_breaches_identified: string;
+  local_quality_manual_compliance: string;
+  member_firm_independence_work_paper: string;
+  communicate_other_independence_matters: string;
+}
+
 interface IndependenceRequirementsSectionProps {
-  formData: any;
+  formData: FormData;
   onFormDataChange: (updates: any) => void;
 }
 
@@ -95,6 +102,34 @@ const IndependenceRequirementsSection = ({
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="Not selected" id="independence-not-selected" />
               <Label htmlFor="independence-not-selected">Not selected</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Communicate other independence matters section */}
+        <div className="space-y-3 pt-4 border-t">
+          <Label className="text-lg font-medium text-gray-900">
+            Communicate other independence matters
+          </Label>
+          <Label className="text-sm font-medium text-gray-900">
+            Other than required communications regarding breaches, will we communicate other independence matters to those charged with governance
+          </Label>
+          <RadioGroup
+            value={formData.communicate_other_independence_matters || ''}
+            onValueChange={(value) => handleRadioChange('communicate_other_independence_matters', value)}
+            className="flex space-x-6"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Yes" id="communicate-yes" />
+              <Label htmlFor="communicate-yes">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="No" id="communicate-no" />
+              <Label htmlFor="communicate-no">No</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Not selected" id="communicate-not-selected" />
+              <Label htmlFor="communicate-not-selected">Not selected</Label>
             </div>
           </RadioGroup>
         </div>

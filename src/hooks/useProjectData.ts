@@ -123,6 +123,7 @@ export const useProjectData = () => {
     ethics_breaches_identified: 'Not selected',
     local_quality_manual_compliance: 'Not selected',
     member_firm_independence_work_paper: 'Not selected',
+    communicate_other_independence_matters: 'Not selected',
   });
 
   useEffect(() => {
@@ -249,6 +250,7 @@ export const useProjectData = () => {
         ethics_breaches_identified: (projectData as any).ethics_breaches_identified || 'Not selected',
         local_quality_manual_compliance: (projectData as any).local_quality_manual_compliance || 'Not selected',
         member_firm_independence_work_paper: (projectData as any).member_firm_independence_work_paper || 'Not selected',
+        communicate_other_independence_matters: (projectData as any).communicate_other_independence_matters || 'Not selected',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([
