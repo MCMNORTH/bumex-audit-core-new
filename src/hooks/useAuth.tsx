@@ -29,15 +29,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('Setting up auth state listener');
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('Auth state changed:', firebaseUser?.email);
       if (firebaseUser) {
         setFirebaseUser(firebaseUser);
-        // Fetch user data from Firestore
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (userDoc.exists()) {
-          setUser({ id: firebaseUser.uid, ...userDoc.data() } as User);
+        try {
+          // Fetch user data from Firestore
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
+            console.log('User data loaded:', userData);
+            setUser(userData);
+          } else {
+            console.log('No user document found in Firestore');
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          setUser(null);
         }
       } else {
+        console.log('User signed out');
         setUser(null);
         setFirebaseUser(null);
       }
@@ -49,7 +62,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
+      console.log('Attempting login for:', email);
       await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login successful');
     } catch (error) {
       console.error('Login error:', error);
       throw error;
