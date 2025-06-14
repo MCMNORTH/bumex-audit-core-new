@@ -82,6 +82,10 @@ export const useProjectData = () => {
     prior_period_method: '',
     minimum_review_requirement: '',
     mrr_file: '',
+    // New entity profile fields
+    entity_revenue_greater_than_billion: '',
+    entity_meets_international_criteria: false,
+    using_sats_not_on_firm_list: '',
     // Team assignment fields
     engagement_partner_id: '',
     engagement_manager_id: '',
@@ -193,6 +197,10 @@ export const useProjectData = () => {
         prior_period_method: (projectData as any).prior_period_method || '',
         minimum_review_requirement: (projectData as any).minimum_review_requirement || '',
         mrr_file: (projectData as any).mrr_file || '',
+        // New entity profile fields
+        entity_revenue_greater_than_billion: (projectData as any).entity_revenue_greater_than_billion || '',
+        entity_meets_international_criteria: (projectData as any).entity_meets_international_criteria || false,
+        using_sats_not_on_firm_list: (projectData as any).using_sats_not_on_firm_list || '',
         // Team assignment fields
         engagement_partner_id: (projectData as any).engagement_partner_id || '',
         engagement_manager_id: (projectData as any).engagement_manager_id || '',

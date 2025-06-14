@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EngagementTypeSection from './EngagementScope/EngagementTypeSection';
 import AuditingStandardsSection from './EngagementScope/AuditingStandardsSection';
@@ -11,6 +12,7 @@ import EngagementTeamSection from './EngagementScope/EngagementTeamSection';
 import DirectionSupervisionSection from './EngagementScope/DirectionSupervisionSection';
 import StrategyConsiderationsSection from './EngagementScope/StrategyConsiderationsSection';
 import AuditStrategySection from './EngagementScope/AuditStrategySection';
+import EntityProfileSection from './EngagementScope/EntityProfileSection';
 
 interface SpecialistTeam {
   id: string;
@@ -50,6 +52,10 @@ interface FormData {
   prior_period_method: string;
   minimum_review_requirement: string;
   mrr_file: string;
+  // New entity profile fields
+  entity_revenue_greater_than_billion: string;
+  entity_meets_international_criteria: boolean;
+  using_sats_not_on_firm_list: string;
 }
 
 interface EngagementScopeSectionProps {
@@ -134,6 +140,11 @@ const EngagementScopeSection = ({
         />
 
         <StrategyConsiderationsSection 
+          formData={formData} 
+          onFormDataChange={onFormDataChange} 
+        />
+
+        <EntityProfileSection 
           formData={formData} 
           onFormDataChange={onFormDataChange} 
         />

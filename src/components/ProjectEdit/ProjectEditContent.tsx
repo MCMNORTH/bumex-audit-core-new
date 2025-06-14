@@ -70,6 +70,10 @@ interface FormData {
   prior_period_method: string;
   minimum_review_requirement: string;
   mrr_file: string;
+  // New entity profile fields
+  entity_revenue_greater_than_billion: string;
+  entity_meets_international_criteria: boolean;
+  using_sats_not_on_firm_list: string;
   // Team assignment fields
   engagement_partner_id: string;
   engagement_manager_id: string;
