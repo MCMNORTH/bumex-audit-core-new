@@ -105,6 +105,16 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       member_firm_independence_work_paper: (projectData as any).member_firm_independence_work_paper || 'Not selected',
       communicate_other_independence_matters: (projectData as any).communicate_other_independence_matters || 'Not selected',
       independence_compliance_requirements: (projectData as any).independence_compliance_requirements || 'Not selected',
+      // TCWG Communications initialization
+      tcwg_communications: (projectData as any).tcwg_communications || [],
+      tcwg_main_attachments: (projectData as any).tcwg_main_attachments || [],
+      tcwg_inquiries: (projectData as any).tcwg_inquiries || [],
+      tcwg_meeting_minutes: (projectData as any).tcwg_meeting_minutes || [],
+      tcwg_generate_meeting_agenda: (projectData as any).tcwg_generate_meeting_agenda || false,
+      tcwg_responses_unsatisfactory: (projectData as any).tcwg_responses_unsatisfactory || 'Not selected',
+      tcwg_results_communications: (projectData as any).tcwg_results_communications || [],
+      tcwg_results_attachments: (projectData as any).tcwg_results_attachments || [],
+      tcwg_adequate_communication: (projectData as any).tcwg_adequate_communication || 'Not selected',
     });
   };
 

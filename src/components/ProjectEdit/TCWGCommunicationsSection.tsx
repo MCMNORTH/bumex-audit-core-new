@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2, Calendar, Upload, FileText, X, Download } from 'lucide-react';
-import { ProjectFormData } from '@/types/formData';
+import { ProjectFormData, CommunicationItem, InquiryItem, MeetingMinuteItem, TCWGResultsCommunicationItem } from '@/types/formData';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -20,42 +20,6 @@ import { storage } from '@/lib/firebase';
 interface TCWGCommunicationsSectionProps {
   formData: ProjectFormData;
   onFormDataChange: (updates: Partial<ProjectFormData>) => void;
-}
-
-interface CommunicationItem {
-  id: string;
-  topic: string;
-  included: boolean;
-  date: string;
-}
-
-interface InquiryItem {
-  id: string;
-  intervieweeName: string;
-  intervieweeRole: string;
-  intervieweePosition: string;
-  kpmgInterviewer: string;
-  dateOfMeeting: string;
-}
-
-interface MeetingMinuteItem {
-  id: string;
-  bodyCommittee: string;
-  dateOfMeeting: string;
-  meetingMinutesAvailable: boolean;
-  comments: string;
-  attachment: string;
-}
-
-interface TCWGResultsCommunicationItem {
-  id: string;
-  communicationPerformed: string;
-  writtenForm: boolean;
-  oralForm: boolean;
-  when: string;
-  toWhom: string;
-  byWhom: string;
-  potentiallyApplicableCR: boolean;
 }
 
 const TCWGCommunicationsSection = ({

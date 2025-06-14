@@ -1,4 +1,41 @@
 
+// Communication item interfaces
+export interface CommunicationItem {
+  id: string;
+  topic: string;
+  included: boolean;
+  date: string;
+}
+
+export interface InquiryItem {
+  id: string;
+  intervieweeName: string;
+  intervieweeRole: string;
+  intervieweePosition: string;
+  kpmgInterviewer: string;
+  dateOfMeeting: string;
+}
+
+export interface MeetingMinuteItem {
+  id: string;
+  bodyCommittee: string;
+  dateOfMeeting: string;
+  meetingMinutesAvailable: boolean;
+  comments: string;
+  attachment: string;
+}
+
+export interface TCWGResultsCommunicationItem {
+  id: string;
+  communicationPerformed: string;
+  writtenForm: boolean;
+  oralForm: boolean;
+  when: string;
+  toWhom: string;
+  byWhom: string;
+  potentiallyApplicableCR: boolean;
+}
+
 export interface ProjectFormData {
   client_id: string;
   engagement_name: string;
@@ -108,6 +145,16 @@ export interface ProjectFormData {
   member_firm_independence_work_paper: string;
   communicate_other_independence_matters: string;
   independence_compliance_requirements: string;
+  // TCWG Communications fields
+  tcwg_communications: CommunicationItem[];
+  tcwg_main_attachments: Array<{name: string, url: string, type: string}>;
+  tcwg_inquiries: InquiryItem[];
+  tcwg_meeting_minutes: MeetingMinuteItem[];
+  tcwg_generate_meeting_agenda: boolean;
+  tcwg_responses_unsatisfactory: string;
+  tcwg_results_communications: TCWGResultsCommunicationItem[];
+  tcwg_results_attachments: Array<{name: string, url: string, type: string}>;
+  tcwg_adequate_communication: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -202,4 +249,14 @@ export const getInitialFormData = (): ProjectFormData => ({
   member_firm_independence_work_paper: 'Not selected',
   communicate_other_independence_matters: 'Not selected',
   independence_compliance_requirements: 'Not selected',
+  // TCWG Communications initial values
+  tcwg_communications: [],
+  tcwg_main_attachments: [],
+  tcwg_inquiries: [],
+  tcwg_meeting_minutes: [],
+  tcwg_generate_meeting_agenda: false,
+  tcwg_responses_unsatisfactory: 'Not selected',
+  tcwg_results_communications: [],
+  tcwg_results_attachments: [],
+  tcwg_adequate_communication: 'Not selected',
 });
