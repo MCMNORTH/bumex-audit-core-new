@@ -86,6 +86,15 @@ export const useProjectData = () => {
     entity_revenue_greater_than_billion: '',
     entity_meets_international_criteria: false,
     using_sats_not_on_firm_list: '',
+    // New multi-reporting fields
+    planning_to_use_multi_reporting: 'No',
+    reports: [] as Array<{
+      id: string;
+      report_id: string;
+      report_name: string;
+      legal_entity: string;
+      is_primary_report: boolean;
+    }>,
     // Team assignment fields
     engagement_partner_id: '',
     engagement_manager_id: '',
@@ -201,6 +210,9 @@ export const useProjectData = () => {
         entity_revenue_greater_than_billion: (projectData as any).entity_revenue_greater_than_billion || '',
         entity_meets_international_criteria: (projectData as any).entity_meets_international_criteria || false,
         using_sats_not_on_firm_list: (projectData as any).using_sats_not_on_firm_list || '',
+        // New multi-reporting fields
+        planning_to_use_multi_reporting: (projectData as any).planning_to_use_multi_reporting || 'No',
+        reports: (projectData as any).reports || [],
         // Team assignment fields
         engagement_partner_id: (projectData as any).engagement_partner_id || '',
         engagement_manager_id: (projectData as any).engagement_manager_id || '',

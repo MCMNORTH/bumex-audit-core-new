@@ -10,6 +10,7 @@ import FileUploadSection from './FileUploadSection';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
 import EntityProfileSection from './EngagementScope/EntityProfileSection';
+import MultiReportingSection from './MultiReportingSection';
 
 interface DocumentFile {
   name: string;
@@ -90,6 +91,15 @@ interface FormData {
   entity_revenue_greater_than_billion: string;
   entity_meets_international_criteria: boolean;
   using_sats_not_on_firm_list: string;
+  // New multi-reporting fields
+  planning_to_use_multi_reporting: string;
+  reports: Array<{
+    id: string;
+    report_id: string;
+    report_name: string;
+    legal_entity: string;
+    is_primary_report: boolean;
+  }>;
 }
 
 interface EngagementProfileSectionProps {
@@ -587,6 +597,14 @@ const EngagementProfileSection = ({
           />
         </CardContent>
       </Card>
+
+      <MultiReportingSection
+        formData={{
+          planning_to_use_multi_reporting: formData.planning_to_use_multi_reporting || 'No',
+          reports: formData.reports || []
+        }}
+        onFormDataChange={onFormDataChange}
+      />
 
       <Card>
         <CardHeader>
