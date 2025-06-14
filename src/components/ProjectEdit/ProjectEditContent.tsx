@@ -102,6 +102,7 @@ interface ProjectEditContentProps {
   saving: boolean;
   uploadedFile: File | null;
   uploadStatus: 'idle' | 'uploading' | 'success' | 'error';
+  fileInputRef: React.RefObject<HTMLInputElement>;
   onBack: () => void;
   onSave: () => void;
   onFormDataChange: (updates: Partial<FormData>) => void;
@@ -110,6 +111,13 @@ interface ProjectEditContentProps {
   onRemoveFile: () => void;
   onDownloadFile: () => void;
   projectId?: string;
+  // MRR file upload props
+  mrrUploadedFile: File | null;
+  mrrUploadStatus: 'idle' | 'uploading' | 'success' | 'error';
+  mrrFileInputRef: React.RefObject<HTMLInputElement>;
+  onMRRFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveMRRFile: () => void;
+  onDownloadMRRFile: () => void;
 }
 
 const ProjectEditContent = ({
@@ -121,6 +129,7 @@ const ProjectEditContent = ({
   saving,
   uploadedFile,
   uploadStatus,
+  fileInputRef,
   onBack,
   onSave,
   onFormDataChange,
@@ -128,7 +137,14 @@ const ProjectEditContent = ({
   onFileUpload,
   onRemoveFile,
   onDownloadFile,
-  projectId
+  projectId,
+  // MRR file upload props
+  mrrUploadedFile,
+  mrrUploadStatus,
+  mrrFileInputRef,
+  onMRRFileUpload,
+  onRemoveMRRFile,
+  onDownloadMRRFile
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
 
@@ -163,6 +179,7 @@ const ProjectEditContent = ({
               users={users}
               uploadedFile={uploadedFile}
               uploadStatus={uploadStatus}
+              fileInputRef={fileInputRef}
               onFormDataChange={onFormDataChange}
               onAssignmentChange={handleAssignmentChange}
               onFileUpload={onFileUpload}
@@ -177,6 +194,12 @@ const ProjectEditContent = ({
               formData={formData}
               onFormDataChange={onFormDataChange}
               projectId={projectId}
+              mrrUploadedFile={mrrUploadedFile}
+              mrrUploadStatus={mrrUploadStatus}
+              mrrFileInputRef={mrrFileInputRef}
+              onMRRFileUpload={onMRRFileUpload}
+              onRemoveMRRFile={onRemoveMRRFile}
+              onDownloadMRRFile={onDownloadMRRFile}
             />
           )}
 
