@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -60,6 +59,10 @@ const ProjectEdit = () => {
     sentinel_expiration_date: '',
     // New radio button field
     first_period_auditing: 'Not selected',
+    // Document attachment fields
+    sentinel_approval_email_files: [] as Array<{name: string, url: string, type: string}>,
+    ceac_approval_email_files: [] as Array<{name: string, url: string, type: string}>,
+    other_documents_files: [] as Array<{name: string, url: string, type: string}>,
   });
 
   const sidebarSections = [
@@ -130,6 +133,10 @@ const ProjectEdit = () => {
         sentinel_expiration_date: (projectData as any).sentinel_expiration_date || '',
         // New radio button field with default
         first_period_auditing: (projectData as any).first_period_auditing || 'Not selected',
+        // Document attachment fields with defaults
+        sentinel_approval_email_files: (projectData as any).sentinel_approval_email_files || [],
+        ceac_approval_email_files: (projectData as any).ceac_approval_email_files || [],
+        other_documents_files: (projectData as any).other_documents_files || [],
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display
@@ -347,6 +354,7 @@ const ProjectEdit = () => {
                 onFileUpload={handleFileUpload}
                 onRemoveFile={handleRemoveFile}
                 onDownloadFile={handleDownloadFile}
+                projectId={id}
               />
             )}
 

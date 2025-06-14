@@ -34,6 +34,22 @@ export interface Project {
   is_first_audit: boolean;
   created_by: string;
   created_at: Date;
+  // Engagement evaluation fields
+  engagement_evaluation_id?: string;
+  engagement_evaluation_status?: string;
+  evaluation_approval_date?: string;
+  planned_expiration_date?: string;
+  // Sentinel approval fields
+  sentinel_approval_number?: string;
+  sentinel_approval_status?: string;
+  sentinel_approval_date?: string;
+  sentinel_expiration_date?: string;
+  // Radio button field
+  first_period_auditing?: string;
+  // Document attachment fields
+  sentinel_approval_email_files?: string[];
+  ceac_approval_email_files?: string[];
+  other_documents_files?: string[];
 }
 
 export interface Log {

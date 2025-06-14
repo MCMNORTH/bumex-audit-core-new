@@ -7,6 +7,13 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from 'lucide-react';
 import { Client, User, Project } from '@/types';
 import FileUploadSection from './FileUploadSection';
+import DocumentAttachmentSection from './DocumentAttachmentSection';
+
+interface DocumentFile {
+  name: string;
+  url: string;
+  type: string;
+}
 
 interface FormData {
   client_id: string;
@@ -38,6 +45,10 @@ interface FormData {
   sentinel_expiration_date: string;
   // New radio button field
   first_period_auditing: string;
+  // Document attachment fields
+  sentinel_approval_email_files: DocumentFile[];
+  ceac_approval_email_files: DocumentFile[];
+  other_documents_files: DocumentFile[];
 }
 
 interface EngagementProfileSectionProps {
@@ -51,6 +62,7 @@ interface EngagementProfileSectionProps {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveFile: () => void;
   onDownloadFile: () => void;
+  projectId?: string;
 }
 
 const EngagementProfileSection = ({
@@ -63,7 +75,8 @@ const EngagementProfileSection = ({
   onAssignmentChange,
   onFileUpload,
   onRemoveFile,
-  onDownloadFile
+  onDownloadFile,
+  projectId = ''
 }: EngagementProfileSectionProps) => {
   const auditTypes = [
     'Financial Audit',
@@ -301,7 +314,7 @@ const EngagementProfileSection = ({
         <CardHeader>
           <CardTitle>Engagement evaluation and sentinel approval information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="grid grid-cols-4 gap-4">
             <div>
               <Label htmlFor="engagement_evaluation_id">Engagement evaluation ID</Label>
@@ -420,6 +433,36 @@ const EngagementProfileSection = ({
                   <Label htmlFor="not-selected" className="text-sm">Not selected</Label>
                 </div>
               </RadioGroup>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-900">Attach the following client/engagement acceptance continuance documents:</h4>
+            
+            <div className="bg-gray-50 p-4 rounded-lg space-y-4">
+              <DocumentAttachmentSection
+                title="Sentinel approval email"
+                files={formData.sentinel_approval_email_files}
+                onFilesChange={(files) => onFormDataChange({ sentinel_approval_email_files: files })}
+                projectId={projectId}
+                storagePrefix="sentinel-approval"
+              />
+              
+              <DocumentAttachmentSection
+                title="CEAC approval email"
+                files={formData.ceac_approval_email_files}
+                onFilesChange={(files) => onFormDataChange({ ceac_approval_email_files: files })}
+                projectId={projectId}
+                storagePrefix="ceac-approval"
+              />
+              
+              <DocumentAttachmentSection
+                title="Other documents, if applicable"
+                files={formData.other_documents_files}
+                onFilesChange={(files) => onFormDataChange({ other_documents_files: files })}
+                projectId={projectId}
+                storagePrefix="other-documents"
+              />
             </div>
           </div>
         </CardContent>
