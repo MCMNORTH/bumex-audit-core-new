@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc, updateDoc, getDocs, collection, query } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { db, storage } from '@/lib/firebase';
 import { Project, Client, User } from '@/types';
 import { ArrowLeft, Save, Calendar, Upload, X, FileText } from 'lucide-react';
 
@@ -141,7 +142,7 @@ const ProjectEdit = () => {
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -167,23 +168,51 @@ const ProjectEdit = () => {
 
     setUploadStatus('uploading');
     
-    // Simulate upload process (in real app, you'd upload to storage)
-    setTimeout(() => {
+    try {
+      // Create a reference to the file in Firebase Storage
+      const fileName = `engagement-structures/${id}/${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, fileName);
+      
+      // Upload the file
+      await uploadBytes(storageRef, file);
+      
+      // Get the download URL
+      const downloadURL = await getDownloadURL(storageRef);
+      
       setUploadedFile(file);
       setUploadStatus('success');
       setFormData(prev => ({
         ...prev,
-        engagement_structure_file: file.name
+        engagement_structure_file: downloadURL
       }));
       
       toast({
         title: 'File uploaded',
         description: `${file.name} has been uploaded successfully`,
       });
-    }, 1000);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setUploadStatus('error');
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload the file. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleRemoveFile = () => {
+  const handleRemoveFile = async () => {
+    if (formData.engagement_structure_file && formData.engagement_structure_file.startsWith('https://')) {
+      try {
+        // Delete the file from Firebase Storage
+        const storageRef = ref(storage, formData.engagement_structure_file);
+        await deleteObject(storageRef);
+      } catch (error) {
+        console.error('Error deleting file from storage:', error);
+        // Continue with removing the reference even if storage deletion fails
+      }
+    }
+
     setUploadedFile(null);
     setUploadStatus('idle');
     setFormData(prev => ({
