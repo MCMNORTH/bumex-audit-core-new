@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -196,9 +195,6 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
-          {/* Team Assignment */}
-          {activeSection === 'team-assignment' && renderPlaceholderSection('Team assignment')}
-
           {/* Engagement Profile & Strategy */}
           {activeSection === 'engagement-profile' && (
             <EngagementProfileSection
@@ -222,20 +218,16 @@ const ProjectEditContent = ({
             />
           )}
 
-          {/* Placeholder sections for the new hierarchy */}
-          {activeSection === 'acceptance-continuance' && renderPlaceholderSection('Acceptance & continuance')}
-          {activeSection === 'pre-engagement' && renderPlaceholderSection('Pre-engagement activities')}
-          {activeSection === 'independence-evaluation' && renderPlaceholderSection('Independence evaluation')}
-          {activeSection === 'independence-documentation' && renderPlaceholderSection('Independence documentation')}
-          {activeSection === 'planning-overview' && renderPlaceholderSection('Planning overview')}
-          {activeSection === 'risk-assessment' && renderPlaceholderSection('Risk assessment')}
-          {activeSection === 'audit-strategy' && renderPlaceholderSection('Audit strategy')}
-          {activeSection === 'execution-overview' && renderPlaceholderSection('Execution overview')}
-          {activeSection === 'substantive-procedures' && renderPlaceholderSection('Substantive procedures')}
-          {activeSection === 'controls-testing' && renderPlaceholderSection('Controls testing')}
-          {activeSection === 'completion-overview' && renderPlaceholderSection('Completion overview')}
-          {activeSection === 'final-review' && renderPlaceholderSection('Final review')}
-          {activeSection === 'reporting' && renderPlaceholderSection('Reporting')}
+          {/* Sign-off sections */}
+          {activeSection === 'sign-off-1' && renderPlaceholderSection('Sign-off')}
+          {activeSection === 'sign-off-2' && renderPlaceholderSection('Sign-off')}
+          {activeSection === 'sign-off-3' && renderPlaceholderSection('Sign-off')}
+
+          {/* Tech Risk Corp - IT Audit */}
+          {activeSection === 'tech-risk-corp' && renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+
+          {/* Initial independence and conclusion */}
+          {activeSection === 'initial-independence' && renderPlaceholderSection('Initial independence and conclusion')}
         </div>
       </div>
     </div>
