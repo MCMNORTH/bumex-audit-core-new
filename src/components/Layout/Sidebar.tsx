@@ -3,34 +3,41 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { 
-  Home, 
-  Users, 
-  FolderOpen, 
-  FileText, 
-  Settings, 
-  Menu,
-  X,
-  LogOut
-} from 'lucide-react';
-
-const navigationItems = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home, roles: ['dev', 'partner', 'manager', 'incharge', 'staff'] },
-  { name: 'Clients', href: '/clients', icon: Users, roles: ['dev', 'partner', 'manager', 'incharge'] },
-  { name: 'Projects', href: '/projects', icon: FolderOpen, roles: ['dev', 'partner', 'manager', 'incharge', 'staff'] },
-  { name: 'Logs', href: '/logs', icon: FileText, roles: ['dev', 'partner', 'manager', 'incharge', 'staff'] },
-  { name: 'App Control', href: '/app-control', icon: Settings, roles: ['dev'] },
-];
-
+import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut } from 'lucide-react';
+const navigationItems = [{
+  name: 'Dashboard',
+  href: '/dashboard',
+  icon: Home,
+  roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+}, {
+  name: 'Clients',
+  href: '/clients',
+  icon: Users,
+  roles: ['dev', 'partner', 'manager', 'incharge']
+}, {
+  name: 'Projects',
+  href: '/projects',
+  icon: FolderOpen,
+  roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+}, {
+  name: 'Logs',
+  href: '/logs',
+  icon: FileText,
+  roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+}, {
+  name: 'App Control',
+  href: '/app-control',
+  icon: Settings,
+  roles: ['dev']
+}];
 export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const {
+    user,
+    logout
+  } = useAuth();
   const location = useLocation();
-
-  const filteredItems = navigationItems.filter(item => 
-    user && item.roles.includes(user.role)
-  );
-
+  const filteredItems = navigationItems.filter(item => user && item.roles.includes(user.role));
   const handleLogout = async () => {
     try {
       await logout();
@@ -38,56 +45,29 @@ export const Sidebar = () => {
       console.error('Logout error:', error);
     }
   };
-
-  return (
-    <>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="fixed top-4 left-4 z-50 lg:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-      >
+  return <>
+      <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? <X /> : <Menu />}
       </Button>
 
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-      )}>
+      <div className={cn("fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0", isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0")}>
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-              <img 
-                src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" 
-                alt="BUMEX Logo" 
-                className="w-8 h-8 object-contain"
-              />
-              <span className="text-xl font-bold text-gray-900">BUMEX</span>
+              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-8 h-8 object-contain" />
+              
             </div>
           </div>
 
           <nav className="flex-1 px-4 py-6 space-y-2">
-            {filteredItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.href;
-              
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={cn(
-                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-                    isActive
-                      ? "bg-blue-100 text-blue-700"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
+            {filteredItems.map(item => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.href;
+            return <Link key={item.name} to={item.href} className={cn("flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors", isActive ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900")} onClick={() => setIsOpen(false)}>
                   <Icon className="mr-3 h-5 w-5" />
                   {item.name}
-                </Link>
-              );
-            })}
+                </Link>;
+          })}
           </nav>
 
           <div className="p-4 border-t border-gray-200">
@@ -107,12 +87,7 @@ export const Sidebar = () => {
                   </p>
                 </div>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleLogout}
-                className="h-8 w-8"
-              >
+              <Button variant="ghost" size="icon" onClick={handleLogout} className="h-8 w-8">
                 <LogOut className="h-4 w-4" />
               </Button>
             </div>
@@ -120,12 +95,6 @@ export const Sidebar = () => {
         </div>
       </div>
 
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-    </>
-  );
+      {isOpen && <div className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden" onClick={() => setIsOpen(false)} />}
+    </>;
 };
