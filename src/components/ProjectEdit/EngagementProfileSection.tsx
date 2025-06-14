@@ -513,8 +513,15 @@ const EngagementProfileSection = ({
           entity_uses_service_organization: formData.entity_uses_service_organization || false,
           plan_to_involve_specialists: formData.plan_to_involve_specialists || false,
           specialist_teams: formData.specialist_teams || [],
-          // IT environment field
+          // IT environment fields
           entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it || 'Not selected',
+          plan_to_rely_on_automated_controls: (formData as any).plan_to_rely_on_automated_controls || 'Not selected',
+          use_it_critically_checklist: (formData as any).use_it_critically_checklist || false,
+          // Engagement team fields
+          sufficient_appropriate_resources: (formData as any).sufficient_appropriate_resources || false,
+          team_competence_and_capabilities: (formData as any).team_competence_and_capabilities || false,
+          // Direction and supervision field
+          direction_supervision_documentation: (formData as any).direction_supervision_documentation || '',
         }}
         onFormDataChange={onFormDataChange}
       />
