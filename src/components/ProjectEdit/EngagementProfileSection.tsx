@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -577,10 +578,10 @@ const EngagementProfileSection = ({
           prior_period_method: (formData as any).prior_period_method || '',
           minimum_review_requirement: (formData as any).minimum_review_requirement || '',
           mrr_file: (formData as any).mrr_file || '',
-          // Add the missing entity profile fields
-          entity_revenue_greater_than_billion: formData.entity_revenue_greater_than_billion || '',
-          entity_meets_international_criteria: formData.entity_meets_international_criteria || false,
-          using_sats_not_on_firm_list: formData.using_sats_not_on_firm_list || '',
+          // Remove the entity profile fields from here since they'll be in the separate section
+          entity_revenue_greater_than_billion: '',
+          entity_meets_international_criteria: false,
+          using_sats_not_on_firm_list: '',
         }}
         onFormDataChange={onFormDataChange}
         projectId={projectId}
@@ -591,6 +592,22 @@ const EngagementProfileSection = ({
         onRemoveMRRFile={onRemoveMRRFile}
         onDownloadMRRFile={onDownloadMRRFile}
       />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Entity Profile</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EntityProfileSection
+            formData={{
+              entity_revenue_greater_than_billion: formData.entity_revenue_greater_than_billion,
+              entity_meets_international_criteria: formData.entity_meets_international_criteria,
+              using_sats_not_on_firm_list: formData.using_sats_not_on_firm_list,
+            }}
+            onFormDataChange={onFormDataChange}
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
