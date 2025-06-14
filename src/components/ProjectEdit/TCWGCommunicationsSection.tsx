@@ -150,9 +150,6 @@ const TCWGCommunicationsSection = ({
           <p className="text-sm text-gray-600">
             We communicate the following:
           </p>
-          <p className="text-sm text-gray-700 font-medium">
-            Attach the signed engagement letter and any other documents relevant to understanding the terms of the audit.
-          </p>
         </div>
       </CardHeader>
       <CardContent>
@@ -219,6 +216,10 @@ const TCWGCommunicationsSection = ({
               </tbody>
             </table>
           </div>
+
+          <p className="text-sm text-gray-700 font-medium">
+            Attach the signed engagement letter and any other documents relevant to understanding the terms of the audit.
+          </p>
 
           <DocumentAttachmentSection
             title="Attachment"
