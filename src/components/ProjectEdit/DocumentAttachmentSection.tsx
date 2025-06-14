@@ -95,14 +95,28 @@ const DocumentAttachmentSection = ({
   };
 
   const handleDownloadFile = (file: DocumentFile) => {
-    // Create a temporary link to download the file
-    const link = document.createElement('a');
-    link.href = file.url;
-    link.download = file.name;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Check if it's a valid URL (either Firebase Storage or a real URL)
+    if (file.url.startsWith('https://firebasestorage.googleapis.com') || 
+        file.url.startsWith('https://storage.googleapis.com')) {
+      // For Firebase Storage URLs, open in new tab
+      window.open(file.url, '_blank');
+    } else if (file.url.startsWith('https://') && !file.url.includes('example.com')) {
+      // For other valid URLs, create download link
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.download = file.name;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      // For mock URLs, show a toast message
+      toast({
+        title: 'Download not available',
+        description: 'This is a demo file. In a real implementation, the file would be downloaded from Firebase Storage.',
+        variant: 'default',
+      });
+    }
   };
 
   return (
