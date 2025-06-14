@@ -80,14 +80,6 @@ const TCWGCommunicationsSection = ({
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          <DocumentAttachmentSection
-            title="Attachment"
-            files={mainAttachments}
-            onFilesChange={handleMainAttachmentsChange}
-            projectId={formData.project_id || 'unknown'}
-            storagePrefix="tcwg-main-attachments"
-          />
-
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
@@ -150,6 +142,14 @@ const TCWGCommunicationsSection = ({
               </tbody>
             </table>
           </div>
+
+          <DocumentAttachmentSection
+            title="Attachment"
+            files={mainAttachments}
+            onFilesChange={handleMainAttachmentsChange}
+            projectId={formData.project_id || 'unknown'}
+            storagePrefix="tcwg-main-attachments"
+          />
 
           {communications.length > 0 && (
             <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
