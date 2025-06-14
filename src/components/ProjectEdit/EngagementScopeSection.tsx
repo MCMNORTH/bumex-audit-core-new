@@ -88,7 +88,7 @@ const EngagementScopeSection = ({
 
   const handleAddSpecialistTeam = () => {
     const newTeam: SpecialistTeam = {
-      id: Date.now().toString(),
+      id: '',
       description: '',
       name: '',
       title: ''
@@ -97,14 +97,14 @@ const EngagementScopeSection = ({
     onFormDataChange({ specialist_teams: newTeams });
   };
 
-  const handleRemoveSpecialistTeam = (id: string) => {
-    const newTeams = (formData.specialist_teams || []).filter(team => team.id !== id);
+  const handleRemoveSpecialistTeam = (index: number) => {
+    const newTeams = (formData.specialist_teams || []).filter((_, i) => i !== index);
     onFormDataChange({ specialist_teams: newTeams });
   };
 
-  const handleSpecialistTeamChange = (id: string, field: keyof SpecialistTeam, value: string) => {
-    const newTeams = (formData.specialist_teams || []).map(team =>
-      team.id === id ? { ...team, [field]: value } : team
+  const handleSpecialistTeamChange = (index: number, field: keyof SpecialistTeam, value: string) => {
+    const newTeams = (formData.specialist_teams || []).map((team, i) =>
+      i === index ? { ...team, [field]: value } : team
     );
     onFormDataChange({ specialist_teams: newTeams });
   };
@@ -358,33 +358,33 @@ const EngagementScopeSection = ({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {(formData.specialist_teams || []).map((team) => (
-                      <TableRow key={team.id}>
+                    {(formData.specialist_teams || []).map((team, index) => (
+                      <TableRow key={`specialist-team-${index}`}>
                         <TableCell>
                           <Input
                             value={team.id}
-                            onChange={(e) => handleSpecialistTeamChange(team.id, 'id', e.target.value)}
+                            onChange={(e) => handleSpecialistTeamChange(index, 'id', e.target.value)}
                             placeholder="ID"
                           />
                         </TableCell>
                         <TableCell>
                           <Input
                             value={team.description}
-                            onChange={(e) => handleSpecialistTeamChange(team.id, 'description', e.target.value)}
+                            onChange={(e) => handleSpecialistTeamChange(index, 'description', e.target.value)}
                             placeholder="Description"
                           />
                         </TableCell>
                         <TableCell>
                           <Input
                             value={team.name}
-                            onChange={(e) => handleSpecialistTeamChange(team.id, 'name', e.target.value)}
+                            onChange={(e) => handleSpecialistTeamChange(index, 'name', e.target.value)}
                             placeholder="Name"
                           />
                         </TableCell>
                         <TableCell>
                           <Input
                             value={team.title}
-                            onChange={(e) => handleSpecialistTeamChange(team.id, 'title', e.target.value)}
+                            onChange={(e) => handleSpecialistTeamChange(index, 'title', e.target.value)}
                             placeholder="Title"
                           />
                         </TableCell>
@@ -393,7 +393,7 @@ const EngagementScopeSection = ({
                             type="button"
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleRemoveSpecialistTeam(team.id)}
+                            onClick={() => handleRemoveSpecialistTeam(index)}
                             className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
