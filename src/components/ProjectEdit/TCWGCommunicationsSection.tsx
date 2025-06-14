@@ -5,6 +5,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 import { Plus, Trash2, Calendar } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
@@ -41,6 +43,8 @@ const TCWGCommunicationsSection = ({
   const communications = (formData as any).tcwg_communications || [];
   const mainAttachments = (formData as any).tcwg_main_attachments || [];
   const inquiries = (formData as any).tcwg_inquiries || [];
+  const generateMeetingAgenda = (formData as any).tcwg_generate_meeting_agenda || false;
+  const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || 'Not selected';
 
   const handleCommunicationChange = (id: string, field: 'topic' | 'included' | 'date', value: boolean | string) => {
     const updatedCommunications = communications.map((comm: CommunicationItem) =>
@@ -335,6 +339,48 @@ const TCWGCommunicationsSection = ({
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* New section with checkbox and radio buttons */}
+            <div className="mt-6 space-y-4">
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  checked={generateMeetingAgenda}
+                  onCheckedChange={(checked) => 
+                    onFormDataChange({ tcwg_generate_meeting_agenda: !!checked } as any)
+                  }
+                />
+                <p className="text-sm text-gray-700">
+                  Based on the selection made in the table above, we choose to generate and use the meeting agenda/questionnaire template(s) in order to document our inquiries:
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm text-gray-700 font-medium">
+                  Were any of the responses obtained and documented in the attachment(s) above inconsistent with our understanding of the entity or otherwise unsatisfactory?
+                </p>
+                
+                <RadioGroup 
+                  value={responsesUnsatisfactory} 
+                  onValueChange={(value) => 
+                    onFormDataChange({ tcwg_responses_unsatisfactory: value } as any)
+                  }
+                  className="flex space-x-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Yes" id="yes" />
+                    <Label htmlFor="yes" className="text-sm">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="No" id="no" />
+                    <Label htmlFor="no" className="text-sm">No</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Not selected" id="not-selected" />
+                    <Label htmlFor="not-selected" className="text-sm">Not selected</Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
           </div>
         </div>
