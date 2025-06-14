@@ -78,12 +78,6 @@ interface FormData {
   // Other strategy or planning considerations fields
   significant_factors_directing_activities: string;
   additional_information_documentation: string;
-  // New audit strategy and planning fields
-  gaap_conversion_activity: boolean;
-  gaas_conversion_activity: boolean;
-  current_period_evaluation_method: string;
-  prior_period_evaluation_method: string;
-  minimum_review_requirement: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -98,7 +92,6 @@ interface EngagementProfileSectionProps {
   onRemoveFile: () => void;
   onDownloadFile: () => void;
   projectId?: string;
-  project?: Project | null;
 }
 
 const EngagementProfileSection = ({
@@ -114,7 +107,6 @@ const EngagementProfileSection = ({
   onDownloadFile,
   projectId = ''
 }: EngagementProfileSectionProps) => {
-  // ... keep existing code (auditTypes, languages, bumexOffices, approvalStatuses arrays and all component logic)
   const auditTypes = [
     'Financial Audit',
     'Compliance Audit',
@@ -536,14 +528,6 @@ const EngagementProfileSection = ({
           // Other strategy or planning considerations fields
           significant_factors_directing_activities: (formData as any).significant_factors_directing_activities || '',
           additional_information_documentation: (formData as any).additional_information_documentation || '',
-          // New audit strategy and planning fields
-          gaap_conversion_activity: (formData as any).gaap_conversion_activity || false,
-          gaas_conversion_activity: (formData as any).gaas_conversion_activity || false,
-          current_period_evaluation_method: (formData as any).current_period_evaluation_method || 'Dual method',
-          prior_period_evaluation_method: (formData as any).prior_period_evaluation_method || 'Dual method',
-          minimum_review_requirement: (formData as any).minimum_review_requirement || 'Global - No EQCR',
-          // MRR file field
-          mrr_file: (formData as any).mrr_file || '',
         }}
         onFormDataChange={onFormDataChange}
       />
