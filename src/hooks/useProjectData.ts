@@ -115,6 +115,10 @@ export const useProjectData = () => {
     engagement_real_estate_specialist_id: '',
     engagement_industry_specialist_id: '',
     engagement_other_specialist_id: '',
+    // New data considerations fields
+    trial_balances_electronic_format: 'Not selected',
+    large_batch_journal_entries: 'Not selected',
+    significant_circumstances_impair_da: 'Not selected',
   });
 
   useEffect(() => {
@@ -233,6 +237,10 @@ export const useProjectData = () => {
         engagement_real_estate_specialist_id: (projectData as any).engagement_real_estate_specialist_id || '',
         engagement_industry_specialist_id: (projectData as any).engagement_industry_specialist_id || '',
         engagement_other_specialist_id: (projectData as any).engagement_other_specialist_id || '',
+        // New data considerations fields
+        trial_balances_electronic_format: (projectData as any).trial_balances_electronic_format || 'Not selected',
+        large_batch_journal_entries: (projectData as any).large_batch_journal_entries || 'Not selected',
+        significant_circumstances_impair_da: (projectData as any).significant_circumstances_impair_da || 'Not selected',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([

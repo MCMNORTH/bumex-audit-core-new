@@ -11,6 +11,7 @@ import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
 import EntityProfileSection from './EngagementScope/EntityProfileSection';
 import MultiReportingSection from './MultiReportingSection';
+import DataConsiderationsSection from './DataConsiderationsSection';
 
 interface DocumentFile {
   name: string;
@@ -100,6 +101,10 @@ interface FormData {
     legal_entity: string;
     is_primary_report: boolean;
   }>;
+  // New data considerations fields
+  trial_balances_electronic_format: string;
+  large_batch_journal_entries: string;
+  significant_circumstances_impair_da: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -602,6 +607,15 @@ const EngagementProfileSection = ({
         formData={{
           planning_to_use_multi_reporting: formData.planning_to_use_multi_reporting || 'No',
           reports: formData.reports || []
+        }}
+        onFormDataChange={onFormDataChange}
+      />
+
+      <DataConsiderationsSection
+        formData={{
+          trial_balances_electronic_format: formData.trial_balances_electronic_format || 'Not selected',
+          large_batch_journal_entries: formData.large_batch_journal_entries || 'Not selected',
+          significant_circumstances_impair_da: formData.significant_circumstances_impair_da || 'Not selected'
         }}
         onFormDataChange={onFormDataChange}
       />
