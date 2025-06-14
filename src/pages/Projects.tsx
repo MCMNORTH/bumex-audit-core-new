@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +19,7 @@ import { Plus, Search, FolderOpen, Calendar, Users, Building } from 'lucide-reac
 const Projects = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<(Project & { client_name?: string })[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -216,6 +218,10 @@ const Projects = () => {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const handleProjectClick = (projectId: string) => {
+    navigate(`/projects/${projectId}`);
   };
 
   const filteredProjects = projects.filter(project => {
@@ -502,7 +508,7 @@ const Projects = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredProjects.map((project) => (
             <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6" onClick={() => canEditProject && handleEdit(project)}>
+              <CardContent className="p-6" onClick={() => handleProjectClick(project.id)}>
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
