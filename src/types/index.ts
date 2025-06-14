@@ -56,6 +56,15 @@ export interface Project {
   financial_reporting_framework?: string[];
   audit_report_date?: string;
   required_audit_file_closeout_date?: string;
+  // New component reporting and reviewer fields
+  component_reporting?: boolean;
+  component_reporting_details?: string;
+  group_auditor?: boolean;
+  engagement_quality_control_reviewer?: boolean;
+  limited_scope_quality_control_reviewer?: boolean;
+  other_reviewer?: boolean;
+  governance_management_same_persons?: boolean;
+  entity_has_internal_audit_function?: boolean;
 }
 
 export interface Log {

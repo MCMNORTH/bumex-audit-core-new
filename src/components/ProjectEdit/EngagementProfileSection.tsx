@@ -56,6 +56,14 @@ interface FormData {
   financial_reporting_framework: string[];
   audit_report_date: string;
   required_audit_file_closeout_date: string;
+  component_reporting: boolean;
+  component_reporting_details: string;
+  group_auditor: boolean;
+  engagement_quality_control_reviewer: boolean;
+  limited_scope_quality_control_reviewer: boolean;
+  other_reviewer: boolean;
+  governance_management_same_persons: boolean;
+  entity_has_internal_audit_function: boolean;
 }
 
 interface EngagementProfileSectionProps {
@@ -482,6 +490,14 @@ const EngagementProfileSection = ({
           financial_reporting_framework: formData.financial_reporting_framework,
           audit_report_date: formData.audit_report_date,
           required_audit_file_closeout_date: formData.required_audit_file_closeout_date,
+          component_reporting: formData.component_reporting || false,
+          component_reporting_details: formData.component_reporting_details || '',
+          group_auditor: formData.group_auditor || false,
+          engagement_quality_control_reviewer: formData.engagement_quality_control_reviewer || false,
+          limited_scope_quality_control_reviewer: formData.limited_scope_quality_control_reviewer || false,
+          other_reviewer: formData.other_reviewer || false,
+          governance_management_same_persons: formData.governance_management_same_persons || false,
+          entity_has_internal_audit_function: formData.entity_has_internal_audit_function || false,
         }}
         onFormDataChange={onFormDataChange}
       />

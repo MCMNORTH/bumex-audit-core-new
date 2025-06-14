@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2 } from 'lucide-react';
 
 interface DocumentFile {
@@ -19,6 +20,15 @@ interface FormData {
   financial_reporting_framework: string[];
   audit_report_date: string;
   required_audit_file_closeout_date: string;
+  // New component reporting and reviewer fields
+  component_reporting: boolean;
+  component_reporting_details: string;
+  group_auditor: boolean;
+  engagement_quality_control_reviewer: boolean;
+  limited_scope_quality_control_reviewer: boolean;
+  other_reviewer: boolean;
+  governance_management_same_persons: boolean;
+  entity_has_internal_audit_function: boolean;
 }
 
 interface EngagementScopeSectionProps {
@@ -166,6 +176,98 @@ const EngagementScopeSection = ({
               value={formData.required_audit_file_closeout_date}
               onChange={(e) => onFormDataChange({ required_audit_file_closeout_date: e.target.value })}
             />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="component_reporting"
+              checked={formData.component_reporting}
+              onCheckedChange={(checked) => onFormDataChange({ component_reporting: checked as boolean })}
+            />
+            <Label htmlFor="component_reporting">Component reporting</Label>
+          </div>
+          
+          {formData.component_reporting && (
+            <div>
+              <Label htmlFor="component_reporting_details">Component reporting details</Label>
+              <Textarea
+                id="component_reporting_details"
+                value={formData.component_reporting_details}
+                onChange={(e) => onFormDataChange({ component_reporting_details: e.target.value })}
+                placeholder="En complément de l'opinion d'audit statuaire au 31 décembre 2023, nous avons reçu des instructions de nos collègues dans les pays où opèrent les filiales de Company X en vue de tester des contrôles JSOX sur le scope B, soit les PLC (revenues, receivables & inventories)"
+                className="min-h-[120px]"
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="group_auditor"
+              checked={formData.group_auditor}
+              onCheckedChange={(checked) => onFormDataChange({ group_auditor: checked as boolean })}
+            />
+            <Label htmlFor="group_auditor">Group auditor</Label>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="font-medium text-gray-900">Select the type of reviewer(s) which have been identified for the engagement:</h4>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="engagement_quality_control_reviewer"
+                checked={formData.engagement_quality_control_reviewer}
+                onCheckedChange={(checked) => onFormDataChange({ engagement_quality_control_reviewer: checked as boolean })}
+              />
+              <Label htmlFor="engagement_quality_control_reviewer">Engagement quality control reviewer</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="limited_scope_quality_control_reviewer"
+                checked={formData.limited_scope_quality_control_reviewer}
+                onCheckedChange={(checked) => onFormDataChange({ limited_scope_quality_control_reviewer: checked as boolean })}
+              />
+              <Label htmlFor="limited_scope_quality_control_reviewer">Limited scope quality control reviewer</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="other_reviewer"
+                checked={formData.other_reviewer}
+                onCheckedChange={(checked) => onFormDataChange({ other_reviewer: checked as boolean })}
+              />
+              <Label htmlFor="other_reviewer">Other reviewer</Label>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="font-medium text-gray-900">Management, those charged with governance and internal audit function:</h4>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="governance_management_same_persons"
+                checked={formData.governance_management_same_persons}
+                onCheckedChange={(checked) => onFormDataChange({ governance_management_same_persons: checked as boolean })}
+              />
+              <Label htmlFor="governance_management_same_persons">Those charged with governance and management are the same persons</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="entity_has_internal_audit_function"
+                checked={formData.entity_has_internal_audit_function}
+                onCheckedChange={(checked) => onFormDataChange({ entity_has_internal_audit_function: checked as boolean })}
+              />
+              <Label htmlFor="entity_has_internal_audit_function">The entity has an internal audit function or equivalent, including others under the direction of management or those charged with governance</Label>
+            </div>
           </div>
         </div>
       </CardContent>

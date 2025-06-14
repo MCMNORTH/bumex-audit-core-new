@@ -69,6 +69,15 @@ const ProjectEdit = () => {
     financial_reporting_framework: [] as string[],
     audit_report_date: '',
     required_audit_file_closeout_date: '',
+    // New component reporting and reviewer fields
+    component_reporting: false,
+    component_reporting_details: '',
+    group_auditor: false,
+    engagement_quality_control_reviewer: false,
+    limited_scope_quality_control_reviewer: false,
+    other_reviewer: false,
+    governance_management_same_persons: false,
+    entity_has_internal_audit_function: false,
   });
 
   const sidebarSections = [
@@ -149,6 +158,15 @@ const ProjectEdit = () => {
         financial_reporting_framework: (projectData as any).financial_reporting_framework || [],
         audit_report_date: (projectData as any).audit_report_date || '',
         required_audit_file_closeout_date: (projectData as any).required_audit_file_closeout_date || '',
+        // New component reporting and reviewer fields with defaults
+        component_reporting: (projectData as any).component_reporting || false,
+        component_reporting_details: (projectData as any).component_reporting_details || '',
+        group_auditor: (projectData as any).group_auditor || false,
+        engagement_quality_control_reviewer: (projectData as any).engagement_quality_control_reviewer || false,
+        limited_scope_quality_control_reviewer: (projectData as any).limited_scope_quality_control_reviewer || false,
+        other_reviewer: (projectData as any).other_reviewer || false,
+        governance_management_same_persons: (projectData as any).governance_management_same_persons || false,
+        entity_has_internal_audit_function: (projectData as any).entity_has_internal_audit_function || false,
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display
