@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import { ProjectFormData } from '@/types/formData';
@@ -93,10 +92,22 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
-          {/* Team Assignment */}
-          {activeSection === 'team-assignment' && renderPlaceholderSection('Team Assignment')}
+          {/* Main parent section */}
+          {activeSection === 'engagement-management' && renderPlaceholderSection('Engagement Management')}
 
-          {/* Engagement Profile & Strategy */}
+          {/* Engagement Profile parent section */}
+          {activeSection === 'engagement-profile-section' && renderPlaceholderSection('Engagement Profile & Strategy Overview')}
+
+          {/* SP Specialists parent section */}
+          {activeSection === 'sp-specialists-section' && renderPlaceholderSection('SP. Specialists Overview')}
+
+          {/* Independence parent section */}
+          {activeSection === 'independence-section' && renderPlaceholderSection('Independence Overview')}
+
+          {/* Communications parent section */}
+          {activeSection === 'communications-section' && renderPlaceholderSection('Communications, Inquiries and Minutes Overview')}
+
+          {/* Existing sections - now as leaf nodes */}
           {activeSection === 'engagement-profile' && (
             <EngagementProfileSection
               formData={formData}

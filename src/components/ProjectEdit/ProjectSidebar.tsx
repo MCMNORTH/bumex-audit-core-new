@@ -29,7 +29,7 @@ const ProjectSidebar = ({
   onBack,
   onSectionChange
 }: ProjectSidebarProps) => {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['engagement-management']));
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['engagement-management', 'engagement-profile-section']));
 
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
@@ -39,6 +39,23 @@ const ProjectSidebar = ({
       newExpanded.add(sectionId);
     }
     setExpandedSections(newExpanded);
+  };
+
+  const handleSectionClick = (section: SidebarSection, event: React.MouseEvent) => {
+    event.preventDefault();
+    
+    // If it's a parent section, navigate to it
+    if (section.isParent) {
+      onSectionChange(section.id);
+    } else {
+      // If it's a leaf section, navigate to it
+      onSectionChange(section.id);
+    }
+  };
+
+  const handleChevronClick = (sectionId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    toggleSection(sectionId);
   };
 
   const renderSection = (section: SidebarSection, level: number = 0) => {
@@ -52,17 +69,14 @@ const ProjectSidebar = ({
             isActive
               ? 'bg-blue-100 text-blue-700 font-medium'
               : 'text-gray-600 hover:bg-gray-100'
-          } ${level > 0 ? 'ml-4' : ''}`}
-          onClick={() => {
-            if (section.isParent) {
-              toggleSection(section.id);
-            } else {
-              onSectionChange(section.id);
-            }
-          }}
+          } ${level === 1 ? 'ml-4' : level === 2 ? 'ml-8' : ''}`}
+          onClick={(e) => handleSectionClick(section, e)}
         >
           {section.isParent && (
-            <div className="mr-2">
+            <div 
+              className="mr-2 hover:bg-gray-200 rounded p-1 -m-1"
+              onClick={(e) => handleChevronClick(section.id, e)}
+            >
               {isExpanded ? (
                 <ChevronDown className="h-4 w-4" />
               ) : (
@@ -70,13 +84,13 @@ const ProjectSidebar = ({
               )}
             </div>
           )}
-          <span className={`${section.isParent ? 'font-medium' : ''}`}>
+          <span className={`${section.isParent ? 'font-medium' : ''} flex-1`}>
             {section.number && `${section.number} `}{section.title}
           </span>
         </div>
 
         {section.isParent && isExpanded && section.children && (
-          <div className="ml-2">
+          <div className={level === 0 ? 'ml-2' : ''}>
             {section.children.map(child => renderSection(child, level + 1))}
           </div>
         )}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -54,38 +55,47 @@ const ProjectEdit = () => {
       isParent: true,
       number: '1.',
       children: [
-        { id: 'engagement-profile', title: 'Engagement profile & Strategy', active: true, number: '1.' },
-        { id: 'sign-off-1', title: 'Sign-off', active: false },
-      ]
-    },
-    {
-      id: 'sp-specialists',
-      title: 'SP. Specialists',
-      active: false,
-      isParent: true,
-      children: [
-        { id: 'tech-risk-corp', title: 'Tech Risk Corp - IT Audit', active: false },
-      ]
-    },
-    {
-      id: 'independence',
-      title: 'Independence',
-      active: false,
-      isParent: true,
-      number: '2.',
-      children: [
-        { id: 'initial-independence', title: 'Initial independence and conclusion', active: false, number: '1.' },
-        { id: 'sign-off-2', title: 'Sign-off', active: false },
-      ]
-    },
-    {
-      id: 'communications',
-      title: 'Communications, inquiries and minutes',
-      active: false,
-      isParent: true,
-      number: '4.',
-      children: [
-        { id: 'sign-off-3', title: 'Sign-off', active: false },
+        { 
+          id: 'engagement-profile-section', 
+          title: 'Engagement profile & Strategy', 
+          active: true, 
+          number: '1.',
+          isParent: true,
+          children: [
+            { id: 'engagement-profile', title: 'Engagement profile & Strategy', active: true },
+            { id: 'sign-off-1', title: 'Sign-off', active: false },
+          ]
+        },
+        { 
+          id: 'sp-specialists-section', 
+          title: 'SP. Specialists', 
+          active: false,
+          isParent: true,
+          children: [
+            { id: 'tech-risk-corp', title: 'Tech Risk Corp - IT Audit', active: false },
+          ]
+        },
+        {
+          id: 'independence-section',
+          title: 'Independence',
+          active: false,
+          isParent: true,
+          number: '2.',
+          children: [
+            { id: 'initial-independence', title: 'Initial independence and conclusion', active: false, number: '1.' },
+            { id: 'sign-off-2', title: 'Sign-off', active: false },
+          ]
+        },
+        {
+          id: 'communications-section',
+          title: 'Communications, inquiries and minutes',
+          active: false,
+          isParent: true,
+          number: '4.',
+          children: [
+            { id: 'sign-off-3', title: 'Sign-off', active: false },
+          ]
+        }
       ]
     }
   ];

@@ -25,12 +25,17 @@ const ProjectHeader = ({
 }: ProjectHeaderProps) => {
   const getSectionTitle = () => {
     switch (activeSection) {
+      case 'engagement-management': return '1. Engagement Management';
+      case 'engagement-profile-section': return '1. Engagement Profile & Strategy';
       case 'engagement-profile': return '1. Engagement profile & Strategy';
+      case 'sp-specialists-section': return 'SP. Specialists';
+      case 'independence-section': return '2. Independence';
+      case 'communications-section': return '4. Communications, Inquiries and Minutes';
       case 'sign-off-1': return 'Sign-off';
-      case 'tech-risk-corp': return 'Tech Risk Corp - IT Audit';
-      case 'initial-independence': return '1. Initial independence and conclusion';
       case 'sign-off-2': return 'Sign-off';
       case 'sign-off-3': return 'Sign-off';
+      case 'tech-risk-corp': return 'Tech Risk Corp - IT Audit';
+      case 'initial-independence': return '1. Initial independence and conclusion';
       default: return 'Engagement Profile';
     }
   };
