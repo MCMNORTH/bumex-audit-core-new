@@ -107,6 +107,12 @@ interface FormData {
   trial_balances_electronic_format: string;
   large_batch_journal_entries: string;
   significant_circumstances_impair_da: string;
+  // Independence fields
+  ethics_breaches_identified: string;
+  local_quality_manual_compliance: string;
+  member_firm_independence_work_paper: string;
+  communicate_other_independence_matters: string;
+  independence_compliance_requirements: string;
 }
 
 interface ProjectEditContentProps {
