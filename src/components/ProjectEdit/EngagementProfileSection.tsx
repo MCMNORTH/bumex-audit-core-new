@@ -422,14 +422,6 @@ const EngagementProfileSection = ({
               </RadioGroup>
             </div>
           </div>
-
-          <FileUploadSection
-            uploadedFile={uploadedFile}
-            uploadStatus={uploadStatus}
-            onFileUpload={onFileUpload}
-            onRemoveFile={onRemoveFile}
-            onDownloadFile={onDownloadFile}
-          />
         </CardContent>
       </Card>
 
