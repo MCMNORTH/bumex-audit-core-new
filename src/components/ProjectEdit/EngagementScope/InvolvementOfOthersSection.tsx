@@ -76,55 +76,58 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
             <Label className="font-medium text-gray-900">Specialist Teams</Label>
             <Button
               type="button"
-              variant="outline"
-              size="sm"
               onClick={handleAddSpecialistTeam}
+              size="sm"
+              className="bg-green-600 hover:bg-green-700"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Add
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
           
-          {(formData.specialist_teams || []).length > 0 && (
+          <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead>ID</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead className="w-[50px]"></TableHead>
+                <TableRow className="bg-blue-600">
+                  <TableHead className="text-white font-medium">ID</TableHead>
+                  <TableHead className="text-white font-medium">Description</TableHead>
+                  <TableHead className="text-white font-medium">Name</TableHead>
+                  <TableHead className="text-white font-medium">Title</TableHead>
+                  <TableHead className="text-white font-medium w-12"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {(formData.specialist_teams || []).map((team, index) => (
-                  <TableRow key={`specialist-team-${index}`}>
+                  <TableRow key={`specialist-team-${index}`} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
                     <TableCell>
                       <Input
                         value={team.id}
                         onChange={(e) => handleSpecialistTeamChange(index, 'id', e.target.value)}
-                        placeholder="ID"
+                        placeholder="Enter ID"
+                        className="border-0 bg-transparent"
                       />
                     </TableCell>
                     <TableCell>
                       <Input
                         value={team.description}
                         onChange={(e) => handleSpecialistTeamChange(index, 'description', e.target.value)}
-                        placeholder="Description"
+                        placeholder="Enter description"
+                        className="border-0 bg-transparent"
                       />
                     </TableCell>
                     <TableCell>
                       <Input
                         value={team.name}
                         onChange={(e) => handleSpecialistTeamChange(index, 'name', e.target.value)}
-                        placeholder="Name"
+                        placeholder="Enter name"
+                        className="border-0 bg-transparent"
                       />
                     </TableCell>
                     <TableCell>
                       <Input
                         value={team.title}
                         onChange={(e) => handleSpecialistTeamChange(index, 'title', e.target.value)}
-                        placeholder="Title"
+                        placeholder="Enter title"
+                        className="border-0 bg-transparent"
                       />
                     </TableCell>
                     <TableCell>
@@ -133,16 +136,23 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                         variant="ghost"
                         size="sm"
                         onClick={() => handleRemoveSpecialistTeam(index)}
-                        className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))}
+                {(!formData.specialist_teams || formData.specialist_teams.length === 0) && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="text-center text-gray-500 py-8">
+                      No specialist teams added yet. Click the + button to add a specialist team.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
-          )}
+          </div>
         </div>
       )}
     </div>
