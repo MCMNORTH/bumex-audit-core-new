@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,7 +13,7 @@ import { doc, getDoc, updateDoc, getDocs, collection, query } from 'firebase/fir
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { Project, Client, User } from '@/types';
-import { ArrowLeft, Save, Calendar, Upload, X, FileText } from 'lucide-react';
+import { ArrowLeft, Save, Calendar, Upload, X, FileText, Download } from 'lucide-react';
 
 const ProjectEdit = () => {
   const { id } = useParams<{ id: string }>();
@@ -122,6 +123,16 @@ const ProjectEdit = () => {
         engagement_structure_file: (projectData as any).engagement_structure_file || '',
       });
 
+      // If there's an existing file, set the upload status and create a mock file object for display
+      if ((projectData as any).engagement_structure_file) {
+        setUploadStatus('success');
+        // Extract filename from URL for display purposes
+        const url = (projectData as any).engagement_structure_file;
+        const fileName = url.split('/').pop()?.split('?')[0] || 'engagement-structure.pdf';
+        const displayName = fileName.includes('-') ? fileName.split('-').slice(1).join('-') : fileName;
+        setUploadedFile({ name: displayName } as File);
+      }
+
       // Fetch clients and users
       const [clientsSnapshot, usersSnapshot] = await Promise.all([
         getDocs(query(collection(db, 'clients'))),
@@ -221,6 +232,19 @@ const ProjectEdit = () => {
     }));
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDownloadFile = () => {
+    if (formData.engagement_structure_file) {
+      // Create a temporary link to download the file
+      const link = document.createElement('a');
+      link.href = formData.engagement_structure_file;
+      link.download = uploadedFile?.name || 'engagement-structure.pdf';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   };
 
@@ -586,8 +610,18 @@ const ProjectEdit = () => {
                             <Button
                               variant="ghost"
                               size="sm"
+                              onClick={handleDownloadFile}
+                              className="h-6 w-6 p-0 text-blue-500 hover:text-blue-700"
+                              title="Download file"
+                            >
+                              <Download className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={handleRemoveFile}
                               className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                              title="Remove file"
                             >
                               <X className="h-3 w-3" />
                             </Button>
