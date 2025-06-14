@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -87,10 +86,6 @@ const TCWGCommunicationsSection = ({
       minute.id === id ? { ...minute, [field]: value } : minute
     );
     onFormDataChange({ tcwg_meeting_minutes: updatedMeetingMinutes } as any);
-  };
-
-  const handleMeetingMinutesAttachmentsChange = (attachments: Array<{name: string, url: string, type: string}>) => {
-    onFormDataChange({ tcwg_meeting_minutes_attachments: attachments } as any);
   };
 
   // New file upload handler for individual meeting minute attachments
@@ -660,16 +655,6 @@ const TCWGCommunicationsSection = ({
                   )}
                 </tbody>
               </table>
-            </div>
-
-            <div className="mt-6">
-              <DocumentAttachmentSection
-                title="Meeting Minutes Attachments"
-                files={meetingMinutesAttachments}
-                onFilesChange={handleMeetingMinutesAttachmentsChange}
-                projectId={formData.project_id || 'unknown'}
-                storagePrefix="tcwg-meeting-minutes-attachments"
-              />
             </div>
           </div>
         </div>
