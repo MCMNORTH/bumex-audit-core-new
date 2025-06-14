@@ -139,7 +139,10 @@ const EngagementScopeSection = ({
 
   const handleMRRFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file || !projectId) return;
+    if (!file || !projectId) {
+      console.log('No file selected or no project ID:', { file: !!file, projectId });
+      return;
+    }
 
     if (file.type !== 'application/pdf') {
       toast({
@@ -160,14 +163,17 @@ const EngagementScopeSection = ({
     }
 
     setUploadStatus('uploading');
+    console.log('Starting MRR file upload:', file.name);
     
     try {
       const fileName = `mrr-files/${projectId}/${Date.now()}-${file.name}`;
       const storageRef = ref(storage, fileName);
       
+      console.log('Uploading to Firebase Storage:', fileName);
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
       
+      console.log('Upload successful, download URL:', downloadURL);
       setUploadedFileName(file.name);
       setUploadStatus('success');
       onFormDataChange({ mrr_file: downloadURL });
@@ -177,7 +183,7 @@ const EngagementScopeSection = ({
         description: `${file.name} has been uploaded successfully`,
       });
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error uploading MRR file:', error);
       setUploadStatus('error');
       toast({
         title: 'Upload failed',
@@ -215,6 +221,11 @@ const EngagementScopeSection = ({
       link.click();
       document.body.removeChild(link);
     }
+  };
+
+  const triggerFileUpload = () => {
+    console.log('Triggering file upload, input ref:', fileInputRef.current);
+    fileInputRef.current?.click();
   };
 
   return (
@@ -762,7 +773,7 @@ const EngagementScopeSection = ({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={triggerFileUpload}
                   disabled={uploadStatus === 'uploading'}
                 >
                   <Upload className="h-4 w-4 mr-2" />
@@ -777,6 +788,10 @@ const EngagementScopeSection = ({
                 onChange={handleMRRFileUpload}
                 className="hidden"
               />
+              
+              {uploadStatus === 'error' && (
+                <span className="text-sm text-red-600">Upload failed. Please try again.</span>
+              )}
             </div>
           </div>
         </div>
