@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -172,6 +173,14 @@ const ProjectEditContent = ({
     onFormDataChange({ assigned_to: updatedAssignments });
   };
 
+  const renderPlaceholderSection = (title: string) => (
+    <Card>
+      <CardContent className="p-8 text-center">
+        <p className="text-gray-500">{title} section coming soon</p>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="p-8">
@@ -187,6 +196,10 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
+          {/* Team Assignment */}
+          {activeSection === 'team-assignment' && renderPlaceholderSection('Team assignment')}
+
+          {/* Engagement Profile & Strategy */}
           {activeSection === 'engagement-profile' && (
             <EngagementProfileSection
               formData={formData}
@@ -209,13 +222,20 @@ const ProjectEditContent = ({
             />
           )}
 
-          {activeSection === 'team-assignment' && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <p className="text-gray-500">Team assignment section coming soon</p>
-              </CardContent>
-            </Card>
-          )}
+          {/* Placeholder sections for the new hierarchy */}
+          {activeSection === 'acceptance-continuance' && renderPlaceholderSection('Acceptance & continuance')}
+          {activeSection === 'pre-engagement' && renderPlaceholderSection('Pre-engagement activities')}
+          {activeSection === 'independence-evaluation' && renderPlaceholderSection('Independence evaluation')}
+          {activeSection === 'independence-documentation' && renderPlaceholderSection('Independence documentation')}
+          {activeSection === 'planning-overview' && renderPlaceholderSection('Planning overview')}
+          {activeSection === 'risk-assessment' && renderPlaceholderSection('Risk assessment')}
+          {activeSection === 'audit-strategy' && renderPlaceholderSection('Audit strategy')}
+          {activeSection === 'execution-overview' && renderPlaceholderSection('Execution overview')}
+          {activeSection === 'substantive-procedures' && renderPlaceholderSection('Substantive procedures')}
+          {activeSection === 'controls-testing' && renderPlaceholderSection('Controls testing')}
+          {activeSection === 'completion-overview' && renderPlaceholderSection('Completion overview')}
+          {activeSection === 'final-review' && renderPlaceholderSection('Final review')}
+          {activeSection === 'reporting' && renderPlaceholderSection('Reporting')}
         </div>
       </div>
     </div>
