@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -128,8 +127,13 @@ const ProjectEdit = () => {
         setUploadStatus('success');
         // Extract filename from URL for display purposes
         const url = (projectData as any).engagement_structure_file;
-        const fileName = url.split('/').pop()?.split('?')[0] || 'engagement-structure.pdf';
-        const displayName = fileName.includes('-') ? fileName.split('-').slice(1).join('-') : fileName;
+        // Better filename extraction - get the part after the last slash and before the query parameters
+        const urlParts = url.split('/');
+        const fileNameWithTimestamp = urlParts[urlParts.length - 1].split('?')[0];
+        // Remove the timestamp prefix (e.g., "1234567890-filename.pdf" -> "filename.pdf")
+        const displayName = fileNameWithTimestamp.includes('-') 
+          ? fileNameWithTimestamp.substring(fileNameWithTimestamp.indexOf('-') + 1)
+          : fileNameWithTimestamp;
         setUploadedFile({ name: displayName } as File);
       }
 
