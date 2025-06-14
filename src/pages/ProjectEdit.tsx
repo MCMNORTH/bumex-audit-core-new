@@ -48,6 +48,18 @@ const ProjectEdit = () => {
     plan_to_roll_forward: false,
     enable_external_documents: false,
     engagement_structure_file: '',
+    // New engagement evaluation fields
+    engagement_evaluation_id: '',
+    engagement_evaluation_status: 'Not Selected',
+    evaluation_approval_date: '',
+    planned_expiration_date: '',
+    // New sentinel approval fields
+    sentinel_approval_number: '',
+    sentinel_approval_status: 'Not Selected',
+    sentinel_approval_date: '',
+    sentinel_expiration_date: '',
+    // New radio button field
+    first_period_auditing: 'Not selected',
   });
 
   const sidebarSections = [
@@ -106,6 +118,18 @@ const ProjectEdit = () => {
         plan_to_roll_forward: false,
         enable_external_documents: false,
         engagement_structure_file: (projectData as any).engagement_structure_file || '',
+        // New engagement evaluation fields with defaults
+        engagement_evaluation_id: (projectData as any).engagement_evaluation_id || '',
+        engagement_evaluation_status: (projectData as any).engagement_evaluation_status || 'Not Selected',
+        evaluation_approval_date: (projectData as any).evaluation_approval_date || '',
+        planned_expiration_date: (projectData as any).planned_expiration_date || '',
+        // New sentinel approval fields with defaults
+        sentinel_approval_number: (projectData as any).sentinel_approval_number || '',
+        sentinel_approval_status: (projectData as any).sentinel_approval_status || 'Not Selected',
+        sentinel_approval_date: (projectData as any).sentinel_approval_date || '',
+        sentinel_expiration_date: (projectData as any).sentinel_expiration_date || '',
+        // New radio button field with default
+        first_period_auditing: (projectData as any).first_period_auditing || 'Not selected',
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display

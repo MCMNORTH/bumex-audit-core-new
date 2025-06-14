@@ -1,9 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from 'lucide-react';
 import { Client, User, Project } from '@/types';
 import FileUploadSection from './FileUploadSection';
@@ -26,6 +26,18 @@ interface FormData {
   plan_to_roll_forward: boolean;
   enable_external_documents: boolean;
   engagement_structure_file: string;
+  // New engagement evaluation fields
+  engagement_evaluation_id: string;
+  engagement_evaluation_status: string;
+  evaluation_approval_date: string;
+  planned_expiration_date: string;
+  // New sentinel approval fields
+  sentinel_approval_number: string;
+  sentinel_approval_status: string;
+  sentinel_approval_date: string;
+  sentinel_expiration_date: string;
+  // New radio button field
+  first_period_auditing: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -66,6 +78,7 @@ const EngagementProfileSection = ({
 
   const languages = ['English', 'Spanish', 'French', 'German', 'Portuguese', 'Other'];
   const bumexOffices = ['Nouakchott'];
+  const approvalStatuses = ['Not Selected', 'Approved'];
 
   return (
     <div className="space-y-6">
@@ -271,6 +284,142 @@ const EngagementProfileSection = ({
                 onCheckedChange={(checked) => onFormDataChange({ enable_external_documents: checked as boolean })}
               />
               <Label htmlFor="enable_external_documents">Enable the ability to receive external documents</Label>
+            </div>
+          </div>
+
+          <FileUploadSection
+            uploadedFile={uploadedFile}
+            uploadStatus={uploadStatus}
+            onFileUpload={onFileUpload}
+            onRemoveFile={onRemoveFile}
+            onDownloadFile={onDownloadFile}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Engagement evaluation and sentinel approval information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-4 gap-4">
+            <div>
+              <Label htmlFor="engagement_evaluation_id">Engagement evaluation ID</Label>
+              <Input
+                id="engagement_evaluation_id"
+                value={formData.engagement_evaluation_id}
+                onChange={(e) => onFormDataChange({ engagement_evaluation_id: e.target.value })}
+                placeholder="Enter evaluation ID"
+              />
+            </div>
+            <div>
+              <Label htmlFor="engagement_evaluation_status">Engagement evaluation status</Label>
+              <Select
+                value={formData.engagement_evaluation_status}
+                onValueChange={(value) => onFormDataChange({ engagement_evaluation_status: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {approvalStatuses.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="evaluation_approval_date">Evaluation approval date</Label>
+              <Input
+                id="evaluation_approval_date"
+                type="date"
+                value={formData.evaluation_approval_date}
+                onChange={(e) => onFormDataChange({ evaluation_approval_date: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="planned_expiration_date">Planned expiration date</Label>
+              <Input
+                id="planned_expiration_date"
+                type="date"
+                value={formData.planned_expiration_date}
+                onChange={(e) => onFormDataChange({ planned_expiration_date: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-4">
+            <div>
+              <Label htmlFor="sentinel_approval_number">Sentinel approval number</Label>
+              <Input
+                id="sentinel_approval_number"
+                value={formData.sentinel_approval_number}
+                onChange={(e) => onFormDataChange({ sentinel_approval_number: e.target.value })}
+                placeholder="Enter approval number"
+              />
+            </div>
+            <div>
+              <Label htmlFor="sentinel_approval_status">Sentinel approval status</Label>
+              <Select
+                value={formData.sentinel_approval_status}
+                onValueChange={(value) => onFormDataChange({ sentinel_approval_status: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {approvalStatuses.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="sentinel_approval_date">Sentinel approval date</Label>
+              <Input
+                id="sentinel_approval_date"
+                type="date"
+                value={formData.sentinel_approval_date}
+                onChange={(e) => onFormDataChange({ sentinel_approval_date: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="sentinel_expiration_date">Sentinel expiration date</Label>
+              <Input
+                id="sentinel_expiration_date"
+                type="date"
+                value={formData.sentinel_expiration_date}
+                onChange={(e) => onFormDataChange({ sentinel_expiration_date: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h4 className="font-medium text-gray-900">Perform procedures over client and engagement acceptance or continuance</h4>
+            <div>
+              <Label className="text-sm font-medium">Is this a first period we will be auditing the entity?</Label>
+              <RadioGroup
+                value={formData.first_period_auditing}
+                onValueChange={(value) => onFormDataChange({ first_period_auditing: value })}
+                className="flex space-x-6 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Yes" id="yes" />
+                  <Label htmlFor="yes" className="text-sm">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="No" id="no" />
+                  <Label htmlFor="no" className="text-sm">No</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Not selected" id="not-selected" />
+                  <Label htmlFor="not-selected" className="text-sm">Not selected</Label>
+                </div>
+              </RadioGroup>
             </div>
           </div>
 
