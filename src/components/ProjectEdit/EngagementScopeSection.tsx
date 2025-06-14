@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Upload, Download, X, FileText } from 'lucide-react';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 interface DocumentFile {
   name: string;
@@ -60,17 +61,30 @@ interface FormData {
   current_period_evaluation_method: string;
   prior_period_evaluation_method: string;
   minimum_review_requirement: string;
+  // MRR file field
+  mrr_file: string;
 }
 
 interface EngagementScopeSectionProps {
   formData: FormData;
   onFormDataChange: (updates: Partial<FormData>) => void;
+  projectId?: string;
 }
 
 const EngagementScopeSection = ({
   formData,
-  onFormDataChange
+  onFormDataChange,
+  projectId = ''
 }: EngagementScopeSectionProps) => {
+  const {
+    uploadedFile: mrrFile,
+    uploadStatus: mrrUploadStatus,
+    handleFileUpload: handleMrrFileUpload,
+    handleRemoveFile: handleMrrRemoveFile,
+    handleDownloadFile: handleMrrDownloadFile,
+    initializeExistingFile: initializeMrrFile
+  } = useFileUpload(projectId, (url) => onFormDataChange({ mrr_file: url }));
+
   const handleAddAuditingStandard = () => {
     const newStandards = [...formData.auditing_standards, ''];
     onFormDataChange({ auditing_standards: newStandards });
@@ -125,6 +139,29 @@ const EngagementScopeSection = ({
     );
     onFormDataChange({ specialist_teams: newTeams });
   };
+
+  const handleMrrFileUploadClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf,.doc,.docx';
+    input.onchange = (e) => handleMrrFileUpload(e as any);
+    input.click();
+  };
+
+  const handleMrrRemoveFileWrapper = () => {
+    handleMrrRemoveFile(formData.mrr_file);
+  };
+
+  const handleMrrDownloadFileWrapper = () => {
+    handleMrrDownloadFile(formData.mrr_file);
+  };
+
+  // Initialize MRR file if it exists
+  useState(() => {
+    if (formData.mrr_file) {
+      initializeMrrFile(formData.mrr_file);
+    }
+  });
 
   return (
     <div className="space-y-6">
@@ -251,7 +288,7 @@ const EngagementScopeSection = ({
                   id="component_reporting_details"
                   value={formData.component_reporting_details}
                   onChange={(e) => onFormDataChange({ component_reporting_details: e.target.value })}
-                  placeholder="Describe the nature and scope of component reporting requirements, including any specific instructions received from group auditors..."
+                  placeholder="Enter details about component reporting requirements..."
                   className="min-h-[120px]"
                 />
               </div>
@@ -515,7 +552,7 @@ const EngagementScopeSection = ({
                 id="direction_supervision_documentation"
                 value={formData.direction_supervision_documentation || ''}
                 onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
-                placeholder="Document your approach to team direction and supervision, including review procedures and communication methods..."
+                placeholder="Document your approach to team direction and supervision..."
                 className="min-h-[120px] mt-2"
               />
             </div>
@@ -532,7 +569,7 @@ const EngagementScopeSection = ({
                 id="significant_factors_directing_activities"
                 value={formData.significant_factors_directing_activities || ''}
                 onChange={(e) => onFormDataChange({ significant_factors_directing_activities: e.target.value })}
-                placeholder="Identify and describe significant factors, issues, and key audit areas that will guide the engagement team's activities..."
+                placeholder="Identify and describe significant factors that will guide the engagement team's activities..."
                 className="min-h-[120px] mt-2"
               />
             </div>
@@ -545,19 +582,12 @@ const EngagementScopeSection = ({
                 id="additional_information_documentation"
                 value={formData.additional_information_documentation || ''}
                 onChange={(e) => onFormDataChange({ additional_information_documentation: e.target.value })}
-                placeholder="Document additional planning information, including timing of audit activities, location scope decisions, and other relevant considerations..."
+                placeholder="Document additional planning information, including timing and location decisions..."
                 className="min-h-[120px] mt-2"
               />
             </div>
           </div>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Audit Strategy and Planning</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
           <div className="space-y-4">
             <p className="text-sm text-gray-700">
               We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, 
@@ -565,25 +595,25 @@ const EngagementScopeSection = ({
             </p>
             
             <div className="grid grid-cols-2 gap-4 pl-4">
-              <div className="space-y-2">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left">
+              <div className="space-y-3">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
                   1.4 Communications
                 </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
                   2.1.2 Materiality
                 </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
                   2.2.1 Entity and its environment
                 </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
                   2.2.4 RAPD
                 </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
                   2.3.1 CERAMIC
                 </button>
               </div>
-              <div className="space-y-2">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left">
+              <div className="space-y-3">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
                   3.2 Litigation claims and assessments
                 </button>
               </div>
@@ -676,14 +706,42 @@ const EngagementScopeSection = ({
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Label className="text-sm font-medium">Change MRR</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-8 px-3 bg-gray-200 text-gray-600"
-              >
-                •••
-              </Button>
+              {!mrrFile ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleMrrFileUploadClick}
+                  disabled={mrrUploadStatus === 'uploading'}
+                  className="h-8 px-3"
+                >
+                  <Upload className="h-3 w-3 mr-2" />
+                  {mrrUploadStatus === 'uploading' ? 'Uploading...' : 'Upload'}
+                </Button>
+              ) : (
+                <div className="flex items-center space-x-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                  <FileText className="h-3 w-3 text-green-600" />
+                  <span className="text-xs text-green-700">{mrrFile.name}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleMrrDownloadFileWrapper}
+                    className="h-5 w-5 p-0 text-blue-500 hover:text-blue-700"
+                    title="Download file"
+                  >
+                    <Download className="h-2 w-2" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleMrrRemoveFileWrapper}
+                    className="h-5 w-5 p-0 text-red-500 hover:text-red-700"
+                    title="Remove file"
+                  >
+                    <X className="h-2 w-2" />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
