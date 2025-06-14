@@ -78,6 +78,13 @@ interface FormData {
   // Other strategy or planning considerations fields
   significant_factors_directing_activities: string;
   additional_information_documentation: string;
+  // New audit strategy fields
+  gaap_conversion_activity: boolean;
+  gaas_conversion_activity: boolean;
+  current_period_method: string;
+  prior_period_method: string;
+  minimum_review_requirement: string;
+  mrr_file: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -528,6 +535,13 @@ const EngagementProfileSection = ({
           // Other strategy or planning considerations fields
           significant_factors_directing_activities: (formData as any).significant_factors_directing_activities || '',
           additional_information_documentation: (formData as any).additional_information_documentation || '',
+          // New audit strategy fields
+          gaap_conversion_activity: (formData as any).gaap_conversion_activity || false,
+          gaas_conversion_activity: (formData as any).gaas_conversion_activity || false,
+          current_period_method: (formData as any).current_period_method || '',
+          prior_period_method: (formData as any).prior_period_method || '',
+          minimum_review_requirement: (formData as any).minimum_review_requirement || '',
+          mrr_file: (formData as any).mrr_file || '',
         }}
         onFormDataChange={onFormDataChange}
       />

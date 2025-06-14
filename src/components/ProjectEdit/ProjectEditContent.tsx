@@ -132,6 +132,15 @@ const ProjectEditContent = ({
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
 
+  const handleAssignmentChange = (userId: string, checked: boolean) => {
+    const currentAssignments = formData.assigned_to || [];
+    const updatedAssignments = checked 
+      ? [...currentAssignments, userId]
+      : currentAssignments.filter(id => id !== userId);
+    
+    onFormDataChange({ assigned_to: updatedAssignments });
+  };
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="p-8">
@@ -155,7 +164,7 @@ const ProjectEditContent = ({
               uploadedFile={uploadedFile}
               uploadStatus={uploadStatus}
               onFormDataChange={onFormDataChange}
-              onAssignmentChange={onAssignmentChange}
+              onAssignmentChange={handleAssignmentChange}
               onFileUpload={onFileUpload}
               onRemoveFile={onRemoveFile}
               onDownloadFile={onDownloadFile}
