@@ -47,6 +47,17 @@ interface MeetingMinuteItem {
   attachment: string;
 }
 
+interface TCWGResultsCommunicationItem {
+  id: string;
+  communicationPerformed: string;
+  writtenForm: boolean;
+  oralForm: boolean;
+  when: string;
+  toWhom: string;
+  byWhom: string;
+  potentiallyApplicableCR: boolean;
+}
+
 const TCWGCommunicationsSection = ({
   formData,
   onFormDataChange
@@ -59,6 +70,9 @@ const TCWGCommunicationsSection = ({
   const meetingMinutes = (formData as any).tcwg_meeting_minutes || [];
   const generateMeetingAgenda = (formData as any).tcwg_generate_meeting_agenda || false;
   const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || 'Not selected';
+  const resultsCommunications = (formData as any).tcwg_results_communications || [];
+  const resultsAttachments = (formData as any).tcwg_results_attachments || [];
+  const adequateCommunication = (formData as any).tcwg_adequate_communication || 'Not selected';
 
   // Add upload states for meeting minutes attachments
   const [meetingMinuteUploads, setMeetingMinuteUploads] = React.useState<{[key: string]: {uploading: boolean, file: File | null}}>({});
@@ -172,6 +186,37 @@ const TCWGCommunicationsSection = ({
     if (attachment) {
       window.open(attachment, '_blank');
     }
+  };
+
+  // New handlers for results communications
+  const handleResultsCommunicationChange = (id: string, field: keyof TCWGResultsCommunicationItem, value: string | boolean) => {
+    const updatedCommunications = resultsCommunications.map((comm: TCWGResultsCommunicationItem) =>
+      comm.id === id ? { ...comm, [field]: value } : comm
+    );
+    onFormDataChange({ tcwg_results_communications: updatedCommunications } as any);
+  };
+
+  const addNewResultsCommunication = () => {
+    const newCommunication: TCWGResultsCommunicationItem = {
+      id: Date.now().toString(),
+      communicationPerformed: '',
+      writtenForm: false,
+      oralForm: false,
+      when: '',
+      toWhom: '',
+      byWhom: '',
+      potentiallyApplicableCR: false
+    };
+    onFormDataChange({ tcwg_results_communications: [...resultsCommunications, newCommunication] } as any);
+  };
+
+  const removeResultsCommunication = (id: string) => {
+    const updatedCommunications = resultsCommunications.filter((comm: TCWGResultsCommunicationItem) => comm.id !== id);
+    onFormDataChange({ tcwg_results_communications: updatedCommunications } as any);
+  };
+
+  const handleResultsAttachmentsChange = (attachments: Array<{name: string, url: string, type: string}>) => {
+    onFormDataChange({ tcwg_results_attachments: attachments } as any);
   };
 
   const addNewCommunication = () => {
@@ -655,6 +700,168 @@ const TCWGCommunicationsSection = ({
                   )}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* New TCWG Results Section */}
+          <div className="border-t pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                Communicate with Those Charged with Governance (TCWG), management and/or other parties, as applicable - Results
+              </h3>
+              <Button 
+                onClick={addNewResultsCommunication}
+                size="sm"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-4">
+              Identify communications with TCWG, management, and others:
+            </p>
+
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-blue-700 text-white">
+                    <th className="text-left p-4 font-medium border">Communication performed</th>
+                    <th className="text-center p-4 font-medium border">Written form</th>
+                    <th className="text-center p-4 font-medium border">Oral form</th>
+                    <th className="text-center p-4 font-medium border">When?</th>
+                    <th className="text-left p-4 font-medium border">To whom?</th>
+                    <th className="text-left p-4 font-medium border">By who?</th>
+                    <th className="text-center p-4 font-medium border">Potentially applicable consultation requirement (CR)</th>
+                    <th className="text-center p-4 font-medium border">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resultsCommunications.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="text-center p-12 text-gray-500 border">
+                        No communications added yet. Click "Add" to create your first communication.
+                      </td>
+                    </tr>
+                  ) : (
+                    resultsCommunications.map((comm: TCWGResultsCommunicationItem, index: number) => (
+                      <tr key={comm.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                        <td className="p-3 border">
+                          <Textarea
+                            value={comm.communicationPerformed}
+                            onChange={(e) => handleResultsCommunicationChange(comm.id, 'communicationPerformed', e.target.value)}
+                            placeholder="Enter communication performed..."
+                            className="min-h-[60px] resize-none text-sm"
+                          />
+                        </td>
+                        <td className="p-6 text-center border">
+                          <Checkbox
+                            checked={comm.writtenForm}
+                            onCheckedChange={(checked) => 
+                              handleResultsCommunicationChange(comm.id, 'writtenForm', !!checked)
+                            }
+                          />
+                        </td>
+                        <td className="p-6 text-center border">
+                          <Checkbox
+                            checked={comm.oralForm}
+                            onCheckedChange={(checked) => 
+                              handleResultsCommunicationChange(comm.id, 'oralForm', !!checked)
+                            }
+                          />
+                        </td>
+                        <td className="p-3 border">
+                          <Input
+                            type="date"
+                            value={comm.when}
+                            onChange={(e) => handleResultsCommunicationChange(comm.id, 'when', e.target.value)}
+                            className="text-sm"
+                          />
+                        </td>
+                        <td className="p-3 border">
+                          <Input
+                            value={comm.toWhom}
+                            onChange={(e) => handleResultsCommunicationChange(comm.id, 'toWhom', e.target.value)}
+                            placeholder="Enter recipient..."
+                            className="text-sm"
+                          />
+                        </td>
+                        <td className="p-3 border">
+                          <Input
+                            value={comm.byWhom}
+                            onChange={(e) => handleResultsCommunicationChange(comm.id, 'byWhom', e.target.value)}
+                            placeholder="Enter sender..."
+                            className="text-sm"
+                          />
+                        </td>
+                        <td className="p-6 text-center border">
+                          <Checkbox
+                            checked={comm.potentiallyApplicableCR}
+                            onCheckedChange={(checked) => 
+                              handleResultsCommunicationChange(comm.id, 'potentiallyApplicableCR', !!checked)
+                            }
+                          />
+                        </td>
+                        <td className="p-3 text-center border">
+                          <Button
+                            onClick={() => removeResultsCommunication(comm.id)}
+                            size="sm"
+                            variant="destructive"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <div className="flex items-start space-x-3">
+                <Checkbox />
+                <p className="text-sm text-gray-700">
+                  When appropriate, attach a copy of the written communications or materials related to oral communications:
+                </p>
+              </div>
+
+              <DocumentAttachmentSection
+                title="Attachment"
+                files={resultsAttachments}
+                onFilesChange={handleResultsAttachmentsChange}
+                projectId={formData.project_id || 'unknown'}
+                storagePrefix="tcwg-results-attachments"
+              />
+
+              <div className="space-y-3">
+                <p className="text-sm text-gray-700 font-medium">
+                  Has the two-way communication between TCWG and us been adequate for the purpose of the audit?
+                </p>
+                
+                <RadioGroup 
+                  value={adequateCommunication} 
+                  onValueChange={(value) => 
+                    onFormDataChange({ tcwg_adequate_communication: value } as any)
+                  }
+                  className="flex space-x-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Yes" id="adequate-yes" />
+                    <Label htmlFor="adequate-yes" className="text-sm">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="No" id="adequate-no" />
+                    <Label htmlFor="adequate-no" className="text-sm">No</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="Not selected" id="adequate-not-selected" />
+                    <Label htmlFor="adequate-not-selected" className="text-sm">Not selected</Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
           </div>
         </div>
