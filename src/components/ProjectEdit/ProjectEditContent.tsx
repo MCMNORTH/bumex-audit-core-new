@@ -2,7 +2,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
 import EngagementProfileSection from './EngagementProfileSection';
-import EngagementScopeSection from './EngagementScopeSection';
 
 interface FormData {
   client_id: string;
@@ -188,14 +187,6 @@ const ProjectEditContent = ({
               onRemoveFile={onRemoveFile}
               onDownloadFile={onDownloadFile}
               projectId={projectId}
-            />
-          )}
-
-          {activeSection === 'planning' && (
-            <EngagementScopeSection
-              formData={formData}
-              onFormDataChange={onFormDataChange}
-              projectId={projectId}
               mrrUploadedFile={mrrUploadedFile}
               mrrUploadStatus={mrrUploadStatus}
               mrrFileInputRef={mrrFileInputRef}
@@ -205,10 +196,10 @@ const ProjectEditContent = ({
             />
           )}
 
-          {activeSection !== 'engagement-profile' && activeSection !== 'planning' && (
+          {activeSection === 'team-assignment' && (
             <Card>
               <CardContent className="p-8 text-center">
-                <p className="text-gray-500">This section is under development</p>
+                <p className="text-gray-500">Team assignment section coming soon</p>
               </CardContent>
             </Card>
           )}

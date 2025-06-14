@@ -9,6 +9,7 @@ import { Client, User, Project } from '@/types';
 import FileUploadSection from './FileUploadSection';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
+import EntityProfileSection from './EngagementScope/EntityProfileSection';
 
 interface DocumentFile {
   name: string;
@@ -103,6 +104,13 @@ interface EngagementProfileSectionProps {
   onRemoveFile: () => void;
   onDownloadFile: () => void;
   projectId?: string;
+  // MRR file upload props
+  mrrUploadedFile: File | null;
+  mrrUploadStatus: 'idle' | 'uploading' | 'success' | 'error';
+  mrrFileInputRef: React.RefObject<HTMLInputElement>;
+  onMRRFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemoveMRRFile: () => void;
+  onDownloadMRRFile: () => void;
 }
 
 const EngagementProfileSection = ({
@@ -116,7 +124,14 @@ const EngagementProfileSection = ({
   onFileUpload,
   onRemoveFile,
   onDownloadFile,
-  projectId = ''
+  projectId = '',
+  // MRR file upload props
+  mrrUploadedFile,
+  mrrUploadStatus,
+  mrrFileInputRef,
+  onMRRFileUpload,
+  onRemoveMRRFile,
+  onDownloadMRRFile
 }: EngagementProfileSectionProps) => {
   const auditTypes = [
     'Financial Audit',
@@ -508,6 +523,22 @@ const EngagementProfileSection = ({
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Entity Profile</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <EntityProfileSection
+            formData={{
+              entity_revenue_greater_than_billion: formData.entity_revenue_greater_than_billion,
+              entity_meets_international_criteria: formData.entity_meets_international_criteria,
+              using_sats_not_on_firm_list: formData.using_sats_not_on_firm_list,
+            }}
+            onFormDataChange={onFormDataChange}
+          />
+        </CardContent>
+      </Card>
+
       <EngagementScopeSection
         formData={{
           financial_statement_audit_report: formData.financial_statement_audit_report,
@@ -546,12 +577,15 @@ const EngagementProfileSection = ({
           prior_period_method: (formData as any).prior_period_method || '',
           minimum_review_requirement: (formData as any).minimum_review_requirement || '',
           mrr_file: (formData as any).mrr_file || '',
-          // New entity profile fields
-          entity_revenue_greater_than_billion: (formData as any).entity_revenue_greater_than_billion || '',
-          entity_meets_international_criteria: (formData as any).entity_meets_international_criteria || false,
-          using_sats_not_on_firm_list: (formData as any).using_sats_not_on_firm_list || '',
         }}
         onFormDataChange={onFormDataChange}
+        projectId={projectId}
+        mrrUploadedFile={mrrUploadedFile}
+        mrrUploadStatus={mrrUploadStatus}
+        mrrFileInputRef={mrrFileInputRef}
+        onMRRFileUpload={onMRRFileUpload}
+        onRemoveMRRFile={onRemoveMRRFile}
+        onDownloadMRRFile={onDownloadMRRFile}
       />
 
       <Card>

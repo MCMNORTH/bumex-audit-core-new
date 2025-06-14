@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -50,10 +49,6 @@ const ProjectEdit = () => {
   const sidebarSections = [
     { id: 'engagement-profile', title: 'Engagement Profile', active: true },
     { id: 'team-assignment', title: 'Team Assignment', active: false },
-    { id: 'timeline', title: 'Timeline & Milestones', active: false },
-    { id: 'documentation', title: 'Documentation', active: false },
-    { id: 'risk-assessment', title: 'Risk Assessment', active: false },
-    { id: 'planning', title: 'Audit Planning', active: false },
   ];
 
   useEffect(() => {
