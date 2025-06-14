@@ -76,6 +76,12 @@ export const useProjectData = () => {
     direction_supervision_documentation: '',
     significant_factors_directing_activities: '',
     additional_information_documentation: '',
+    // New audit strategy and planning fields
+    gaap_conversion_activity: false,
+    gaas_conversion_activity: false,
+    current_period_evaluation_method: 'Dual method',
+    prior_period_evaluation_method: 'Dual method',
+    minimum_review_requirement: 'Global - No EQCR',
   });
 
   useEffect(() => {
@@ -160,6 +166,12 @@ export const useProjectData = () => {
         direction_supervision_documentation: (projectData as any).direction_supervision_documentation || '',
         significant_factors_directing_activities: (projectData as any).significant_factors_directing_activities || '',
         additional_information_documentation: (projectData as any).additional_information_documentation || '',
+        // New audit strategy and planning fields
+        gaap_conversion_activity: (projectData as any).gaap_conversion_activity || false,
+        gaas_conversion_activity: (projectData as any).gaas_conversion_activity || false,
+        current_period_evaluation_method: (projectData as any).current_period_evaluation_method || 'Dual method',
+        prior_period_evaluation_method: (projectData as any).prior_period_evaluation_method || 'Dual method',
+        minimum_review_requirement: (projectData as any).minimum_review_requirement || 'Global - No EQCR',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([
