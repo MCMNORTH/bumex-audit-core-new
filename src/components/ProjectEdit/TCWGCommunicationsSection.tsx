@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2, Calendar } from 'lucide-react';
+import { Plus, Trash2, Calendar, Upload } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -419,6 +419,116 @@ const TCWGCommunicationsSection = ({
                   </div>
                 </RadioGroup>
               </div>
+            </div>
+          </div>
+
+          {/* New Meeting Minutes Section */}
+          <div className="border-t pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">
+                Read the meeting minutes of owners, management and TCWG
+              </h3>
+              <Button 
+                onClick={addNewMeetingMinute}
+                size="sm"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-4">
+              We read the meeting minutes of the following body/committee:
+            </p>
+
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-blue-700 text-white">
+                    <th className="text-left p-4 font-medium border">Body/Committee</th>
+                    <th className="text-left p-4 font-medium border">Date of meeting</th>
+                    <th className="text-center p-4 font-medium border">Meeting minutes available</th>
+                    <th className="text-left p-4 font-medium border">Comments</th>
+                    <th className="text-center p-4 font-medium border">Upload PDF</th>
+                    <th className="text-center p-4 font-medium border">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {meetingMinutes.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="text-center p-12 text-gray-500 border">
+                        No meeting minutes added yet. Click "Add" to create your first meeting minute entry.
+                      </td>
+                    </tr>
+                  ) : (
+                    meetingMinutes.map((minute: MeetingMinuteItem, index: number) => (
+                      <tr key={minute.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                        <td className="p-3 border">
+                          <Input
+                            value={minute.bodyCommittee}
+                            onChange={(e) => handleMeetingMinuteChange(minute.id, 'bodyCommittee', e.target.value)}
+                            placeholder="Enter body/committee"
+                            className="text-sm"
+                          />
+                        </td>
+                        <td className="p-3 border">
+                          <DatePicker
+                            value={minute.dateOfMeeting}
+                            onChange={(date) => handleMeetingMinuteChange(minute.id, 'dateOfMeeting', date)}
+                          />
+                        </td>
+                        <td className="p-6 text-center border">
+                          <Checkbox
+                            checked={minute.meetingMinutesAvailable}
+                            onCheckedChange={(checked) => 
+                              handleMeetingMinuteChange(minute.id, 'meetingMinutesAvailable', !!checked)
+                            }
+                          />
+                        </td>
+                        <td className="p-3 border">
+                          <Textarea
+                            value={minute.comments}
+                            onChange={(e) => handleMeetingMinuteChange(minute.id, 'comments', e.target.value)}
+                            placeholder="Enter comments..."
+                            className="min-h-[60px] resize-none text-sm"
+                          />
+                        </td>
+                        <td className="p-3 text-center border">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            <Upload className="h-3 w-3 mr-1" />
+                            Upload PDF
+                          </Button>
+                        </td>
+                        <td className="p-3 text-center border">
+                          <Button
+                            onClick={() => removeMeetingMinute(minute.id)}
+                            size="sm"
+                            variant="destructive"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="mt-6">
+              <DocumentAttachmentSection
+                title="Meeting Minutes Attachments"
+                files={meetingMinutesAttachments}
+                onFilesChange={handleMeetingMinutesAttachmentsChange}
+                projectId={formData.project_id || 'unknown'}
+                storagePrefix="tcwg-meeting-minutes-attachments"
+              />
             </div>
           </div>
         </div>
