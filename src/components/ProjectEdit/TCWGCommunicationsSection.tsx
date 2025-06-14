@@ -6,13 +6,16 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Plus, Trash2, Calendar, Upload } from 'lucide-react';
+import { Plus, Trash2, Calendar, Upload, FileText, X, Download } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 interface TCWGCommunicationsSectionProps {
   formData: ProjectFormData;
@@ -48,6 +51,8 @@ const TCWGCommunicationsSection = ({
   formData,
   onFormDataChange
 }: TCWGCommunicationsSectionProps) => {
+  const { toast } = useToast();
+  
   const communications = (formData as any).tcwg_communications || [];
   const mainAttachments = (formData as any).tcwg_main_attachments || [];
   const inquiries = (formData as any).tcwg_inquiries || [];
@@ -55,6 +60,9 @@ const TCWGCommunicationsSection = ({
   const meetingMinutesAttachments = (formData as any).tcwg_meeting_minutes_attachments || [];
   const generateMeetingAgenda = (formData as any).tcwg_generate_meeting_agenda || false;
   const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || 'Not selected';
+
+  // Add upload states for meeting minutes attachments
+  const [meetingMinuteUploads, setMeetingMinuteUploads] = React.useState<{[key: string]: {uploading: boolean, file: File | null}}>({});
 
   const handleCommunicationChange = (id: string, field: 'topic' | 'included' | 'date', value: boolean | string) => {
     const updatedCommunications = communications.map((comm: CommunicationItem) =>
@@ -83,6 +91,92 @@ const TCWGCommunicationsSection = ({
 
   const handleMeetingMinutesAttachmentsChange = (attachments: Array<{name: string, url: string, type: string}>) => {
     onFormDataChange({ tcwg_meeting_minutes_attachments: attachments } as any);
+  };
+
+  // New file upload handler for individual meeting minute attachments
+  const handleMeetingMinuteFileUpload = async (minuteId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select a PDF file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please select a file smaller than 10MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setMeetingMinuteUploads(prev => ({
+      ...prev,
+      [minuteId]: { uploading: true, file: null }
+    }));
+
+    try {
+      const fileName = `tcwg-meeting-minutes/${formData.project_id || 'unknown'}/${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, fileName);
+      
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      handleMeetingMinuteChange(minuteId, 'attachment', downloadURL);
+      setMeetingMinuteUploads(prev => ({
+        ...prev,
+        [minuteId]: { uploading: false, file }
+      }));
+      
+      toast({
+        title: 'File uploaded',
+        description: `${file.name} has been uploaded successfully`,
+      });
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setMeetingMinuteUploads(prev => ({
+        ...prev,
+        [minuteId]: { uploading: false, file: null }
+      }));
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload the file. Please try again.',
+        variant: 'destructive',
+      });
+    }
+
+    // Reset the input
+    event.target.value = '';
+  };
+
+  const handleRemoveMeetingMinuteFile = async (minuteId: string) => {
+    const minute = meetingMinutes.find((m: MeetingMinuteItem) => m.id === minuteId);
+    if (minute?.attachment && minute.attachment.startsWith('https://')) {
+      try {
+        const storageRef = ref(storage, minute.attachment);
+        await deleteObject(storageRef);
+      } catch (error) {
+        console.error('Error deleting file from storage:', error);
+      }
+    }
+
+    handleMeetingMinuteChange(minuteId, 'attachment', '');
+    setMeetingMinuteUploads(prev => ({
+      ...prev,
+      [minuteId]: { uploading: false, file: null }
+    }));
+  };
+
+  const handleDownloadMeetingMinuteFile = (attachment: string, fileName?: string) => {
+    if (attachment) {
+      window.open(attachment, '_blank');
+    }
   };
 
   const addNewCommunication = () => {
@@ -462,60 +556,107 @@ const TCWGCommunicationsSection = ({
                       </td>
                     </tr>
                   ) : (
-                    meetingMinutes.map((minute: MeetingMinuteItem, index: number) => (
-                      <tr key={minute.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                        <td className="p-3 border">
-                          <Input
-                            value={minute.bodyCommittee}
-                            onChange={(e) => handleMeetingMinuteChange(minute.id, 'bodyCommittee', e.target.value)}
-                            placeholder="Enter body/committee"
-                            className="text-sm"
-                          />
-                        </td>
-                        <td className="p-3 border">
-                          <DatePicker
-                            value={minute.dateOfMeeting}
-                            onChange={(date) => handleMeetingMinuteChange(minute.id, 'dateOfMeeting', date)}
-                          />
-                        </td>
-                        <td className="p-6 text-center border">
-                          <Checkbox
-                            checked={minute.meetingMinutesAvailable}
-                            onCheckedChange={(checked) => 
-                              handleMeetingMinuteChange(minute.id, 'meetingMinutesAvailable', !!checked)
-                            }
-                          />
-                        </td>
-                        <td className="p-3 border">
-                          <Textarea
-                            value={minute.comments}
-                            onChange={(e) => handleMeetingMinuteChange(minute.id, 'comments', e.target.value)}
-                            placeholder="Enter comments..."
-                            className="min-h-[60px] resize-none text-sm"
-                          />
-                        </td>
-                        <td className="p-3 text-center border">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="text-xs"
-                          >
-                            <Upload className="h-3 w-3 mr-1" />
-                            Upload PDF
-                          </Button>
-                        </td>
-                        <td className="p-3 text-center border">
-                          <Button
-                            onClick={() => removeMeetingMinute(minute.id)}
-                            size="sm"
-                            variant="destructive"
-                            className="h-8 w-8 p-0"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
+                    meetingMinutes.map((minute: MeetingMinuteItem, index: number) => {
+                      const uploadState = meetingMinuteUploads[minute.id];
+                      const hasFile = minute.attachment && minute.attachment.length > 0;
+                      
+                      return (
+                        <tr key={minute.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                          <td className="p-3 border">
+                            <Input
+                              value={minute.bodyCommittee}
+                              onChange={(e) => handleMeetingMinuteChange(minute.id, 'bodyCommittee', e.target.value)}
+                              placeholder="Enter body/committee"
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <DatePicker
+                              value={minute.dateOfMeeting}
+                              onChange={(date) => handleMeetingMinuteChange(minute.id, 'dateOfMeeting', date)}
+                            />
+                          </td>
+                          <td className="p-6 text-center border">
+                            <Checkbox
+                              checked={minute.meetingMinutesAvailable}
+                              onCheckedChange={(checked) => 
+                                handleMeetingMinuteChange(minute.id, 'meetingMinutesAvailable', !!checked)
+                              }
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Textarea
+                              value={minute.comments}
+                              onChange={(e) => handleMeetingMinuteChange(minute.id, 'comments', e.target.value)}
+                              placeholder="Enter comments..."
+                              className="min-h-[60px] resize-none text-sm"
+                            />
+                          </td>
+                          <td className="p-3 text-center border">
+                            <div className="space-y-2">
+                              {hasFile ? (
+                                <div className="flex flex-col items-center space-y-1">
+                                  <div className="flex items-center space-x-1 text-xs text-green-600">
+                                    <FileText className="h-3 w-3" />
+                                    <span>File uploaded</span>
+                                  </div>
+                                  <div className="flex space-x-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleDownloadMeetingMinuteFile(minute.attachment)}
+                                      className="h-6 w-6 p-0 text-blue-500 hover:text-blue-700"
+                                      title="Download file"
+                                    >
+                                      <Download className="h-3 w-3" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleRemoveMeetingMinuteFile(minute.id)}
+                                      className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                                      title="Remove file"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <input
+                                    type="file"
+                                    accept=".pdf"
+                                    onChange={(e) => handleMeetingMinuteFileUpload(minute.id, e)}
+                                    className="hidden"
+                                    id={`file-upload-${minute.id}`}
+                                  />
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => document.getElementById(`file-upload-${minute.id}`)?.click()}
+                                    disabled={uploadState?.uploading}
+                                    className="text-xs"
+                                  >
+                                    <Upload className="h-3 w-3 mr-1" />
+                                    {uploadState?.uploading ? 'Uploading...' : 'Upload PDF'}
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-3 text-center border">
+                            <Button
+                              onClick={() => removeMeetingMinute(minute.id)}
+                              size="sm"
+                              variant="destructive"
+                              className="h-8 w-8 p-0"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
