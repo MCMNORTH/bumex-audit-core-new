@@ -1,10 +1,8 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
 import EngagementProfileSection from './EngagementProfileSection';
 import EngagementScopeSection from './EngagementScopeSection';
-import FileUploadSection from './FileUploadSection';
 
 interface DocumentFile {
   name: string;
@@ -191,6 +189,7 @@ const ProjectEditContent = ({
                 current_period_evaluation_method: formData.current_period_evaluation_method,
                 prior_period_evaluation_method: formData.prior_period_evaluation_method,
                 minimum_review_requirement: formData.minimum_review_requirement,
+                mrr_file: formData.mrr_file,
               }}
               onFormDataChange={onFormDataChange}
               onAssignmentChange={(userId: string, checked: boolean) => {
@@ -209,17 +208,6 @@ const ProjectEditContent = ({
               onDownloadFile={onDownloadFile}
               projectId={projectId}
             />
-            <Card>
-              <CardContent className="pt-6">
-                <FileUploadSection
-                  uploadedFile={uploadedFile}
-                  uploadStatus={uploadStatus}
-                  onFileUpload={onFileUpload}
-                  onRemoveFile={onRemoveFile}
-                  onDownloadFile={onDownloadFile}
-                />
-              </CardContent>
-            </Card>
           </div>
         );
       case 'team-assignment':

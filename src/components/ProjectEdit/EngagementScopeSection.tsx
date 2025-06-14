@@ -1,15 +1,15 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, Upload, Download, X, FileText } from 'lucide-react';
-import { useFileUpload } from '@/hooks/useFileUpload';
+import { Upload, X, FileText, Download } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 interface DocumentFile {
   name: string;
@@ -25,6 +25,37 @@ interface SpecialistTeam {
 }
 
 interface FormData {
+  engagement_name: string;
+  engagement_id: string;
+  client_id: string;
+  engagement_partner_id: string;
+  engagement_manager_id: string;
+  engagement_senior_id: string;
+  engagement_associate_id: string;
+  nature_of_engagement: string;
+  engagement_description: string;
+  engagement_structure_file: string;
+  // Team assignment fields
+  team_partner_id: string;
+  team_manager_id: string;
+  team_senior_id: string;
+  team_associate_id: string;
+  // Timeline fields
+  planning_start_date: string;
+  fieldwork_start_date: string;
+  fieldwork_end_date: string;
+  report_date: string;
+  // Documentation fields
+  planning_documentation: DocumentFile[];
+  risk_assessment_documentation: DocumentFile[];
+  audit_procedures_documentation: DocumentFile[];
+  // Risk assessment fields
+  risk_assessment_summary: string;
+  identified_risks: string;
+  // Audit planning fields
+  audit_approach: string;
+  materiality_assessment: string;
+  // Engagement scope fields
   financial_statement_audit_report: boolean;
   auditing_standards: string[];
   financial_reporting_framework: string[];
@@ -71,188 +102,199 @@ interface EngagementScopeSectionProps {
   projectId?: string;
 }
 
-const EngagementScopeSection = ({
-  formData,
-  onFormDataChange,
-  projectId = ''
-}: EngagementScopeSectionProps) => {
-  const {
-    uploadedFile: mrrFile,
-    uploadStatus: mrrUploadStatus,
-    handleFileUpload: handleMrrFileUpload,
-    handleRemoveFile: handleMrrRemoveFile,
-    handleDownloadFile: handleMrrDownloadFile,
-    initializeExistingFile: initializeMrrFile
-  } = useFileUpload(projectId, (url) => onFormDataChange({ mrr_file: url }));
+const EngagementScopeSection = ({ formData, onFormDataChange, projectId }: EngagementScopeSectionProps) => {
+  const { toast } = useToast();
+  const mrrFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleAddAuditingStandard = () => {
-    const newStandards = [...formData.auditing_standards, ''];
-    onFormDataChange({ auditing_standards: newStandards });
+  const handleMrrFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select a PDF file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please select a file smaller than 10MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      const fileName = `mrr-files/${projectId}/${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, fileName);
+      
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      onFormDataChange({ mrr_file: downloadURL });
+      
+      toast({
+        title: 'File uploaded',
+        description: `${file.name} has been uploaded successfully`,
+      });
+    } catch (error) {
+      console.error('Error uploading MRR file:', error);
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload the file. Please try again.',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleRemoveAuditingStandard = (index: number) => {
-    const newStandards = formData.auditing_standards.filter((_, i) => i !== index);
-    onFormDataChange({ auditing_standards: newStandards });
+  const handleMrrFileRemove = async () => {
+    if (formData.mrr_file && formData.mrr_file.startsWith('https://')) {
+      try {
+        const storageRef = ref(storage, formData.mrr_file);
+        await deleteObject(storageRef);
+      } catch (error) {
+        console.error('Error deleting MRR file from storage:', error);
+      }
+    }
+
+    onFormDataChange({ mrr_file: '' });
+    if (mrrFileInputRef.current) {
+      mrrFileInputRef.current.value = '';
+    }
   };
 
-  const handleAuditingStandardChange = (index: number, value: string) => {
-    const newStandards = [...formData.auditing_standards];
-    newStandards[index] = value;
-    onFormDataChange({ auditing_standards: newStandards });
+  const handleMrrFileDownload = () => {
+    if (formData.mrr_file) {
+      const link = document.createElement('a');
+      link.href = formData.mrr_file;
+      link.download = 'mrr-file.pdf';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
-  const handleAddReportingFramework = () => {
-    const newFrameworks = [...formData.financial_reporting_framework, ''];
-    onFormDataChange({ financial_reporting_framework: newFrameworks });
+  const getMrrFileName = () => {
+    if (!formData.mrr_file) return '';
+    try {
+      const decodedUrl = decodeURIComponent(formData.mrr_file);
+      const urlParts = decodedUrl.split('/');
+      const fileNameWithPath = urlParts[urlParts.length - 1].split('?')[0];
+      const fileName = fileNameWithPath.split('/').pop() || fileNameWithPath;
+      return fileName.includes('-') && /^\d+/.test(fileName)
+        ? fileName.substring(fileName.indexOf('-') + 1)
+        : fileName;
+    } catch (error) {
+      console.error('Error extracting filename:', error);
+      return 'mrr-file.pdf';
+    }
   };
 
-  const handleRemoveReportingFramework = (index: number) => {
-    const newFrameworks = formData.financial_reporting_framework.filter((_, i) => i !== index);
-    onFormDataChange({ financial_reporting_framework: newFrameworks });
-  };
-
-  const handleReportingFrameworkChange = (index: number, value: string) => {
-    const newFrameworks = [...formData.financial_reporting_framework];
-    newFrameworks[index] = value;
-    onFormDataChange({ financial_reporting_framework: newFrameworks });
-  };
-
-  const handleAddSpecialistTeam = () => {
-    const newTeam: SpecialistTeam = {
-      id: '',
+  const handleSpecialistAdd = () => {
+    const newSpecialist = {
+      id: `specialist-${Date.now()}`,
       description: '',
       name: '',
-      title: ''
+      title: '',
     };
-    const newTeams = [...(formData.specialist_teams || []), newTeam];
-    onFormDataChange({ specialist_teams: newTeams });
+    onFormDataChange({
+      specialist_teams: [...formData.specialist_teams, newSpecialist],
+    });
   };
 
-  const handleRemoveSpecialistTeam = (index: number) => {
-    const newTeams = (formData.specialist_teams || []).filter((_, i) => i !== index);
-    onFormDataChange({ specialist_teams: newTeams });
+  const handleSpecialistRemove = (id: string) => {
+    onFormDataChange({
+      specialist_teams: formData.specialist_teams.filter(team => team.id !== id),
+    });
   };
 
-  const handleSpecialistTeamChange = (index: number, field: keyof SpecialistTeam, value: string) => {
-    const newTeams = (formData.specialist_teams || []).map((team, i) =>
-      i === index ? { ...team, [field]: value } : team
-    );
-    onFormDataChange({ specialist_teams: newTeams });
+  const handleSpecialistChange = (id: string, field: keyof SpecialistTeam, value: string) => {
+    onFormDataChange({
+      specialist_teams: formData.specialist_teams.map(team => 
+        team.id === id ? { ...team, [field]: value } : team
+      ),
+    });
   };
-
-  const handleMrrFileUploadClick = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf,.doc,.docx';
-    input.onchange = (e) => handleMrrFileUpload(e as any);
-    input.click();
-  };
-
-  const handleMrrRemoveFileWrapper = () => {
-    handleMrrRemoveFile(formData.mrr_file);
-  };
-
-  const handleMrrDownloadFileWrapper = () => {
-    handleMrrDownloadFile(formData.mrr_file);
-  };
-
-  // Initialize MRR file if it exists
-  useState(() => {
-    if (formData.mrr_file) {
-      initializeMrrFile(formData.mrr_file);
-    }
-  });
 
   return (
     <div className="space-y-6">
+      {/* Engagement scope and scale */}
       <Card>
         <CardHeader>
-          <CardTitle>Engagement scope and scale and other strategic matters</CardTitle>
+          <CardTitle>Engagement Scope and Scale</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Select type of engagement</h4>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="financial_statement_audit_report"
-                checked={formData.financial_statement_audit_report}
-                onCheckedChange={(checked) => onFormDataChange({ financial_statement_audit_report: checked as boolean })}
-              />
-              <Label htmlFor="financial_statement_audit_report">Financial statement audit report</Label>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="financial_statement_audit_report"
+              checked={formData.financial_statement_audit_report}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ financial_statement_audit_report: checked as boolean })
+              }
+            />
+            <Label htmlFor="financial_statement_audit_report">Financial Statement Audit Report</Label>
+          </div>
+
+          <div>
+            <Label>Auditing Standards</Label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {['PCAOB', 'US GAAS', 'ISA', 'Other'].map((standard) => (
+                <div key={standard} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`standard-${standard}`}
+                    checked={formData.auditing_standards.includes(standard)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        onFormDataChange({
+                          auditing_standards: [...formData.auditing_standards, standard],
+                        });
+                      } else {
+                        onFormDataChange({
+                          auditing_standards: formData.auditing_standards.filter(s => s !== standard),
+                        });
+                      }
+                    }}
+                  />
+                  <Label htmlFor={`standard-${standard}`}>{standard}</Label>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="font-medium text-gray-900">Applicable auditing standards and other legislative and regulatory requirements:</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddAuditingStandard}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add
-              </Button>
+          <div>
+            <Label>Financial Reporting Framework</Label>
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              {['US GAAP', 'IFRS', 'Other GAAP', 'Other'].map((framework) => (
+                <div key={framework} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`framework-${framework}`}
+                    checked={formData.financial_reporting_framework.includes(framework)}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        onFormDataChange({
+                          financial_reporting_framework: [...formData.financial_reporting_framework, framework],
+                        });
+                      } else {
+                        onFormDataChange({
+                          financial_reporting_framework: formData.financial_reporting_framework.filter(f => f !== framework),
+                        });
+                      }
+                    }}
+                  />
+                  <Label htmlFor={`framework-${framework}`}>{framework}</Label>
+                </div>
+              ))}
             </div>
-            {formData.auditing_standards.map((standard, index) => (
-              <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                <Input
-                  value={standard}
-                  onChange={(e) => handleAuditingStandardChange(index, e.target.value)}
-                  placeholder="Enter auditing standard"
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveAuditingStandard(index)}
-                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="font-medium text-gray-900">Applicable financial reporting framework and other legislative and regulatory requirements:</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddReportingFramework}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add
-              </Button>
-            </div>
-            {formData.financial_reporting_framework.map((framework, index) => (
-              <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-                <Input
-                  value={framework}
-                  onChange={(e) => handleReportingFrameworkChange(index, e.target.value)}
-                  placeholder="Enter financial reporting framework"
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRemoveReportingFramework(index)}
-                  className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="audit_report_date">Audit report date</Label>
+              <Label htmlFor="audit_report_date">Audit Report Date</Label>
               <Input
                 id="audit_report_date"
                 type="date"
@@ -261,7 +303,7 @@ const EngagementScopeSection = ({
               />
             </div>
             <div>
-              <Label htmlFor="required_audit_file_closeout_date">Required audit file closeout date</Label>
+              <Label htmlFor="required_audit_file_closeout_date">Required Audit File Closeout Date</Label>
               <Input
                 id="required_audit_file_closeout_date"
                 type="date"
@@ -270,479 +312,445 @@ const EngagementScopeSection = ({
               />
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="component_reporting"
-                checked={formData.component_reporting}
-                onCheckedChange={(checked) => onFormDataChange({ component_reporting: checked as boolean })}
-              />
-              <Label htmlFor="component_reporting">Component reporting</Label>
-            </div>
-            
-            {formData.component_reporting && (
-              <div>
-                <Label htmlFor="component_reporting_details">Component reporting details</Label>
-                <Textarea
-                  id="component_reporting_details"
-                  value={formData.component_reporting_details}
-                  onChange={(e) => onFormDataChange({ component_reporting_details: e.target.value })}
-                  placeholder="Enter details about component reporting requirements..."
-                  className="min-h-[120px]"
-                />
-              </div>
-            )}
+      {/* Component Reporting and Reviewers */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Component Reporting and Reviewers</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="component_reporting"
+              checked={formData.component_reporting}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ component_reporting: checked as boolean })
+              }
+            />
+            <Label htmlFor="component_reporting">Component Reporting</Label>
           </div>
 
-          <div className="space-y-4">
+          {formData.component_reporting && (
+            <div>
+              <Label htmlFor="component_reporting_details">Component Reporting Details</Label>
+              <Textarea
+                id="component_reporting_details"
+                value={formData.component_reporting_details}
+                onChange={(e) => onFormDataChange({ component_reporting_details: e.target.value })}
+                placeholder="Enter component reporting details"
+              />
+            </div>
+          )}
+
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="group_auditor"
                 checked={formData.group_auditor}
-                onCheckedChange={(checked) => onFormDataChange({ group_auditor: checked as boolean })}
+                onCheckedChange={(checked) => 
+                  onFormDataChange({ group_auditor: checked as boolean })
+                }
               />
-              <Label htmlFor="group_auditor">Group auditor</Label>
+              <Label htmlFor="group_auditor">Group Auditor</Label>
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Select the type of reviewer(s) which have been identified for the engagement:</h4>
-            
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="engagement_quality_control_reviewer"
-                  checked={formData.engagement_quality_control_reviewer}
-                  onCheckedChange={(checked) => onFormDataChange({ engagement_quality_control_reviewer: checked as boolean })}
-                />
-                <Label htmlFor="engagement_quality_control_reviewer">Engagement quality control reviewer</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="limited_scope_quality_control_reviewer"
-                  checked={formData.limited_scope_quality_control_reviewer}
-                  onCheckedChange={(checked) => onFormDataChange({ limited_scope_quality_control_reviewer: checked as boolean })}
-                />
-                <Label htmlFor="limited_scope_quality_control_reviewer">Limited scope quality control reviewer</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="other_reviewer"
-                  checked={formData.other_reviewer}
-                  onCheckedChange={(checked) => onFormDataChange({ other_reviewer: checked as boolean })}
-                />
-                <Label htmlFor="other_reviewer">Other reviewer</Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Management, those charged with governance and internal audit function:</h4>
-          
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="governance_management_same_persons"
-                  checked={formData.governance_management_same_persons}
-                  onCheckedChange={(checked) => onFormDataChange({ governance_management_same_persons: checked as boolean })}
-                />
-                <Label htmlFor="governance_management_same_persons">Those charged with governance and management are the same persons</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="entity_has_internal_audit_function"
-                  checked={formData.entity_has_internal_audit_function}
-                  onCheckedChange={(checked) => onFormDataChange({ entity_has_internal_audit_function: checked as boolean })}
-                />
-                <Label htmlFor="entity_has_internal_audit_function">The entity has an internal audit function or equivalent, including others under the direction of management or those charged with governance</Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Involvement of others and specialized skills or knowledge</h4>
-          
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="entity_uses_service_organization"
-                  checked={formData.entity_uses_service_organization || false}
-                  onCheckedChange={(checked) => onFormDataChange({ entity_uses_service_organization: checked as boolean })}
-                />
-                <Label htmlFor="entity_uses_service_organization">The entity uses a service organization(s)</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="plan_to_involve_specialists"
-                  checked={formData.plan_to_involve_specialists || false}
-                  onCheckedChange={(checked) => onFormDataChange({ plan_to_involve_specialists: checked as boolean })}
-                />
-                <Label htmlFor="plan_to_involve_specialists">We plan to involve specific team members with specialized skills in accounting and auditing and/or use the work of employed/engaged KPMG specialists and/or management's specialists</Label>
-              </div>
-            </div>
-
-            {formData.plan_to_involve_specialists && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label className="font-medium text-gray-900">Specialist Teams</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAddSpecialistTeam}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add
-                  </Button>
-                </div>
-                
-                {(formData.specialist_teams || []).length > 0 && (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Title</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {(formData.specialist_teams || []).map((team, index) => (
-                        <TableRow key={`specialist-team-${index}`}>
-                          <TableCell>
-                            <Input
-                              value={team.id}
-                              onChange={(e) => handleSpecialistTeamChange(index, 'id', e.target.value)}
-                              placeholder="ID"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={team.description}
-                              onChange={(e) => handleSpecialistTeamChange(index, 'description', e.target.value)}
-                              placeholder="Description"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={team.name}
-                              onChange={(e) => handleSpecialistTeamChange(index, 'name', e.target.value)}
-                              placeholder="Name"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={team.title}
-                              onChange={(e) => handleSpecialistTeamChange(index, 'title', e.target.value)}
-                              placeholder="Title"
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveSpecialistTeam(index)}
-                              className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">IT environment</h4>
-            <div>
-              <Label className="text-sm font-medium">Is the entity highly dependent on IT processes to maintain its financial reporting and accounting books and records, including IT processes performed by service organizations, so we cannot obtain sufficient appropriate audit evidence without relying on automated controls?</Label>
-              <RadioGroup
-                value={formData.entity_highly_dependent_on_it || 'Not selected'}
-                onValueChange={(value) => onFormDataChange({ entity_highly_dependent_on_it: value })}
-                className="flex space-x-6 mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Yes" id="it-yes" />
-                  <Label htmlFor="it-yes" className="text-sm">Yes</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="No" id="it-no" />
-                  <Label htmlFor="it-no" className="text-sm">No</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Not selected" id="it-not-selected" />
-                  <Label htmlFor="it-not-selected" className="text-sm">Not selected</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div>
-              <Label className="text-sm font-medium">Do we plan to rely on the operating effectiveness of automated controls to respond to a significant risk?</Label>
-              <RadioGroup
-                value={formData.plan_to_rely_on_automated_controls || 'Not selected'}
-                onValueChange={(value) => onFormDataChange({ plan_to_rely_on_automated_controls: value })}
-                className="flex space-x-6 mt-2"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Yes" id="automated-controls-yes" />
-                  <Label htmlFor="automated-controls-yes" className="text-sm">Yes</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="No" id="automated-controls-no" />
-                  <Label htmlFor="automated-controls-no" className="text-sm">No</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Not selected" id="automated-controls-not-selected" />
-                  <Label htmlFor="automated-controls-not-selected" className="text-sm">Not selected</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="use_it_critically_checklist"
-                checked={formData.use_it_critically_checklist || false}
-                onCheckedChange={(checked) => onFormDataChange({ use_it_critically_checklist: checked as boolean })}
+                id="engagement_quality_control_reviewer"
+                checked={formData.engagement_quality_control_reviewer}
+                onCheckedChange={(checked) => 
+                  onFormDataChange({ engagement_quality_control_reviewer: checked as boolean })
+                }
               />
-              <Label htmlFor="use_it_critically_checklist" className="text-sm">We decided to use the IT Critically checklist to help us determine whether the entity is highly dependent on IT processes</Label>
+              <Label htmlFor="engagement_quality_control_reviewer">Engagement Quality Control Reviewer</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="limited_scope_quality_control_reviewer"
+                checked={formData.limited_scope_quality_control_reviewer}
+                onCheckedChange={(checked) => 
+                  onFormDataChange({ limited_scope_quality_control_reviewer: checked as boolean })
+                }
+              />
+              <Label htmlFor="limited_scope_quality_control_reviewer">Limited Scope Quality Control Reviewer</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="other_reviewer"
+                checked={formData.other_reviewer}
+                onCheckedChange={(checked) => 
+                  onFormDataChange({ other_reviewer: checked as boolean })
+                }
+              />
+              <Label htmlFor="other_reviewer">Other Reviewer</Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Entity Structure */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Entity Structure</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="governance_management_same_persons"
+              checked={formData.governance_management_same_persons}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ governance_management_same_persons: checked as boolean })
+              }
+            />
+            <Label htmlFor="governance_management_same_persons">Those Charged with Governance and Management are the Same Persons</Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="entity_has_internal_audit_function"
+              checked={formData.entity_has_internal_audit_function}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ entity_has_internal_audit_function: checked as boolean })
+              }
+            />
+            <Label htmlFor="entity_has_internal_audit_function">Entity has an Internal Audit Function</Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Involvement of Others */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Involvement of Others</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="entity_uses_service_organization"
+              checked={formData.entity_uses_service_organization}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ entity_uses_service_organization: checked as boolean })
+              }
+            />
+            <Label htmlFor="entity_uses_service_organization">Entity Uses a Service Organization</Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="plan_to_involve_specialists"
+              checked={formData.plan_to_involve_specialists}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ plan_to_involve_specialists: checked as boolean })
+              }
+            />
+            <Label htmlFor="plan_to_involve_specialists">Plan to Involve Specialists</Label>
+          </div>
+
+          {formData.plan_to_involve_specialists && (
+            <div className="space-y-4">
+              <Label>Specialist Teams</Label>
+              {formData.specialist_teams.map((team) => (
+                <div key={team.id} className="grid grid-cols-3 gap-2 items-start">
+                  <Input
+                    placeholder="Description"
+                    value={team.description}
+                    onChange={(e) => handleSpecialistChange(team.id, 'description', e.target.value)}
+                  />
+                  <Input
+                    placeholder="Name"
+                    value={team.name}
+                    onChange={(e) => handleSpecialistChange(team.id, 'name', e.target.value)}
+                  />
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      placeholder="Title"
+                      value={team.title}
+                      onChange={(e) => handleSpecialistChange(team.id, 'title', e.target.value)}
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleSpecialistRemove(team.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              <Button variant="outline" size="sm" onClick={handleSpecialistAdd}>
+                Add Specialist
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* IT Environment */}
+      <Card>
+        <CardHeader>
+          <CardTitle>IT Environment</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="entity_highly_dependent_on_it">Is the Entity Highly Dependent on IT?</Label>
+            <Select
+              value={formData.entity_highly_dependent_on_it}
+              onValueChange={(value) => onFormDataChange({ entity_highly_dependent_on_it: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Not selected">Not selected</SelectItem>
+                <SelectItem value="Yes">Yes</SelectItem>
+                <SelectItem value="No">No</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label htmlFor="plan_to_rely_on_automated_controls">Do You Plan to Rely on Automated Controls?</Label>
+            <Select
+              value={formData.plan_to_rely_on_automated_controls}
+              onValueChange={(value) => onFormDataChange({ plan_to_rely_on_automated_controls: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Not selected">Not selected</SelectItem>
+                <SelectItem value="Yes">Yes</SelectItem>
+                <SelectItem value="No">No</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="use_it_critically_checklist"
+              checked={formData.use_it_critically_checklist}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ use_it_critically_checklist: checked as boolean })
+              }
+            />
+            <Label htmlFor="use_it_critically_checklist">Use IT Critically Checklist</Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Engagement Team */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Engagement Team</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="sufficient_appropriate_resources"
+              checked={formData.sufficient_appropriate_resources}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ sufficient_appropriate_resources: checked as boolean })
+              }
+            />
+            <Label htmlFor="sufficient_appropriate_resources">Sufficient Appropriate Resources</Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="team_competence_and_capabilities"
+              checked={formData.team_competence_and_capabilities}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ team_competence_and_capabilities: checked as boolean })
+              }
+            />
+            <Label htmlFor="team_competence_and_capabilities">Team Competence and Capabilities</Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Direction and Supervision */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Direction and Supervision</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>
+            <Label htmlFor="direction_supervision_documentation">Direction, Supervision, and Review Documentation</Label>
+            <Textarea
+              id="direction_supervision_documentation"
+              value={formData.direction_supervision_documentation}
+              onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
+              placeholder="Enter direction, supervision, and review documentation"
+              rows={4}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Other Strategy or Planning Considerations */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Other Strategy or Planning Considerations</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="significant_factors_directing_activities">Significant Factors Directing Activities</Label>
+            <Textarea
+              id="significant_factors_directing_activities"
+              value={formData.significant_factors_directing_activities}
+              onChange={(e) => onFormDataChange({ significant_factors_directing_activities: e.target.value })}
+              placeholder="Enter significant factors directing activities"
+              rows={4}
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="additional_information_documentation">Additional Information Documentation</Label>
+            <Textarea
+              id="additional_information_documentation"
+              value={formData.additional_information_documentation}
+              onChange={(e) => onFormDataChange({ additional_information_documentation: e.target.value })}
+              placeholder="Enter additional information documentation"
+              rows={4}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Audit Strategy and Planning */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Audit Strategy and Planning</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="gaap_conversion_activity"
+                checked={formData.gaap_conversion_activity}
+                onCheckedChange={(checked) => 
+                  onFormDataChange({ gaap_conversion_activity: checked as boolean })
+                }
+              />
+              <Label htmlFor="gaap_conversion_activity">GAAP Conversion Activity</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="gaas_conversion_activity"
+                checked={formData.gaas_conversion_activity}
+                onCheckedChange={(checked) => 
+                  onFormDataChange({ gaas_conversion_activity: checked as boolean })
+                }
+              />
+              <Label htmlFor="gaas_conversion_activity">GAAS Conversion Activity</Label>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Engagement team</h4>
-            
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="sufficient_appropriate_resources"
-                  checked={formData.sufficient_appropriate_resources || false}
-                  onCheckedChange={(checked) => onFormDataChange({ sufficient_appropriate_resources: checked as boolean })}
-                />
-                <Label htmlFor="sufficient_appropriate_resources" className="text-sm">Confirm that sufficient and appropriate resources to perform the engagement are assigned or made available to the engagement in a timely manner</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="team_competence_and_capabilities"
-                  checked={formData.team_competence_and_capabilities || false}
-                  onCheckedChange={(checked) => onFormDataChange({ team_competence_and_capabilities: checked as boolean })}
-                />
-                <Label htmlFor="team_competence_and_capabilities" className="text-sm">Confirm that the members of the engagement team, and any engaged BUMEX specialists and internal auditors who provide direct assistance collectively have the appropriate competence and capabilities, including sufficient time, to perform the engagement</Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Determine the nature, timing, and extent of direction and supervision of engagement team members, and review of their work</h4>
-            
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="direction_supervision_documentation" className="text-sm font-medium">Document how we plan to direct and supervise engagement team members, including review of their work.</Label>
-              <Textarea
-                id="direction_supervision_documentation"
-                value={formData.direction_supervision_documentation || ''}
-                onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
-                placeholder="Document your approach to team direction and supervision..."
-                className="min-h-[120px] mt-2"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Other strategy or planning considerations</h4>
-            
-            <div>
-              <Label htmlFor="significant_factors_directing_activities" className="text-sm font-medium">
-                Identify factors that are significant in directing the activities of the engagement team e.g. significant issues and key audit areas.
-              </Label>
-              <Textarea
-                id="significant_factors_directing_activities"
-                value={formData.significant_factors_directing_activities || ''}
-                onChange={(e) => onFormDataChange({ significant_factors_directing_activities: e.target.value })}
-                placeholder="Identify and describe significant factors that will guide the engagement team's activities..."
-                className="min-h-[120px] mt-2"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="additional_information_documentation" className="text-sm font-medium">
-                Document any additional information e.g. overall timing of audit activities and preliminary decisions about which locations we will include in our audit scope.
-              </Label>
-              <Textarea
-                id="additional_information_documentation"
-                value={formData.additional_information_documentation || ''}
-                onChange={(e) => onFormDataChange({ additional_information_documentation: e.target.value })}
-                placeholder="Document additional planning information, including timing and location decisions..."
-                className="min-h-[120px] mt-2"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <p className="text-sm text-gray-700">
-              We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, 
-              risks and response for each business process and in the following locations:
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 pl-4">
-              <div className="space-y-3">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
-                  1.4 Communications
-                </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
-                  2.1.2 Materiality
-                </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
-                  2.2.1 Entity and its environment
-                </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
-                  2.2.4 RAPD
-                </button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
-                  2.3.1 CERAMIC
-                </button>
-              </div>
-              <div className="space-y-3">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium text-left block">
-                  3.2 Litigation claims and assessments
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Activate GAAP conversion and/or GAAS differences for this report</h4>
-            
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="gaap_conversion_activity"
-                  checked={formData.gaap_conversion_activity || false}
-                  onCheckedChange={(checked) => onFormDataChange({ gaap_conversion_activity: checked as boolean })}
-                />
-                <Label htmlFor="gaap_conversion_activity" className="text-sm">GAAP conversion activity</Label>
-              </div>
-              
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="gaas_conversion_activity"
-                  checked={formData.gaas_conversion_activity || false}
-                  onCheckedChange={(checked) => onFormDataChange({ gaas_conversion_activity: checked as boolean })}
-                />
-                <Label htmlFor="gaas_conversion_activity" className="text-sm">GAAS conversion activity</Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Method used to evaluate identified misstatements:</h4>
-            
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Current period</Label>
-                <Select
-                  value={formData.current_period_evaluation_method || 'Dual method'}
-                  onValueChange={(value) => onFormDataChange({ current_period_evaluation_method: value })}
-                >
-                  <SelectTrigger className="bg-gray-100">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Dual method">Dual method</SelectItem>
-                    <SelectItem value="Single method">Single method</SelectItem>
-                    <SelectItem value="Other method">Other method</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Prior period</Label>
-                <Select
-                  value={formData.prior_period_evaluation_method || 'Dual method'}
-                  onValueChange={(value) => onFormDataChange({ prior_period_evaluation_method: value })}
-                >
-                  <SelectTrigger className="bg-gray-100">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Dual method">Dual method</SelectItem>
-                    <SelectItem value="Single method">Single method</SelectItem>
-                    <SelectItem value="Other method">Other method</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-sm font-medium">Minimum Review Requirement</Label>
+              <Label htmlFor="current_period_evaluation_method">Current Period Evaluation Method</Label>
               <Select
-                value={formData.minimum_review_requirement || 'Global - No EQCR'}
-                onValueChange={(value) => onFormDataChange({ minimum_review_requirement: value })}
+                value={formData.current_period_evaluation_method}
+                onValueChange={(value) => onFormDataChange({ current_period_evaluation_method: value })}
               >
-                <SelectTrigger className="bg-gray-100">
-                  <SelectValue />
+                <SelectTrigger>
+                  <SelectValue placeholder="Select method" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Global - No EQCR">Global - No EQCR</SelectItem>
-                  <SelectItem value="Global - EQCR Required">Global - EQCR Required</SelectItem>
-                  <SelectItem value="Local Requirements">Local Requirements</SelectItem>
+                  <SelectItem value="Dual method">Dual method</SelectItem>
+                  <SelectItem value="Substantive approach">Substantive approach</SelectItem>
+                  <SelectItem value="Combined approach">Combined approach</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="prior_period_evaluation_method">Prior Period Evaluation Method</Label>
+              <Select
+                value={formData.prior_period_evaluation_method}
+                onValueChange={(value) => onFormDataChange({ prior_period_evaluation_method: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Dual method">Dual method</SelectItem>
+                  <SelectItem value="Substantive approach">Substantive approach</SelectItem>
+                  <SelectItem value="Combined approach">Combined approach</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Label className="text-sm font-medium">Change MRR</Label>
-              {!mrrFile ? (
+      {/* Minimum Review Requirement */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Minimum Review Requirement</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="minimum_review_requirement">Minimum Review Requirement</Label>
+            <Select
+              value={formData.minimum_review_requirement}
+              onValueChange={(value) => onFormDataChange({ minimum_review_requirement: value })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select minimum review requirement" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Global - No EQCR">Global - No EQCR</SelectItem>
+                <SelectItem value="Global - EQCR">Global - EQCR</SelectItem>
+                <SelectItem value="Local - No EQCR">Local - No EQCR</SelectItem>
+                <SelectItem value="Local - EQCR">Local - EQCR</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <input
+              type="file"
+              ref={mrrFileInputRef}
+              onChange={handleMrrFileUpload}
+              accept=".pdf"
+              className="hidden"
+            />
+            
+            {!formData.mrr_file ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => mrrFileInputRef.current?.click()}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Change MRR
+              </Button>
+            ) : (
+              <div className="flex items-center space-x-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                <FileText className="h-4 w-4 text-green-600" />
+                <span className="text-sm text-green-700 flex-1">{getMrrFileName()}</span>
                 <Button
-                  type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  onClick={handleMrrFileUploadClick}
-                  disabled={mrrUploadStatus === 'uploading'}
-                  className="h-8 px-3"
+                  onClick={handleMrrFileDownload}
+                  className="h-6 w-6 p-0 text-blue-500 hover:text-blue-700"
+                  title="Download file"
                 >
-                  <Upload className="h-3 w-3 mr-2" />
-                  {mrrUploadStatus === 'uploading' ? 'Uploading...' : 'Upload'}
+                  <Download className="h-3 w-3" />
                 </Button>
-              ) : (
-                <div className="flex items-center space-x-2 p-2 bg-green-50 border border-green-200 rounded-md">
-                  <FileText className="h-3 w-3 text-green-600" />
-                  <span className="text-xs text-green-700">{mrrFile.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleMrrDownloadFileWrapper}
-                    className="h-5 w-5 p-0 text-blue-500 hover:text-blue-700"
-                    title="Download file"
-                  >
-                    <Download className="h-2 w-2" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleMrrRemoveFileWrapper}
-                    className="h-5 w-5 p-0 text-red-500 hover:text-red-700"
-                    title="Remove file"
-                  >
-                    <X className="h-2 w-2" />
-                  </Button>
-                </div>
-              )}
-            </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleMrrFileRemove}
+                  className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                  title="Remove file"
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
