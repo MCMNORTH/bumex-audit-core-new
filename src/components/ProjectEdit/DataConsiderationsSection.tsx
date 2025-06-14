@@ -26,7 +26,7 @@ const DataConsiderationsSection = ({
       <CardContent className="space-y-6">
         <div>
           <Label className="text-sm font-medium">
-            Is the engagement team able to <span className="underline">obtain</span> trial balances and journal entry transactions in an <span className="underline">electronic</span> format for <span className="underline">upload</span>?
+            Is the engagement team able to obtain trial balances and journal entry transactions in an electronic format for upload?
           </Label>
           <RadioGroup
             value={formData.trial_balances_electronic_format || 'Not selected'}
@@ -74,7 +74,7 @@ const DataConsiderationsSection = ({
 
         <div>
           <Label className="text-sm font-medium">
-            Are <span className="underline">there</span> any significant <span className="underline">circumstances</span> that <span className="underline">would</span> impair the use of D&A in the <span className="underline">current</span> audit?
+            Are there any significant circumstances that would impair the use of D&A in the current audit?
           </Label>
           <RadioGroup
             value={formData.significant_circumstances_impair_da || 'Not selected'}
