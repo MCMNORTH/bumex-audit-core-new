@@ -54,7 +54,7 @@ export const Sidebar = () => {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-16 h-16 object-contain" />
+              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-20 h-20 object-contain" />
               
             </div>
           </div>
