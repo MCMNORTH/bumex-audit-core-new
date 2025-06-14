@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -63,6 +62,12 @@ interface FormData {
   direction_supervision_documentation: string;
   significant_factors_directing_activities: string;
   additional_information_documentation: string;
+  // New audit strategy and planning fields
+  gaap_conversion_activity: boolean;
+  gaas_conversion_activity: boolean;
+  current_period_evaluation_method: string;
+  prior_period_evaluation_method: string;
+  minimum_review_requirement: string;
 }
 
 interface ProjectEditContentProps {
