@@ -144,14 +144,28 @@ const ProjectEdit = () => {
         setUploadStatus('success');
         // Extract filename from URL for display purposes
         const url = (projectData as any).engagement_structure_file;
-        // Better filename extraction - get the part after the last slash and before the query parameters
-        const urlParts = url.split('/');
-        const fileNameWithTimestamp = urlParts[urlParts.length - 1].split('?')[0];
-        // Remove the timestamp prefix (e.g., "1234567890-filename.pdf" -> "filename.pdf")
-        const displayName = fileNameWithTimestamp.includes('-') 
-          ? fileNameWithTimestamp.substring(fileNameWithTimestamp.indexOf('-') + 1)
-          : fileNameWithTimestamp;
-        setUploadedFile({ name: displayName } as File);
+        
+        // Better filename extraction - decode URL and get the actual filename
+        try {
+          // For Firebase Storage URLs, the filename is typically after the last '/' and before '?'
+          const decodedUrl = decodeURIComponent(url);
+          const urlParts = decodedUrl.split('/');
+          const fileNameWithPath = urlParts[urlParts.length - 1].split('?')[0];
+          
+          // Remove the folder path (e.g., "engagement-structures/projectId/timestamp-filename.pdf" -> "timestamp-filename.pdf")
+          const fileName = fileNameWithPath.split('/').pop() || fileNameWithPath;
+          
+          // Remove the timestamp prefix if it exists (e.g., "1234567890-filename.pdf" -> "filename.pdf")
+          const displayName = fileName.includes('-') && /^\d+/.test(fileName)
+            ? fileName.substring(fileName.indexOf('-') + 1)
+            : fileName;
+          
+          setUploadedFile({ name: displayName } as File);
+        } catch (error) {
+          console.error('Error extracting filename:', error);
+          // Fallback to a generic name if extraction fails
+          setUploadedFile({ name: 'engagement-structure.pdf' } as File);
+        }
       }
 
       // Fetch clients and users
