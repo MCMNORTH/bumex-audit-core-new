@@ -243,7 +243,7 @@ const EngagementScopeSection = ({
                 id="component_reporting_details"
                 value={formData.component_reporting_details}
                 onChange={(e) => onFormDataChange({ component_reporting_details: e.target.value })}
-                placeholder="En complément de l'opinion d'audit statuaire au 31 décembre 2023, nous avons reçu des instructions de nos collègues dans les pays où opèrent les filiales de Company X en vue de tester des contrôles JSOX sur le scope B, soit les PLC (revenues, receivables & inventories)"
+                placeholder="Describe the nature and scope of component reporting requirements, including any specific instructions received from group auditors..."
                 className="min-h-[120px]"
               />
             </div>
@@ -507,7 +507,7 @@ const EngagementScopeSection = ({
               id="direction_supervision_documentation"
               value={formData.direction_supervision_documentation || ''}
               onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
-              placeholder="Enter your documentation here..."
+              placeholder="Document your approach to team direction and supervision, including review procedures and communication methods..."
               className="min-h-[120px] mt-2"
             />
           </div>
@@ -524,7 +524,7 @@ const EngagementScopeSection = ({
               id="significant_factors_directing_activities"
               value={formData.significant_factors_directing_activities || ''}
               onChange={(e) => onFormDataChange({ significant_factors_directing_activities: e.target.value })}
-              placeholder="La mission s'effectue dans le cadre d'audit statuaire, nous avons identifié des risques significatifs, tel que le risque de fraude sur le CA, le risque d'erreur sur les immos incorporelles non amorti et le contournement des contrôles par la direction."
+              placeholder="Identify and describe significant factors, issues, and key audit areas that will guide the engagement team's activities..."
               className="min-h-[120px] mt-2"
             />
           </div>
@@ -537,7 +537,7 @@ const EngagementScopeSection = ({
               id="additional_information_documentation"
               value={formData.additional_information_documentation || ''}
               onChange={(e) => onFormDataChange({ additional_information_documentation: e.target.value })}
-              placeholder="Nous intervenons pendant la période intérimaire pour effectuer les revues de process et"
+              placeholder="Document additional planning information, including timing of audit activities, location scope decisions, and other relevant considerations..."
               className="min-h-[120px] mt-2"
             />
           </div>
