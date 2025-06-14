@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { MainLayout } from '@/components/Layout/MainLayout';
@@ -32,12 +31,14 @@ const Projects = () => {
     client_id: '',
     engagement_name: '',
     engagement_id: '',
+    project_id: '',
     assigned_to: [] as string[],
     status: 'new' as Project['status'],
     period_start: '',
     period_end: '',
     audit_type: '',
     jurisdiction: '',
+    bumex_office: '',
     language: 'English',
     is_first_audit: false,
   });
@@ -54,6 +55,8 @@ const Projects = () => {
   ];
 
   const languages = ['English', 'Spanish', 'French', 'German', 'Portuguese', 'Other'];
+
+  const bumexOffices = ['Nouakchott'];
 
   useEffect(() => {
     fetchData();
@@ -156,12 +159,14 @@ const Projects = () => {
       client_id: '',
       engagement_name: '',
       engagement_id: '',
+      project_id: '',
       assigned_to: [],
       status: 'new',
       period_start: '',
       period_end: '',
       audit_type: '',
       jurisdiction: '',
+      bumex_office: '',
       language: 'English',
       is_first_audit: false,
     });
@@ -175,12 +180,14 @@ const Projects = () => {
       client_id: project.client_id,
       engagement_name: project.engagement_name,
       engagement_id: project.engagement_id,
+      project_id: project.project_id || '',
       assigned_to: project.assigned_to,
       status: project.status,
       period_start: project.period_start.toISOString().split('T')[0],
       period_end: project.period_end.toISOString().split('T')[0],
       audit_type: project.audit_type,
       jurisdiction: project.jurisdiction,
+      bumex_office: project.bumex_office || '',
       language: project.language,
       is_first_audit: project.is_first_audit,
     });
@@ -326,6 +333,16 @@ const Projects = () => {
                     />
                   </div>
 
+                  <div>
+                    <Label htmlFor="project_id">Project ID</Label>
+                    <Input
+                      id="project_id"
+                      value={formData.project_id}
+                      onChange={(e) => setFormData({ ...formData, project_id: e.target.value })}
+                      placeholder="Enter project ID"
+                    />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="period_start">Period Start</Label>
@@ -396,6 +413,25 @@ const Projects = () => {
                       onChange={(e) => setFormData({ ...formData, jurisdiction: e.target.value })}
                       placeholder="Enter jurisdiction"
                     />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="bumex_office">BUMEX Office</Label>
+                    <Select
+                      value={formData.bumex_office}
+                      onValueChange={(value) => setFormData({ ...formData, bumex_office: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select BUMEX office" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bumexOffices.map((office) => (
+                          <SelectItem key={office} value={office}>
+                            {office}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>

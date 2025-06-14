@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { MainLayout } from '@/components/Layout/MainLayout';
@@ -25,6 +24,7 @@ const Clients = () => {
 
   const [formData, setFormData] = useState({
     name: '',
+    client_id: '',
     country: '',
     sector: '',
     contact_email: '',
@@ -99,7 +99,7 @@ const Clients = () => {
         });
       }
       
-      setFormData({ name: '', country: '', sector: '', contact_email: '' });
+      setFormData({ name: '', client_id: '', country: '', sector: '', contact_email: '' });
       setIsDialogOpen(false);
       setEditingClient(null);
       fetchClients();
@@ -117,6 +117,7 @@ const Clients = () => {
     setEditingClient(client);
     setFormData({
       name: client.name,
+      client_id: client.client_id || '',
       country: client.country,
       sector: client.sector,
       contact_email: client.contact_email,
@@ -127,7 +128,7 @@ const Clients = () => {
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
     setEditingClient(null);
-    setFormData({ name: '', country: '', sector: '', contact_email: '' });
+    setFormData({ name: '', client_id: '', country: '', sector: '', contact_email: '' });
   };
 
   const filteredClients = clients.filter(client =>
@@ -190,6 +191,15 @@ const Clients = () => {
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
                       placeholder="Enter client name"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="client_id">Client ID (GIS entity ID)</Label>
+                    <Input
+                      id="client_id"
+                      value={formData.client_id}
+                      onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                      placeholder="Enter client ID"
                     />
                   </div>
                   <div>

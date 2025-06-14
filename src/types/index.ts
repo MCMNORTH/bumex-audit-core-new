@@ -10,6 +10,7 @@ export interface User {
 export interface Client {
   id: string;
   name: string;
+  client_id?: string;
   country: string;
   sector: string;
   contact_email: string;
@@ -21,12 +22,14 @@ export interface Project {
   client_id: string;
   engagement_name: string;
   engagement_id: string;
+  project_id?: string;
   assigned_to: string[];
   status: 'new' | 'inprogress' | 'closed' | 'archived';
   period_start: Date;
   period_end: Date;
   audit_type: string;
   jurisdiction: string;
+  bumex_office?: string;
   language: string;
   is_first_audit: boolean;
   created_by: string;
