@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import { ProjectFormData } from '@/types/formData';
@@ -6,6 +5,7 @@ import ProjectHeader from './ProjectHeader';
 import EngagementProfileSection from './EngagementProfileSection';
 import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 import { Separator } from '@/components/ui/separator';
+import TCWGCommunicationsSection from './TCWGCommunicationsSection';
 
 interface ProjectEditContentProps {
   project: Project | null;
@@ -154,7 +154,10 @@ const ProjectEditContent = ({
   const renderCommunicationsContent = () => (
     <div className="space-y-6">
       {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
-      {renderPlaceholderSection('Communications, Inquiries and Minutes Overview')}
+      <TCWGCommunicationsSection
+        formData={formData}
+        onFormDataChange={onFormDataChange}
+      />
       
       <div className="ml-4 space-y-4">
         {renderSignOffContent()}
