@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
 import EngagementProfileSection from './EngagementProfileSection';
+import EngagementScopeSection from './EngagementScopeSection';
 
 interface FormData {
   client_id: string;
@@ -63,6 +64,33 @@ interface FormData {
   direction_supervision_documentation: string;
   significant_factors_directing_activities: string;
   additional_information_documentation: string;
+  // New audit strategy fields
+  gaap_conversion_activity: boolean;
+  gaas_conversion_activity: boolean;
+  current_period_method: string;
+  prior_period_method: string;
+  minimum_review_requirement: string;
+  mrr_file: string;
+  // Team assignment fields
+  engagement_partner_id: string;
+  engagement_manager_id: string;
+  engagement_senior_id: string;
+  engagement_associate_id: string;
+  engagement_quality_control_reviewer_id: string;
+  limited_scope_quality_control_reviewer_id: string;
+  other_reviewer_id: string;
+  engagement_tax_specialist_id: string;
+  engagement_actuarial_specialist_id: string;
+  engagement_it_specialist_id: string;
+  engagement_valuation_specialist_id: string;
+  engagement_forensic_specialist_id: string;
+  engagement_sustainability_specialist_id: string;
+  engagement_data_analytics_specialist_id: string;
+  engagement_regulatory_specialist_id: string;
+  engagement_treasury_specialist_id: string;
+  engagement_real_estate_specialist_id: string;
+  engagement_industry_specialist_id: string;
+  engagement_other_specialist_id: string;
 }
 
 interface ProjectEditContentProps {
@@ -77,7 +105,7 @@ interface ProjectEditContentProps {
   onBack: () => void;
   onSave: () => void;
   onFormDataChange: (updates: Partial<FormData>) => void;
-  onAssignmentChange: (userId: string, checked: boolean) => void;
+  onAssignmentChange: (field: string, value: string) => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveFile: () => void;
   onDownloadFile: () => void;
@@ -135,7 +163,15 @@ const ProjectEditContent = ({
             />
           )}
 
-          {activeSection !== 'engagement-profile' && (
+          {activeSection === 'planning' && (
+            <EngagementScopeSection
+              formData={formData}
+              onFormDataChange={onFormDataChange}
+              projectId={projectId}
+            />
+          )}
+
+          {activeSection !== 'engagement-profile' && activeSection !== 'planning' && (
             <Card>
               <CardContent className="p-8 text-center">
                 <p className="text-gray-500">This section is under development</p>

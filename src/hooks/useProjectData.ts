@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -76,6 +75,33 @@ export const useProjectData = () => {
     direction_supervision_documentation: '',
     significant_factors_directing_activities: '',
     additional_information_documentation: '',
+    // New audit strategy fields
+    gaap_conversion_activity: false,
+    gaas_conversion_activity: false,
+    current_period_method: '',
+    prior_period_method: '',
+    minimum_review_requirement: '',
+    mrr_file: '',
+    // Team assignment fields
+    engagement_partner_id: '',
+    engagement_manager_id: '',
+    engagement_senior_id: '',
+    engagement_associate_id: '',
+    engagement_quality_control_reviewer_id: '',
+    limited_scope_quality_control_reviewer_id: '',
+    other_reviewer_id: '',
+    engagement_tax_specialist_id: '',
+    engagement_actuarial_specialist_id: '',
+    engagement_it_specialist_id: '',
+    engagement_valuation_specialist_id: '',
+    engagement_forensic_specialist_id: '',
+    engagement_sustainability_specialist_id: '',
+    engagement_data_analytics_specialist_id: '',
+    engagement_regulatory_specialist_id: '',
+    engagement_treasury_specialist_id: '',
+    engagement_real_estate_specialist_id: '',
+    engagement_industry_specialist_id: '',
+    engagement_other_specialist_id: '',
   });
 
   useEffect(() => {
@@ -160,6 +186,33 @@ export const useProjectData = () => {
         direction_supervision_documentation: (projectData as any).direction_supervision_documentation || '',
         significant_factors_directing_activities: (projectData as any).significant_factors_directing_activities || '',
         additional_information_documentation: (projectData as any).additional_information_documentation || '',
+        // New audit strategy fields
+        gaap_conversion_activity: (projectData as any).gaap_conversion_activity || false,
+        gaas_conversion_activity: (projectData as any).gaas_conversion_activity || false,
+        current_period_method: (projectData as any).current_period_method || '',
+        prior_period_method: (projectData as any).prior_period_method || '',
+        minimum_review_requirement: (projectData as any).minimum_review_requirement || '',
+        mrr_file: (projectData as any).mrr_file || '',
+        // Team assignment fields
+        engagement_partner_id: (projectData as any).engagement_partner_id || '',
+        engagement_manager_id: (projectData as any).engagement_manager_id || '',
+        engagement_senior_id: (projectData as any).engagement_senior_id || '',
+        engagement_associate_id: (projectData as any).engagement_associate_id || '',
+        engagement_quality_control_reviewer_id: (projectData as any).engagement_quality_control_reviewer_id || '',
+        limited_scope_quality_control_reviewer_id: (projectData as any).limited_scope_quality_control_reviewer_id || '',
+        other_reviewer_id: (projectData as any).other_reviewer_id || '',
+        engagement_tax_specialist_id: (projectData as any).engagement_tax_specialist_id || '',
+        engagement_actuarial_specialist_id: (projectData as any).engagement_actuarial_specialist_id || '',
+        engagement_it_specialist_id: (projectData as any).engagement_it_specialist_id || '',
+        engagement_valuation_specialist_id: (projectData as any).engagement_valuation_specialist_id || '',
+        engagement_forensic_specialist_id: (projectData as any).engagement_forensic_specialist_id || '',
+        engagement_sustainability_specialist_id: (projectData as any).engagement_sustainability_specialist_id || '',
+        engagement_data_analytics_specialist_id: (projectData as any).engagement_data_analytics_specialist_id || '',
+        engagement_regulatory_specialist_id: (projectData as any).engagement_regulatory_specialist_id || '',
+        engagement_treasury_specialist_id: (projectData as any).engagement_treasury_specialist_id || '',
+        engagement_real_estate_specialist_id: (projectData as any).engagement_real_estate_specialist_id || '',
+        engagement_industry_specialist_id: (projectData as any).engagement_industry_specialist_id || '',
+        engagement_other_specialist_id: (projectData as any).engagement_other_specialist_id || '',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([
@@ -209,12 +262,10 @@ export const useProjectData = () => {
     }
   };
 
-  const handleAssignmentChange = (userId: string, checked: boolean) => {
+  const handleAssignmentChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      assigned_to: checked 
-        ? [...prev.assigned_to, userId]
-        : prev.assigned_to.filter(id => id !== userId)
+      [field]: value
     }));
   };
 

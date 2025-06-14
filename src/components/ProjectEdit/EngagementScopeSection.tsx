@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,7 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Trash2, Upload, Download, X } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
 
 interface DocumentFile {
   name: string;
@@ -53,17 +57,31 @@ interface FormData {
   // Other strategy or planning considerations fields
   significant_factors_directing_activities: string;
   additional_information_documentation: string;
+  // New audit strategy fields
+  gaap_conversion_activity: boolean;
+  gaas_conversion_activity: boolean;
+  current_period_method: string;
+  prior_period_method: string;
+  minimum_review_requirement: string;
+  mrr_file: string;
 }
 
 interface EngagementScopeSectionProps {
   formData: FormData;
   onFormDataChange: (updates: Partial<FormData>) => void;
+  projectId?: string;
 }
 
 const EngagementScopeSection = ({
   formData,
-  onFormDataChange
+  onFormDataChange,
+  projectId
 }: EngagementScopeSectionProps) => {
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
+  const [uploadedFileName, setUploadedFileName] = useState<string>('');
+
   const handleAddAuditingStandard = () => {
     const newStandards = [...formData.auditing_standards, ''];
     onFormDataChange({ auditing_standards: newStandards });
@@ -117,6 +135,86 @@ const EngagementScopeSection = ({
       i === index ? { ...team, [field]: value } : team
     );
     onFormDataChange({ specialist_teams: newTeams });
+  };
+
+  const handleMRRFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !projectId) return;
+
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select a PDF file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please select a file smaller than 10MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadStatus('uploading');
+    
+    try {
+      const fileName = `mrr-files/${projectId}/${Date.now()}-${file.name}`;
+      const storageRef = ref(storage, fileName);
+      
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      setUploadedFileName(file.name);
+      setUploadStatus('success');
+      onFormDataChange({ mrr_file: downloadURL });
+      
+      toast({
+        title: 'File uploaded',
+        description: `${file.name} has been uploaded successfully`,
+      });
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setUploadStatus('error');
+      toast({
+        title: 'Upload failed',
+        description: 'Failed to upload the file. Please try again.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleRemoveMRRFile = async () => {
+    if (formData.mrr_file && formData.mrr_file.startsWith('https://')) {
+      try {
+        const storageRef = ref(storage, formData.mrr_file);
+        await deleteObject(storageRef);
+      } catch (error) {
+        console.error('Error deleting file from storage:', error);
+      }
+    }
+
+    setUploadedFileName('');
+    setUploadStatus('idle');
+    onFormDataChange({ mrr_file: '' });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDownloadMRRFile = () => {
+    if (formData.mrr_file) {
+      const link = document.createElement('a');
+      link.href = formData.mrr_file;
+      link.download = uploadedFileName || 'mrr-file.pdf';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -540,6 +638,150 @@ const EngagementScopeSection = ({
               placeholder="Document additional planning information, including timing of audit activities, location scope decisions, and other relevant considerations..."
               className="min-h-[120px] mt-2"
             />
+          </div>
+        </div>
+
+        {/* New audit strategy section */}
+        <div className="space-y-6 border-t pt-6">
+          <div>
+            <p className="text-sm text-gray-700 mb-4">
+              We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, risks and response for each business process and in the following locations:
+            </p>
+            
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="space-y-2">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">1.4 Communications</button>
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.1.2 Materiality</button>
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.2.1 Entity and its environment</button>
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.2.4 RAPD</button>
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.3.1 CERAMIC</button>
+              </div>
+              <div className="space-y-2">
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">3.2 Litigation claims and assessments</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-900">Activate GAAP conversion and/or GAAS differences for this report</h4>
+            
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="gaap_conversion_activity"
+                  checked={formData.gaap_conversion_activity || false}
+                  onCheckedChange={(checked) => onFormDataChange({ gaap_conversion_activity: checked as boolean })}
+                />
+                <Label htmlFor="gaap_conversion_activity">GAAP conversion activity</Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="gaas_conversion_activity"
+                  checked={formData.gaas_conversion_activity || false}
+                  onCheckedChange={(checked) => onFormDataChange({ gaas_conversion_activity: checked as boolean })}
+                />
+                <Label htmlFor="gaas_conversion_activity">GAAS conversion activity</Label>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h4 className="font-medium text-gray-900">Method used to evaluate identified misstatements:</h4>
+            
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Current period</Label>
+                <Select value={formData.current_period_method || ''} onValueChange={(value) => onFormDataChange({ current_period_method: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Dual method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="dual-method">Dual method</SelectItem>
+                    <SelectItem value="rollover-method">Rollover method</SelectItem>
+                    <SelectItem value="iron-curtain-method">Iron curtain method</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <Label className="text-sm font-medium mb-2 block">Prior period</Label>
+                <Select value={formData.prior_period_method || ''} onValueChange={(value) => onFormDataChange({ prior_period_method: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Dual method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="dual-method">Dual method</SelectItem>
+                    <SelectItem value="rollover-method">Rollover method</SelectItem>
+                    <SelectItem value="iron-curtain-method">Iron curtain method</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Minimum Review Requirement</Label>
+              <Select value={formData.minimum_review_requirement || ''} onValueChange={(value) => onFormDataChange({ minimum_review_requirement: value })}>
+                <SelectTrigger className="max-w-sm">
+                  <SelectValue placeholder="Global - No EQCR" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="global-no-eqcr">Global - No EQCR</SelectItem>
+                  <SelectItem value="global-eqcr">Global - EQCR</SelectItem>
+                  <SelectItem value="local-no-eqcr">Local - No EQCR</SelectItem>
+                  <SelectItem value="local-eqcr">Local - EQCR</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-4">
+              <Label className="text-sm font-medium">Change MRR</Label>
+              
+              {formData.mrr_file ? (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">{uploadedFileName || 'MRR file uploaded'}</span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleDownloadMRRFile}
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRemoveMRRFile}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadStatus === 'uploading'}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {uploadStatus === 'uploading' ? 'Uploading...' : 'Upload PDF'}
+                </Button>
+              )}
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".pdf"
+                onChange={handleMRRFileUpload}
+                className="hidden"
+              />
+            </div>
           </div>
         </div>
       </CardContent>
