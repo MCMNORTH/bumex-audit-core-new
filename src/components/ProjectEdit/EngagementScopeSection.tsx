@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -144,7 +145,11 @@ const EngagementScopeSection = ({
 
   const triggerMRRFileUpload = () => {
     console.log('Triggering MRR file upload, input ref:', mrrFileInputRef?.current);
-    mrrFileInputRef?.current?.click();
+    if (mrrFileInputRef?.current) {
+      mrrFileInputRef.current.click();
+    } else {
+      console.error('MRR file input ref is not available');
+    }
   };
 
   return (
@@ -700,18 +705,19 @@ const EngagementScopeSection = ({
                 </Button>
               )}
               
-              <input
-                ref={mrrFileInputRef}
-                type="file"
-                accept=".pdf"
-                onChange={onMRRFileUpload}
-                className="hidden"
-              />
-              
               {mrrUploadStatus === 'error' && (
                 <span className="text-sm text-red-600">Upload failed. Please try again.</span>
               )}
             </div>
+            
+            {/* MRR file input - make sure it's always rendered */}
+            <input
+              ref={mrrFileInputRef}
+              type="file"
+              accept=".pdf"
+              onChange={onMRRFileUpload}
+              className="hidden"
+            />
           </div>
         </div>
       </CardContent>
