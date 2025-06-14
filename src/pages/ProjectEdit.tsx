@@ -10,7 +10,7 @@ import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
 const ProjectEdit = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState('engagement-profile');
+  const [activeSection, setActiveSection] = useState('engagement-management');
 
   const {
     id,
