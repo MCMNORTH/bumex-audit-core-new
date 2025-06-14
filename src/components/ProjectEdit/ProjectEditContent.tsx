@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -103,6 +102,10 @@ interface FormData {
   engagement_real_estate_specialist_id: string;
   engagement_industry_specialist_id: string;
   engagement_other_specialist_id: string;
+  // New data considerations fields
+  trial_balances_electronic_format: string;
+  large_batch_journal_entries: string;
+  significant_circumstances_impair_da: string;
 }
 
 interface ProjectEditContentProps {
