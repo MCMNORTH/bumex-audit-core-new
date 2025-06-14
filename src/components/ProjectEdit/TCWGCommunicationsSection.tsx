@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -36,6 +35,15 @@ interface InquiryItem {
   dateOfMeeting: string;
 }
 
+interface MeetingMinuteItem {
+  id: string;
+  bodyCommittee: string;
+  dateOfMeeting: string;
+  meetingMinutesAvailable: boolean;
+  comments: string;
+  attachment: string;
+}
+
 const TCWGCommunicationsSection = ({
   formData,
   onFormDataChange
@@ -43,6 +51,8 @@ const TCWGCommunicationsSection = ({
   const communications = (formData as any).tcwg_communications || [];
   const mainAttachments = (formData as any).tcwg_main_attachments || [];
   const inquiries = (formData as any).tcwg_inquiries || [];
+  const meetingMinutes = (formData as any).tcwg_meeting_minutes || [];
+  const meetingMinutesAttachments = (formData as any).tcwg_meeting_minutes_attachments || [];
   const generateMeetingAgenda = (formData as any).tcwg_generate_meeting_agenda || false;
   const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || 'Not selected';
 
@@ -62,6 +72,17 @@ const TCWGCommunicationsSection = ({
       inquiry.id === id ? { ...inquiry, [field]: value } : inquiry
     );
     onFormDataChange({ tcwg_inquiries: updatedInquiries } as any);
+  };
+
+  const handleMeetingMinuteChange = (id: string, field: keyof MeetingMinuteItem, value: string | boolean) => {
+    const updatedMeetingMinutes = meetingMinutes.map((minute: MeetingMinuteItem) =>
+      minute.id === id ? { ...minute, [field]: value } : minute
+    );
+    onFormDataChange({ tcwg_meeting_minutes: updatedMeetingMinutes } as any);
+  };
+
+  const handleMeetingMinutesAttachmentsChange = (attachments: Array<{name: string, url: string, type: string}>) => {
+    onFormDataChange({ tcwg_meeting_minutes_attachments: attachments } as any);
   };
 
   const addNewCommunication = () => {
@@ -94,6 +115,23 @@ const TCWGCommunicationsSection = ({
   const removeInquiry = (id: string) => {
     const updatedInquiries = inquiries.filter((inquiry: InquiryItem) => inquiry.id !== id);
     onFormDataChange({ tcwg_inquiries: updatedInquiries } as any);
+  };
+
+  const addNewMeetingMinute = () => {
+    const newMeetingMinute: MeetingMinuteItem = {
+      id: Date.now().toString(),
+      bodyCommittee: '',
+      dateOfMeeting: '',
+      meetingMinutesAvailable: false,
+      comments: '',
+      attachment: ''
+    };
+    onFormDataChange({ tcwg_meeting_minutes: [...meetingMinutes, newMeetingMinute] } as any);
+  };
+
+  const removeMeetingMinute = (id: string) => {
+    const updatedMeetingMinutes = meetingMinutes.filter((minute: MeetingMinuteItem) => minute.id !== id);
+    onFormDataChange({ tcwg_meeting_minutes: updatedMeetingMinutes } as any);
   };
 
   const DatePicker = ({ value, onChange }: { value: string, onChange: (date: string) => void }) => {
