@@ -40,7 +40,7 @@ const AppControlPage = () => {
         setAppControl(docSnap.data() as AppControl);
       } else {
         // Create default settings if they don't exist
-        await setDoc(docRef, appControl);
+        await setDoc(docRef, appControl as any);
       }
     } catch (error) {
       console.error('Error fetching app control:', error);
@@ -58,7 +58,7 @@ const AppControlPage = () => {
     setSaving(true);
     try {
       const docRef = doc(db, 'app_control', 'settings');
-      await updateDoc(docRef, appControl);
+      await updateDoc(docRef, appControl as any);
       
       toast({
         title: 'Success',
