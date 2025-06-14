@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -74,8 +73,15 @@ export interface Project {
     name: string;
     title: string;
   }>;
-  // IT environment field
+  // IT environment fields
   entity_highly_dependent_on_it?: string;
+  plan_to_rely_on_automated_controls?: string;
+  use_it_critically_checklist?: boolean;
+  // Engagement team fields
+  sufficient_appropriate_resources?: boolean;
+  team_competence_and_capabilities?: boolean;
+  // Direction and supervision field
+  direction_supervision_documentation?: string;
 }
 
 export interface Log {

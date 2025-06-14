@@ -41,8 +41,15 @@ interface FormData {
   entity_uses_service_organization: boolean;
   plan_to_involve_specialists: boolean;
   specialist_teams: SpecialistTeam[];
-  // IT environment field
+  // IT environment fields
   entity_highly_dependent_on_it: string;
+  plan_to_rely_on_automated_controls: string;
+  use_it_critically_checklist: boolean;
+  // Engagement team fields
+  sufficient_appropriate_resources: boolean;
+  team_competence_and_capabilities: boolean;
+  // Direction and supervision field
+  direction_supervision_documentation: string;
 }
 
 interface EngagementScopeSectionProps {
@@ -430,6 +437,76 @@ const EngagementScopeSection = ({
                 <Label htmlFor="it-not-selected" className="text-sm">Not selected</Label>
               </div>
             </RadioGroup>
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Do we plan to rely on the operating effectiveness of automated controls to respond to a significant risk?</Label>
+            <RadioGroup
+              value={formData.plan_to_rely_on_automated_controls || 'Not selected'}
+              onValueChange={(value) => onFormDataChange({ plan_to_rely_on_automated_controls: value })}
+              className="flex space-x-6 mt-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="Yes" id="automated-controls-yes" />
+                <Label htmlFor="automated-controls-yes" className="text-sm">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="No" id="automated-controls-no" />
+                <Label htmlFor="automated-controls-no" className="text-sm">No</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="Not selected" id="automated-controls-not-selected" />
+                <Label htmlFor="automated-controls-not-selected" className="text-sm">Not selected</Label>
+              </div>
+            </RadioGroup>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="use_it_critically_checklist"
+              checked={formData.use_it_critically_checklist || false}
+              onCheckedChange={(checked) => onFormDataChange({ use_it_critically_checklist: checked as boolean })}
+            />
+            <Label htmlFor="use_it_critically_checklist" className="text-sm">We decided to use the IT Critically checklist to help us determine whether the entity is highly dependent on IT processes</Label>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="font-medium text-gray-900">Engagement team</h4>
+          
+          <div className="space-y-3">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="sufficient_appropriate_resources"
+                checked={formData.sufficient_appropriate_resources || false}
+                onCheckedChange={(checked) => onFormDataChange({ sufficient_appropriate_resources: checked as boolean })}
+              />
+              <Label htmlFor="sufficient_appropriate_resources" className="text-sm">Confirm that sufficient and appropriate resources to perform the engagement are assigned or made available to the engagement in a timely manner</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="team_competence_and_capabilities"
+                checked={formData.team_competence_and_capabilities || false}
+                onCheckedChange={(checked) => onFormDataChange({ team_competence_and_capabilities: checked as boolean })}
+              />
+              <Label htmlFor="team_competence_and_capabilities" className="text-sm">Confirm that the members of the engagement team, and any engaged BUMEX specialists and internal auditors who provide direct assistance collectively have the appropriate competence and capabilities, including sufficient time, to perform the engagement</Label>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="font-medium text-gray-900">Determine the nature, timing, and extent of direction and supervision of engagement team members, and review of their work</h4>
+          
+          <div>
+            <Label htmlFor="direction_supervision_documentation" className="text-sm font-medium">Document how we plan to direct and supervise engagement team members, including review of their work.</Label>
+            <Textarea
+              id="direction_supervision_documentation"
+              value={formData.direction_supervision_documentation || ''}
+              onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
+              placeholder="Enter your documentation here..."
+              className="min-h-[120px] mt-2"
+            />
           </div>
         </div>
       </CardContent>

@@ -89,6 +89,13 @@ const ProjectEdit = () => {
     }>,
     // IT environment field
     entity_highly_dependent_on_it: 'Not selected',
+    plan_to_rely_on_automated_controls: 'Not selected',
+    use_it_critically_checklist: false,
+    // Engagement team fields
+    sufficient_appropriate_resources: false,
+    team_competence_and_capabilities: false,
+    // Direction and supervision field
+    direction_supervision_documentation: '',
   });
 
   const sidebarSections = [
@@ -184,6 +191,13 @@ const ProjectEdit = () => {
         specialist_teams: (projectData as any).specialist_teams || [],
         // IT environment field with default
         entity_highly_dependent_on_it: (projectData as any).entity_highly_dependent_on_it || 'Not selected',
+        plan_to_rely_on_automated_controls: (projectData as any).plan_to_rely_on_automated_controls || 'Not selected',
+        use_it_critically_checklist: (projectData as any).use_it_critically_checklist || false,
+        // Engagement team fields with defaults
+        sufficient_appropriate_resources: (projectData as any).sufficient_appropriate_resources || false,
+        team_competence_and_capabilities: (projectData as any).team_competence_and_capabilities || false,
+        // Direction and supervision field with default
+        direction_supervision_documentation: (projectData as any).direction_supervision_documentation || '',
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display
