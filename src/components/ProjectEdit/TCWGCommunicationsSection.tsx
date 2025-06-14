@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -57,7 +58,6 @@ const TCWGCommunicationsSection = ({
   const mainAttachments = (formData as any).tcwg_main_attachments || [];
   const inquiries = (formData as any).tcwg_inquiries || [];
   const meetingMinutes = (formData as any).tcwg_meeting_minutes || [];
-  const meetingMinutesAttachments = (formData as any).tcwg_meeting_minutes_attachments || [];
   const generateMeetingAgenda = (formData as any).tcwg_generate_meeting_agenda || false;
   const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || 'Not selected';
 
