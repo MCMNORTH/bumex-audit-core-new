@@ -4,7 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Calendar, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
 
 interface TCWGCommunicationsSectionProps {
@@ -72,31 +72,31 @@ const TCWGCommunicationsSection = ({
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-700 text-white">
-                <th className="text-left p-4 font-medium border">Topic</th>
-                <th className="text-center p-4 font-medium border">Included in our engagement letter?</th>
-                <th className="text-center p-4 font-medium border">Date</th>
-                <th className="text-center p-4 font-medium border">Actions</th>
+                <th className="text-left p-6 font-medium border">Topic</th>
+                <th className="text-center p-6 font-medium border">Included in our engagement letter?</th>
+                <th className="text-center p-6 font-medium border">Date</th>
+                <th className="text-center p-6 font-medium border">Actions</th>
               </tr>
             </thead>
             <tbody>
               {communications.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="text-center p-8 text-gray-500 border">
+                  <td colSpan={4} className="text-center p-12 text-gray-500 border">
                     No communications added yet. Click "Add" to create your first communication item.
                   </td>
                 </tr>
               ) : (
                 communications.map((comm: CommunicationItem, index: number) => (
                   <tr key={comm.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                    <td className="p-2 border">
+                    <td className="p-4 border">
                       <Textarea
                         value={comm.topic}
                         onChange={(e) => handleCommunicationChange(comm.id, 'topic', e.target.value)}
                         placeholder="Enter communication topic..."
-                        className="min-h-[60px] resize-none"
+                        className="min-h-[80px] resize-none"
                       />
                     </td>
-                    <td className="p-4 text-center border">
+                    <td className="p-6 text-center border">
                       <Checkbox
                         checked={comm.included}
                         onCheckedChange={(checked) => 
@@ -104,20 +104,17 @@ const TCWGCommunicationsSection = ({
                         }
                       />
                     </td>
-                    <td className="p-2 text-center border">
-                      <div className="flex items-center justify-center gap-2">
-                        <Input
-                          type="date"
-                          value={comm.date}
-                          onChange={(e) => 
-                            handleCommunicationChange(comm.id, 'date', e.target.value)
-                          }
-                          className="w-32 text-sm"
-                        />
-                        <Calendar className="h-4 w-4 text-gray-400" />
-                      </div>
+                    <td className="p-4 text-center border">
+                      <Input
+                        type="date"
+                        value={comm.date}
+                        onChange={(e) => 
+                          handleCommunicationChange(comm.id, 'date', e.target.value)
+                        }
+                        className="w-36 text-sm"
+                      />
                     </td>
-                    <td className="p-2 text-center border">
+                    <td className="p-4 text-center border">
                       <Button
                         onClick={() => removeCommunication(comm.id)}
                         size="sm"
