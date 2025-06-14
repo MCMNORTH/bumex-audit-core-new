@@ -18,7 +18,6 @@ interface CommunicationItem {
   topic: string;
   included: boolean;
   date: string;
-  attachments: Array<{name: string, url: string, type: string}>;
 }
 
 const TCWGCommunicationsSection = ({
@@ -26,6 +25,7 @@ const TCWGCommunicationsSection = ({
   onFormDataChange
 }: TCWGCommunicationsSectionProps) => {
   const communications = (formData as any).tcwg_communications || [];
+  const mainAttachments = (formData as any).tcwg_main_attachments || [];
 
   const handleCommunicationChange = (id: string, field: 'topic' | 'included' | 'date', value: boolean | string) => {
     const updatedCommunications = communications.map((comm: CommunicationItem) =>
@@ -34,11 +34,8 @@ const TCWGCommunicationsSection = ({
     onFormDataChange({ tcwg_communications: updatedCommunications } as any);
   };
 
-  const handleAttachmentsChange = (id: string, attachments: Array<{name: string, url: string, type: string}>) => {
-    const updatedCommunications = communications.map((comm: CommunicationItem) =>
-      comm.id === id ? { ...comm, attachments } : comm
-    );
-    onFormDataChange({ tcwg_communications: updatedCommunications } as any);
+  const handleMainAttachmentsChange = (attachments: Array<{name: string, url: string, type: string}>) => {
+    onFormDataChange({ tcwg_main_attachments: attachments } as any);
   };
 
   const addNewCommunication = () => {
@@ -46,8 +43,7 @@ const TCWGCommunicationsSection = ({
       id: Date.now().toString(),
       topic: '',
       included: false,
-      date: '',
-      attachments: []
+      date: ''
     };
     onFormDataChange({ tcwg_communications: [...communications, newCommunication] } as any);
   };
@@ -83,88 +79,89 @@ const TCWGCommunicationsSection = ({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-blue-700 text-white">
-                <th className="text-left p-6 font-medium border">Topic</th>
-                <th className="text-center p-6 font-medium border">Included in our engagement letter?</th>
-                <th className="text-center p-6 font-medium border">Date</th>
-                <th className="text-center p-6 font-medium border">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {communications.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="text-center p-12 text-gray-500 border">
-                    No communications added yet. Click "Add" to create your first communication item.
-                  </td>
+        <div className="space-y-6">
+          <DocumentAttachmentSection
+            title="Attachment"
+            files={mainAttachments}
+            onFilesChange={handleMainAttachmentsChange}
+            projectId={formData.project_id || 'unknown'}
+            storagePrefix="tcwg-main-attachments"
+          />
+
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-blue-700 text-white">
+                  <th className="text-left p-6 font-medium border">Topic</th>
+                  <th className="text-center p-6 font-medium border">Included in our engagement letter?</th>
+                  <th className="text-center p-6 font-medium border">Date</th>
+                  <th className="text-center p-6 font-medium border">Actions</th>
                 </tr>
-              ) : (
-                communications.map((comm: CommunicationItem, index: number) => (
-                  <tr key={comm.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                    <td className="p-4 border">
-                      <div className="space-y-4">
+              </thead>
+              <tbody>
+                {communications.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center p-12 text-gray-500 border">
+                      No communications added yet. Click "Add" to create your first communication item.
+                    </td>
+                  </tr>
+                ) : (
+                  communications.map((comm: CommunicationItem, index: number) => (
+                    <tr key={comm.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                      <td className="p-4 border">
                         <Textarea
                           value={comm.topic}
                           onChange={(e) => handleCommunicationChange(comm.id, 'topic', e.target.value)}
                           placeholder="Enter communication topic..."
                           className="min-h-[80px] resize-none"
                         />
-                        <DocumentAttachmentSection
-                          title="Attachments"
-                          files={comm.attachments || []}
-                          onFilesChange={(files) => handleAttachmentsChange(comm.id, files)}
-                          projectId={formData.project_id || 'unknown'}
-                          storagePrefix={`tcwg-communications/${comm.id}`}
+                      </td>
+                      <td className="p-6 text-center border">
+                        <Checkbox
+                          checked={comm.included}
+                          onCheckedChange={(checked) => 
+                            handleCommunicationChange(comm.id, 'included', !!checked)
+                          }
                         />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center border">
-                      <Checkbox
-                        checked={comm.included}
-                        onCheckedChange={(checked) => 
-                          handleCommunicationChange(comm.id, 'included', !!checked)
-                        }
-                      />
-                    </td>
-                    <td className="p-4 text-center border">
-                      <Input
-                        type="date"
-                        value={comm.date}
-                        onChange={(e) => 
-                          handleCommunicationChange(comm.id, 'date', e.target.value)
-                        }
-                        className="w-36 text-sm"
-                      />
-                    </td>
-                    <td className="p-4 text-center border">
-                      <Button
-                        onClick={() => removeCommunication(comm.id)}
-                        size="sm"
-                        variant="destructive"
-                        className="h-8 w-8 p-0"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {communications.length > 0 && (
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <div className="flex items-start space-x-2">
-              <Checkbox className="mt-1" />
-              <p className="text-sm text-blue-800">
-                When appropriate, attach a copy of either (i) written communications, (ii) materials related to oral communications (including when and to whom it was communicated) and/or (ii) matter not covered by our engagement.
-              </p>
-            </div>
+                      </td>
+                      <td className="p-4 text-center border">
+                        <Input
+                          type="date"
+                          value={comm.date}
+                          onChange={(e) => 
+                            handleCommunicationChange(comm.id, 'date', e.target.value)
+                          }
+                          className="w-36 text-sm"
+                        />
+                      </td>
+                      <td className="p-4 text-center border">
+                        <Button
+                          onClick={() => removeCommunication(comm.id)}
+                          size="sm"
+                          variant="destructive"
+                          className="h-8 w-8 p-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
+
+          {communications.length > 0 && (
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+              <div className="flex items-start space-x-2">
+                <Checkbox className="mt-1" />
+                <p className="text-sm text-blue-800">
+                  When appropriate, attach a copy of either (i) written communications, (ii) materials related to oral communications (including when and to whom it was communicated) and/or (ii) matter not covered by our engagement.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
