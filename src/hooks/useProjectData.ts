@@ -119,6 +119,10 @@ export const useProjectData = () => {
     trial_balances_electronic_format: 'Not selected',
     large_batch_journal_entries: 'Not selected',
     significant_circumstances_impair_da: 'Not selected',
+    // New independence fields
+    ethics_breaches_identified: 'Not selected',
+    local_quality_manual_compliance: 'Not selected',
+    member_firm_independence_work_paper: 'Not selected',
   });
 
   useEffect(() => {
@@ -241,6 +245,10 @@ export const useProjectData = () => {
         trial_balances_electronic_format: (projectData as any).trial_balances_electronic_format || 'Not selected',
         large_batch_journal_entries: (projectData as any).large_batch_journal_entries || 'Not selected',
         significant_circumstances_impair_da: (projectData as any).significant_circumstances_impair_da || 'Not selected',
+        // New independence fields
+        ethics_breaches_identified: (projectData as any).ethics_breaches_identified || 'Not selected',
+        local_quality_manual_compliance: (projectData as any).local_quality_manual_compliance || 'Not selected',
+        member_firm_independence_work_paper: (projectData as any).member_firm_independence_work_paper || 'Not selected',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([

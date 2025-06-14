@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
 import EngagementProfileSection from './EngagementProfileSection';
+import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 
 interface FormData {
   client_id: string;
@@ -195,6 +196,9 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
+          {/* Team Assignment */}
+          {activeSection === 'team-assignment' && renderPlaceholderSection('Team Assignment')}
+
           {/* Engagement Profile & Strategy */}
           {activeSection === 'engagement-profile' && (
             <EngagementProfileSection
@@ -227,7 +231,12 @@ const ProjectEditContent = ({
           {activeSection === 'tech-risk-corp' && renderPlaceholderSection('Tech Risk Corp - IT Audit')}
 
           {/* Initial independence and conclusion */}
-          {activeSection === 'initial-independence' && renderPlaceholderSection('Initial independence and conclusion')}
+          {activeSection === 'initial-independence' && (
+            <IndependenceRequirementsSection
+              formData={formData}
+              onFormDataChange={onFormDataChange}
+            />
+          )}
         </div>
       </div>
     </div>
