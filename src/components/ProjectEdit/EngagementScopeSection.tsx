@@ -648,15 +648,13 @@ const EngagementScopeSection = ({
               We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, risks and response for each business process and in the following locations:
             </p>
             
-            <div className="grid grid-cols-1 gap-4 mb-6">
-              <div className="space-y-2">
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">1.4 Communications</button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.1.2 Materiality</button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.2.1 Entity and its environment</button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.2.4 RAPD</button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">2.3.1 CERAMIC</button>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">3.2 Litigation claims and assessments</button>
-              </div>
+            <div className="space-y-2 mb-6">
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">1.4 Communications</button>
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.1.2 Materiality</button>
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.2.1 Entity and its environment</button>
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.2.4 RAPD</button>
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">2.3.1 CERAMIC</button>
+              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium block">3.2 Litigation claims and assessments</button>
             </div>
           </div>
 
