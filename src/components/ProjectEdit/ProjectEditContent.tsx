@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -179,7 +178,6 @@ const ProjectEditContent = ({
               users={users}
               uploadedFile={uploadedFile}
               uploadStatus={uploadStatus}
-              fileInputRef={fileInputRef}
               onFormDataChange={onFormDataChange}
               onAssignmentChange={handleAssignmentChange}
               onFileUpload={onFileUpload}
