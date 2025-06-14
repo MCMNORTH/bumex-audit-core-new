@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -62,7 +61,6 @@ const ProjectEdit = () => {
           number: '1.',
           isParent: true,
           children: [
-            { id: 'engagement-profile', title: 'Engagement profile & Strategy', active: true },
             { id: 'sign-off-1', title: 'Sign-off', active: false },
           ]
         },

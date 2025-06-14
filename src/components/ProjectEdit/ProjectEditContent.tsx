@@ -95,20 +95,8 @@ const ProjectEditContent = ({
           {/* Main parent section */}
           {activeSection === 'engagement-management' && renderPlaceholderSection('Engagement Management')}
 
-          {/* Engagement Profile parent section */}
-          {activeSection === 'engagement-profile-section' && renderPlaceholderSection('Engagement Profile & Strategy Overview')}
-
-          {/* SP Specialists parent section */}
-          {activeSection === 'sp-specialists-section' && renderPlaceholderSection('SP. Specialists Overview')}
-
-          {/* Independence parent section */}
-          {activeSection === 'independence-section' && renderPlaceholderSection('Independence Overview')}
-
-          {/* Communications parent section */}
-          {activeSection === 'communications-section' && renderPlaceholderSection('Communications, Inquiries and Minutes Overview')}
-
-          {/* Existing sections - now as leaf nodes */}
-          {activeSection === 'engagement-profile' && (
+          {/* Engagement Profile parent section - now contains the actual content */}
+          {activeSection === 'engagement-profile-section' && (
             <EngagementProfileSection
               formData={formData}
               clients={clients}
@@ -129,6 +117,15 @@ const ProjectEditContent = ({
               onDownloadMRRFile={onDownloadMRRFile}
             />
           )}
+
+          {/* SP Specialists parent section */}
+          {activeSection === 'sp-specialists-section' && renderPlaceholderSection('SP. Specialists Overview')}
+
+          {/* Independence parent section */}
+          {activeSection === 'independence-section' && renderPlaceholderSection('Independence Overview')}
+
+          {/* Communications parent section */}
+          {activeSection === 'communications-section' && renderPlaceholderSection('Communications, Inquiries and Minutes Overview')}
 
           {/* Sign-off sections */}
           {activeSection === 'sign-off-1' && renderPlaceholderSection('Sign-off')}
