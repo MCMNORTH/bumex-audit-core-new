@@ -4,11 +4,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
 interface IndependenceRequirementsSectionProps {
-  formData: {
-    ethics_breaches_identified?: string;
-    local_quality_manual_compliance?: string;
-    member_firm_independence_work_paper?: string;
-  };
+  formData: any;
   onFormDataChange: (updates: any) => void;
 }
 
