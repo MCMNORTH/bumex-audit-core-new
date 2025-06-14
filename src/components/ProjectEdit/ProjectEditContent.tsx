@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import ProjectHeader from './ProjectHeader';
@@ -136,9 +137,77 @@ const ProjectEditContent = ({
               project={project}
               clients={clients}
               users={users}
-              formData={formData}
+              formData={{
+                client_id: formData.client_id,
+                engagement_name: formData.engagement_name,
+                engagement_id: formData.engagement_id,
+                project_id: (formData as any).project_id || '',
+                assigned_to: (formData as any).assigned_to || [],
+                status: (formData as any).status || 'new',
+                period_start: (formData as any).period_start || '',
+                period_end: (formData as any).period_end || '',
+                expected_start_date: (formData as any).expected_start_date || '',
+                audit_type: (formData as any).audit_type || '',
+                jurisdiction: (formData as any).jurisdiction || '',
+                bumex_office: (formData as any).bumex_office || '',
+                language: (formData as any).language || 'English',
+                is_first_audit: (formData as any).is_first_audit || false,
+                plan_to_roll_forward: (formData as any).plan_to_roll_forward || false,
+                enable_external_documents: (formData as any).enable_external_documents || false,
+                engagement_structure_file: formData.engagement_structure_file,
+                engagement_evaluation_id: (formData as any).engagement_evaluation_id || '',
+                engagement_evaluation_status: (formData as any).engagement_evaluation_status || 'Not Selected',
+                evaluation_approval_date: (formData as any).evaluation_approval_date || '',
+                planned_expiration_date: (formData as any).planned_expiration_date || '',
+                sentinel_approval_number: (formData as any).sentinel_approval_number || '',
+                sentinel_approval_status: (formData as any).sentinel_approval_status || 'Not Selected',
+                sentinel_approval_date: (formData as any).sentinel_approval_date || '',
+                sentinel_expiration_date: (formData as any).sentinel_expiration_date || '',
+                first_period_auditing: (formData as any).first_period_auditing || 'Not selected',
+                sentinel_approval_email_files: (formData as any).sentinel_approval_email_files || [],
+                ceac_approval_email_files: (formData as any).ceac_approval_email_files || [],
+                other_documents_files: (formData as any).other_documents_files || [],
+                financial_statement_audit_report: formData.financial_statement_audit_report,
+                auditing_standards: formData.auditing_standards,
+                financial_reporting_framework: formData.financial_reporting_framework,
+                audit_report_date: formData.audit_report_date,
+                required_audit_file_closeout_date: formData.required_audit_file_closeout_date,
+                component_reporting: formData.component_reporting,
+                component_reporting_details: formData.component_reporting_details,
+                group_auditor: formData.group_auditor,
+                engagement_quality_control_reviewer: formData.engagement_quality_control_reviewer,
+                limited_scope_quality_control_reviewer: formData.limited_scope_quality_control_reviewer,
+                other_reviewer: formData.other_reviewer,
+                governance_management_same_persons: formData.governance_management_same_persons,
+                entity_has_internal_audit_function: formData.entity_has_internal_audit_function,
+                entity_uses_service_organization: formData.entity_uses_service_organization,
+                plan_to_involve_specialists: formData.plan_to_involve_specialists,
+                specialist_teams: formData.specialist_teams,
+                entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it,
+                significant_factors_directing_activities: formData.significant_factors_directing_activities,
+                additional_information_documentation: formData.additional_information_documentation,
+                gaap_conversion_activity: formData.gaap_conversion_activity,
+                gaas_conversion_activity: formData.gaas_conversion_activity,
+                current_period_evaluation_method: formData.current_period_evaluation_method,
+                prior_period_evaluation_method: formData.prior_period_evaluation_method,
+                minimum_review_requirement: formData.minimum_review_requirement,
+              }}
               onFormDataChange={onFormDataChange}
-              onAssignmentChange={onAssignmentChange}
+              onAssignmentChange={(userId: string, checked: boolean) => {
+                if (checked) {
+                  const currentAssigned = (formData as any).assigned_to || [];
+                  onFormDataChange({ assigned_to: [...currentAssigned, userId] } as any);
+                } else {
+                  const currentAssigned = (formData as any).assigned_to || [];
+                  onFormDataChange({ assigned_to: currentAssigned.filter((id: string) => id !== userId) } as any);
+                }
+              }}
+              uploadedFile={uploadedFile}
+              uploadStatus={uploadStatus}
+              onFileUpload={onFileUpload}
+              onRemoveFile={onRemoveFile}
+              onDownloadFile={onDownloadFile}
+              projectId={projectId}
             />
             <Card>
               <CardContent className="pt-6">
@@ -199,6 +268,8 @@ const ProjectEditContent = ({
       <ProjectHeader
         projectName={project?.engagement_name || ''}
         engagementId={project?.engagement_id || ''}
+        activeSection={activeSection}
+        auditType={project?.audit_type || ''}
         onBack={onBack}
         onSave={onSave}
         saving={saving}

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -82,6 +81,8 @@ export const useProjectData = () => {
     current_period_evaluation_method: 'Dual method',
     prior_period_evaluation_method: 'Dual method',
     minimum_review_requirement: 'Global - No EQCR',
+    // MRR file field
+    mrr_file: '',
   });
 
   useEffect(() => {
@@ -172,6 +173,8 @@ export const useProjectData = () => {
         current_period_evaluation_method: (projectData as any).current_period_evaluation_method || 'Dual method',
         prior_period_evaluation_method: (projectData as any).prior_period_evaluation_method || 'Dual method',
         minimum_review_requirement: (projectData as any).minimum_review_requirement || 'Global - No EQCR',
+        // MRR file field
+        mrr_file: (projectData as any).mrr_file || '',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([

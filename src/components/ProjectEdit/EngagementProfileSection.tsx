@@ -98,6 +98,7 @@ interface EngagementProfileSectionProps {
   onRemoveFile: () => void;
   onDownloadFile: () => void;
   projectId?: string;
+  project?: Project | null;
 }
 
 const EngagementProfileSection = ({
@@ -113,6 +114,7 @@ const EngagementProfileSection = ({
   onDownloadFile,
   projectId = ''
 }: EngagementProfileSectionProps) => {
+  // ... keep existing code (auditTypes, languages, bumexOffices, approvalStatuses arrays and all component logic)
   const auditTypes = [
     'Financial Audit',
     'Compliance Audit',
@@ -540,6 +542,8 @@ const EngagementProfileSection = ({
           current_period_evaluation_method: (formData as any).current_period_evaluation_method || 'Dual method',
           prior_period_evaluation_method: (formData as any).prior_period_evaluation_method || 'Dual method',
           minimum_review_requirement: (formData as any).minimum_review_requirement || 'Global - No EQCR',
+          // MRR file field
+          mrr_file: (formData as any).mrr_file || '',
         }}
         onFormDataChange={onFormDataChange}
       />
