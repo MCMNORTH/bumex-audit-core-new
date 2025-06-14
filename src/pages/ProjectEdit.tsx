@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -11,13 +11,14 @@ import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc, updateDoc, getDocs, collection, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project, Client, User } from '@/types';
-import { ArrowLeft, Save, Calendar, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, Save, Calendar, Upload, X, FileText } from 'lucide-react';
 
 const ProjectEdit = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [project, setProject] = useState<Project | null>(null);
   const [clients, setClients] = useState<Client[]>([]);
@@ -25,6 +26,8 @@ const ProjectEdit = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeSection, setActiveSection] = useState('engagement-profile');
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadStatus, setUploadStatus] = useState<'idle' | 'uploading' | 'success' | 'error'>('idle');
 
   const [formData, setFormData] = useState({
     client_id: '',
@@ -43,6 +46,7 @@ const ProjectEdit = () => {
     is_first_audit: false,
     plan_to_roll_forward: false,
     enable_external_documents: false,
+    engagement_structure_file: '',
   });
 
   const sidebarSections = [
@@ -114,6 +118,7 @@ const ProjectEdit = () => {
         is_first_audit: projectData.is_first_audit,
         plan_to_roll_forward: false,
         enable_external_documents: false,
+        engagement_structure_file: (projectData as any).engagement_structure_file || '',
       });
 
       // Fetch clients and users
@@ -134,6 +139,64 @@ const ProjectEdit = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select a PDF file',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate file size (10MB limit)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please select a file smaller than 10MB',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setUploadStatus('uploading');
+    
+    // Simulate upload process (in real app, you'd upload to storage)
+    setTimeout(() => {
+      setUploadedFile(file);
+      setUploadStatus('success');
+      setFormData(prev => ({
+        ...prev,
+        engagement_structure_file: file.name
+      }));
+      
+      toast({
+        title: 'File uploaded',
+        description: `${file.name} has been uploaded successfully`,
+      });
+    }, 1000);
+  };
+
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    setUploadStatus('idle');
+    setFormData(prev => ({
+      ...prev,
+      engagement_structure_file: ''
+    }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSave = async () => {
@@ -469,9 +532,38 @@ const ProjectEdit = () => {
                     <div>
                       <Label>Select engagement structure</Label>
                       <div className="mt-2">
-                        <Button variant="outline" size="sm">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          onChange={handleFileUpload}
+                          accept=".pdf"
+                          className="hidden"
+                        />
+                        
+                        {!uploadedFile ? (
+                          <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleUploadClick}
+                            disabled={uploadStatus === 'uploading'}
+                          >
+                            <Upload className="mr-2 h-4 w-4" />
+                            {uploadStatus === 'uploading' ? 'Uploading...' : 'Upload PDF'}
+                          </Button>
+                        ) : (
+                          <div className="flex items-center space-x-2 p-2 bg-green-50 border border-green-200 rounded-md">
+                            <FileText className="h-4 w-4 text-green-600" />
+                            <span className="text-sm text-green-700 flex-1">{uploadedFile.name}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleRemoveFile}
+                              className="h-6 w-6 p-0 text-red-500 hover:text-red-700"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>
