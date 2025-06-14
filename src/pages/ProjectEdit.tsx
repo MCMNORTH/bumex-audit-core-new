@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -12,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { doc, getDoc, updateDoc, getDocs, collection, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project, Client, User } from '@/types';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Calendar, MoreHorizontal } from 'lucide-react';
 
 const ProjectEdit = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,11 +35,14 @@ const ProjectEdit = () => {
     status: 'new' as Project['status'],
     period_start: '',
     period_end: '',
+    expected_start_date: '',
     audit_type: '',
     jurisdiction: '',
     bumex_office: '',
     language: 'English',
     is_first_audit: false,
+    plan_to_roll_forward: false,
+    enable_external_documents: false,
   });
 
   const sidebarSections = [
@@ -104,11 +106,14 @@ const ProjectEdit = () => {
         status: projectData.status,
         period_start: projectData.period_start.toISOString().split('T')[0],
         period_end: projectData.period_end.toISOString().split('T')[0],
+        expected_start_date: projectData.period_start.toISOString().split('T')[0],
         audit_type: projectData.audit_type,
         jurisdiction: projectData.jurisdiction,
         bumex_office: projectData.bumex_office || '',
         language: projectData.language,
         is_first_audit: projectData.is_first_audit,
+        plan_to_roll_forward: false,
+        enable_external_documents: false,
       });
 
       // Fetch clients and users
@@ -138,6 +143,7 @@ const ProjectEdit = () => {
         ...formData,
         period_start: new Date(formData.period_start),
         period_end: new Date(formData.period_end),
+        expected_start_date: new Date(formData.expected_start_date),
       };
 
       await updateDoc(doc(db, 'projects', id!), updateData);
@@ -398,7 +404,7 @@ const ProjectEdit = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
                       <div>
                         <Label htmlFor="period_start">Period Start</Label>
                         <Input
@@ -417,15 +423,56 @@ const ProjectEdit = () => {
                           onChange={(e) => setFormData({ ...formData, period_end: e.target.value })}
                         />
                       </div>
+                      <div>
+                        <Label htmlFor="expected_start_date">Expected start date</Label>
+                        <div className="relative">
+                          <Input
+                            id="expected_start_date"
+                            type="date"
+                            value={formData.expected_start_date}
+                            onChange={(e) => setFormData({ ...formData, expected_start_date: e.target.value })}
+                          />
+                          <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="is_first_audit"
-                        checked={formData.is_first_audit}
-                        onCheckedChange={(checked) => setFormData({ ...formData, is_first_audit: checked as boolean })}
-                      />
-                      <Label htmlFor="is_first_audit">First-time audit</Label>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="is_first_audit"
+                          checked={formData.is_first_audit}
+                          onCheckedChange={(checked) => setFormData({ ...formData, is_first_audit: checked as boolean })}
+                        />
+                        <Label htmlFor="is_first_audit">First-time audit</Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="plan_to_roll_forward"
+                          checked={formData.plan_to_roll_forward}
+                          onCheckedChange={(checked) => setFormData({ ...formData, plan_to_roll_forward: checked as boolean })}
+                        />
+                        <Label htmlFor="plan_to_roll_forward">Plan to roll forward an engagement</Label>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2">
+                        <Checkbox
+                          id="enable_external_documents"
+                          checked={formData.enable_external_documents}
+                          onCheckedChange={(checked) => setFormData({ ...formData, enable_external_documents: checked as boolean })}
+                        />
+                        <Label htmlFor="enable_external_documents">Enable the ability to receive external documents</Label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Select engagement structure</Label>
+                      <div className="mt-2">
+                        <Button variant="outline" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
