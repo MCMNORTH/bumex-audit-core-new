@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import EngagementTypeSection from './EngagementScope/EngagementTypeSection';
 import AuditingStandardsSection from './EngagementScope/AuditingStandardsSection';
@@ -76,6 +75,8 @@ const EngagementScopeSection = ({
   onDownloadMRRFile,
   mrrFileInputRef
 }: EngagementScopeSectionProps) => {
+  console.log('EngagementScopeSection - mrrFileInputRef:', mrrFileInputRef);
+  
   return (
     <Card>
       <CardHeader>

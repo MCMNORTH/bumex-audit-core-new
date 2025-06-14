@@ -1,4 +1,3 @@
-
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -34,11 +33,25 @@ const AuditStrategySection = ({
   mrrFileInputRef
 }: AuditStrategySectionProps) => {
   const triggerMRRFileUpload = () => {
-    console.log('Triggering MRR file upload, input ref:', mrrFileInputRef?.current);
-    if (mrrFileInputRef?.current) {
+    console.log('Triggering MRR file upload');
+    console.log('mrrFileInputRef:', mrrFileInputRef);
+    console.log('mrrFileInputRef.current:', mrrFileInputRef?.current);
+    
+    if (!mrrFileInputRef) {
+      console.error('MRR file input ref is not provided');
+      return;
+    }
+    
+    if (!mrrFileInputRef.current) {
+      console.error('MRR file input ref current is null');
+      return;
+    }
+    
+    try {
       mrrFileInputRef.current.click();
-    } else {
-      console.error('MRR file input ref is not available');
+      console.log('File input clicked successfully');
+    } catch (error) {
+      console.error('Error clicking file input:', error);
     }
   };
 
@@ -176,13 +189,13 @@ const AuditStrategySection = ({
           )}
         </div>
         
-        {/* MRR file input - make sure it's always rendered */}
+        {/* Always render the file input - this is crucial for the ref to work */}
         <input
           ref={mrrFileInputRef}
           type="file"
           accept=".pdf"
           onChange={onMRRFileUpload}
-          className="hidden"
+          style={{ display: 'none' }}
         />
       </div>
     </div>
