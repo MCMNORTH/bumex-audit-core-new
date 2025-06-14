@@ -96,6 +96,9 @@ const ProjectEdit = () => {
     team_competence_and_capabilities: false,
     // Direction and supervision field
     direction_supervision_documentation: '',
+    // Other strategy or planning considerations fields
+    significant_factors_directing_activities: '',
+    additional_information_documentation: '',
   });
 
   const sidebarSections = [
@@ -198,6 +201,9 @@ const ProjectEdit = () => {
         team_competence_and_capabilities: (projectData as any).team_competence_and_capabilities || false,
         // Direction and supervision field with default
         direction_supervision_documentation: (projectData as any).direction_supervision_documentation || '',
+        // Other strategy or planning considerations fields with defaults
+        significant_factors_directing_activities: (projectData as any).significant_factors_directing_activities || '',
+        additional_information_documentation: (projectData as any).additional_information_documentation || '',
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display

@@ -75,6 +75,9 @@ interface FormData {
   }>;
   // IT environment field
   entity_highly_dependent_on_it: string;
+  // Other strategy or planning considerations fields
+  significant_factors_directing_activities: string;
+  additional_information_documentation: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -522,6 +525,9 @@ const EngagementProfileSection = ({
           team_competence_and_capabilities: (formData as any).team_competence_and_capabilities || false,
           // Direction and supervision field
           direction_supervision_documentation: (formData as any).direction_supervision_documentation || '',
+          // Other strategy or planning considerations fields
+          significant_factors_directing_activities: (formData as any).significant_factors_directing_activities || '',
+          additional_information_documentation: (formData as any).additional_information_documentation || '',
         }}
         onFormDataChange={onFormDataChange}
       />

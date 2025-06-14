@@ -82,6 +82,9 @@ export interface Project {
   team_competence_and_capabilities?: boolean;
   // Direction and supervision field
   direction_supervision_documentation?: string;
+  // Other strategy or planning considerations fields
+  significant_factors_directing_activities?: string;
+  additional_information_documentation?: string;
 }
 
 export interface Log {

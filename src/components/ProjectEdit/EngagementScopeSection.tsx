@@ -50,6 +50,9 @@ interface FormData {
   team_competence_and_capabilities: boolean;
   // Direction and supervision field
   direction_supervision_documentation: string;
+  // Other strategy or planning considerations fields
+  significant_factors_directing_activities: string;
+  additional_information_documentation: string;
 }
 
 interface EngagementScopeSectionProps {
@@ -505,6 +508,36 @@ const EngagementScopeSection = ({
               value={formData.direction_supervision_documentation || ''}
               onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
               placeholder="Enter your documentation here..."
+              className="min-h-[120px] mt-2"
+            />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <h4 className="font-medium text-gray-900">Other strategy or planning considerations</h4>
+          
+          <div>
+            <Label htmlFor="significant_factors_directing_activities" className="text-sm font-medium">
+              Identify factors that are significant in directing the activities of the engagement team e.g. significant issues and key audit areas.
+            </Label>
+            <Textarea
+              id="significant_factors_directing_activities"
+              value={formData.significant_factors_directing_activities || ''}
+              onChange={(e) => onFormDataChange({ significant_factors_directing_activities: e.target.value })}
+              placeholder="La mission s'effectue dans le cadre d'audit statuaire, nous avons identifié des risques significatifs, tel que le risque de fraude sur le CA, le risque d'erreur sur les immos incorporelles non amorti et le contournement des contrôles par la direction."
+              className="min-h-[120px] mt-2"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="additional_information_documentation" className="text-sm font-medium">
+              Document any additional information e.g. overall timing of audit activities and preliminary decisions about which locations we will include in our audit scope.
+            </Label>
+            <Textarea
+              id="additional_information_documentation"
+              value={formData.additional_information_documentation || ''}
+              onChange={(e) => onFormDataChange({ additional_information_documentation: e.target.value })}
+              placeholder="Nous intervenons pendant la période intérimaire pour effectuer les revues de process et"
               className="min-h-[120px] mt-2"
             />
           </div>
