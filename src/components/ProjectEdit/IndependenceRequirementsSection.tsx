@@ -3,15 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
-interface IndependenceFormData {
-  ethics_breaches_identified: string;
-  local_quality_manual_compliance: string;
-  member_firm_independence_work_paper: string;
-  communicate_other_independence_matters: string;
-}
-
 interface IndependenceRequirementsSectionProps {
-  formData: IndependenceFormData;
+  formData: any;
   onFormDataChange: (updates: any) => void;
 }
 
@@ -132,6 +125,34 @@ const IndependenceRequirementsSection = ({
               <Label htmlFor="communicate-not-selected">Not selected</Label>
             </div>
           </RadioGroup>
+        </div>
+
+        {/* New compliance section based on the image */}
+        <div className="space-y-3 pt-4 border-t">
+          <Label className="text-sm font-medium text-gray-900">
+            Are we in compliance with independence requirements, including required consultations?
+          </Label>
+          <RadioGroup
+            value={formData.independence_compliance_requirements || ''}
+            onValueChange={(value) => handleRadioChange('independence_compliance_requirements', value)}
+            className="flex space-x-6"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Yes" id="compliance-yes" />
+              <Label htmlFor="compliance-yes">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="No" id="compliance-no" />
+              <Label htmlFor="compliance-no">No</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Not selected" id="compliance-not-selected" />
+              <Label htmlFor="compliance-not-selected">Not selected</Label>
+            </div>
+          </RadioGroup>
+          <p className="text-sm text-gray-700 mt-2 underline">
+            We have attached the relevant documentation in reaching our conclusions regarding independence compliance.
+          </p>
         </div>
       </CardContent>
     </Card>

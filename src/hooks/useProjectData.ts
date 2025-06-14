@@ -124,6 +124,7 @@ export const useProjectData = () => {
     local_quality_manual_compliance: 'Not selected',
     member_firm_independence_work_paper: 'Not selected',
     communicate_other_independence_matters: 'Not selected',
+    independence_compliance_requirements: 'Not selected',
   });
 
   useEffect(() => {
@@ -251,6 +252,7 @@ export const useProjectData = () => {
         local_quality_manual_compliance: (projectData as any).local_quality_manual_compliance || 'Not selected',
         member_firm_independence_work_paper: (projectData as any).member_firm_independence_work_paper || 'Not selected',
         communicate_other_independence_matters: (projectData as any).communicate_other_independence_matters || 'Not selected',
+        independence_compliance_requirements: (projectData as any).independence_compliance_requirements || 'Not selected',
       });
 
       const [clientsSnapshot, usersSnapshot] = await Promise.all([
