@@ -8,6 +8,7 @@ import { Calendar } from 'lucide-react';
 import { Client, User, Project } from '@/types';
 import FileUploadSection from './FileUploadSection';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
+import EngagementScopeSection from './EngagementScopeSection';
 
 interface DocumentFile {
   name: string;
@@ -49,6 +50,12 @@ interface FormData {
   sentinel_approval_email_files: DocumentFile[];
   ceac_approval_email_files: DocumentFile[];
   other_documents_files: DocumentFile[];
+  // Engagement scope and scale fields
+  financial_statement_audit_report: boolean;
+  auditing_standards: string[];
+  financial_reporting_framework: string[];
+  audit_report_date: string;
+  required_audit_file_closeout_date: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -467,6 +474,17 @@ const EngagementProfileSection = ({
           </div>
         </CardContent>
       </Card>
+
+      <EngagementScopeSection
+        formData={{
+          financial_statement_audit_report: formData.financial_statement_audit_report,
+          auditing_standards: formData.auditing_standards,
+          financial_reporting_framework: formData.financial_reporting_framework,
+          audit_report_date: formData.audit_report_date,
+          required_audit_file_closeout_date: formData.required_audit_file_closeout_date,
+        }}
+        onFormDataChange={onFormDataChange}
+      />
 
       <Card>
         <CardHeader>

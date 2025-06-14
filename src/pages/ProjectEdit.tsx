@@ -63,6 +63,12 @@ const ProjectEdit = () => {
     sentinel_approval_email_files: [] as Array<{name: string, url: string, type: string}>,
     ceac_approval_email_files: [] as Array<{name: string, url: string, type: string}>,
     other_documents_files: [] as Array<{name: string, url: string, type: string}>,
+    // Engagement scope and scale fields
+    financial_statement_audit_report: false,
+    auditing_standards: [] as string[],
+    financial_reporting_framework: [] as string[],
+    audit_report_date: '',
+    required_audit_file_closeout_date: '',
   });
 
   const sidebarSections = [
@@ -137,6 +143,12 @@ const ProjectEdit = () => {
         sentinel_approval_email_files: (projectData as any).sentinel_approval_email_files || [],
         ceac_approval_email_files: (projectData as any).ceac_approval_email_files || [],
         other_documents_files: (projectData as any).other_documents_files || [],
+        // Engagement scope and scale fields with defaults
+        financial_statement_audit_report: (projectData as any).financial_statement_audit_report || false,
+        auditing_standards: (projectData as any).auditing_standards || [],
+        financial_reporting_framework: (projectData as any).financial_reporting_framework || [],
+        audit_report_date: (projectData as any).audit_report_date || '',
+        required_audit_file_closeout_date: (projectData as any).required_audit_file_closeout_date || '',
       });
 
       // If there's an existing file, set the upload status and create a mock file object for display
