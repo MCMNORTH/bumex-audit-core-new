@@ -324,7 +324,12 @@ const ProjectEditContent = ({
           />
 
           {/* Main parent section - shows all nested content for 1. Engagement management */}
-          {activeSection === 'engagement-management' && renderEngagementManagementContent()}
+          {activeSection === 'engagement-management' && (
+            <div className="space-y-8">
+              {renderOverviewInfo()}
+              {/* Optionally, you could add sub-section links/cards or further details here as needed */}
+            </div>
+          )}
 
           {/* Section 1, Engagement management children keep as before */}
           {activeSection === 'engagement-profile-section' && (
