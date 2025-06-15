@@ -70,16 +70,17 @@ export const Sidebar = () => {
           })}
           </nav>
 
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-3">
-              <Button 
-                variant="ghost" 
-                onClick={handleLogout} 
-                className="flex items-center justify-start w-full px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
-              >
-                <LogOut className="mr-3 h-4 w-4" />
-                Log out
-              </Button>
+          <div className="p-4">
+            <Button 
+              variant="ghost" 
+              onClick={handleLogout} 
+              className="flex items-center justify-start w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors mb-3"
+            >
+              <LogOut className="mr-3 h-4 w-4" />
+              Log out
+            </Button>
+            
+            <div className="border-t border-gray-200 pt-3">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                   <span className="text-xs font-medium text-gray-700">
