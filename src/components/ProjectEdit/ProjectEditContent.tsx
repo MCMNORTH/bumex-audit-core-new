@@ -202,6 +202,7 @@ const ProjectEditContent = ({
     {
       sectionId: 'engagement-profile-section',
       title: 'Engagement Profile & Strategy',
+      number: '1.',
     },
     {
       sectionId: 'sp-specialists-section',
@@ -215,11 +216,11 @@ const ProjectEditContent = ({
     {
       sectionId: 'communications-section',
       title: 'Communications, Inquiries and Minutes',
-      number: '4.'
+      number: '4.',
     }
   ];
 
-  // New: Engagement Management Card navigation for overview
+  // Horizontal, equal-size, clickable overview cards
   const renderEngagementManagementCardList = () => (
     <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
       {engagementCards.map((card) => (
