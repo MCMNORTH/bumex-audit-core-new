@@ -206,8 +206,8 @@ const ProjectEditContent = ({
   // Engagement management cards logic
   const engagementManagementSection = sidebarSections.find(s => s.id === "engagement-management");
 
-  // Independence cards logic
-  const independenceSection = sidebarSections.find(s => s.id === "independence-section");
+  // Independence cards logic: USE THE RECURSIVE LOOKUP HERE!
+  const independenceSection = findSectionById(sidebarSections, "independence-section");
 
   const renderIndependenceContent = () => {
     if (!independenceSection) return null;
