@@ -143,7 +143,7 @@ const ProjectEditContent = ({
   const entitySection = sidebarSections.find(s => s.id === 'entity-wide-procedures');
   const entityChildren = entitySection?.children || [];
 
-  // Utility to render a card list for any node with children
+  // Utility to render a card list for any node with children (reused below)
   const renderCardsForSection = section => {
     if (!section?.children?.length) return null;
     return <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
@@ -215,45 +215,50 @@ const ProjectEditContent = ({
       }
     }
   }
+
+  // Engagement management cards logic
+  const engagementManagementSection = sidebarSections.find(s => s.id === "engagement-management");
+
   return <div className="flex-1 overflow-y-auto">
-      <div className="p-8">
-        <div className="max-w-4xl mx-auto">
-          <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
+    <div className="p-8">
+      <div className="max-w-4xl mx-auto">
+        <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
 
-          {/* Main parent section - shows all nested content for 1. Engagement management */}
-          {activeSection === 'engagement-management' && <div className="space-y-8">
-              {renderOverviewInfo()}
-              {/* Optionally, you could add sub-section links/cards or further details here as needed */}
-            </div>}
+        {/* Main parent section - shows all nested content for 1. Engagement management */}
+        {activeSection === 'engagement-management' && (
+          <div className="space-y-8">
+            {renderOverviewInfo()}
+            {renderCardsForSection(engagementManagementSection)}
+          </div>
+        )}
 
-          {/* Section 1, Engagement management children keep as before */}
-          {activeSection === 'engagement-profile-section' && <div className="space-y-8">
-              {renderEngagementProfileContent()}
-              <div className="ml-4">
-                {renderSignOffContent()}
-              </div>
-            </div>}
-          {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
-          {activeSection === 'independence-section' && renderIndependenceContent()}
-          {activeSection === 'communications-section' && renderCommunicationsContent()}
-          {activeSection === 'sign-off-1' && renderSignOffContent()}
-          {activeSection === 'sign-off-2' && renderSignOffContent()}
-          {activeSection === 'sign-off-3' && renderSignOffContent()}
-          {activeSection === 'tech-risk-corp' && <div className="space-y-4">
-              {renderSectionHeader('Tech Risk Corp - IT Audit')}
-              {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-            </div>}
-          {activeSection === 'initial-independence' && <div className="space-y-4">
-              {renderSectionHeader('Initial independence and conclusion', '1.')}
-              <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>}
-          {/* END of engagement management custom blocks */}
+        {/* Section 1, Engagement management children keep as before */}
+        {activeSection === 'engagement-profile-section' && <div className="space-y-8">
+            {renderEngagementProfileContent()}
+            <div className="ml-4">
+              {renderSignOffContent()}
+            </div>
+          </div>}
+        {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
+        {activeSection === 'independence-section' && renderIndependenceContent()}
+        {activeSection === 'communications-section' && renderCommunicationsContent()}
+        {activeSection === 'sign-off-1' && renderSignOffContent()}
+        {activeSection === 'sign-off-2' && renderSignOffContent()}
+        {activeSection === 'sign-off-3' && renderSignOffContent()}
+        {activeSection === 'tech-risk-corp' && <div className="space-y-4">
+            {renderSectionHeader('Tech Risk Corp - IT Audit')}
+            {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+          </div>}
+        {activeSection === 'initial-independence' && <div className="space-y-4">
+            {renderSectionHeader('Initial independence and conclusion', '1.')}
+            <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
+          </div>}
+        {/* END of engagement management custom blocks */}
 
-          {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
-          {renderedEntityContent}
-
-        </div>
+        {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
+        {renderedEntityContent}
       </div>
-    </div>;
+    </div>
+  </div>;
 };
 export default ProjectEditContent;
