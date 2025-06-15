@@ -36,6 +36,51 @@ interface ProjectEditContentProps {
   sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
 }
 
+// Helper: Given `sidebarSections`, find subtree for given id
+function findSection(sections: any[], id: string): any | null {
+  for (const section of sections) {
+    if (section.id === id) return section;
+    if (section.children) {
+      const found = findSection(section.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+// Helper: Render cards for given section's children
+function renderSectionCards(section: any, onSectionChange: (id: string) => void) {
+  if (!section?.children?.length) return null;
+  return (
+    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
+      {section.children.map((child: any) => (
+        <div
+          key={child.id}
+          className="w-[260px] flex-shrink-0"
+        >
+          <Card
+            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
+            tabIndex={0}
+            onClick={() => onSectionChange(child.id)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') onSectionChange(child.id);
+            }}
+            aria-label={child.title}
+            role="button"
+          >
+            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
+              <span className="text-xs text-muted-foreground font-semibold mb-1">
+                {child.number ? child.number : ""}
+              </span>
+              <span className="text-gray-900 text-base font-medium">{child.title}</span>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const ProjectEditContent = ({
   project,
   clients,
@@ -198,6 +243,33 @@ const ProjectEditContent = ({
       </div>
     </div>
   );
+
+  // SECTION: Generic dynamic section renderer for nested navigation
+  const currentSection = findSection(sidebarSections, activeSection);
+
+  // If current section has children, render their cards.
+  // If it's a leaf, render a placeholder.
+  const renderDynamicSection = () => {
+    if (!currentSection) return null;
+
+    // If section has children, render cards for children
+    if (currentSection.children && currentSection.children.length > 0) {
+      return (
+        <div className="space-y-8">
+          {renderSectionHeader(currentSection.title, currentSection.number)}
+          {renderSectionCards(currentSection, onSectionChange)}
+        </div>
+      );
+    }
+
+    // Else, leaf: show placeholder
+    return (
+      <div className="space-y-4">
+        {renderSectionHeader(currentSection.title, currentSection.number)}
+        {renderPlaceholderSection(currentSection.title + " coming soon")}
+      </div>
+    );
+  };
 
   // Find the engagement management section and its children
   const engagementMgmtSection = sidebarSections.find(
@@ -400,71 +472,79 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
-          {/* Main parent section - shows all nested content */}
-          {activeSection === 'engagement-management' && renderEngagementManagementContent()}
+          {/* NEW: Dynamic navigation for any nested section in entity wide procedures */}
+          {sidebarSections && currentSection && currentSection.id !== 'engagement-management' ? (
+            renderDynamicSection()
+          ) : (
+            <>
+              {/* Main parent section - shows all nested content */}
+              {activeSection === 'engagement-management' && renderEngagementManagementContent()}
 
-          {/* Engagement Profile parent section - shows its content and children */}
-          {activeSection === 'engagement-profile-section' && (
-            <div className="space-y-8">
-              {renderEngagementProfileContent()}
-              <div className="ml-4">
-                {renderSignOffContent()}
-              </div>
-            </div>
-          )}
+              {/* Engagement Profile parent section - shows its content and children */}
+              {activeSection === 'engagement-profile-section' && (
+                <div className="space-y-8">
+                  {renderEngagementProfileContent()}
+                  <div className="ml-4">
+                    {renderSignOffContent()}
+                  </div>
+                </div>
+              )}
 
-          {/* SP Specialists parent section - shows its content and children */}
-          {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
+              {/* SP Specialists parent section - shows its content and children */}
+              {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
 
-          {/* Independence parent section - shows its content and children */}
-          {activeSection === 'independence-section' && renderIndependenceContent()}
+              {/* Independence parent section - shows its content and children */}
+              {activeSection === 'independence-section' && renderIndependenceContent()}
 
-          {/* Communications parent section - shows its content and children */}
-          {activeSection === 'communications-section' && renderCommunicationsContent()}
+              {/* Communications parent section - shows its content and children */}
+              {activeSection === 'communications-section' && renderCommunicationsContent()}
 
-          {/* Individual leaf sections */}
-          {activeSection === 'sign-off-1' && renderSignOffContent()}
-          {activeSection === 'sign-off-2' && renderSignOffContent()}
-          {activeSection === 'sign-off-3' && renderSignOffContent()}
+              {/* Individual leaf sections */}
+              {activeSection === 'sign-off-1' && renderSignOffContent()}
+              {activeSection === 'sign-off-2' && renderSignOffContent()}
+              {activeSection === 'sign-off-3' && renderSignOffContent()}
 
-          {activeSection === 'tech-risk-corp' && (
-            <div className="space-y-4">
-              {renderSectionHeader('Tech Risk Corp - IT Audit')}
-              {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-            </div>
-          )}
+              {activeSection === 'tech-risk-corp' && (
+                <div className="space-y-4">
+                  {renderSectionHeader('Tech Risk Corp - IT Audit')}
+                  {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+                </div>
+              )}
 
-          {activeSection === 'initial-independence' && (
-            <div className="space-y-4">
-              {renderSectionHeader('Initial independence and conclusion', '1.')}
-              <IndependenceRequirementsSection
-                formData={formData}
-                onFormDataChange={onFormDataChange}
-              />
-            </div>
-          )}
+              {activeSection === 'initial-independence' && (
+                <div className="space-y-4">
+                  {renderSectionHeader('Initial independence and conclusion', '1.')}
+                  <IndependenceRequirementsSection
+                    formData={formData}
+                    onFormDataChange={onFormDataChange}
+                  />
+                </div>
+              )}
 
-          {/* ENTITY WIDE PROCEDURES SECTION & CARDS */}
-          {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
+              {/* ENTITY WIDE PROCEDURES SECTION & CARDS */}
+              {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
 
-          {/* Render Materiality child/leaf cards if selected */}
-          {materialityChildren.map(child =>
-            activeSection === child.id ? (
-              <div key={child.id} className="space-y-4">
-                {renderSectionHeader(child.title, child.number)}
-                {renderPlaceholderSection(child.title + " coming soon")}
-              </div>
-            ) : null
-          )}
+              {/* Render Materiality child/leaf cards if selected */}
+              {materialityChildren.map(child =>
+                activeSection === child.id ? (
+                  <div key={child.id} className="space-y-4">
+                    {renderSectionHeader(child.title, child.number)}
+                    {renderPlaceholderSection(child.title + " coming soon")}
+                  </div>
+                ) : null
+              )}
 
-          {/* Render other entity-wide children (e.g., risk assessment) */}
-          {entityChildren.filter(c => c.id !== 'materiality').map(child =>
-            activeSection === child.id ? (
-              <div key={child.id} className="space-y-4">
-                {renderSectionHeader(child.title, child.number)}
-                {renderPlaceholderSection(child.title + " coming soon")}
-              </div>
-            ) : null
+              {/* Render other entity-wide children (e.g., risk assessment) */}
+              {entityChildren.filter(c => c.id !== 'materiality').map(child =>
+                activeSection === child.id ? (
+                  <div key={child.id} className="space-y-4">
+                    {renderSectionHeader(child.title, child.number)}
+                    {renderPlaceholderSection(child.title + " coming soon")}
+                  </div>
+                ) : null
+              )}
+
+            </>
           )}
 
         </div>

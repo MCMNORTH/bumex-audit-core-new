@@ -100,26 +100,72 @@ const ProjectEdit = () => {
       id: 'entity-wide-procedures',
       title: 'Entity wide procedures',
       isParent: true,
-      active: false,
       number: '2.',
+      active: false,
       children: [
-        { 
-          id: 'materiality', 
-          number: '1.',
-          title: 'Materiality', 
-          active: false,
+        {
+          id: 'materiality',
+          title: 'Materiality',
           isParent: true,
+          number: '1.',
           children: [
-            { id: 'materiality-summary', number: '1', title: 'Summary', active: false },
-            { id: 'materiality-materiality', number: '2', title: 'Materiality', active: false },
-            { id: 'materiality-reevaluate', number: '3', title: 'Re-evaluate', active: false },
+            { id: 'materiality-summary', title: 'Summary', number: '1.', active: false },
+            { id: 'materiality-materiality', title: 'Materiality', number: '2.', active: false },
+            { id: 'materiality-reevaluate', title: 'Re-evaluate', number: '3.', active: false },
           ]
         },
-        { id: 'risk-assessment', number: '2.', title: 'Risk Assessment', active: false },
-        { id: 'components-of-internal-control', number: '3.', title: 'Components of internal control', active: false },
-        { id: 'fraud', number: '4.', title: 'Fraud', active: false },
-        { id: 'overall-response', number: '5.', title: 'Overall Response', active: false },
-        { id: 'plan-revisions', number: '6.', title: 'Plan revisions', active: false },
+        {
+          id: 'risk-assessment',
+          title: 'Risk Assessment',
+          isParent: true,
+          number: '2.',
+          children: [
+            { id: 'risk-entity', title: 'Entity and its environment', number: '1.', active: false },
+            { id: 'risk-analytics', title: 'Planning analytics', number: '2.', active: false },
+            { id: 'risk-business', title: 'Business processes', number: '3.', active: false },
+            { id: 'risk-rapd', title: 'RAPD', number: '4.', active: false },
+          ]
+        },
+        {
+          id: 'components-of-internal-control',
+          title: 'Components of internal control',
+          isParent: true,
+          number: '3.',
+          children: [
+            { id: 'cic-ceramic', title: 'CERAMIC', number: '1.', active: false },
+            { id: 'cic-it', title: 'IT Understanding', number: '2.', active: false },
+            { id: 'cic-gitc', title: 'GITC. Controls', active: false },
+            { id: 'cic-significant-deficiencies', title: 'Significant Control Deficiencies', number: '3.', active: false },
+            { id: 'cic-deficiencies', title: 'DEF. Deficiencies', active: false },
+            { id: 'cic-so', title: 'SO. Service Organization', active: false }
+          ]
+        },
+        {
+          id: 'fraud',
+          title: 'Fraud',
+          isParent: true,
+          number: '4.',
+          children: [
+            { id: 'fraud-risk', title: 'Fraud risk assessment and response', number: '1.', active: false },
+            { id: 'fraud-journal', title: 'Journal entry plan and testwork', number: '2.', active: false },
+          ]
+        },
+        {
+          id: 'overall-response',
+          title: 'Overall Response',
+          isParent: true,
+          number: '5.',
+          children: [
+            { id: 'overall-general', title: 'General', number: '1.', active: false },
+          ]
+        },
+        {
+          id: 'plan-revisions',
+          title: 'Plan revisions',
+          isParent: true,
+          number: '6.',
+          children: []
+        }
       ]
     },
     {
