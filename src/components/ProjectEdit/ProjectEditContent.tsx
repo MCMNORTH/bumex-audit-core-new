@@ -447,12 +447,6 @@ const ProjectEditContent = ({
   );
 
   // OVERRIDE EngagementManagementContent to cards navigation instead of info
-  const renderEngagementManagementContent = () => (
-    <div className="space-y-8">
-      {renderSectionHeader('Engagement Management', '1.')}
-      {renderEngagementManagementCardList()}
-    </div>
-  );
 
   // Entity Wide Procedures parent section - shows its content and children
   {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
@@ -519,7 +513,7 @@ const ProjectEditContent = ({
                 </div>
               )}
 
-              // ... keep existing code for entity-wide procedures etc ...
+              {/* Entity wide procedures etc */}
             </>
           )}
         </div>
