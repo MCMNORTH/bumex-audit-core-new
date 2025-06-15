@@ -47,7 +47,7 @@ const Clients = () => {
   const countries = [
     'United States', 'Canada', 'United Kingdom', 'Germany', 'France', 'Japan',
     'Australia', 'Brazil', 'India', 'China', 'South Korea', 'Netherlands',
-    'Switzerland', 'Singapore', 'Other'
+    'Switzerland', 'Singapore', 'Mauritania', 'Other'
   ];
 
   useEffect(() => {
