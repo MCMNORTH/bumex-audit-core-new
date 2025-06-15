@@ -1,27 +1,28 @@
-
 import { useState, useEffect } from 'react';
+import { useReferenceData } from '@/hooks/useReferenceData';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Log, User } from '@/types';
+import { Log } from '@/types';
 import { Search, Activity, Clock, User as UserIcon } from 'lucide-react';
 
 const Logs = () => {
+  const { users, loading: refLoading } = useReferenceData();
   const [logs, setLogs] = useState<(Log & { user_name?: string })[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    fetchLogs();
-  }, []);
+    if (!refLoading) fetchLogs();
+    // eslint-disable-next-line
+  }, [refLoading]);
 
   const fetchLogs = async () => {
     try {
-      // Fetch logs
+      // Fetch logs only, users come from context
       const logsQuery = query(
         collection(db, 'logs'), 
         orderBy('timestamp', 'desc'),
@@ -29,15 +30,7 @@ const Logs = () => {
       );
       const logsSnapshot = await getDocs(logsQuery);
       
-      // Fetch users
-      const usersQuery = query(collection(db, 'users'));
-      const usersSnapshot = await getDocs(usersQuery);
-      const usersData = usersSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as User[];
-
-      // Combine logs with user names
+      // Combine logs with user names from context
       const logsData = logsSnapshot.docs.map(doc => {
         const logData = {
           id: doc.id,
@@ -45,7 +38,7 @@ const Logs = () => {
           timestamp: doc.data().timestamp?.toDate() || new Date(),
         } as Log;
         
-        const user = usersData.find(u => u.id === logData.user_id);
+        const user = users.find(u => u.id === logData.user_id);
         return {
           ...logData,
           user_name: user ? `${user.first_name} ${user.last_name}` : 'Unknown User'
@@ -53,7 +46,6 @@ const Logs = () => {
       });
 
       setLogs(logsData);
-      setUsers(usersData);
     } catch (error) {
       console.error('Error fetching logs:', error);
     } finally {

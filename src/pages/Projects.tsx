@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useReferenceData } from '@/hooks/useReferenceData';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -13,16 +14,15 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { collection, addDoc, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Project, Client, User } from '@/types';
+import { Project } from '@/types';
 import { Plus, Search, FolderOpen, Calendar, Users, Building } from 'lucide-react';
 
 const Projects = () => {
   const { user } = useAuth();
+  const { clients, users, loading: refLoading } = useReferenceData();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<(Project & { client_name?: string })[]>([]);
-  const [clients, setClients] = useState<Client[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -61,32 +61,16 @@ const Projects = () => {
   const bumexOffices = ['Nouakchott'];
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!refLoading) fetchData();
+  // eslint-disable-next-line
+  }, [refLoading]);
 
   const fetchData = async () => {
     try {
-      // Fetch projects
+      // Fetch projects only, clients/users come from context
       const projectsQuery = query(collection(db, 'projects'), orderBy('created_at', 'desc'));
       const projectsSnapshot = await getDocs(projectsQuery);
-      
-      // Fetch clients
-      const clientsQuery = query(collection(db, 'clients'));
-      const clientsSnapshot = await getDocs(clientsQuery);
-      const clientsData = clientsSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Client[];
-      
-      // Fetch users
-      const usersQuery = query(collection(db, 'users'));
-      const usersSnapshot = await getDocs(usersQuery);
-      const usersData = usersSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as User[];
 
-      // Combine projects with client names
       const projectsData = projectsSnapshot.docs.map(doc => {
         const projectData = {
           id: doc.id,
@@ -95,8 +79,8 @@ const Projects = () => {
           period_start: doc.data().period_start?.toDate() || new Date(),
           period_end: doc.data().period_end?.toDate() || new Date(),
         } as Project;
-        
-        const client = clientsData.find(c => c.id === projectData.client_id);
+
+        const client = clients.find(c => c.id === projectData.client_id);
         return {
           ...projectData,
           client_name: client?.name || 'Unknown Client'
@@ -104,8 +88,6 @@ const Projects = () => {
       });
 
       setProjects(projectsData);
-      setClients(clientsData);
-      setUsers(usersData);
     } catch (error) {
       console.error('Error fetching data:', error);
       toast({

@@ -1,16 +1,17 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useReferenceData } from '@/hooks/useReferenceData';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MainLayout } from '@/components/Layout/MainLayout';
-import { collection, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { Project, Client } from '@/types';
+import { Project } from '@/types';
 import { FolderOpen, Users, Activity, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const { clients, users, loading: refLoading } = useReferenceData();
   const [stats, setStats] = useState({
     totalProjects: 0,
     newProjects: 0,
@@ -24,7 +25,6 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // Fetch projects
         const projectsQuery = query(collection(db, 'projects'));
         const projectsSnapshot = await getDocs(projectsQuery);
         const projects = projectsSnapshot.docs.map(doc => ({
@@ -32,15 +32,7 @@ const Dashboard = () => {
           ...doc.data()
         })) as Project[];
 
-        // Fetch clients
-        const clientsQuery = query(collection(db, 'clients'));
-        const clientsSnapshot = await getDocs(clientsQuery);
-        const clients = clientsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Client[];
-
-        // Calculate stats
+        // Use clients from context, which is prefetched and shared
         const newProjects = projects.filter(p => p.status === 'new').length;
         const inProgressProjects = projects.filter(p => p.status === 'inprogress').length;
         const closedProjects = projects.filter(p => p.status === 'closed').length;
@@ -53,7 +45,6 @@ const Dashboard = () => {
           totalClients: clients.length,
         });
 
-        // Get recent projects with client names
         const recent = projects
           .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           .slice(0, 5)
@@ -73,8 +64,9 @@ const Dashboard = () => {
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    // Wait until clients data ready before fetching stats
+    if (!refLoading) fetchDashboardData();
+  }, [refLoading, clients]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
