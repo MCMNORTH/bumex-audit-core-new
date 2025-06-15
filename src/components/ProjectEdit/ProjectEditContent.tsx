@@ -95,15 +95,7 @@ const ProjectEditContent = ({
       {renderSectionHeader(title)}
       {renderPlaceholderSection('Sign-off')}
     </div>;
-  const renderSPSpecialistsContent = () => <div className="space-y-6">
-      {renderSectionHeader('SP. Specialists')}
-      {renderPlaceholderSection('SP. Specialists Overview')}
-      
-      <div className="ml-4 space-y-4">
-        {renderSectionHeader('Tech Risk Corp - IT Audit')}
-        {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-      </div>
-    </div>;
+  const renderSPSpecialistsContent = () => {};
   const renderIndependenceContent = () => <div className="space-y-6">
       {renderSectionHeader('Independence', '2.')}
       {renderPlaceholderSection('Independence Overview')}
@@ -218,19 +210,16 @@ const ProjectEditContent = ({
 
   // Engagement management cards logic
   const engagementManagementSection = sidebarSections.find(s => s.id === "engagement-management");
-
   return <div className="flex-1 overflow-y-auto">
     <div className="p-8">
       <div className="max-w-4xl mx-auto">
         <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
 
         {/* Main parent section - shows all nested content for 1. Engagement management */}
-        {activeSection === 'engagement-management' && (
-          <div className="space-y-8">
+        {activeSection === 'engagement-management' && <div className="space-y-8">
             {renderOverviewInfo()}
             {renderCardsForSection(engagementManagementSection)}
-          </div>
-        )}
+          </div>}
 
         {/* Section 1, Engagement management children keep as before */}
         {activeSection === 'engagement-profile-section' && <div className="space-y-8">
