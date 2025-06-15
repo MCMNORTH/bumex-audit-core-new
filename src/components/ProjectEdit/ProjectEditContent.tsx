@@ -196,14 +196,47 @@ const ProjectEditContent = ({
         {renderSignOffContent()}
       </div>
       
-      {/* SP Specialists */}
-      {renderSPSpecialistsContent()}
-      
+      {/* SP Specialists Section */}
+      <div className="space-y-6">
+        {renderSectionHeader('SP. Specialists')}
+        {renderPlaceholderSection('SP. Specialists Overview')}
+        
+        <div className="ml-4 space-y-4">
+          {renderSectionHeader('Tech Risk Corp - IT Audit')}
+          {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+        </div>
+      </div>
+
       {/* Independence */}
-      {renderIndependenceContent()}
-      
+      <div className="space-y-6">
+        {renderSectionHeader('Independence', '2.')}
+        {renderPlaceholderSection('Independence Overview')}
+
+        <div className="ml-4 space-y-6">
+          {renderSectionHeader('Initial independence and conclusion', '1.')}
+          <IndependenceRequirementsSection
+            formData={formData}
+            onFormDataChange={onFormDataChange}
+          />
+
+          <div className="mt-6">
+            {renderSignOffContent()}
+          </div>
+        </div>
+      </div>
+
       {/* Communications */}
-      {renderCommunicationsContent()}
+      <div className="space-y-6">
+        {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
+        <TCWGCommunicationsSection
+          formData={formData}
+          onFormDataChange={onFormDataChange}
+        />
+
+        <div className="ml-4 space-y-4">
+          {renderSignOffContent()}
+        </div>
+      </div>
     </div>
   );
 
@@ -482,15 +515,52 @@ const ProjectEditContent = ({
           ) : (
             <>
               {/* Main parent section now shows only its children as cards */}
-              {activeSection === 'engagement-management' && renderEngagementManagementContent()}
+              {activeSection === 'engagement-management' && renderEngagementManagementCardList()}
 
               {/* Override: Engagement Profile & Strategy (now gets all previous main content) */}
               {activeSection === 'engagement-profile-section' && renderEngagementProfileContent()}
 
               {/* SP Specialists, Independence, Communications, etc: still use existing cards/logic */}
-              {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
-              {activeSection === 'independence-section' && renderIndependenceContent()}
-              {activeSection === 'communications-section' && renderCommunicationsContent()}
+              {activeSection === 'sp-specialists-section' && (
+                <div className="space-y-6">
+                  {renderSectionHeader('SP. Specialists')}
+                  {renderPlaceholderSection('SP. Specialists Overview')}
+                  <div className="ml-4 space-y-4">
+                    {renderSectionHeader('Tech Risk Corp - IT Audit')}
+                    {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === 'independence-section' && (
+                <div className="space-y-6">
+                  {renderSectionHeader('Independence', '2.')}
+                  {renderPlaceholderSection('Independence Overview')}
+                  <div className="ml-4 space-y-6">
+                    {renderSectionHeader('Initial independence and conclusion', '1.')}
+                    <IndependenceRequirementsSection
+                      formData={formData}
+                      onFormDataChange={onFormDataChange}
+                    />
+                    <div className="mt-6">
+                      {renderSignOffContent()}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeSection === 'communications-section' && (
+                <div className="space-y-6">
+                  {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
+                  <TCWGCommunicationsSection
+                    formData={formData}
+                    onFormDataChange={onFormDataChange}
+                  />
+                  <div className="ml-4 space-y-4">
+                    {renderSignOffContent()}
+                  </div>
+                </div>
+              )}
 
               {activeSection === 'sign-off-1' && renderSignOffContent()}
               {activeSection === 'sign-off-2' && renderSignOffContent()}
