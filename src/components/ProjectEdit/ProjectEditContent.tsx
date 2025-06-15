@@ -6,7 +6,6 @@ import EngagementProfileSection from './EngagementProfileSection';
 import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 import { Separator } from '@/components/ui/separator';
 import TCWGCommunicationsSection from './TCWGCommunicationsSection';
-
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -35,7 +34,6 @@ interface ProjectEditContentProps {
   onSectionChange?: (sectionId: string) => void; // NEW, optional, fallback gracefully
   sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
 }
-
 const ProjectEditContent = ({
   project,
   clients,
@@ -62,100 +60,39 @@ const ProjectEditContent = ({
   onRemoveMRRFile,
   onDownloadMRRFile,
   onSectionChange = () => {},
-  sidebarSections = [],
+  sidebarSections = []
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
-
   const handleAssignmentChange = (userId: string, checked: boolean) => {
     const currentAssignments = formData.assigned_to || [];
-    const updatedAssignments = checked 
-      ? [...currentAssignments, userId]
-      : currentAssignments.filter(id => id !== userId);
-    
-    onFormDataChange({ assigned_to: updatedAssignments });
+    const updatedAssignments = checked ? [...currentAssignments, userId] : currentAssignments.filter(id => id !== userId);
+    onFormDataChange({
+      assigned_to: updatedAssignments
+    });
   };
 
   // NEW: Renders summary info for the Engagement Management overview
-  const renderOverviewInfo = () => (
-    <div className="flex flex-col gap-2 items-start text-sm">
-      <div>
-        <span className="text-muted-foreground font-medium">Client: </span>
-        <span>{selectedClient?.name || '—'}</span>
-      </div>
-      <div>
-        <span className="text-muted-foreground font-medium">Status: </span>
-        <span className="capitalize">{project?.status || '—'}</span>
-      </div>
-      <div>
-        <span className="text-muted-foreground font-medium">Engagement Name: </span>
-        <span>{project?.engagement_name || '—'}</span>
-      </div>
-      <div>
-        <span className="text-muted-foreground font-medium">Engagement ID: </span>
-        <span>{project?.engagement_id || '—'}</span>
-      </div>
-      <div>
-        <span className="text-muted-foreground font-medium">Project ID: </span>
-        <span>{project?.project_id || project?.id || '—'}</span>
-      </div>
-      <div>
-        <span className="text-muted-foreground font-medium">Audit Type: </span>
-        <span>{project?.audit_type || formData.audit_type || '—'}</span>
-      </div>
-    </div>
-  );
-
-  const renderPlaceholderSection = (title: string) => (
-    <Card>
+  const renderOverviewInfo = () => {};
+  const renderPlaceholderSection = (title: string) => <Card>
       <CardContent className="p-8 text-center">
         <p className="text-gray-500">{title} section coming soon</p>
       </CardContent>
-    </Card>
-  );
-
-  const renderSectionHeader = (title: string, number?: string) => (
-    <div className="mb-6">
+    </Card>;
+  const renderSectionHeader = (title: string, number?: string) => <div className="mb-6">
       <h3 className="text-lg font-semibold text-gray-900">
         {number && `${number} `}{title}
       </h3>
       <Separator className="mt-2" />
-    </div>
-  );
-
-  const renderEngagementProfileContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderEngagementProfileContent = () => <div className="space-y-6">
       {renderSectionHeader('Engagement Profile & Strategy', '1.')}
-      <EngagementProfileSection
-        formData={formData}
-        clients={clients}
-        users={users}
-        uploadedFile={uploadedFile}
-        uploadStatus={uploadStatus}
-        onFormDataChange={onFormDataChange}
-        onAssignmentChange={handleAssignmentChange}
-        onFileUpload={onFileUpload}
-        onRemoveFile={onRemoveFile}
-        onDownloadFile={onDownloadFile}
-        projectId={projectId}
-        mrrUploadedFile={mrrUploadedFile}
-        mrrUploadStatus={mrrUploadStatus}
-        mrrFileInputRef={mrrFileInputRef}
-        onMRRFileUpload={onMRRFileUpload}
-        onRemoveMRRFile={onRemoveMRRFile}
-        onDownloadMRRFile={onDownloadMRRFile}
-      />
-    </div>
-  );
-
-  const renderSignOffContent = (title: string = 'Sign-off') => (
-    <div className="space-y-4">
+      <EngagementProfileSection formData={formData} clients={clients} users={users} uploadedFile={uploadedFile} uploadStatus={uploadStatus} onFormDataChange={onFormDataChange} onAssignmentChange={handleAssignmentChange} onFileUpload={onFileUpload} onRemoveFile={onRemoveFile} onDownloadFile={onDownloadFile} projectId={projectId} mrrUploadedFile={mrrUploadedFile} mrrUploadStatus={mrrUploadStatus} mrrFileInputRef={mrrFileInputRef} onMRRFileUpload={onMRRFileUpload} onRemoveMRRFile={onRemoveMRRFile} onDownloadMRRFile={onDownloadMRRFile} />
+    </div>;
+  const renderSignOffContent = (title: string = 'Sign-off') => <div className="space-y-4">
       {renderSectionHeader(title)}
       {renderPlaceholderSection('Sign-off')}
-    </div>
-  );
-
-  const renderSPSpecialistsContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderSPSpecialistsContent = () => <div className="space-y-6">
       {renderSectionHeader('SP. Specialists')}
       {renderPlaceholderSection('SP. Specialists Overview')}
       
@@ -163,41 +100,28 @@ const ProjectEditContent = ({
         {renderSectionHeader('Tech Risk Corp - IT Audit')}
         {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
       </div>
-    </div>
-  );
-
-  const renderIndependenceContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderIndependenceContent = () => <div className="space-y-6">
       {renderSectionHeader('Independence', '2.')}
       {renderPlaceholderSection('Independence Overview')}
       
       <div className="ml-4 space-y-6">
         {renderSectionHeader('Initial independence and conclusion', '1.')}
-        <IndependenceRequirementsSection
-          formData={formData}
-          onFormDataChange={onFormDataChange}
-        />
+        <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
         
         <div className="mt-6">
           {renderSignOffContent()}
         </div>
       </div>
-    </div>
-  );
-
-  const renderCommunicationsContent = () => (
-    <div className="space-y-6">
+    </div>;
+  const renderCommunicationsContent = () => <div className="space-y-6">
       {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
-      <TCWGCommunicationsSection
-        formData={formData}
-        onFormDataChange={onFormDataChange}
-      />
+      <TCWGCommunicationsSection formData={formData} onFormDataChange={onFormDataChange} />
       
       <div className="ml-4 space-y-4">
         {renderSignOffContent()}
       </div>
-    </div>
-  );
+    </div>;
 
   // Utility function: find a section by id recursively
   function findSectionById(sections, id) {
@@ -217,25 +141,13 @@ const ProjectEditContent = ({
   const entityChildren = entitySection?.children || [];
 
   // Utility to render a card list for any node with children
-  const renderCardsForSection = (section) => {
+  const renderCardsForSection = section => {
     if (!section?.children?.length) return null;
-    return (
-      <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-        {section.children.map(child => (
-          <div
-            key={child.id}
-            className="w-[260px] flex-shrink-0"
-          >
-            <Card
-              className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
-              tabIndex={0}
-              onClick={() => onSectionChange(child.id)}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') onSectionChange(child.id);
-              }}
-              aria-label={child.title}
-              role="button"
-            >
+    return <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
+        {section.children.map(child => <div key={child.id} className="w-[260px] flex-shrink-0">
+            <Card className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full" tabIndex={0} onClick={() => onSectionChange(child.id)} onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') onSectionChange(child.id);
+        }} aria-label={child.title} role="button">
               <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
                 <span className="text-xs text-muted-foreground font-semibold mb-1">
                   {child.number ? `${child.number}` : ""}
@@ -243,23 +155,18 @@ const ProjectEditContent = ({
                 <span className="text-gray-900 text-base font-medium">{child.title}</span>
               </CardContent>
             </Card>
-          </div>
-        ))}
-      </div>
-    );
+          </div>)}
+      </div>;
   };
 
   // Renders the content for "Entity wide procedures" and its tree
-  const renderEntityWideProceduresContent = (section) => {
+  const renderEntityWideProceduresContent = section => {
     // If not provided, show root entity section
     if (!section) section = entitySection;
-
-    return (
-      <div className="space-y-8">
+    return <div className="space-y-8">
         {renderSectionHeader(section.title, section.number)}
         {renderCardsForSection(section)}
-      </div>
-    );
+      </div>;
   };
 
   // If the active section is in the entity tree, show either cards or placeholder:
@@ -298,69 +205,45 @@ const ProjectEditContent = ({
         renderedEntityContent = renderEntityWideProceduresContent(targetSection);
       } else {
         // Render placeholder for leaves
-        renderedEntityContent = (
-          <div className="space-y-8">
+        renderedEntityContent = <div className="space-y-8">
             {renderSectionHeader(targetSection.title, targetSection.number)}
             {renderPlaceholderSection(targetSection.title + " coming soon")}
-          </div>
-        );
+          </div>;
       }
     }
   }
-
-  return (
-    <div className="flex-1 overflow-y-auto">
+  return <div className="flex-1 overflow-y-auto">
       <div className="p-8">
         <div className="max-w-4xl mx-auto">
-          <ProjectHeader
-            projectName={project?.engagement_name || ''}
-            engagementId={project?.engagement_id || ''}
-            activeSection={activeSection}
-            clientName={selectedClient?.name}
-            auditType={formData.audit_type}
-            onBack={onBack}
-            onSave={onSave}
-            saving={saving}
-          />
+          <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
 
           {/* Main parent section - shows all nested content for 1. Engagement management */}
-          {activeSection === 'engagement-management' && (
-            <div className="space-y-8">
+          {activeSection === 'engagement-management' && <div className="space-y-8">
               {renderOverviewInfo()}
               {/* Optionally, you could add sub-section links/cards or further details here as needed */}
-            </div>
-          )}
+            </div>}
 
           {/* Section 1, Engagement management children keep as before */}
-          {activeSection === 'engagement-profile-section' && (
-            <div className="space-y-8">
+          {activeSection === 'engagement-profile-section' && <div className="space-y-8">
               {renderEngagementProfileContent()}
               <div className="ml-4">
                 {renderSignOffContent()}
               </div>
-            </div>
-          )}
+            </div>}
           {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
           {activeSection === 'independence-section' && renderIndependenceContent()}
           {activeSection === 'communications-section' && renderCommunicationsContent()}
           {activeSection === 'sign-off-1' && renderSignOffContent()}
           {activeSection === 'sign-off-2' && renderSignOffContent()}
           {activeSection === 'sign-off-3' && renderSignOffContent()}
-          {activeSection === 'tech-risk-corp' && (
-            <div className="space-y-4">
+          {activeSection === 'tech-risk-corp' && <div className="space-y-4">
               {renderSectionHeader('Tech Risk Corp - IT Audit')}
               {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-            </div>
-          )}
-          {activeSection === 'initial-independence' && (
-            <div className="space-y-4">
+            </div>}
+          {activeSection === 'initial-independence' && <div className="space-y-4">
               {renderSectionHeader('Initial independence and conclusion', '1.')}
-              <IndependenceRequirementsSection
-                formData={formData}
-                onFormDataChange={onFormDataChange}
-              />
-            </div>
-          )}
+              <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>}
           {/* END of engagement management custom blocks */}
 
           {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
@@ -368,8 +251,6 @@ const ProjectEditContent = ({
 
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProjectEditContent;
