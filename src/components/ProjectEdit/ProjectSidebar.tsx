@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
@@ -116,6 +115,19 @@ const ProjectSidebar = ({
             <p className="text-sm text-gray-500 mt-1">{clientName}</p>
           )}
         </div>
+        {/* Team Button */}
+        <Button
+          variant="secondary"
+          size="sm"
+          className="mt-4 w-full"
+          // Placeholder onClick, can be wired to open a team dialog or navigation.
+          onClick={() => {
+            // TODO: Implement team dialog or navigation.
+            console.log("Team button clicked");
+          }}
+        >
+          Team
+        </Button>
       </div>
       
       <nav className="flex-1 p-4 overflow-y-auto">
