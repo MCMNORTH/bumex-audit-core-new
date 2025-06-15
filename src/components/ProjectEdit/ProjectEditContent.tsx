@@ -211,6 +211,66 @@ const ProjectEditContent = ({
   );
   const entityChildren = entityWideSection?.children || [];
 
+  // Fix: Append a dot after each number for entity-wide procedures cards
+  const renderEntityWideProceduresCardList = () => (
+    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
+      {entityChildren.map(card => (
+        <div
+          key={card.id}
+          className="w-[260px] flex-shrink-0"
+        >
+          <Card
+            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
+            tabIndex={0}
+            onClick={() => onSectionChange(card.id)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
+            }}
+            aria-label={card.title}
+            role="button"
+          >
+            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
+              <span className="text-xs text-muted-foreground font-semibold mb-1">
+                {card.number ? `${card.number}.` : ""}
+              </span>
+              <span className="text-gray-900 text-base font-medium">{card.title}</span>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Dynamic cards for entity wide procedures
+  const renderEntityWideProceduresCardListOld = () => (
+    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
+      {entityChildren.map(card => (
+        <div
+          key={card.id}
+          className="w-[260px] flex-shrink-0"
+        >
+          <Card
+            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
+            tabIndex={0}
+            onClick={() => onSectionChange(card.id)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
+            }}
+            aria-label={card.title}
+            role="button"
+          >
+            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
+              <span className="text-xs text-muted-foreground font-semibold mb-1">
+                {card.number ? card.number : ""}
+              </span>
+              <span className="text-gray-900 text-base font-medium">{card.title}</span>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+    </div>
+  );
+
   // Dynamic cards based on sidebar section children (for engagement management)
   const renderEngagementManagementCardList = () => (
     <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
@@ -241,33 +301,12 @@ const ProjectEditContent = ({
     </div>
   );
 
-  // Dynamic cards for entity wide procedures
-  const renderEntityWideProceduresCardList = () => (
-    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-      {entityChildren.map(card => (
-        <div
-          key={card.id}
-          className="w-[260px] flex-shrink-0"
-        >
-          <Card
-            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
-            tabIndex={0}
-            onClick={() => onSectionChange(card.id)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
-            }}
-            aria-label={card.title}
-            role="button"
-          >
-            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
-              <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number ? card.number : ""}
-              </span>
-              <span className="text-gray-900 text-base font-medium">{card.title}</span>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
+  // NEW: Render cards overview for Entity wide procedures
+  const renderEntityWideProceduresContent = () => (
+    <div className="space-y-8">
+      {renderSectionHeader('Entity wide procedures', '2.')}
+      {renderEntityWideProceduresCardList()}
+      {/* Optional: add child section renders if needed */}
     </div>
   );
 
@@ -292,15 +331,6 @@ const ProjectEditContent = ({
     </div>
   );
 
-  // NEW: Render cards overview for Entity wide procedures
-  const renderEntityWideProceduresContent = () => (
-    <div className="space-y-8">
-      {renderSectionHeader('Entity wide procedures', '2.')}
-      {renderEntityWideProceduresCardList()}
-      {/* Optional: add child section renders if needed */}
-    </div>
-  );
-
   // Entity Wide Procedures parent section - shows its content and children
   {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
 
@@ -308,7 +338,7 @@ const ProjectEditContent = ({
   {entityChildren.map(child =>
     activeSection === child.id ? (
       <div key={child.id} className="space-y-4">
-        {renderSectionHeader(child.title, child.number)}
+        {renderSectionHeader(child.title, child.number ? `${child.number}.` : undefined)}
         {renderPlaceholderSection(child.title + " coming soon")}
       </div>
     ) : null
@@ -380,7 +410,7 @@ const ProjectEditContent = ({
           {entityChildren.map(child =>
             activeSection === child.id ? (
               <div key={child.id} className="space-y-4">
-                {renderSectionHeader(child.title, child.number)}
+                {renderSectionHeader(child.title, child.number ? `${child.number}.` : undefined)}
                 {renderPlaceholderSection(child.title + " coming soon")}
               </div>
             ) : null
