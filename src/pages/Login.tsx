@@ -63,10 +63,11 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
-            <span className="text-3xl font-bold text-gray-900">BUMEX</span>
+            <img 
+              src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" 
+              alt="BUMEX Logo" 
+              className="w-16 h-16 object-contain" 
+            />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Audit Management System</h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
