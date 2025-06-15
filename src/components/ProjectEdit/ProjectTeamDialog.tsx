@@ -81,11 +81,11 @@ export const ProjectTeamDialog: React.FC<ProjectTeamDialogProps> = ({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={onSave} loading={saving}>
-            Save
+          <Button onClick={onSave} disabled={saving}>
+            {saving ? "Saving..." : "Save"}
           </Button>
           <DialogClose asChild>
-            <Button variant="ghost" type="button">
+            <Button variant="ghost" type="button" disabled={saving}>
               Close
             </Button>
           </DialogClose>
