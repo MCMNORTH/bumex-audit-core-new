@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -66,7 +65,7 @@ const Login = () => {
             <img 
               src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" 
               alt="BUMEX Logo" 
-              className="w-16 h-16 object-contain" 
+              className="w-32 h-32 object-contain" 
             />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Audit Management System</h2>
