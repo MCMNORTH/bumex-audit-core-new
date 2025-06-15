@@ -103,12 +103,12 @@ const ProjectEdit = () => {
       active: false,
       number: '2.',
       children: [
-        { id: 'materiality', number: '1', title: 'Materiality', active: false },
-        { id: 'risk-assessment', number: '2', title: 'Risk Assessment', active: false },
-        { id: 'components-of-internal-control', number: '3', title: 'Components of internal control', active: false },
-        { id: 'fraud', number: '4', title: 'Fraud', active: false },
-        { id: 'overall-response', number: '5', title: 'Overall Response', active: false },
-        { id: 'plan-revisions', number: '6', title: 'Plan revisions', active: false },
+        { id: 'materiality', number: '1.', title: 'Materiality', active: false },
+        { id: 'risk-assessment', number: '2.', title: 'Risk Assessment', active: false },
+        { id: 'components-of-internal-control', number: '3.', title: 'Components of internal control', active: false },
+        { id: 'fraud', number: '4.', title: 'Fraud', active: false },
+        { id: 'overall-response', number: '5.', title: 'Overall Response', active: false },
+        { id: 'plan-revisions', number: '6.', title: 'Plan revisions', active: false },
       ]
     },
     {
