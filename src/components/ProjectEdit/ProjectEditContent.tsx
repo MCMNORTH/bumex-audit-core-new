@@ -199,191 +199,114 @@ const ProjectEditContent = ({
     </div>
   );
 
-  // Find the engagement management section and its children
-  const engagementMgmtSection = sidebarSections.find(
-    s => s.id === 'engagement-management'
-  );
-  const engagementChildren = engagementMgmtSection?.children || [];
+  // Utility function: find a section by id recursively
+  function findSectionById(sections, id) {
+    for (const section of sections) {
+      if (section.id === id) return section;
+      if (section.children) {
+        const child = findSectionById(section.children, id);
+        if (child) return child;
+      }
+    }
+    return null;
+  }
 
-  // Find the entity wide procedures section and its children
-  const entityWideSection = sidebarSections.find(
-    s => s.id === 'entity-wide-procedures'
-  );
-  const entityChildren = entityWideSection?.children || [];
+  // -- Begin new dynamic rendering logic for Entity wide procedures:
+  // Get the main entity-wide section and children
+  const entitySection = sidebarSections.find(s => s.id === 'entity-wide-procedures');
+  const entityChildren = entitySection?.children || [];
 
-  // Find the Materiality subchildren if any
-  const materialitySection = entityChildren.find(c => c.id === 'materiality');
-  const materialityChildren = materialitySection?.children || [];
-
-  // Main Card Rendering for Entity wide procedures
-  const renderEntityWideProceduresCardList = () => (
-    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-      {entityChildren.map(card => (
-        <div
-          key={card.id}
-          className="w-[260px] flex-shrink-0"
-        >
-          <Card
-            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
-            tabIndex={0}
-            onClick={() => onSectionChange(card.id)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
-            }}
-            aria-label={card.title}
-            role="button"
+  // Utility to render a card list for any node with children
+  const renderCardsForSection = (section) => {
+    if (!section?.children?.length) return null;
+    return (
+      <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
+        {section.children.map(child => (
+          <div
+            key={child.id}
+            className="w-[260px] flex-shrink-0"
           >
-            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
-              <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number ? `${card.number}` : ""}
-              </span>
-              <span className="text-gray-900 text-base font-medium">{card.title}</span>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
-    </div>
-  );
-
-  // Sub-card rendering for Materiality children
-  const renderMaterialityChildrenCards = () => (
-    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-      {materialityChildren.map(card => (
-        <div
-          key={card.id}
-          className="w-[260px] flex-shrink-0"
-        >
-          <Card
-            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
-            tabIndex={0}
-            onClick={() => onSectionChange(card.id)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
-            }}
-            aria-label={card.title}
-            role="button"
-          >
-            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
-              <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number}
-              </span>
-              <span className="text-gray-900 text-base font-medium">{card.title}</span>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
-    </div>
-  );
-
-  const renderEntityWideProceduresCardListOld = () => (
-    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-      {entityChildren.map(card => (
-        <div
-          key={card.id}
-          className="w-[260px] flex-shrink-0"
-        >
-          <Card
-            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
-            tabIndex={0}
-            onClick={() => onSectionChange(card.id)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
-            }}
-            aria-label={card.title}
-            role="button"
-          >
-            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
-              <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number ? card.number : ""}
-              </span>
-              <span className="text-gray-900 text-base font-medium">{card.title}</span>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
-    </div>
-  );
-
-  // Dynamic cards based on sidebar section children (for engagement management)
-  const renderEngagementManagementCardList = () => (
-    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-      {engagementChildren.map(card => (
-        <div
-          key={card.id}
-          className="w-[260px] flex-shrink-0"
-        >
-          <Card
-            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
-            tabIndex={0}
-            onClick={() => onSectionChange(card.id)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
-            }}
-            aria-label={card.title}
-            role="button"
-          >
-            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
-              <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number ? card.number : ""}
-              </span>
-              <span className="text-gray-900 text-base font-medium">{card.title}</span>
-            </CardContent>
-          </Card>
-        </div>
-      ))}
-    </div>
-  );
-
-  // NEW: Render cards overview for Entity wide procedures
-  const renderEntityWideProceduresContent = () => (
-    <div className="space-y-8">
-      {renderSectionHeader('Entity wide procedures', '2.')}
-      {renderEntityWideProceduresCardList()}
-      {/* For main materiality section, render its children cards */}
-      {activeSection === 'materiality' && (
-        <div>
-          <div className="mt-8" />
-          {renderSectionHeader('Materiality', '1.')}
-          {renderMaterialityChildrenCards()}
-        </div>
-      )}
-      {/* Optionally, add child section renders if needed */}
-    </div>
-  );
-
-  // OVERRIDE EngagementManagementContent to cards navigation instead of info
-  const renderEngagementManagementContent = () => (
-    <div className="space-y-8">
-      {renderSectionHeader('Engagement Management', '1.')}
-      {renderEngagementManagementCardList()}
-
-      <div className="ml-4 space-y-8">
-        {renderEngagementProfileContent()}
-        <div className="ml-4">
-          {renderSignOffContent()}
-        </div>
-        
-        {renderSPSpecialistsContent()}
-        
-        {renderIndependenceContent()}
-        
-        {renderCommunicationsContent()}
+            <Card
+              className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
+              tabIndex={0}
+              onClick={() => onSectionChange(child.id)}
+              onKeyDown={e => {
+                if (e.key === 'Enter' || e.key === ' ') onSectionChange(child.id);
+              }}
+              aria-label={child.title}
+              role="button"
+            >
+              <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
+                <span className="text-xs text-muted-foreground font-semibold mb-1">
+                  {child.number ? `${child.number}` : ""}
+                </span>
+                <span className="text-gray-900 text-base font-medium">{child.title}</span>
+              </CardContent>
+            </Card>
+          </div>
+        ))}
       </div>
-    </div>
-  );
+    );
+  };
 
-  // Entity Wide Procedures parent section - shows its content and children
-  {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
+  // Renders the content for "Entity wide procedures" and its tree
+  const renderEntityWideProceduresContent = (section) => {
+    // If not provided, show root entity section
+    if (!section) section = entitySection;
 
-  // Entity Wide Procedures child sections
-  {entityChildren.map(child =>
-    activeSection === child.id ? (
-      <div key={child.id} className="space-y-4">
-        {renderSectionHeader(child.title, child.number ? `${child.number}.` : undefined)}
-        {renderPlaceholderSection(child.title + " coming soon")}
+    return (
+      <div className="space-y-8">
+        {renderSectionHeader(section.title, section.number)}
+        {renderCardsForSection(section)}
       </div>
-    ) : null
-  )}
+    );
+  };
+
+  // If the active section is in the entity tree, show either cards or placeholder:
+  function getEntityActiveSectionChain(activeId) {
+    // Returns an array of ancestor objects up to the active section
+    const chain = [];
+    function helper(sections) {
+      for (const node of sections) {
+        if (node.id === activeId) {
+          chain.push(node);
+          return true;
+        }
+        if (node.children && helper(node.children)) {
+          chain.unshift(node);
+          return true;
+        }
+      }
+      return false;
+    }
+    helper(entityChildren);
+    return chain;
+  }
+
+  // Decide renderEntityContent for active section if under entity wide procedures:
+  let renderedEntityContent = null;
+  if (activeSection === 'entity-wide-procedures') {
+    renderedEntityContent = renderEntityWideProceduresContent(entitySection);
+  } else {
+    // Is the active section inside the entity-wide tree?
+    const activeSectionChain = getEntityActiveSectionChain(activeSection);
+    if (activeSectionChain.length > 0) {
+      // Find the current node
+      const targetSection = activeSectionChain[activeSectionChain.length - 1];
+      if (targetSection.children && targetSection.children.length > 0) {
+        // Render cards for children
+        renderedEntityContent = renderEntityWideProceduresContent(targetSection);
+      } else {
+        // Render placeholder for leaves
+        renderedEntityContent = (
+          <div className="space-y-8">
+            {renderSectionHeader(targetSection.title, targetSection.number)}
+            {renderPlaceholderSection(targetSection.title + " coming soon")}
+          </div>
+        );
+      }
+    }
+  }
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -400,10 +323,10 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
-          {/* Main parent section - shows all nested content */}
+          {/* Main parent section - shows all nested content for 1. Engagement management */}
           {activeSection === 'engagement-management' && renderEngagementManagementContent()}
 
-          {/* Engagement Profile parent section - shows its content and children */}
+          {/* Section 1, Engagement management children keep as before */}
           {activeSection === 'engagement-profile-section' && (
             <div className="space-y-8">
               {renderEngagementProfileContent()}
@@ -412,28 +335,18 @@ const ProjectEditContent = ({
               </div>
             </div>
           )}
-
-          {/* SP Specialists parent section - shows its content and children */}
           {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
-
-          {/* Independence parent section - shows its content and children */}
           {activeSection === 'independence-section' && renderIndependenceContent()}
-
-          {/* Communications parent section - shows its content and children */}
           {activeSection === 'communications-section' && renderCommunicationsContent()}
-
-          {/* Individual leaf sections */}
           {activeSection === 'sign-off-1' && renderSignOffContent()}
           {activeSection === 'sign-off-2' && renderSignOffContent()}
           {activeSection === 'sign-off-3' && renderSignOffContent()}
-
           {activeSection === 'tech-risk-corp' && (
             <div className="space-y-4">
               {renderSectionHeader('Tech Risk Corp - IT Audit')}
               {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
             </div>
           )}
-
           {activeSection === 'initial-independence' && (
             <div className="space-y-4">
               {renderSectionHeader('Initial independence and conclusion', '1.')}
@@ -443,29 +356,10 @@ const ProjectEditContent = ({
               />
             </div>
           )}
+          {/* END of engagement management custom blocks */}
 
-          {/* ENTITY WIDE PROCEDURES SECTION & CARDS */}
-          {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
-
-          {/* Render Materiality child/leaf cards if selected */}
-          {materialityChildren.map(child =>
-            activeSection === child.id ? (
-              <div key={child.id} className="space-y-4">
-                {renderSectionHeader(child.title, child.number)}
-                {renderPlaceholderSection(child.title + " coming soon")}
-              </div>
-            ) : null
-          )}
-
-          {/* Render other entity-wide children (e.g., risk assessment) */}
-          {entityChildren.filter(c => c.id !== 'materiality').map(child =>
-            activeSection === child.id ? (
-              <div key={child.id} className="space-y-4">
-                {renderSectionHeader(child.title, child.number)}
-                {renderPlaceholderSection(child.title + " coming soon")}
-              </div>
-            ) : null
-          )}
+          {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
+          {renderedEntityContent}
 
         </div>
       </div>
