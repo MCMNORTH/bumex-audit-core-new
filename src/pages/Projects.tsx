@@ -10,14 +10,11 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { useToast } from '@/hooks/use-toast';
 import { collection, addDoc, getDocs, query, orderBy, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project, Client, User } from '@/types';
-import { Plus, Search, FolderOpen, Calendar, Users, Building, Check, ChevronsUpDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Plus, Search, FolderOpen, Calendar, Users, Building } from 'lucide-react';
 
 const Projects = () => {
   const { user } = useAuth();
@@ -31,7 +28,6 @@ const Projects = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
-  const [clientComboboxOpen, setClientComboboxOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     client_id: '',
@@ -239,8 +235,6 @@ const Projects = () => {
   const canCreateProject = user?.role === 'dev' || user?.role === 'partner';
   const canEditProject = user?.role === 'dev' || user?.role === 'partner' || user?.role === 'manager';
 
-  const selectedClient = clients.find(client => client.id === formData.client_id);
-
   if (loading) {
     return (
       <MainLayout>
@@ -288,47 +282,21 @@ const Projects = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="client_id">Client</Label>
-                      <Popover open={clientComboboxOpen} onOpenChange={setClientComboboxOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            aria-expanded={clientComboboxOpen}
-                            className="w-full justify-between"
-                          >
-                            {selectedClient ? selectedClient.name : "Select client..."}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[--radix-popover-trigger-width] max-h-[200px] p-0">
-                          <Command>
-                            <CommandInput placeholder="Search clients..." />
-                            <CommandList>
-                              <CommandEmpty>No client found.</CommandEmpty>
-                              <CommandGroup>
-                                {clients.map((client) => (
-                                  <CommandItem
-                                    key={client.id}
-                                    value={client.name}
-                                    onSelect={() => {
-                                      setFormData({ ...formData, client_id: client.id });
-                                      setClientComboboxOpen(false);
-                                    }}
-                                  >
-                                    <Check
-                                      className={cn(
-                                        "mr-2 h-4 w-4",
-                                        formData.client_id === client.id ? "opacity-100" : "opacity-0"
-                                      )}
-                                    />
-                                    {client.name}
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
+                      <Select
+                        value={formData.client_id}
+                        onValueChange={(value) => setFormData({ ...formData, client_id: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select client" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {clients.map((client) => (
+                            <SelectItem key={client.id} value={client.id}>
+                              {client.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                     <div>
                       <Label htmlFor="status">Status</Label>
