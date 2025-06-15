@@ -97,31 +97,14 @@ const ProjectEditContent = ({
     </div>;
   const renderSPSpecialistsContent = () => {
     // Find the SP. Specialists section under Engagement Management
-    const spSection = engagementManagementSection?.children?.find(
-      c => c.id === "sp-specialists-section"
-    );
+    const spSection = engagementManagementSection?.children?.find(c => c.id === "sp-specialists-section");
     if (!spSection) return null;
-
-    return (
-      <div className="space-y-8">
+    return <div className="space-y-8">
         {renderSectionHeader(spSection.title)}
         {renderCardsForSection(spSection)}
-      </div>
-    );
+      </div>;
   };
-  const renderIndependenceContent = () => <div className="space-y-6">
-      {renderSectionHeader('Independence', '2.')}
-      {renderPlaceholderSection('Independence Overview')}
-      
-      <div className="ml-4 space-y-6">
-        {renderSectionHeader('Initial independence and conclusion', '1.')}
-        <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
-        
-        <div className="mt-6">
-          {renderSignOffContent()}
-        </div>
-      </div>
-    </div>;
+  const renderIndependenceContent = () => {};
   const renderCommunicationsContent = () => <div className="space-y-6">
       {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
       <TCWGCommunicationsSection formData={formData} onFormDataChange={onFormDataChange} />
