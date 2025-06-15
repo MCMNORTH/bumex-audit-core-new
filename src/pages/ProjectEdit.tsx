@@ -96,7 +96,28 @@ const ProjectEdit = () => {
           ]
         }
       ]
-    }
+    },
+    {
+      id: 'entity-wide-procedures',
+      title: 'Entity wide procedures',
+      isParent: true,
+      active: false,
+      number: '2.',
+    },
+    {
+      id: 'business-processes',
+      title: 'Business processes',
+      isParent: true,
+      active: false,
+      number: '3.',
+    },
+    {
+      id: 'conclusions-and-reporting',
+      title: 'Conclusions and reporting',
+      isParent: true,
+      active: false,
+      number: '4.',
+    },
   ];
 
   // Team management state (local, to control dialog changes before Save)
