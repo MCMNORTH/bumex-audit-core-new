@@ -95,7 +95,20 @@ const ProjectEditContent = ({
       {renderSectionHeader(title)}
       {renderPlaceholderSection('Sign-off')}
     </div>;
-  const renderSPSpecialistsContent = () => {};
+  const renderSPSpecialistsContent = () => {
+    // Find the SP. Specialists section under Engagement Management
+    const spSection = engagementManagementSection?.children?.find(
+      c => c.id === "sp-specialists-section"
+    );
+    if (!spSection) return null;
+
+    return (
+      <div className="space-y-8">
+        {renderSectionHeader(spSection.title)}
+        {renderCardsForSection(spSection)}
+      </div>
+    );
+  };
   const renderIndependenceContent = () => <div className="space-y-6">
       {renderSectionHeader('Independence', '2.')}
       {renderPlaceholderSection('Independence Overview')}
