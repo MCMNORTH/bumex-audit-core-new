@@ -297,7 +297,6 @@ const ProjectEditContent = ({
     <div className="space-y-8">
       {renderSectionHeader('Entity wide procedures', '2.')}
       {renderEntityWideProceduresCardList()}
-
       {/* Optional: add child section renders if needed */}
     </div>
   );
@@ -373,6 +372,20 @@ const ProjectEditContent = ({
               />
             </div>
           )}
+
+          {/* ENTITY WIDE PROCEDURES SECTION & CARDS */}
+          {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
+
+          {/* Render child/leaf entity-wide cards if selected */}
+          {entityChildren.map(child =>
+            activeSection === child.id ? (
+              <div key={child.id} className="space-y-4">
+                {renderSectionHeader(child.title, child.number)}
+                {renderPlaceholderSection(child.title + " coming soon")}
+              </div>
+            ) : null
+          )}
+
         </div>
       </div>
     </div>
