@@ -221,11 +221,11 @@ const ProjectEditContent = ({
 
   // New: Engagement Management Card navigation for overview
   const renderEngagementManagementCardList = () => (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
       {engagementCards.map((card) => (
-        <div key={card.sectionId}>
+        <div key={card.sectionId} className="flex-[1_1_220px] min-w-[220px] max-w-xs">
           <Card
-            className="cursor-pointer border border-gray-300 shadow-none transition-colors hover:bg-muted active:bg-accent focus:ring-2 focus:ring-primary outline-none"
+            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none"
             tabIndex={0}
             onClick={() => onSectionChange(card.sectionId)}
             onKeyDown={e => {
@@ -234,10 +234,12 @@ const ProjectEditContent = ({
             aria-label={card.title}
             role="button"
           >
-            <CardContent className="p-6 pt-6 min-h-[80px] flex items-center">
-              <span className="text-gray-700 text-base">{card.title}</span>
+            <CardContent className="flex flex-col p-8 items-start min-h-[100px]">
+              <span className="text-xs text-muted-foreground font-semibold mb-1">
+                {card.number ? card.number : ""}
+              </span>
+              <span className="text-gray-900 text-base font-medium">{card.title}</span>
             </CardContent>
-            <div className="border-t border-gray-300" />
           </Card>
         </div>
       ))}
