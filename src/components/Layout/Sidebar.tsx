@@ -52,9 +52,9 @@ export const Sidebar = () => {
 
       <div className={cn("fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out lg:translate-x-0", isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0")}>
         <div className="flex flex-col h-full">
-          <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
+          <div className="flex items-center justify-start h-16 px-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-20 h-20 object-contain" />
+              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-32 h-32 object-contain" />
               
             </div>
           </div>
