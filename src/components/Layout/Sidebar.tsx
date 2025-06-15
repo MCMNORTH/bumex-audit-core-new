@@ -71,7 +71,12 @@ export const Sidebar = () => {
           </nav>
 
           <div className="p-4 border-t border-gray-200">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col space-y-3">
+              <div className="flex justify-end">
+                <Button variant="ghost" size="icon" onClick={handleLogout} className="h-8 w-8">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                   <span className="text-xs font-medium text-gray-700">
@@ -87,9 +92,6 @@ export const Sidebar = () => {
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={handleLogout} className="h-8 w-8">
-                <LogOut className="h-4 w-4" />
-              </Button>
             </div>
           </div>
         </div>
