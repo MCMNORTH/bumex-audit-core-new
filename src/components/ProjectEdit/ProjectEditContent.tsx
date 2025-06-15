@@ -71,6 +71,36 @@ const ProjectEditContent = ({
     onFormDataChange({ assigned_to: updatedAssignments });
   };
 
+  // NEW: Renders summary info for the Engagement Management overview
+  const renderOverviewInfo = () => (
+    <div className="flex flex-col gap-2 items-start text-sm">
+      <div>
+        <span className="text-muted-foreground font-medium">Client: </span>
+        <span>{selectedClient?.name || '—'}</span>
+      </div>
+      <div>
+        <span className="text-muted-foreground font-medium">Status: </span>
+        <span className="capitalize">{project?.status || '—'}</span>
+      </div>
+      <div>
+        <span className="text-muted-foreground font-medium">Engagement Name: </span>
+        <span>{project?.engagement_name || '—'}</span>
+      </div>
+      <div>
+        <span className="text-muted-foreground font-medium">Engagement ID: </span>
+        <span>{project?.engagement_id || '—'}</span>
+      </div>
+      <div>
+        <span className="text-muted-foreground font-medium">Project ID: </span>
+        <span>{project?.project_id || project?.id || '—'}</span>
+      </div>
+      <div>
+        <span className="text-muted-foreground font-medium">Audit Type: </span>
+        <span>{project?.audit_type || formData.audit_type || '—'}</span>
+      </div>
+    </div>
+  );
+
   const renderPlaceholderSection = (title: string) => (
     <Card>
       <CardContent className="p-8 text-center">
@@ -165,10 +195,16 @@ const ProjectEditContent = ({
     </div>
   );
 
+  // OVERRIDE EngagementManagementContent to include info
   const renderEngagementManagementContent = () => (
     <div className="space-y-8">
       {renderSectionHeader('Engagement Management', '1.')}
-      {renderPlaceholderSection('Engagement Management Overview')}
+      <Card>
+        <CardContent className="p-8">
+          <h4 className="text-base font-semibold mb-4">Overview</h4>
+          {renderOverviewInfo()}
+        </CardContent>
+      </Card>
       
       <div className="ml-4 space-y-8">
         {renderEngagementProfileContent()}
