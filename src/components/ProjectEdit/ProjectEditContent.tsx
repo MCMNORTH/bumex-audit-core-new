@@ -211,7 +211,11 @@ const ProjectEditContent = ({
   );
   const entityChildren = entityWideSection?.children || [];
 
-  // Fix: Render number as-is for entity-wide procedures cards (do not append extra dot)
+  // Find the Materiality subchildren if any
+  const materialitySection = entityChildren.find(c => c.id === 'materiality');
+  const materialityChildren = materialitySection?.children || [];
+
+  // Main Card Rendering for Entity wide procedures
   const renderEntityWideProceduresCardList = () => (
     <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
       {entityChildren.map(card => (
@@ -231,7 +235,7 @@ const ProjectEditContent = ({
           >
             <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
               <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number ? card.number : ""}
+                {card.number ? `${card.number}` : ""}
               </span>
               <span className="text-gray-900 text-base font-medium">{card.title}</span>
             </CardContent>
@@ -241,7 +245,36 @@ const ProjectEditContent = ({
     </div>
   );
 
-  // Dynamic cards for entity wide procedures
+  // Sub-card rendering for Materiality children
+  const renderMaterialityChildrenCards = () => (
+    <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
+      {materialityChildren.map(card => (
+        <div
+          key={card.id}
+          className="w-[260px] flex-shrink-0"
+        >
+          <Card
+            className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
+            tabIndex={0}
+            onClick={() => onSectionChange(card.id)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
+            }}
+            aria-label={card.title}
+            role="button"
+          >
+            <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
+              <span className="text-xs text-muted-foreground font-semibold mb-1">
+                {card.number}
+              </span>
+              <span className="text-gray-900 text-base font-medium">{card.title}</span>
+            </CardContent>
+          </Card>
+        </div>
+      ))}
+    </div>
+  );
+
   const renderEntityWideProceduresCardListOld = () => (
     <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
       {entityChildren.map(card => (
@@ -306,7 +339,15 @@ const ProjectEditContent = ({
     <div className="space-y-8">
       {renderSectionHeader('Entity wide procedures', '2.')}
       {renderEntityWideProceduresCardList()}
-      {/* Optional: add child section renders if needed */}
+      {/* For main materiality section, render its children cards */}
+      {activeSection === 'materiality' && (
+        <div>
+          <div className="mt-8" />
+          {renderSectionHeader('Materiality', '1.')}
+          {renderMaterialityChildrenCards()}
+        </div>
+      )}
+      {/* Optionally, add child section renders if needed */}
     </div>
   );
 
@@ -406,11 +447,21 @@ const ProjectEditContent = ({
           {/* ENTITY WIDE PROCEDURES SECTION & CARDS */}
           {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
 
-          {/* Render child/leaf entity-wide cards if selected */}
-          {entityChildren.map(child =>
+          {/* Render Materiality child/leaf cards if selected */}
+          {materialityChildren.map(child =>
             activeSection === child.id ? (
               <div key={child.id} className="space-y-4">
-                {renderSectionHeader(child.title, child.number ? `${child.number}.` : undefined)}
+                {renderSectionHeader(child.title, child.number)}
+                {renderPlaceholderSection(child.title + " coming soon")}
+              </div>
+            ) : null
+          )}
+
+          {/* Render other entity-wide children (e.g., risk assessment) */}
+          {entityChildren.filter(c => c.id !== 'materiality').map(child =>
+            activeSection === child.id ? (
+              <div key={child.id} className="space-y-4">
+                {renderSectionHeader(child.title, child.number)}
                 {renderPlaceholderSection(child.title + " coming soon")}
               </div>
             ) : null

@@ -103,7 +103,18 @@ const ProjectEdit = () => {
       active: false,
       number: '2.',
       children: [
-        { id: 'materiality', number: '1.', title: 'Materiality', active: false },
+        { 
+          id: 'materiality', 
+          number: '1.',
+          title: 'Materiality', 
+          active: false,
+          isParent: true,
+          children: [
+            { id: 'materiality-summary', number: '1', title: 'Summary', active: false },
+            { id: 'materiality-materiality', number: '2', title: 'Materiality', active: false },
+            { id: 'materiality-reevaluate', number: '3', title: 'Re-evaluate', active: false },
+          ]
+        },
         { id: 'risk-assessment', number: '2.', title: 'Risk Assessment', active: false },
         { id: 'components-of-internal-control', number: '3.', title: 'Components of internal control', active: false },
         { id: 'fraud', number: '4.', title: 'Fraud', active: false },
