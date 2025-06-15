@@ -104,7 +104,6 @@ const ProjectEditContent = ({
         {renderCardsForSection(spSection)}
       </div>;
   };
-  const renderIndependenceContent = () => {};
   const renderCommunicationsContent = () => <div className="space-y-6">
       {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
       <TCWGCommunicationsSection formData={formData} onFormDataChange={onFormDataChange} />
@@ -210,7 +209,6 @@ const ProjectEditContent = ({
   // Independence cards logic
   const independenceSection = sidebarSections.find(s => s.id === "independence-section");
 
-  // Replace the stub with cards for children
   const renderIndependenceContent = () => {
     if (!independenceSection) return null;
     return (
