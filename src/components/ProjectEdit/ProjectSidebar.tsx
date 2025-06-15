@@ -44,7 +44,8 @@ const ProjectSidebar = ({
   onSaveTeam = () => {},
   teamSaving = false
 }: ProjectSidebarProps) => {
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['engagement-management', 'engagement-profile-section']));
+  // Initialize expandedSections as empty so all sections are collapsed by default
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const [showTeamDialog, setShowTeamDialog] = useState(false);
 
   const toggleSection = (sectionId: string) => {
