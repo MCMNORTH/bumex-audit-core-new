@@ -32,6 +32,7 @@ interface ProjectEditContentProps {
   onMRRFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveMRRFile: () => void;
   onDownloadMRRFile: () => void;
+  onSectionChange?: (sectionId: string) => void; // NEW, optional, fallback gracefully
 }
 
 const ProjectEditContent = ({
@@ -58,7 +59,8 @@ const ProjectEditContent = ({
   mrrFileInputRef,
   onMRRFileUpload,
   onRemoveMRRFile,
-  onDownloadMRRFile
+  onDownloadMRRFile,
+  onSectionChange = () => {}
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
 
@@ -195,17 +197,59 @@ const ProjectEditContent = ({
     </div>
   );
 
-  // OVERRIDE EngagementManagementContent to include info
+  // New: Card config for engagement overview navigation
+  const engagementCards = [
+    {
+      sectionId: 'engagement-profile-section',
+      title: 'Engagement Profile & Strategy',
+    },
+    {
+      sectionId: 'sp-specialists-section',
+      title: 'SP. Specialists',
+    },
+    {
+      sectionId: 'independence-section',
+      title: 'Independence',
+      number: '2.',
+    },
+    {
+      sectionId: 'communications-section',
+      title: 'Communications, Inquiries and Minutes',
+      number: '4.'
+    }
+  ];
+
+  // New: Engagement Management Card navigation for overview
+  const renderEngagementManagementCardList = () => (
+    <div className="flex flex-col gap-4">
+      {engagementCards.map((card) => (
+        <div key={card.sectionId}>
+          <Card
+            className="cursor-pointer border border-gray-300 shadow-none transition-colors hover:bg-muted active:bg-accent focus:ring-2 focus:ring-primary outline-none"
+            tabIndex={0}
+            onClick={() => onSectionChange(card.sectionId)}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.sectionId);
+            }}
+            aria-label={card.title}
+            role="button"
+          >
+            <CardContent className="p-6 pt-6 min-h-[80px] flex items-center">
+              <span className="text-gray-700 text-base">{card.title}</span>
+            </CardContent>
+            <div className="border-t border-gray-300" />
+          </Card>
+        </div>
+      ))}
+    </div>
+  );
+
+  // OVERRIDE EngagementManagementContent to cards navigation instead of info
   const renderEngagementManagementContent = () => (
     <div className="space-y-8">
       {renderSectionHeader('Engagement Management', '1.')}
-      <Card>
-        <CardContent className="p-8">
-          <h4 className="text-base font-semibold mb-4">Overview</h4>
-          {renderOverviewInfo()}
-        </CardContent>
-      </Card>
-      
+      {renderEngagementManagementCardList()}
+
       <div className="ml-4 space-y-8">
         {renderEngagementProfileContent()}
         <div className="ml-4">
