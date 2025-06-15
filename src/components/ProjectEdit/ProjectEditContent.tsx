@@ -167,7 +167,6 @@ const ProjectEditContent = ({
     </div>
   );
 
-  // -- Engagement Profile & Strategy + children now get the whole main content:
   const renderEngagementProfileContent = () => (
     <div className="space-y-6">
       {renderSectionHeader('Engagement Profile & Strategy', '1.')}
@@ -190,61 +189,6 @@ const ProjectEditContent = ({
         onRemoveMRRFile={onRemoveMRRFile}
         onDownloadMRRFile={onDownloadMRRFile}
       />
-
-      {/* Sign-off sub-content */}
-      <div className="ml-4">
-        {renderSignOffContent()}
-      </div>
-      
-      {/* SP Specialists Section */}
-      <div className="space-y-6">
-        {renderSectionHeader('SP. Specialists')}
-        {renderPlaceholderSection('SP. Specialists Overview')}
-        
-        <div className="ml-4 space-y-4">
-          {renderSectionHeader('Tech Risk Corp - IT Audit')}
-          {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-        </div>
-      </div>
-
-      {/* Independence */}
-      <div className="space-y-6">
-        {renderSectionHeader('Independence', '2.')}
-        {renderPlaceholderSection('Independence Overview')}
-
-        <div className="ml-4 space-y-6">
-          {renderSectionHeader('Initial independence and conclusion', '1.')}
-          <IndependenceRequirementsSection
-            formData={formData}
-            onFormDataChange={onFormDataChange}
-          />
-
-          <div className="mt-6">
-            {renderSignOffContent()}
-          </div>
-        </div>
-      </div>
-
-      {/* Communications */}
-      <div className="space-y-6">
-        {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
-        <TCWGCommunicationsSection
-          formData={formData}
-          onFormDataChange={onFormDataChange}
-        />
-
-        <div className="ml-4 space-y-4">
-          {renderSignOffContent()}
-        </div>
-      </div>
-    </div>
-  );
-
-  // Engagement Management OVERVIEW now shows ONLY cards for its children.
-  const renderEngagementManagementContent = () => (
-    <div className="space-y-8">
-      {renderSectionHeader('Engagement Management', '1.')}
-      {renderEngagementManagementCardList()}
     </div>
   );
 
@@ -480,6 +424,25 @@ const ProjectEditContent = ({
   );
 
   // OVERRIDE EngagementManagementContent to cards navigation instead of info
+  const renderEngagementManagementContent = () => (
+    <div className="space-y-8">
+      {renderSectionHeader('Engagement Management', '1.')}
+      {renderEngagementManagementCardList()}
+
+      <div className="ml-4 space-y-8">
+        {renderEngagementProfileContent()}
+        <div className="ml-4">
+          {renderSignOffContent()}
+        </div>
+        
+        {renderSPSpecialistsContent()}
+        
+        {renderIndependenceContent()}
+        
+        {renderCommunicationsContent()}
+      </div>
+    </div>
+  );
 
   // Entity Wide Procedures parent section - shows its content and children
   {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
@@ -509,59 +472,34 @@ const ProjectEditContent = ({
             saving={saving}
           />
 
-          {/* If sidebarSections and currentSection exist, render dynamic section, ELSE... */}
+          {/* NEW: Dynamic navigation for any nested section in entity wide procedures */}
           {sidebarSections && currentSection && currentSection.id !== 'engagement-management' ? (
             renderDynamicSection()
           ) : (
             <>
-              {/* Main parent section now shows only its children as cards */}
-              {activeSection === 'engagement-management' && renderEngagementManagementCardList()}
+              {/* Main parent section - shows all nested content */}
+              {activeSection === 'engagement-management' && renderEngagementManagementContent()}
 
-              {/* Override: Engagement Profile & Strategy (now gets all previous main content) */}
-              {activeSection === 'engagement-profile-section' && renderEngagementProfileContent()}
-
-              {/* SP Specialists, Independence, Communications, etc: still use existing cards/logic */}
-              {activeSection === 'sp-specialists-section' && (
-                <div className="space-y-6">
-                  {renderSectionHeader('SP. Specialists')}
-                  {renderPlaceholderSection('SP. Specialists Overview')}
-                  <div className="ml-4 space-y-4">
-                    {renderSectionHeader('Tech Risk Corp - IT Audit')}
-                    {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === 'independence-section' && (
-                <div className="space-y-6">
-                  {renderSectionHeader('Independence', '2.')}
-                  {renderPlaceholderSection('Independence Overview')}
-                  <div className="ml-4 space-y-6">
-                    {renderSectionHeader('Initial independence and conclusion', '1.')}
-                    <IndependenceRequirementsSection
-                      formData={formData}
-                      onFormDataChange={onFormDataChange}
-                    />
-                    <div className="mt-6">
-                      {renderSignOffContent()}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeSection === 'communications-section' && (
-                <div className="space-y-6">
-                  {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
-                  <TCWGCommunicationsSection
-                    formData={formData}
-                    onFormDataChange={onFormDataChange}
-                  />
-                  <div className="ml-4 space-y-4">
+              {/* Engagement Profile parent section - shows its content and children */}
+              {activeSection === 'engagement-profile-section' && (
+                <div className="space-y-8">
+                  {renderEngagementProfileContent()}
+                  <div className="ml-4">
                     {renderSignOffContent()}
                   </div>
                 </div>
               )}
 
+              {/* SP Specialists parent section - shows its content and children */}
+              {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
+
+              {/* Independence parent section - shows its content and children */}
+              {activeSection === 'independence-section' && renderIndependenceContent()}
+
+              {/* Communications parent section - shows its content and children */}
+              {activeSection === 'communications-section' && renderCommunicationsContent()}
+
+              {/* Individual leaf sections */}
               {activeSection === 'sign-off-1' && renderSignOffContent()}
               {activeSection === 'sign-off-2' && renderSignOffContent()}
               {activeSection === 'sign-off-3' && renderSignOffContent()}
@@ -583,9 +521,32 @@ const ProjectEditContent = ({
                 </div>
               )}
 
-              {/* Entity wide procedures etc */}
+              {/* ENTITY WIDE PROCEDURES SECTION & CARDS */}
+              {activeSection === 'entity-wide-procedures' && renderEntityWideProceduresContent()}
+
+              {/* Render Materiality child/leaf cards if selected */}
+              {materialityChildren.map(child =>
+                activeSection === child.id ? (
+                  <div key={child.id} className="space-y-4">
+                    {renderSectionHeader(child.title, child.number)}
+                    {renderPlaceholderSection(child.title + " coming soon")}
+                  </div>
+                ) : null
+              )}
+
+              {/* Render other entity-wide children (e.g., risk assessment) */}
+              {entityChildren.filter(c => c.id !== 'materiality').map(child =>
+                activeSection === child.id ? (
+                  <div key={child.id} className="space-y-4">
+                    {renderSectionHeader(child.title, child.number)}
+                    {renderPlaceholderSection(child.title + " coming soon")}
+                  </div>
+                ) : null
+              )}
+
             </>
           )}
+
         </div>
       </div>
     </div>

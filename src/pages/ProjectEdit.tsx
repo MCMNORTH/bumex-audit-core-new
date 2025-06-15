@@ -53,14 +53,13 @@ const ProjectEdit = () => {
       active: true,
       isParent: true,
       number: '1.',
-      // Only these are shown as cards in the "Engagement management" section
       children: [
         { 
           id: 'engagement-profile-section', 
           title: 'Engagement profile & Strategy', 
           active: true, 
           number: '1.',
-          isParent: false,
+          isParent: true,
           children: [
             { id: 'sign-off-1', title: 'Sign-off', active: false },
           ]
@@ -69,7 +68,7 @@ const ProjectEdit = () => {
           id: 'sp-specialists-section', 
           title: 'SP. Specialists', 
           active: false,
-          isParent: false,
+          isParent: true,
           children: [
             { id: 'tech-risk-corp', title: 'Tech Risk Corp - IT Audit', active: false },
           ]
@@ -78,7 +77,7 @@ const ProjectEdit = () => {
           id: 'independence-section',
           title: 'Independence',
           active: false,
-          isParent: false,
+          isParent: true,
           number: '2.',
           children: [
             { id: 'initial-independence', title: 'Initial independence and conclusion', active: false, number: '1.' },
@@ -89,7 +88,7 @@ const ProjectEdit = () => {
           id: 'communications-section',
           title: 'Communications, inquiries and minutes',
           active: false,
-          isParent: false,
+          isParent: true,
           number: '4.',
           children: [
             { id: 'sign-off-3', title: 'Sign-off', active: false },
@@ -109,7 +108,6 @@ const ProjectEdit = () => {
           title: 'Materiality',
           isParent: true,
           number: '1.',
-          active: false,
           children: [
             { id: 'materiality-summary', title: 'Summary', number: '1.', active: false },
             { id: 'materiality-materiality', title: 'Materiality', number: '2.', active: false },
@@ -121,7 +119,6 @@ const ProjectEdit = () => {
           title: 'Risk Assessment',
           isParent: true,
           number: '2.',
-          active: false,
           children: [
             { id: 'risk-entity', title: 'Entity and its environment', number: '1.', active: false },
             { id: 'risk-analytics', title: 'Planning analytics', number: '2.', active: false },
@@ -134,7 +131,6 @@ const ProjectEdit = () => {
           title: 'Components of internal control',
           isParent: true,
           number: '3.',
-          active: false,
           children: [
             { id: 'cic-ceramic', title: 'CERAMIC', number: '1.', active: false },
             { id: 'cic-it', title: 'IT Understanding', number: '2.', active: false },
@@ -149,7 +145,6 @@ const ProjectEdit = () => {
           title: 'Fraud',
           isParent: true,
           number: '4.',
-          active: false,
           children: [
             { id: 'fraud-risk', title: 'Fraud risk assessment and response', number: '1.', active: false },
             { id: 'fraud-journal', title: 'Journal entry plan and testwork', number: '2.', active: false },
@@ -160,7 +155,6 @@ const ProjectEdit = () => {
           title: 'Overall Response',
           isParent: true,
           number: '5.',
-          active: false,
           children: [
             { id: 'overall-general', title: 'General', number: '1.', active: false },
           ]
@@ -170,7 +164,6 @@ const ProjectEdit = () => {
           title: 'Plan revisions',
           isParent: true,
           number: '6.',
-          active: false,
           children: []
         }
       ]
@@ -181,7 +174,6 @@ const ProjectEdit = () => {
       isParent: true,
       active: false,
       number: '3.',
-      children: []
     },
     {
       id: 'conclusions-and-reporting',
@@ -189,7 +181,6 @@ const ProjectEdit = () => {
       isParent: true,
       active: false,
       number: '4.',
-      children: []
     },
   ];
 
