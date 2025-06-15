@@ -211,7 +211,7 @@ const ProjectEditContent = ({
   );
   const entityChildren = entityWideSection?.children || [];
 
-  // Fix: Append a dot after each number for entity-wide procedures cards
+  // Fix: Render number as-is for entity-wide procedures cards (do not append extra dot)
   const renderEntityWideProceduresCardList = () => (
     <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
       {entityChildren.map(card => (
@@ -231,7 +231,7 @@ const ProjectEditContent = ({
           >
             <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
               <span className="text-xs text-muted-foreground font-semibold mb-1">
-                {card.number ? `${card.number}.` : ""}
+                {card.number ? card.number : ""}
               </span>
               <span className="text-gray-900 text-base font-medium">{card.title}</span>
             </CardContent>
