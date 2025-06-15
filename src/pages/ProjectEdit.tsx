@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
@@ -98,6 +99,12 @@ const ProjectEdit = () => {
     }
   ];
 
+  // Team management state (local, to control dialog changes before Save)
+  const [pendingLeadId, setPendingLeadId] = useState(formData.assigned_to[0] || '');
+  const [pendingAssigned, setPendingAssigned] = useState([...formData.assigned_to]);
+  const [teamDialogOpen, setTeamDialogOpen] = useState(false);
+  const [teamSaving, setTeamSaving] = useState(false);
+
   useEffect(() => {
     if (formData.engagement_structure_file) {
       initializeExistingFile(formData.engagement_structure_file);
@@ -106,6 +113,13 @@ const ProjectEdit = () => {
       initializeMRRFile(formData.mrr_file);
     }
   }, [formData.engagement_structure_file, formData.mrr_file]);
+
+  useEffect(() => {
+    if (teamDialogOpen) {
+      setPendingAssigned([...formData.assigned_to]);
+      setPendingLeadId(formData.assigned_to[0] || '');
+    }
+  }, [teamDialogOpen, formData.assigned_to]);
 
   const handleRemoveFileWrapper = () => {
     handleRemoveFile(formData.engagement_structure_file);
@@ -124,24 +138,6 @@ const ProjectEdit = () => {
   };
 
   const selectedClient = clients.find(c => c.id === formData.client_id);
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
-  // Team management state (local, to control dialog changes before Save)
-  const [pendingLeadId, setPendingLeadId] = useState(formData.assigned_to[0] || '');
-  const [pendingAssigned, setPendingAssigned] = useState([...formData.assigned_to]);
-  const [teamDialogOpen, setTeamDialogOpen] = useState(false);
-  const [teamSaving, setTeamSaving] = useState(false);
-
-  // When dialog is opened, sync local state with current project values
-  useEffect(() => {
-    if (teamDialogOpen) {
-      setPendingAssigned([...formData.assigned_to]);
-      setPendingLeadId(formData.assigned_to[0] || '');
-    }
-  }, [teamDialogOpen, formData.assigned_to]);
 
   // Save assignments: project lead is always first member of assigned_to
   const handleSaveTeam = async () => {
@@ -169,6 +165,10 @@ const ProjectEdit = () => {
     // Make sure lead is included in assigned
     setPendingAssigned(prev => (prev.includes(userId) ? prev : [userId, ...prev]));
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -220,3 +220,4 @@ const ProjectEdit = () => {
 };
 
 export default ProjectEdit;
+
