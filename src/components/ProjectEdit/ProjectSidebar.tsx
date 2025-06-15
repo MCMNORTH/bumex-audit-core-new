@@ -1,6 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { ProjectTeamDialog } from './ProjectTeamDialog';
+import { User } from '@/types';
 
 interface SidebarSection {
   id: string;
@@ -18,6 +20,13 @@ interface ProjectSidebarProps {
   activeSection: string;
   onBack: () => void;
   onSectionChange: (sectionId: string) => void;
+  users?: User[];
+  leadId?: string;
+  assignedIds?: string[];
+  onChangeLead?: (id: string) => void;
+  onToggleMember?: (id: string) => void;
+  onSaveTeam?: () => void;
+  teamSaving?: boolean;
 }
 
 const ProjectSidebar = ({
@@ -26,9 +35,17 @@ const ProjectSidebar = ({
   sections,
   activeSection,
   onBack,
-  onSectionChange
+  onSectionChange,
+  users = [],
+  leadId,
+  assignedIds = [],
+  onChangeLead = () => {},
+  onToggleMember = () => {},
+  onSaveTeam = () => {},
+  teamSaving = false
 }: ProjectSidebarProps) => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['engagement-management', 'engagement-profile-section']));
+  const [showTeamDialog, setShowTeamDialog] = useState(false);
 
   const toggleSection = (sectionId: string) => {
     const newExpanded = new Set(expandedSections);
@@ -120,16 +137,22 @@ const ProjectSidebar = ({
           variant="secondary"
           size="sm"
           className="mt-4 w-full"
-          // Placeholder onClick, can be wired to open a team dialog or navigation.
-          onClick={() => {
-            // TODO: Implement team dialog or navigation.
-            console.log("Team button clicked");
-          }}
+          onClick={() => setShowTeamDialog(true)}
         >
           Team
         </Button>
       </div>
-      
+      <ProjectTeamDialog
+        open={showTeamDialog}
+        onOpenChange={setShowTeamDialog}
+        users={users}
+        leadId={leadId}
+        assignedIds={assignedIds}
+        onChangeLead={onChangeLead}
+        onToggleMember={onToggleMember}
+        onSave={onSaveTeam}
+        saving={teamSaving}
+      />
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
           {sections.map(section => renderSection(section))}
