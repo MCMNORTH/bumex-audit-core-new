@@ -206,6 +206,21 @@ const ProjectEditContent = ({
 
   // Engagement management cards logic
   const engagementManagementSection = sidebarSections.find(s => s.id === "engagement-management");
+
+  // Independence cards logic
+  const independenceSection = sidebarSections.find(s => s.id === "independence-section");
+
+  // Replace the stub with cards for children
+  const renderIndependenceContent = () => {
+    if (!independenceSection) return null;
+    return (
+      <div className="space-y-8">
+        {renderSectionHeader(independenceSection.title, independenceSection.number)}
+        {renderCardsForSection(independenceSection)}
+      </div>
+    );
+  };
+
   return <div className="flex-1 overflow-y-auto">
     <div className="p-8">
       <div className="max-w-4xl mx-auto">
