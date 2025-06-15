@@ -71,8 +71,11 @@ const ProjectEditContent = ({
     });
   };
 
-  // NEW: Renders summary info for the Engagement Management overview
-  const renderOverviewInfo = () => {};
+  // Renders summary info for the Engagement Management overview
+  const renderOverviewInfo = () => {
+    // Return null, an empty ReactNode, or placeholder JSX as needed
+    return null;
+  };
   const renderPlaceholderSection = (title: string) => <Card>
       <CardContent className="p-8 text-center">
         <p className="text-gray-500">{title} section coming soon</p>
