@@ -61,7 +61,6 @@ const ProjectEdit = () => {
           number: '1.',
           isParent: true,
           children: [
-            { id: 'sign-off-1', title: 'Sign-off', active: false },
           ]
         },
         { 
@@ -81,7 +80,6 @@ const ProjectEdit = () => {
           number: '2.',
           children: [
             { id: 'initial-independence', title: 'Initial independence and conclusion', active: false, number: '1.' },
-            { id: 'sign-off-2', title: 'Sign-off', active: false },
           ]
         },
         {
@@ -91,7 +89,6 @@ const ProjectEdit = () => {
           isParent: true,
           number: '4.',
           children: [
-            { id: 'sign-off-3', title: 'Sign-off', active: false },
           ]
         }
       ]
