@@ -33,6 +33,7 @@ interface ProjectEditContentProps {
   onRemoveMRRFile: () => void;
   onDownloadMRRFile: () => void;
   onSectionChange?: (sectionId: string) => void; // NEW, optional, fallback gracefully
+  sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
 }
 
 const ProjectEditContent = ({
@@ -60,7 +61,8 @@ const ProjectEditContent = ({
   onMRRFileUpload,
   onRemoveMRRFile,
   onDownloadMRRFile,
-  onSectionChange = () => {}
+  onSectionChange = () => {},
+  sidebarSections = [],
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
 
@@ -220,20 +222,26 @@ const ProjectEditContent = ({
     }
   ];
 
-  // Horizontal, equal-size, clickable overview cards
+  // Find the engagement management section and its children
+  const engagementMgmtSection = sidebarSections.find(
+    s => s.id === 'engagement-management'
+  );
+  const engagementChildren = engagementMgmtSection?.children || [];
+
+  // Dynamic cards based on sidebar section children
   const renderEngagementManagementCardList = () => (
     <div className="flex flex-row flex-wrap gap-6 mt-2 mb-4">
-      {engagementCards.map((card) => (
+      {engagementChildren.map(card => (
         <div
-          key={card.sectionId}
+          key={card.id}
           className="w-[260px] flex-shrink-0"
         >
           <Card
             className="cursor-pointer border border-gray-200 shadow-md rounded-xl transition-all hover:bg-accent focus:ring-2 focus:ring-primary outline-none h-full"
             tabIndex={0}
-            onClick={() => onSectionChange(card.sectionId)}
+            onClick={() => onSectionChange(card.id)}
             onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.sectionId);
+              if (e.key === 'Enter' || e.key === ' ') onSectionChange(card.id);
             }}
             aria-label={card.title}
             role="button"

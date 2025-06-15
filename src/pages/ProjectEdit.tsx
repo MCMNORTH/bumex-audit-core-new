@@ -235,6 +235,9 @@ const ProjectEdit = () => {
         onMRRFileUpload={handleMRRFileUpload}
         onRemoveMRRFile={handleRemoveMRRFileWrapper}
         onDownloadMRRFile={handleDownloadMRRFileWrapper}
+        // Pass sidebarSections for dynamic cards
+        sidebarSections={sidebarSections}
+        onSectionChange={setActiveSection}
       />
     </div>
   );
