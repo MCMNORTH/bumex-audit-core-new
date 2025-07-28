@@ -865,6 +865,113 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
               </tr>
             </tbody>
           </table>
+
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="document-aggregation-risk"
+                checked={(formData as any).document_aggregation_risk_considerations || false}
+                onCheckedChange={(checked) => onFormDataChange({ document_aggregation_risk_considerations: !!checked })}
+              />
+              <Label htmlFor="document-aggregation-risk" className="text-sm">
+                Document any further considerations in assessing aggregation risk.
+              </Label>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-gray-900">
+                Assess the level of aggregation risk
+              </p>
+              
+              <div className="flex flex-wrap gap-2">
+                {['Low', 'Normal', 'Increased', 'High', 'Other Circumstances'].map((option) => (
+                  <Button
+                    key={option}
+                    variant={(formData as any).aggregation_risk_level === option ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onFormDataChange({ aggregation_risk_level: option })}
+                    className="h-8"
+                  >
+                    {option}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div></div>
+                <div className="text-center">
+                  <Label className="text-sm font-medium">Current Audit</Label>
+                </div>
+                <div className="text-center">
+                  <Label className="text-sm font-medium">Prior Audit</Label>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-3 gap-4 items-center">
+                  <div>
+                    <Label className="text-sm font-medium">Level of aggregation risk</Label>
+                  </div>
+                  <div>
+                    <Input
+                      value={(formData as any).current_audit_aggregation_risk_level || ''}
+                      onChange={(e) => onFormDataChange({ current_audit_aggregation_risk_level: e.target.value })}
+                      placeholder="Enter level..."
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      value={(formData as any).prior_audit_aggregation_risk_level || ''}
+                      onChange={(e) => onFormDataChange({ prior_audit_aggregation_risk_level: e.target.value })}
+                      placeholder="Enter level..."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 items-center">
+                  <div>
+                    <Label className="text-sm font-medium">Performance materiality %</Label>
+                  </div>
+                  <div>
+                    <Input
+                      value={(formData as any).current_audit_performance_materiality_percentage || ''}
+                      onChange={(e) => onFormDataChange({ current_audit_performance_materiality_percentage: e.target.value })}
+                      placeholder="Enter percentage..."
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      value={(formData as any).prior_audit_performance_materiality_percentage || ''}
+                      onChange={(e) => onFormDataChange({ prior_audit_performance_materiality_percentage: e.target.value })}
+                      placeholder="Enter percentage..."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4 items-center">
+                  <div>
+                    <Label className="text-sm font-medium">Performance materiality</Label>
+                  </div>
+                  <div>
+                    <Input
+                      value={(formData as any).current_audit_performance_materiality || ''}
+                      onChange={(e) => onFormDataChange({ current_audit_performance_materiality: e.target.value })}
+                      placeholder="Enter amount..."
+                    />
+                  </div>
+                  <div>
+                    <Input
+                      value={(formData as any).prior_audit_performance_materiality || ''}
+                      onChange={(e) => onFormDataChange({ prior_audit_performance_materiality: e.target.value })}
+                      placeholder="Enter amount..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

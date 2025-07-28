@@ -224,6 +224,16 @@ export interface ProjectFormData {
   turnover_management: string;
   management_preparedness: string;
   proportion_accounts: string;
+  
+  // Additional performance materiality fields
+  document_aggregation_risk_considerations: boolean;
+  aggregation_risk_level: string;
+  current_audit_aggregation_risk_level: string;
+  prior_audit_aggregation_risk_level: string;
+  current_audit_performance_materiality_percentage: string;
+  prior_audit_performance_materiality_percentage: string;
+  current_audit_performance_materiality: string;
+  prior_audit_performance_materiality: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -367,4 +377,14 @@ export const getInitialFormData = (): ProjectFormData => ({
   turnover_management: '',
   management_preparedness: '',
   proportion_accounts: '',
+  
+  // Additional performance materiality initial values
+  document_aggregation_risk_considerations: false,
+  aggregation_risk_level: '',
+  current_audit_aggregation_risk_level: '',
+  prior_audit_aggregation_risk_level: '',
+  current_audit_performance_materiality_percentage: '',
+  prior_audit_performance_materiality_percentage: '',
+  current_audit_performance_materiality: '',
+  prior_audit_performance_materiality: '',
 });

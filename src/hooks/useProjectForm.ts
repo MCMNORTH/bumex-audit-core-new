@@ -150,6 +150,16 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       turnover_management: (projectData as any).turnover_management || '',
       management_preparedness: (projectData as any).management_preparedness || '',
       proportion_accounts: (projectData as any).proportion_accounts || '',
+      
+      // Additional performance materiality initialization
+      document_aggregation_risk_considerations: (projectData as any).document_aggregation_risk_considerations || false,
+      aggregation_risk_level: (projectData as any).aggregation_risk_level || '',
+      current_audit_aggregation_risk_level: (projectData as any).current_audit_aggregation_risk_level || '',
+      prior_audit_aggregation_risk_level: (projectData as any).prior_audit_aggregation_risk_level || '',
+      current_audit_performance_materiality_percentage: (projectData as any).current_audit_performance_materiality_percentage || '',
+      prior_audit_performance_materiality_percentage: (projectData as any).prior_audit_performance_materiality_percentage || '',
+      current_audit_performance_materiality: (projectData as any).current_audit_performance_materiality || '',
+      prior_audit_performance_materiality: (projectData as any).prior_audit_performance_materiality || '',
     });
   };
 
