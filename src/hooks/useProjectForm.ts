@@ -261,6 +261,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       ceramic_eval_control_foundation: (projectData as any).ceramic_eval_control_foundation || '',
       ceramic_eval_risk_identification: (projectData as any).ceramic_eval_risk_identification || '',
       ceramic_eval_risk_process: (projectData as any).ceramic_eval_risk_process || '',
+      ceramic_eval_communication_support: (projectData as any).ceramic_eval_communication_support || '',
+      ceramic_eval_monitoring_process: (projectData as any).ceramic_eval_monitoring_process || '',
     });
   };
 

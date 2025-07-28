@@ -353,6 +353,8 @@ export interface ProjectFormData {
   ceramic_eval_control_foundation: string;
   ceramic_eval_risk_identification: string;
   ceramic_eval_risk_process: string;
+  ceramic_eval_communication_support: string;
+  ceramic_eval_monitoring_process: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -607,4 +609,6 @@ export const getInitialFormData = (): ProjectFormData => ({
   ceramic_eval_control_foundation: '',
   ceramic_eval_risk_identification: '',
   ceramic_eval_risk_process: '',
+  ceramic_eval_communication_support: '',
+  ceramic_eval_monitoring_process: '',
 });

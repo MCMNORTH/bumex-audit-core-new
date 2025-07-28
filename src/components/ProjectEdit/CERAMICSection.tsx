@@ -644,6 +644,58 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                 </div>
               </div>
             </div>
+
+            <div>
+              <h4 className="font-medium text-base mb-4">Evaluate the Communication component</h4>
+              
+              <div className="space-y-4 ml-4">
+                <div>
+                  <Label className="text-sm font-medium block mb-3">
+                    Based on our understanding obtained, do the entity's communications appropriately support the preparation of the entity's financial statements in accordance with the applicable financial reporting framework?
+                  </Label>
+                  <RadioGroup
+                    value={formData.ceramic_eval_communication_support || ''}
+                    onValueChange={(value) => onFormDataChange({ ceramic_eval_communication_support: value })}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="comm-support-yes" />
+                      <Label htmlFor="comm-support-yes">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="comm-support-no" />
+                      <Label htmlFor="comm-support-no">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-base mb-4">Evaluate the Monitoring component</h4>
+              
+              <div className="space-y-4 ml-4">
+                <div>
+                  <Label className="text-sm font-medium block mb-3">
+                    Based on our understanding obtained, is the entity's process for monitoring the system of internal control appropriate to the entity's circumstances considering the nature and complexity of the entity?
+                  </Label>
+                  <RadioGroup
+                    value={formData.ceramic_eval_monitoring_process || ''}
+                    onValueChange={(value) => onFormDataChange({ ceramic_eval_monitoring_process: value })}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="monitoring-process-yes" />
+                      <Label htmlFor="monitoring-process-yes">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="monitoring-process-no" />
+                      <Label htmlFor="monitoring-process-no">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
