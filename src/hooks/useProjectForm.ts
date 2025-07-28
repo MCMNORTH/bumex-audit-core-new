@@ -230,6 +230,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       // RAPD Section
       rapd_meeting_date: (projectData as any).rapd_meeting_date || '',
       rapd_team_members: (projectData as any).rapd_team_members || [],
+      rapd_fraud_brainstorming_same_meeting: (projectData as any).rapd_fraud_brainstorming_same_meeting || '',
+      rapd_agenda_confirmation: (projectData as any).rapd_agenda_confirmation || false,
     });
   };
 

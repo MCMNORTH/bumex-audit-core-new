@@ -314,6 +314,8 @@ export interface ProjectFormData {
     attendedMeeting: boolean;
     documentMatters: string;
   }>;
+  rapd_fraud_brainstorming_same_meeting: string;
+  rapd_agenda_confirmation: boolean;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -537,4 +539,6 @@ export const getInitialFormData = (): ProjectFormData => ({
     // RAPD Section
     rapd_meeting_date: '',
     rapd_team_members: [],
+    rapd_fraud_brainstorming_same_meeting: '',
+    rapd_agenda_confirmation: false,
 });
