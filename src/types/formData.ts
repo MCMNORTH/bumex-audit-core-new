@@ -311,7 +311,7 @@ export interface ProjectFormData {
     id: string;
     member: string;
     role: string;
-    attendedMeeting: string;
+    attendedMeeting: boolean;
     documentMatters: string;
   }>;
 }
