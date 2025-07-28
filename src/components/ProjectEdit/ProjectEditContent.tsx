@@ -6,6 +6,7 @@ import EngagementProfileSection from './EngagementProfileSection';
 import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 import { Separator } from '@/components/ui/separator';
 import TCWGCommunicationsSection from './TCWGCommunicationsSection';
+import MaterialityMetricsSection from './MaterialityMetricsSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -252,6 +253,12 @@ const ProjectEditContent = ({
             <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
           </div>}
         {/* END of engagement management custom blocks */}
+
+        {/* Materiality section */}
+        {activeSection === 'materiality-materiality' && <div className="space-y-4">
+            {renderSectionHeader('Materiality', '2.')}
+            <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
+          </div>}
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
         {renderedEntityContent}

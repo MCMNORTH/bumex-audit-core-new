@@ -115,6 +115,13 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       tcwg_results_communications: (projectData as any).tcwg_results_communications || [],
       tcwg_results_attachments: (projectData as any).tcwg_results_attachments || [],
       tcwg_adequate_communication: (projectData as any).tcwg_adequate_communication || 'Not selected',
+      // Materiality metrics initialization
+      mbt_applicable: (projectData as any).mbt_applicable || '',
+      mbt_industry_scenarios: (projectData as any).mbt_industry_scenarios || '',
+      financial_info_materiality: (projectData as any).financial_info_materiality || '',
+      period_selection: (projectData as any).period_selection || '',
+      pbt_pbtco_question: (projectData as any).pbt_pbtco_question || '',
+      materiality_metrics_notes: (projectData as any).materiality_metrics_notes || '',
     });
   };
 

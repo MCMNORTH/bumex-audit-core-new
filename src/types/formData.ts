@@ -155,6 +155,13 @@ export interface ProjectFormData {
   tcwg_results_communications: TCWGResultsCommunicationItem[];
   tcwg_results_attachments: Array<{name: string, url: string, type: string}>;
   tcwg_adequate_communication: string;
+  // Materiality metrics fields
+  mbt_applicable: string;
+  mbt_industry_scenarios: string;
+  financial_info_materiality: string;
+  period_selection: string;
+  pbt_pbtco_question: string;
+  materiality_metrics_notes: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -259,4 +266,11 @@ export const getInitialFormData = (): ProjectFormData => ({
   tcwg_results_communications: [],
   tcwg_results_attachments: [],
   tcwg_adequate_communication: 'Not selected',
+  // Materiality metrics initial values
+  mbt_applicable: '',
+  mbt_industry_scenarios: '',
+  financial_info_materiality: '',
+  period_selection: '',
+  pbt_pbtco_question: '',
+  materiality_metrics_notes: '',
 });
