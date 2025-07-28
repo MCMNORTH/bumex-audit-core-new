@@ -78,6 +78,12 @@ interface FormData {
   }>;
   it_information_used_risk_assessment: string;
   cybersecurity_risks_understanding: string;
+  cybersecurity_incident_awareness: string;
+  cybersecurity_bec_risks_understanding: string;
+  cybersecurity_additional_inquiries: boolean;
+  cybersecurity_additional_inquiries_details: string;
+  cybersecurity_incidents_experienced: string;
+  cybersecurity_risks_rmm: string;
   sufficient_appropriate_resources: boolean;
   team_competence_and_capabilities: boolean;
   direction_supervision_documentation: string;

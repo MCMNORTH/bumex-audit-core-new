@@ -56,6 +56,12 @@ interface ITEnvironmentSectionProps {
     }>;
     it_information_used_risk_assessment: string;
     cybersecurity_risks_understanding: string;
+    cybersecurity_incident_awareness: string;
+    cybersecurity_bec_risks_understanding: string;
+    cybersecurity_additional_inquiries: boolean;
+    cybersecurity_additional_inquiries_details: string;
+    cybersecurity_incidents_experienced: string;
+    cybersecurity_risks_rmm: string;
   };
   onFormDataChange: (updates: any) => void;
 }
@@ -725,6 +731,92 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
             rows={4}
             placeholder="Enter cybersecurity risks understanding..."
           />
+        </div>
+
+        <div>
+          <Label htmlFor="cybersecurity-incident-awareness" className="text-sm font-medium mb-2 block">
+            Document the results of inquiries into how the entity would be aware on a timely basis if its IT application, databases, operating systems and/or network had been subject to a cybersecurity incident that could impact the integrity of information used in the financial reporting process.
+          </Label>
+          <Textarea
+            id="cybersecurity-incident-awareness"
+            value={formData.cybersecurity_incident_awareness || ''}
+            onChange={(e) => onFormDataChange({ cybersecurity_incident_awareness: e.target.value })}
+            rows={4}
+            placeholder="Enter cybersecurity incident awareness documentation..."
+          />
+        </div>
+
+        <div>
+          <Label htmlFor="cybersecurity-bec-risks" className="text-sm font-medium mb-2 block">
+            Document the results of our inquiries into how the entity:
+            <br />- identifies, assesses, and responds to risks related to attacks perpetrated through business e-mail compromise (BEC) scams or spoofing or phishing
+            <br />- assessed its internal accounting controls in light of risks arising from cyber-related frauds (e.g. BEC scams, spoofing, phishing, etc.)
+          </Label>
+          <Textarea
+            id="cybersecurity-bec-risks"
+            value={formData.cybersecurity_bec_risks_understanding || ''}
+            onChange={(e) => onFormDataChange({ cybersecurity_bec_risks_understanding: e.target.value })}
+            rows={4}
+            placeholder="Enter BEC risks and controls documentation..."
+          />
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="additional-inquiries"
+              checked={formData.cybersecurity_additional_inquiries || false}
+              onCheckedChange={(checked) => onFormDataChange({ cybersecurity_additional_inquiries: checked === true })}
+            />
+            <Label htmlFor="additional-inquiries" className="text-sm font-medium">
+              We made additional inquiries, where appropriate.
+            </Label>
+          </div>
+          
+          {formData.cybersecurity_additional_inquiries && (
+            <Textarea
+              value={formData.cybersecurity_additional_inquiries_details || ''}
+              onChange={(e) => onFormDataChange({ cybersecurity_additional_inquiries_details: e.target.value })}
+              placeholder="Enter additional inquiries details..."
+              rows={3}
+            />
+          )}
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">Based on the results of inquiries, has the entity experienced any cybersecurity incidents in the period under audit to date or in prior periods that impacts the current period?</Label>
+          <RadioGroup
+            value={formData.cybersecurity_incidents_experienced || ''}
+            onValueChange={(value) => onFormDataChange({ cybersecurity_incidents_experienced: value })}
+            className="flex space-x-6 mt-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Yes" id="incidents-yes" />
+              <Label htmlFor="incidents-yes" className="text-sm">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="No" id="incidents-no" />
+              <Label htmlFor="incidents-no" className="text-sm">No</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div>
+          <Label className="text-sm font-medium">Based on the results of inquiries, did we identify cybersecurity risks that may give rise to an RMM?</Label>
+          <RadioGroup
+            value={formData.cybersecurity_risks_rmm || ''}
+            onValueChange={(value) => onFormDataChange({ cybersecurity_risks_rmm: value })}
+            className="flex space-x-6 mt-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Yes" id="rmm-yes" />
+              <Label htmlFor="rmm-yes" className="text-sm">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="No" id="rmm-no" />
+              <Label htmlFor="rmm-no" className="text-sm">No</Label>
+            </div>
+          </RadioGroup>
         </div>
       </div>
     </div>

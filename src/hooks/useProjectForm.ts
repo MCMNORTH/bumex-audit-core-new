@@ -278,6 +278,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       it_risk_assessment_procedures: (projectData as any).it_risk_assessment_procedures || [],
       it_information_used_risk_assessment: (projectData as any).it_information_used_risk_assessment || '',
       cybersecurity_risks_understanding: (projectData as any).cybersecurity_risks_understanding || '',
+      cybersecurity_incident_awareness: (projectData as any).cybersecurity_incident_awareness || '',
+      cybersecurity_bec_risks_understanding: (projectData as any).cybersecurity_bec_risks_understanding || '',
+      cybersecurity_additional_inquiries: (projectData as any).cybersecurity_additional_inquiries || false,
+      cybersecurity_additional_inquiries_details: (projectData as any).cybersecurity_additional_inquiries_details || '',
+      cybersecurity_incidents_experienced: (projectData as any).cybersecurity_incidents_experienced || '',
+      cybersecurity_risks_rmm: (projectData as any).cybersecurity_risks_rmm || '',
     });
   };
 

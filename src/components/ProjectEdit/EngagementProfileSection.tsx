@@ -146,6 +146,12 @@ interface FormData {
   }>;
   it_information_used_risk_assessment: string;
   cybersecurity_risks_understanding: string;
+  cybersecurity_incident_awareness: string;
+  cybersecurity_bec_risks_understanding: string;
+  cybersecurity_additional_inquiries: boolean;
+  cybersecurity_additional_inquiries_details: string;
+  cybersecurity_incidents_experienced: string;
+  cybersecurity_risks_rmm: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -613,6 +619,12 @@ const EngagementProfileSection = ({
           it_risk_assessment_procedures: formData.it_risk_assessment_procedures || [],
           it_information_used_risk_assessment: formData.it_information_used_risk_assessment || '',
           cybersecurity_risks_understanding: formData.cybersecurity_risks_understanding || '',
+          cybersecurity_incident_awareness: formData.cybersecurity_incident_awareness || '',
+          cybersecurity_bec_risks_understanding: formData.cybersecurity_bec_risks_understanding || '',
+          cybersecurity_additional_inquiries: formData.cybersecurity_additional_inquiries || false,
+          cybersecurity_additional_inquiries_details: formData.cybersecurity_additional_inquiries_details || '',
+          cybersecurity_incidents_experienced: formData.cybersecurity_incidents_experienced || '',
+          cybersecurity_risks_rmm: formData.cybersecurity_risks_rmm || '',
           // Engagement team fields
           sufficient_appropriate_resources: (formData as any).sufficient_appropriate_resources || false,
           team_competence_and_capabilities: (formData as any).team_competence_and_capabilities || false,

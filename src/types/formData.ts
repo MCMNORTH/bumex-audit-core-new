@@ -394,6 +394,12 @@ export interface ProjectFormData {
   }>;
   it_information_used_risk_assessment: string;
   cybersecurity_risks_understanding: string;
+  cybersecurity_incident_awareness: string;
+  cybersecurity_bec_risks_understanding: string;
+  cybersecurity_additional_inquiries: boolean;
+  cybersecurity_additional_inquiries_details: string;
+  cybersecurity_incidents_experienced: string;
+  cybersecurity_risks_rmm: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -665,4 +671,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   it_risk_assessment_procedures: [],
   it_information_used_risk_assessment: '',
   cybersecurity_risks_understanding: '',
+  cybersecurity_incident_awareness: '',
+  cybersecurity_bec_risks_understanding: '',
+  cybersecurity_additional_inquiries: false,
+  cybersecurity_additional_inquiries_details: '',
+  cybersecurity_incidents_experienced: '',
+  cybersecurity_risks_rmm: '',
 });
