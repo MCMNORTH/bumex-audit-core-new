@@ -295,6 +295,12 @@ export interface ProjectFormData {
   
   // Other specific procedures
   other_specific_procedures_performed: boolean;
+  
+  // CEAC process and past audits
+  ceac_approval_email_attachment: string;
+  ceac_impact_assessment: string;
+  past_audits_significant_matters: string;
+  evaluate_past_audit_information: boolean;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -505,4 +511,10 @@ export const getInitialFormData = (): ProjectFormData => ({
     
     // Other specific procedures
     other_specific_procedures_performed: false,
+    
+    // CEAC process and past audits
+    ceac_approval_email_attachment: '',
+    ceac_impact_assessment: '',
+    past_audits_significant_matters: '',
+    evaluate_past_audit_information: false,
 });

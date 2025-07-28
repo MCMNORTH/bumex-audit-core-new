@@ -217,6 +217,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       
       // Other specific procedures
       other_specific_procedures_performed: (projectData as any).other_specific_procedures_performed || false,
+      
+      // CEAC process and past audits
+      ceac_approval_email_attachment: (projectData as any).ceac_approval_email_attachment || '',
+      ceac_impact_assessment: (projectData as any).ceac_impact_assessment || '',
+      past_audits_significant_matters: (projectData as any).past_audits_significant_matters || '',
+      evaluate_past_audit_information: (projectData as any).evaluate_past_audit_information || false,
     });
   };
 

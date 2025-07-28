@@ -902,6 +902,104 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
           </div>
         </div>
 
+        {/* Consider other information relevant to identifying and assessing RMMs */}
+        <div className="space-y-6">
+          <h4 className="text-lg font-semibold">Consider other information relevant to identifying and assessing RMMs</h4>
+          
+          {/* Consider information from the CEAC process */}
+          <div className="space-y-4">
+            <h5 className="font-medium text-gray-900">Consider information from the CEAC process and audit planning in identifying and assessing RMMs</h5>
+            
+            {/* Static table */}
+            <div className="border rounded-lg overflow-hidden">
+              <div className="grid grid-cols-2 bg-slate-800 text-white">
+                <div className="px-4 py-3 font-medium">Required documents</div>
+                <div className="px-4 py-3 font-medium">Attachment</div>
+              </div>
+              <div className="grid grid-cols-2 border-t">
+                <div className="px-4 py-3 bg-gray-50">CEAC approval e-mail</div>
+                <div className="px-4 py-3">
+                  <Input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onFormDataChange({ ceac_approval_email_attachment: file.name });
+                      }
+                    }}
+                    className="w-full"
+                  />
+                  {formData.ceac_approval_email_attachment && (
+                    <p className="text-sm text-gray-600 mt-1">{formData.ceac_approval_email_attachment}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {/* CEAC impact assessment */}
+            <div className="space-y-3">
+              <p className="text-sm text-gray-700">
+                We have considered information from the CEAC process and audit planning in identifying and assessing RMMs and assessed the impact. If CEAC includes any risk mitigation strategies, click impact.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.ceac_impact_assessment === 'impact' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => onFormDataChange({ ceac_impact_assessment: 'impact' })}
+                  className="text-xs"
+                >
+                  IMPACT
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.ceac_impact_assessment === 'no_impact' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => onFormDataChange({ ceac_impact_assessment: 'no_impact' })}
+                  className="text-xs"
+                >
+                  NO IMPACT
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Consider information from past audits */}
+          <div className="space-y-4">
+            <h5 className="font-medium text-gray-900">Consider information from past audits in identifying and assessing RMMs</h5>
+            
+            <div>
+              <Label className="text-sm font-medium">Are there any significant ongoing matters from prior years that could affect the risks of material misstatement in the current year?</Label>
+              <RadioGroup
+                value={formData.past_audits_significant_matters}
+                onValueChange={(value) => onFormDataChange({ past_audits_significant_matters: value })}
+                className="flex space-x-6 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Yes" id="past_audits_yes" />
+                  <Label htmlFor="past_audits_yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="No" id="past_audits_no" />
+                  <Label htmlFor="past_audits_no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="flex items-start space-x-3">
+              <Checkbox
+                id="evaluate_past_audit_info"
+                checked={formData.evaluate_past_audit_information}
+                onCheckedChange={(checked) => onFormDataChange({ evaluate_past_audit_information: checked as boolean })}
+              />
+              <Label htmlFor="evaluate_past_audit_info" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Evaluate whether the information remains relevant and reliable if we plan to limit the nature, timing or extent of risk assessment procedures by relying on information from past audits.
+              </Label>
+            </div>
+          </div>
+        </div>
+
       </CardContent>
     </Card>
   );
