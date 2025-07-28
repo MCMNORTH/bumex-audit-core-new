@@ -258,6 +258,12 @@ export interface ProjectFormData {
   technologies_confirmation: string;
   competitors_confirmation: string;
   industry_stability_confirmation: string;
+  markets_products_confirmation: string;
+  document_additional_considerations: boolean;
+  regulatory_factors_relevant: boolean;
+  entity_nature_ownership_confirmation: string;
+  entity_nature_products_confirmation: string;
+  entity_nature_facilities_confirmation: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -435,4 +441,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   technologies_confirmation: '',
   competitors_confirmation: '',
   industry_stability_confirmation: '',
+  markets_products_confirmation: '',
+  document_additional_considerations: false,
+  regulatory_factors_relevant: false,
+  entity_nature_ownership_confirmation: '',
+  entity_nature_products_confirmation: '',
+  entity_nature_facilities_confirmation: '',
 });

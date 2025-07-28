@@ -346,6 +346,142 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                 </Button>
               </div>
             </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity has continued to operate in the same markets or segments with the same products and services.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.markets_products_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('markets_products_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.markets_products_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('markets_products_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="document-additional-considerations"
+                checked={formData.document_additional_considerations || false}
+                onCheckedChange={(checked) => onFormDataChange({ document_additional_considerations: checked })}
+              />
+              <Label htmlFor="document-additional-considerations" className="text-sm">
+                Document any additional considerations needed regarding understanding industry, regulatory and other external factors including where the assumptions above are not confirmed
+              </Label>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="regulatory-factors-relevant"
+                checked={formData.regulatory_factors_relevant || false}
+                onCheckedChange={(checked) => onFormDataChange({ regulatory_factors_relevant: checked })}
+              />
+              <Label htmlFor="regulatory-factors-relevant" className="text-sm">
+                Regulatory factors are relevant to the entity's accounting estimates
+              </Label>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <h4 className="font-medium text-gray-900">Understand the nature of the entity</h4>
+          
+          <div className="space-y-4">
+            <h5 className="font-medium text-gray-900">Confirm the understanding of the nature of the entity:</h5>
+            
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity is an owner managed business with limited shareholders, or an entity without share capital that is not a Public Interest Entity.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_nature_ownership_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_nature_ownership_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_nature_ownership_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_nature_ownership_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity has a limited range of products or services.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_nature_products_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_nature_products_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_nature_products_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_nature_products_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity has a limited number of facilities or locations.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_nature_facilities_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_nature_facilities_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_nature_facilities_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_nature_facilities_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
