@@ -975,6 +975,69 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
         </div>
       </CardContent>
     </Card>
+
+    {/* AMPT Section */}
+    <Card className="mt-6">
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Determine the Audit Misstatement Posting Threshold (AMPT)
+          </h3>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div></div>
+              <div className="text-center">
+                <Label className="text-sm font-medium">Current Audit</Label>
+              </div>
+              <div className="text-center">
+                <Label className="text-sm font-medium">Prior Audit</Label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <div>
+                <Label className="text-sm font-medium">Audit misstatement posting threshold %</Label>
+              </div>
+              <div>
+                <Input
+                  value={(formData as any).current_audit_ampt_percentage || ''}
+                  onChange={(e) => onFormDataChange({ current_audit_ampt_percentage: e.target.value })}
+                  placeholder="Enter percentage..."
+                />
+              </div>
+              <div>
+                <Input
+                  value={(formData as any).prior_audit_ampt_percentage || ''}
+                  onChange={(e) => onFormDataChange({ prior_audit_ampt_percentage: e.target.value })}
+                  placeholder="Enter percentage..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <div>
+                <Label className="text-sm font-medium">Audit misstatement posting</Label>
+              </div>
+              <div>
+                <Input
+                  value={(formData as any).current_audit_ampt_amount || ''}
+                  onChange={(e) => onFormDataChange({ current_audit_ampt_amount: e.target.value })}
+                  placeholder="Enter amount..."
+                />
+              </div>
+              <div>
+                <Input
+                  value={(formData as any).prior_audit_ampt_amount || ''}
+                  onChange={(e) => onFormDataChange({ prior_audit_ampt_amount: e.target.value })}
+                  placeholder="Enter amount..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   </>
   );
 };

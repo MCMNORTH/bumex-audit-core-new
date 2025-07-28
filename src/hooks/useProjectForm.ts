@@ -160,6 +160,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       prior_audit_performance_materiality_percentage: (projectData as any).prior_audit_performance_materiality_percentage || '',
       current_audit_performance_materiality: (projectData as any).current_audit_performance_materiality || '',
       prior_audit_performance_materiality: (projectData as any).prior_audit_performance_materiality || '',
+      
+      // AMPT initialization
+      current_audit_ampt_percentage: (projectData as any).current_audit_ampt_percentage || '',
+      prior_audit_ampt_percentage: (projectData as any).prior_audit_ampt_percentage || '',
+      current_audit_ampt_amount: (projectData as any).current_audit_ampt_amount || '',
+      prior_audit_ampt_amount: (projectData as any).prior_audit_ampt_amount || '',
     });
   };
 
