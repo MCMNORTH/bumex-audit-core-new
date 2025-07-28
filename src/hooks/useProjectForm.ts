@@ -223,6 +223,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       ceac_impact_assessment: (projectData as any).ceac_impact_assessment || '',
       past_audits_significant_matters: (projectData as any).past_audits_significant_matters || '',
       evaluate_past_audit_information: (projectData as any).evaluate_past_audit_information || false,
+      
+      // Other engagements
+      other_services_impact_rmms: (projectData as any).other_services_impact_rmms || '',
     });
   };
 

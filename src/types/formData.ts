@@ -301,6 +301,9 @@ export interface ProjectFormData {
   ceac_impact_assessment: string;
   past_audits_significant_matters: string;
   evaluate_past_audit_information: boolean;
+  
+  // Other engagements
+  other_services_impact_rmms: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -517,4 +520,7 @@ export const getInitialFormData = (): ProjectFormData => ({
     ceac_impact_assessment: '',
     past_audits_significant_matters: '',
     evaluate_past_audit_information: false,
+    
+    // Other engagements
+    other_services_impact_rmms: '',
 });

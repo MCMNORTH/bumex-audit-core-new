@@ -1000,6 +1000,33 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
           </div>
         </div>
 
+        {/* Consider information from other engagements */}
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold">Consider information from other engagements in identifying and assessing RMMs</h4>
+          
+          <div className="space-y-3">
+            <h5 className="font-medium text-gray-900">Understand and consider the nature of other services we have performed in identifying and assessing RMMs</h5>
+            
+            <div>
+              <Label className="text-sm font-medium">Are there any other services we have performed that have an impact in identifying and assessing RMMs?</Label>
+              <RadioGroup
+                value={formData.other_services_impact_rmms}
+                onValueChange={(value) => onFormDataChange({ other_services_impact_rmms: value })}
+                className="flex space-x-6 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Yes" id="other_services_yes" />
+                  <Label htmlFor="other_services_yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="No" id="other_services_no" />
+                  <Label htmlFor="other_services_no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+        </div>
+
       </CardContent>
     </Card>
   );
