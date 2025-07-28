@@ -272,6 +272,29 @@ export interface ProjectFormData {
   entity_financing_simple_confirmation: string;
   entity_customer_contracts_standard_confirmation: string;
   entity_vendor_contracts_standard_confirmation: string;
+  
+  // Additional considerations
+  additional_considerations_documentation: string;
+  
+  // Entity objectives, strategies, and business risks
+  entity_objectives_strategies_risks: string;
+  
+  // Performance measures
+  performance_measures_table: Array<{
+    id: string;
+    performance_measure: string;
+    definition: string;
+  }>;
+  
+  // Significant changes evaluation
+  significant_changes_prior_periods: string;
+  transactions_events_estimates: string;
+  
+  // Information relevance and reliability
+  information_relevance_reliability: string;
+  
+  // Other specific procedures
+  other_specific_procedures_performed: boolean;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -461,6 +484,25 @@ export const getInitialFormData = (): ProjectFormData => ({
   entity_capital_consistent_confirmation: '',
   entity_investments_consistent_confirmation: '',
   entity_financing_simple_confirmation: '',
-  entity_customer_contracts_standard_confirmation: '',
-  entity_vendor_contracts_standard_confirmation: '',
+    entity_customer_contracts_standard_confirmation: '',
+    entity_vendor_contracts_standard_confirmation: '',
+    
+    // Additional considerations
+    additional_considerations_documentation: '',
+    
+    // Entity objectives, strategies, and business risks
+    entity_objectives_strategies_risks: '',
+    
+    // Performance measures
+    performance_measures_table: [],
+    
+    // Significant changes evaluation
+    significant_changes_prior_periods: '',
+    transactions_events_estimates: '',
+    
+    // Information relevance and reliability
+    information_relevance_reliability: '',
+    
+    // Other specific procedures
+    other_specific_procedures_performed: false,
 });

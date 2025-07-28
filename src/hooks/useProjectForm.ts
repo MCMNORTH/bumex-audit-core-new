@@ -198,6 +198,25 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       entity_financing_simple_confirmation: (projectData as any).entity_financing_simple_confirmation || '',
       entity_customer_contracts_standard_confirmation: (projectData as any).entity_customer_contracts_standard_confirmation || '',
       entity_vendor_contracts_standard_confirmation: (projectData as any).entity_vendor_contracts_standard_confirmation || '',
+      
+      // Additional considerations
+      additional_considerations_documentation: (projectData as any).additional_considerations_documentation || '',
+      
+      // Entity objectives, strategies, and business risks
+      entity_objectives_strategies_risks: (projectData as any).entity_objectives_strategies_risks || '',
+      
+      // Performance measures
+      performance_measures_table: (projectData as any).performance_measures_table || [],
+      
+      // Significant changes evaluation
+      significant_changes_prior_periods: (projectData as any).significant_changes_prior_periods || '',
+      transactions_events_estimates: (projectData as any).transactions_events_estimates || '',
+      
+      // Information relevance and reliability
+      information_relevance_reliability: (projectData as any).information_relevance_reliability || '',
+      
+      // Other specific procedures
+      other_specific_procedures_performed: (projectData as any).other_specific_procedures_performed || false,
     });
   };
 

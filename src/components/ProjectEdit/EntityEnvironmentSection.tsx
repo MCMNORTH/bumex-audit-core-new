@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Trash2, Plus } from 'lucide-react';
 
 interface EntityEnvironmentSectionProps {
@@ -692,6 +693,215 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
             </div>
           </div>
         </div>
+
+        {/* Document additional considerations */}
+        <div className="space-y-4">
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="document_additional_considerations_nature"
+              checked={formData.document_additional_considerations}
+              onCheckedChange={(checked) => 
+                onFormDataChange({ 
+                  document_additional_considerations: checked as boolean,
+                  additional_considerations_documentation: checked ? formData.additional_considerations_documentation : ''
+                })
+              }
+            />
+            <Label htmlFor="document_additional_considerations_nature" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              Document any additional consideration needed regarding the understanding the nature of the entity including where the assumptions above are not confirmed:
+            </Label>
+          </div>
+          
+          {formData.document_additional_considerations && (
+            <div className="ml-6">
+              <Textarea
+                placeholder="Enter additional considerations..."
+                value={formData.additional_considerations_documentation}
+                onChange={(e) => onFormDataChange({ additional_considerations_documentation: e.target.value })}
+                className="min-h-[100px]"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Understand the entity's objectives, strategies, and related business risks */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-lg font-semibold">Understand the entity's objectives, strategies, and related business risks</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              Understand the entity's objectives and strategies and those related business risks.
+            </p>
+          </div>
+          <Textarea
+            placeholder="Enter understanding of entity's objectives, strategies, and business risks..."
+            value={formData.entity_objectives_strategies_risks}
+            onChange={(e) => onFormDataChange({ entity_objectives_strategies_risks: e.target.value })}
+            className="min-h-[100px]"
+          />
+        </div>
+
+        {/* Understand the entity's measurement and analysis of its financial performance */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-lg font-semibold">Understand the entity's measurement and analysis of its financial performance</h4>
+            <p className="text-sm text-muted-foreground mt-1">
+              Identify the performance measures the entity and external parties consider most relevant when assessing financial performance.
+            </p>
+          </div>
+          
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm font-medium">Performance Measures</span>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const newMeasure = {
+                    id: Date.now().toString(),
+                    performance_measure: '',
+                    definition: ''
+                  };
+                  onFormDataChange({
+                    performance_measures_table: [...(formData.performance_measures_table || []), newMeasure]
+                  });
+                }}
+              >
+                Add
+              </Button>
+            </div>
+            
+            {(formData.performance_measures_table || []).length > 0 && (
+              <div className="space-y-2">
+                {(formData.performance_measures_table || []).map((measure: any, index: number) => (
+                  <div key={measure.id} className="grid grid-cols-2 gap-4 p-3 border rounded-lg">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Performance measure</Label>
+                      <Input
+                        value={measure.performance_measure}
+                        onChange={(e) => {
+                          const updated = [...(formData.performance_measures_table || [])];
+                          updated[index] = { ...updated[index], performance_measure: e.target.value };
+                          onFormDataChange({ performance_measures_table: updated });
+                        }}
+                        placeholder="Enter performance measure"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <Label className="text-xs text-muted-foreground">How is the performance measure defined? (Optional)</Label>
+                        <Input
+                          value={measure.definition}
+                          onChange={(e) => {
+                            const updated = [...(formData.performance_measures_table || [])];
+                            updated[index] = { ...updated[index], definition: e.target.value };
+                            onFormDataChange({ performance_measures_table: updated });
+                          }}
+                          placeholder="Enter definition"
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-4"
+                        onClick={() => {
+                          const updated = (formData.performance_measures_table || []).filter((_: any, i: number) => i !== index);
+                          onFormDataChange({ performance_measures_table: updated });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Evaluate whether significant changes in the entity from prior periods affect RMMs */}
+        <div className="space-y-4">
+          <h4 className="text-lg font-semibold">Evaluate whether significant changes in the entity from prior periods affect RMMs</h4>
+          
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-medium">Were there any significant changes in the entity from prior periods?</Label>
+              <RadioGroup
+                value={formData.significant_changes_prior_periods}
+                onValueChange={(value) => onFormDataChange({ significant_changes_prior_periods: value })}
+                className="flex space-x-6 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Yes" id="significant_changes_yes" />
+                  <Label htmlFor="significant_changes_yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="No" id="significant_changes_no" />
+                  <Label htmlFor="significant_changes_no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <Label className="text-sm font-medium">Were there any transactions or other events and conditions that may give rise to the need for an estimate or a change in an estimate?</Label>
+              <RadioGroup
+                value={formData.transactions_events_estimates}
+                onValueChange={(value) => onFormDataChange({ transactions_events_estimates: value })}
+                className="flex space-x-6 mt-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Yes" id="transactions_events_yes" />
+                  <Label htmlFor="transactions_events_yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="No" id="transactions_events_no" />
+                  <Label htmlFor="transactions_events_no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+        </div>
+
+        {/* Evaluate relevance and reliability of information used */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-lg font-semibold">Evaluate relevance and reliability of information used</h4>
+            <Label className="text-sm font-medium">Is information used in our risk assessment procedures performed to obtain an understanding of the entity and its environment?</Label>
+            <RadioGroup
+              value={formData.information_relevance_reliability}
+              onValueChange={(value) => onFormDataChange({ information_relevance_reliability: value })}
+              className="flex space-x-6 mt-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="Yes" id="info_relevant_yes" />
+                <Label htmlFor="info_relevant_yes">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="No" id="info_relevant_no" />
+                <Label htmlFor="info_relevant_no">No</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </div>
+
+        {/* Consider performing other specific procedures */}
+        <div className="space-y-4">
+          <div>
+            <h4 className="text-lg font-semibold">Consider performing other specific procedures</h4>
+            <div className="flex items-start space-x-3 mt-2">
+              <Checkbox
+                id="other_specific_procedures"
+                checked={formData.other_specific_procedures_performed}
+                onCheckedChange={(checked) => onFormDataChange({ other_specific_procedures_performed: checked as boolean })}
+              />
+              <Label htmlFor="other_specific_procedures" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                We have performed other specific procedures to identify additional information to understand the entity and its environment.
+              </Label>
+            </div>
+          </div>
+        </div>
+
       </CardContent>
     </Card>
   );
