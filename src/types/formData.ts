@@ -249,6 +249,9 @@ export interface ProjectFormData {
   // Entity and environment fields
   entity_industry: string;
   financial_reporting_framework_main: string;
+  entity_markets: string[];
+  provide_brief_understanding: boolean;
+  entity_brief_understanding: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -417,4 +420,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   // Entity and environment initial values
   entity_industry: '',
   financial_reporting_framework_main: '',
+  entity_markets: [],
+  provide_brief_understanding: false,
+  entity_brief_understanding: '',
 });

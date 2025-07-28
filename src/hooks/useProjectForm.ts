@@ -175,6 +175,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       // Entity and environment initialization
       entity_industry: (projectData as any).entity_industry || '',
       financial_reporting_framework_main: (projectData as any).financial_reporting_framework_main || '',
+      entity_markets: (projectData as any).entity_markets || [],
+      provide_brief_understanding: (projectData as any).provide_brief_understanding || false,
+      entity_brief_understanding: (projectData as any).entity_brief_understanding || '',
     });
   };
 
