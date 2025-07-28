@@ -338,6 +338,11 @@ export interface ProjectFormData {
     ceramicComponents: string;
     controlAssessment: string;
   }>;
+  ceramic_larger_entity: boolean;
+  ceramic_more_complex: boolean;
+  ceramic_lack_knowledge: boolean;
+  ceramic_planned_reliance: boolean;
+  ceramic_extensive_changes: boolean;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -577,4 +582,9 @@ export const getInitialFormData = (): ProjectFormData => ({
   // CERAMIC initial values
   ceramic_governance_separate: '',
   ceramic_inquiries: [],
+  ceramic_larger_entity: false,
+  ceramic_more_complex: false,
+  ceramic_lack_knowledge: false,
+  ceramic_planned_reliance: false,
+  ceramic_extensive_changes: false,
 });

@@ -246,6 +246,11 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       // CERAMIC initialization
       ceramic_governance_separate: (projectData as any).ceramic_governance_separate || '',
       ceramic_inquiries: (projectData as any).ceramic_inquiries || [],
+      ceramic_larger_entity: (projectData as any).ceramic_larger_entity || false,
+      ceramic_more_complex: (projectData as any).ceramic_more_complex || false,
+      ceramic_lack_knowledge: (projectData as any).ceramic_lack_knowledge || false,
+      ceramic_planned_reliance: (projectData as any).ceramic_planned_reliance || false,
+      ceramic_extensive_changes: (projectData as any).ceramic_extensive_changes || false,
     });
   };
 

@@ -7,8 +7,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+
 import { ProjectFormData } from '@/types/formData';
 
 interface CERAMICSectionProps {
@@ -190,6 +194,98 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <p className="text-sm text-gray-700 mb-4">
+              In determining whether inquiry alone is sufficient to obtain an understanding of the components of the entity's system of internal control, 
+              determine whether any of the following circumstances exist. If at least one of the circumstances exist, perform more than inquiry.
+            </p>
+            
+            <div className="space-y-3">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ceramic-larger-entity"
+                  checked={formData.ceramic_larger_entity || false}
+                  onCheckedChange={(checked) => onFormDataChange({ ceramic_larger_entity: !!checked })}
+                />
+                <Label htmlFor="ceramic-larger-entity" className="text-sm">
+                  Larger entity
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ceramic-more-complex"
+                  checked={formData.ceramic_more_complex || false}
+                  onCheckedChange={(checked) => onFormDataChange({ ceramic_more_complex: !!checked })}
+                />
+                <Label htmlFor="ceramic-more-complex" className="text-sm">
+                  More complex entity
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ceramic-lack-knowledge"
+                  checked={formData.ceramic_lack_knowledge || false}
+                  onCheckedChange={(checked) => onFormDataChange({ ceramic_lack_knowledge: !!checked })}
+                />
+                <Label htmlFor="ceramic-lack-knowledge" className="text-sm">
+                  Lack of existing knowledge of the entity's system of internal controls
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ceramic-planned-reliance"
+                  checked={formData.ceramic_planned_reliance || false}
+                  onCheckedChange={(checked) => onFormDataChange({ ceramic_planned_reliance: !!checked })}
+                />
+                <Label htmlFor="ceramic-planned-reliance" className="text-sm">
+                  Planned reliance on the entity's control activities to reduce control risk
+                </Label>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="ceramic-extensive-changes"
+                  checked={formData.ceramic_extensive_changes || false}
+                  onCheckedChange={(checked) => onFormDataChange({ ceramic_extensive_changes: !!checked })}
+                />
+                <Label htmlFor="ceramic-extensive-changes" className="text-sm">
+                  Extensive changes to the entity's systems and operations based upon our understanding of the entity and its environment in 2.2 Risk assessment
+                </Label>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center gap-2 w-full bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition-colors">
+                <ChevronDown className="h-4 w-4" />
+                <span className="font-medium">Control environment:</span>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4 space-y-4 p-4 bg-gray-50 rounded-md">
+                <div>
+                  <p className="text-sm mb-4">
+                    The entity demonstrates a commitment to integrity and ethical values.
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <div className="flex gap-4">
+                      <span className="font-medium text-sm min-w-[80px]">Element 1</span>
+                      <span className="text-sm">
+                        Our understanding includes how management's oversight responsibilities are carried out, 
+                        such as creating and maintaining the entity's culture.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         </div>
       </CardContent>
