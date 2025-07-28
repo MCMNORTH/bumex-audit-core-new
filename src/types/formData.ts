@@ -177,6 +177,13 @@ export interface ProjectFormData {
   pbt_pbtco_question: string;
   materiality_metrics_notes: string;
   materiality_metrics_table: MaterialityMetricItem[];
+  not_relevant_metrics_rationale: string;
+  current_audit_total_revenues: string;
+  prior_audit_total_revenues: string;
+  current_audit_adjusted_amount: string;
+  prior_audit_adjusted_amount: string;
+  prior_audit_benchmark_not_metric: boolean;
+  different_benchmark_rationale: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -289,4 +296,11 @@ export const getInitialFormData = (): ProjectFormData => ({
   pbt_pbtco_question: '',
   materiality_metrics_notes: '',
   materiality_metrics_table: [],
+  not_relevant_metrics_rationale: '',
+  current_audit_total_revenues: '',
+  prior_audit_total_revenues: '',
+  current_audit_adjusted_amount: '',
+  prior_audit_adjusted_amount: '',
+  prior_audit_benchmark_not_metric: false,
+  different_benchmark_rationale: '',
 });

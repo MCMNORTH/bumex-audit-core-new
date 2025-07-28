@@ -267,6 +267,98 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
               </table>
             </div>
           </div>
+
+          {/* Additional Form Sections */}
+          <div className="mt-8 space-y-6">
+            {/* Not Relevant Metrics Rationale */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                One or more of the presumed metrics in the Metrics and Benchmark Table is not relevant. Document the rationale.
+              </Label>
+              <Textarea
+                value={(formData as any).not_relevant_metrics_rationale || ''}
+                onChange={(e) => onFormDataChange({ not_relevant_metrics_rationale: e.target.value })}
+                className="min-h-[100px] resize-none"
+                placeholder="Document the rationale..."
+              />
+            </div>
+
+            {/* Current Audit vs Prior Audit Section */}
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div></div>
+                <div className="text-center">
+                  <Label className="text-sm font-medium">Current Audit</Label>
+                </div>
+                <div className="text-center">
+                  <Label className="text-sm font-medium">Prior Audit</Label>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 items-center">
+                <div>
+                  <Label className="text-sm font-medium">Determine the benchmark</Label>
+                </div>
+                <div>
+                  <Input
+                    value={(formData as any).current_audit_total_revenues || ''}
+                    onChange={(e) => onFormDataChange({ current_audit_total_revenues: e.target.value })}
+                    placeholder="Total revenues"
+                  />
+                </div>
+                <div>
+                  <Input
+                    value={(formData as any).prior_audit_total_revenues || ''}
+                    onChange={(e) => onFormDataChange({ prior_audit_total_revenues: e.target.value })}
+                    placeholder="Total revenues"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 items-center">
+                <div>
+                  <Label className="text-sm font-medium">Adjusted amount</Label>
+                </div>
+                <div>
+                  <Input
+                    value={(formData as any).current_audit_adjusted_amount || ''}
+                    onChange={(e) => onFormDataChange({ current_audit_adjusted_amount: e.target.value })}
+                    placeholder="Enter adjusted amount..."
+                  />
+                </div>
+                <div>
+                  <Input
+                    value={(formData as any).prior_audit_adjusted_amount || ''}
+                    onChange={(e) => onFormDataChange({ prior_audit_adjusted_amount: e.target.value })}
+                    placeholder="Enter adjusted amount..."
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 mt-4">
+                <Checkbox
+                  checked={(formData as any).prior_audit_benchmark_not_metric || false}
+                  onCheckedChange={(checked) => onFormDataChange({ prior_audit_benchmark_not_metric: !!checked })}
+                />
+                <Label className="text-sm">
+                  The prior audit benchmark is not a metric in the current audit
+                </Label>
+              </div>
+            </div>
+
+            {/* Different Benchmark Rationale */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">
+                The benchmark selected is different from the presumed benchmark in the Metrics and Benchmark Table. Document the rationale.
+              </Label>
+              <Textarea
+                value={(formData as any).different_benchmark_rationale || ''}
+                onChange={(e) => onFormDataChange({ different_benchmark_rationale: e.target.value })}
+                className="min-h-[100px] resize-none"
+                placeholder="Document the rationale..."
+              />
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

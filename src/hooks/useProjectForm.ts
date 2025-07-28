@@ -123,6 +123,13 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       pbt_pbtco_question: (projectData as any).pbt_pbtco_question || '',
       materiality_metrics_notes: (projectData as any).materiality_metrics_notes || '',
       materiality_metrics_table: (projectData as any).materiality_metrics_table || [],
+      not_relevant_metrics_rationale: (projectData as any).not_relevant_metrics_rationale || '',
+      current_audit_total_revenues: (projectData as any).current_audit_total_revenues || '',
+      prior_audit_total_revenues: (projectData as any).prior_audit_total_revenues || '',
+      current_audit_adjusted_amount: (projectData as any).current_audit_adjusted_amount || '',
+      prior_audit_adjusted_amount: (projectData as any).prior_audit_adjusted_amount || '',
+      prior_audit_benchmark_not_metric: (projectData as any).prior_audit_benchmark_not_metric || false,
+      different_benchmark_rationale: (projectData as any).different_benchmark_rationale || '',
     });
   };
 
