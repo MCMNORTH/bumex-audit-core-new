@@ -255,6 +255,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       ceramic_risk_assessment_documentation: (projectData as any).ceramic_risk_assessment_documentation || '',
       ceramic_communication_documentation: (projectData as any).ceramic_communication_documentation || '',
       ceramic_monitoring_activities_documentation: (projectData as any).ceramic_monitoring_activities_documentation || '',
+      // CERAMIC Evaluation initialization
+      ceramic_eval_control_deficiencies: (projectData as any).ceramic_eval_control_deficiencies || '',
+      ceramic_eval_control_culture: (projectData as any).ceramic_eval_control_culture || '',
+      ceramic_eval_control_foundation: (projectData as any).ceramic_eval_control_foundation || '',
+      ceramic_eval_risk_identification: (projectData as any).ceramic_eval_risk_identification || '',
+      ceramic_eval_risk_process: (projectData as any).ceramic_eval_risk_process || '',
     });
   };
 

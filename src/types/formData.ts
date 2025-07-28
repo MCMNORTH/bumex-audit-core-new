@@ -347,6 +347,12 @@ export interface ProjectFormData {
   ceramic_risk_assessment_documentation: string;
   ceramic_communication_documentation: string;
   ceramic_monitoring_activities_documentation: string;
+  // CERAMIC Evaluation fields
+  ceramic_eval_control_deficiencies: string;
+  ceramic_eval_control_culture: string;
+  ceramic_eval_control_foundation: string;
+  ceramic_eval_risk_identification: string;
+  ceramic_eval_risk_process: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -595,4 +601,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   ceramic_risk_assessment_documentation: '',
   ceramic_communication_documentation: '',
   ceramic_monitoring_activities_documentation: '',
+  // CERAMIC Evaluation initial values
+  ceramic_eval_control_deficiencies: '',
+  ceramic_eval_control_culture: '',
+  ceramic_eval_control_foundation: '',
+  ceramic_eval_risk_identification: '',
+  ceramic_eval_risk_process: '',
 });

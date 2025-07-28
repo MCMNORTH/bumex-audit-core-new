@@ -528,6 +528,124 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
             </Collapsible>
           </div>
         </div>
+
+        <div className="mt-8">
+          <h3 className="text-lg font-semibold mb-6">Evaluate the CERAMIC Components</h3>
+          
+          <div className="space-y-6">
+            <div>
+              <Label className="text-sm font-medium block mb-3">
+                Have we identified any control deficiency(ies) based on the nature and complexity of the entity, including elements for which we were unable to obtain an understanding?
+              </Label>
+              <RadioGroup
+                value={formData.ceramic_eval_control_deficiencies || ''}
+                onValueChange={(value) => onFormDataChange({ ceramic_eval_control_deficiencies: value })}
+                className="flex gap-6"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="deficiencies-yes" />
+                  <Label htmlFor="deficiencies-yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="deficiencies-no" />
+                  <Label htmlFor="deficiencies-no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-base mb-4">Evaluate the Control environment component</h4>
+              
+              <div className="space-y-4 ml-4">
+                <div>
+                  <Label className="text-sm font-medium block mb-3">
+                    Based on our understanding obtained from the control environment, has management, with the oversight of those charged with governance, created and maintained a culture of honesty and ethical behavior?
+                  </Label>
+                  <RadioGroup
+                    value={formData.ceramic_eval_control_culture || ''}
+                    onValueChange={(value) => onFormDataChange({ ceramic_eval_control_culture: value })}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="culture-yes" />
+                      <Label htmlFor="culture-yes">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="culture-no" />
+                      <Label htmlFor="culture-no">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium block mb-3">
+                    Based on our understanding obtained, does the control environment provide an appropriate foundation for the other components of the entity's system of internal control considering the nature and complexity of the entity?
+                  </Label>
+                  <RadioGroup
+                    value={formData.ceramic_eval_control_foundation || ''}
+                    onValueChange={(value) => onFormDataChange({ ceramic_eval_control_foundation: value })}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="foundation-yes" />
+                      <Label htmlFor="foundation-yes">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="foundation-no" />
+                      <Label htmlFor="foundation-no">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="font-medium text-base mb-4">Evaluate the Risk Assessment component</h4>
+              
+              <div className="space-y-4 ml-4">
+                <div>
+                  <Label className="text-sm font-medium block mb-3">
+                    Have we identified any risks of material misstatement that arise from business risks that were not identified by the entity's risk assessment process?
+                  </Label>
+                  <RadioGroup
+                    value={formData.ceramic_eval_risk_identification || ''}
+                    onValueChange={(value) => onFormDataChange({ ceramic_eval_risk_identification: value })}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="risk-id-yes" />
+                      <Label htmlFor="risk-id-yes">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="risk-id-no" />
+                      <Label htmlFor="risk-id-no">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium block mb-3">
+                    Based on our understanding obtained, is the entity's risk assessment process appropriate to the entity's circumstances considering the nature and complexity of the entity?
+                  </Label>
+                  <RadioGroup
+                    value={formData.ceramic_eval_risk_process || ''}
+                    onValueChange={(value) => onFormDataChange({ ceramic_eval_risk_process: value })}
+                    className="flex gap-6"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="yes" id="risk-process-yes" />
+                      <Label htmlFor="risk-process-yes">Yes</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="no" id="risk-process-no" />
+                      <Label htmlFor="risk-process-no">No</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
