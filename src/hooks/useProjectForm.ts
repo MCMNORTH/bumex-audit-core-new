@@ -242,6 +242,10 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       rapd_no_other_significant_decisions_details: (projectData as any).rapd_no_other_significant_decisions_details || '',
       rapd_document_other_significant_decisions: (projectData as any).rapd_document_other_significant_decisions || false,
       rapd_document_other_significant_decisions_details: (projectData as any).rapd_document_other_significant_decisions_details || '',
+
+      // CERAMIC initialization
+      ceramic_governance_separate: (projectData as any).ceramic_governance_separate || '',
+      ceramic_inquiries: (projectData as any).ceramic_inquiries || [],
     });
   };
 

@@ -326,6 +326,18 @@ export interface ProjectFormData {
   rapd_no_other_significant_decisions_details: string;
   rapd_document_other_significant_decisions: boolean;
   rapd_document_other_significant_decisions_details: string;
+
+  // CERAMIC Section
+  ceramic_governance_separate: string;
+  ceramic_inquiries: Array<{
+    id: string;
+    dateOfInquiry: string;
+    intervieweeName: string;
+    intervieweeRole: string;
+    kpmgInterviewer: string;
+    ceramicComponents: string;
+    controlAssessment: string;
+  }>;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -561,4 +573,8 @@ export const getInitialFormData = (): ProjectFormData => ({
   rapd_no_other_significant_decisions_details: '',
   rapd_document_other_significant_decisions: false,
   rapd_document_other_significant_decisions_details: '',
+
+  // CERAMIC initial values
+  ceramic_governance_separate: '',
+  ceramic_inquiries: [],
 });
