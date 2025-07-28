@@ -251,6 +251,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       ceramic_lack_knowledge: (projectData as any).ceramic_lack_knowledge || false,
       ceramic_planned_reliance: (projectData as any).ceramic_planned_reliance || false,
       ceramic_extensive_changes: (projectData as any).ceramic_extensive_changes || false,
+      ceramic_control_environment_documentation: (projectData as any).ceramic_control_environment_documentation || '',
     });
   };
 

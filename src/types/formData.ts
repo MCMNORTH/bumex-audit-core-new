@@ -343,6 +343,7 @@ export interface ProjectFormData {
   ceramic_lack_knowledge: boolean;
   ceramic_planned_reliance: boolean;
   ceramic_extensive_changes: boolean;
+  ceramic_control_environment_documentation: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -587,4 +588,5 @@ export const getInitialFormData = (): ProjectFormData => ({
   ceramic_lack_knowledge: false,
   ceramic_planned_reliance: false,
   ceramic_extensive_changes: false,
+  ceramic_control_environment_documentation: '',
 });

@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -328,6 +329,18 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                         pursuit of objectives.
                       </span>
                     </div>
+                  </div>
+                  
+                  <div className="mt-6 space-y-3">
+                    <Label className="text-sm font-medium">
+                      Document our understanding of the set of controls, processes and structures that address each element above.
+                    </Label>
+                    <Textarea
+                      placeholder="Enter your documentation..."
+                      value={formData.ceramic_control_environment_documentation || ''}
+                      onChange={(e) => onFormDataChange({ ceramic_control_environment_documentation: e.target.value })}
+                      rows={4}
+                    />
                   </div>
                 </div>
               </CollapsibleContent>
