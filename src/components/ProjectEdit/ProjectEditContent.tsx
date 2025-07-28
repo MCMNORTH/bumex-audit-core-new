@@ -10,6 +10,7 @@ import MaterialityMetricsSection from './MaterialityMetricsSection';
 import EntityEnvironmentSection from './EntityEnvironmentSection';
 import RAPDSection from './RAPDSection';
 import CERAMICSection from './CERAMICSection';
+import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -223,6 +224,15 @@ const ProjectEditContent = ({
           renderedEntityContent = <div className="space-y-4">
               {renderSectionHeader('CERAMIC', '1.')}
               <CERAMICSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>;
+        } else if (targetSection.id === 'it-understanding') {
+          renderedEntityContent = <div className="space-y-4">
+              {renderSectionHeader('IT Understanding', '2.')}
+              <Card>
+                <CardContent className="p-6">
+                  <ITEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
+                </CardContent>
+              </Card>
             </div>;
         } else {
           // Render placeholder for other leaves
