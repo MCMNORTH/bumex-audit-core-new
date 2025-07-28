@@ -107,6 +107,25 @@ interface FormData {
   it_plan_to_rely_on_automated_controls: string;
   it_plan_benchmarking_strategy: string;
   it_key_members_inquired: string;
+  it_interviewees: Array<{
+    id: string;
+    intervieweeName: string;
+    intervieweePosition: string;
+    bumexInterviewers: string;
+    dateOfMeeting: string;
+  }>;
+  it_systems_layers: Array<{
+    id: string;
+    itLayers: string;
+    description: string;
+    layerType: string;
+    financialReporting: string;
+    process: string;
+    outsourced: boolean;
+  }>;
+  it_systems_documentation: string;
+  it_attach_documentation: boolean;
+  it_documentation_details: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -559,6 +578,11 @@ const EngagementProfileSection = ({
           it_plan_to_rely_on_automated_controls: formData.it_plan_to_rely_on_automated_controls || '',
           it_plan_benchmarking_strategy: formData.it_plan_benchmarking_strategy || '',
           it_key_members_inquired: formData.it_key_members_inquired || '',
+          it_interviewees: formData.it_interviewees || [],
+          it_systems_layers: formData.it_systems_layers || [],
+          it_systems_documentation: formData.it_systems_documentation || '',
+          it_attach_documentation: formData.it_attach_documentation || false,
+          it_documentation_details: formData.it_documentation_details || '',
           // Engagement team fields
           sufficient_appropriate_resources: (formData as any).sufficient_appropriate_resources || false,
           team_competence_and_capabilities: (formData as any).team_competence_and_capabilities || false,

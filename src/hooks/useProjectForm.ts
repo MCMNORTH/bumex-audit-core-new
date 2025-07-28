@@ -263,6 +263,11 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       it_plan_to_rely_on_automated_controls: (projectData as any).it_plan_to_rely_on_automated_controls || '',
       it_plan_benchmarking_strategy: (projectData as any).it_plan_benchmarking_strategy || '',
       it_key_members_inquired: (projectData as any).it_key_members_inquired || '',
+      it_interviewees: (projectData as any).it_interviewees || [],
+      it_systems_layers: (projectData as any).it_systems_layers || [],
+      it_systems_documentation: (projectData as any).it_systems_documentation || '',
+      it_attach_documentation: (projectData as any).it_attach_documentation || false,
+      it_documentation_details: (projectData as any).it_documentation_details || '',
     });
   };
 

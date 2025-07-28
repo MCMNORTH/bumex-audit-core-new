@@ -355,6 +355,25 @@ export interface ProjectFormData {
   it_plan_to_rely_on_automated_controls: string;
   it_plan_benchmarking_strategy: string;
   it_key_members_inquired: string;
+  it_interviewees: Array<{
+    id: string;
+    intervieweeName: string;
+    intervieweePosition: string;
+    bumexInterviewers: string;
+    dateOfMeeting: string;
+  }>;
+  it_systems_layers: Array<{
+    id: string;
+    itLayers: string;
+    description: string;
+    layerType: string;
+    financialReporting: string;
+    process: string;
+    outsourced: boolean;
+  }>;
+  it_systems_documentation: string;
+  it_attach_documentation: boolean;
+  it_documentation_details: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -611,4 +630,9 @@ export const getInitialFormData = (): ProjectFormData => ({
   it_plan_to_rely_on_automated_controls: '',
   it_plan_benchmarking_strategy: '',
   it_key_members_inquired: '',
+  it_interviewees: [],
+  it_systems_layers: [],
+  it_systems_documentation: '',
+  it_attach_documentation: false,
+  it_documentation_details: '',
 });
