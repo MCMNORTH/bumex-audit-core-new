@@ -397,6 +397,32 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                       </p>
                     </div>
                   </div>
+                  
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 9</span>
+                    <div className="text-sm space-y-2">
+                      <p>
+                        The entity identifies and assesses changes that could significantly affect the system of 
+                        internal control.
+                      </p>
+                      <p>
+                        Our understanding includes the entity's process for assessing changes that could impact 
+                        the entity's process for making accounting estimates.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-6 space-y-3">
+                    <Label className="text-sm font-medium">
+                      Document our understanding of the processes for each element above.
+                    </Label>
+                    <Textarea
+                      placeholder="Enter your documentation..."
+                      value={formData.ceramic_risk_assessment_documentation || ''}
+                      onChange={(e) => onFormDataChange({ ceramic_risk_assessment_documentation: e.target.value })}
+                      rows={4}
+                    />
+                  </div>
                 </div>
               </CollapsibleContent>
             </Collapsible>
