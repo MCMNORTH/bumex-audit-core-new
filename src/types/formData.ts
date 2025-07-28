@@ -36,6 +36,20 @@ export interface TCWGResultsCommunicationItem {
   potentiallyApplicableCR: boolean;
 }
 
+export interface MaterialityMetricItem {
+  id: string;
+  metrics: string;
+  benchmark: string;
+  mbt: string;
+  amount: string;
+  metricType: 'Gross' | 'Net' | '';
+  relevant: boolean;
+  manualAdjustment: string;
+  adjustedAmount: string;
+  expectedHigherRange: string;
+  expectedLowerRange: string;
+}
+
 export interface ProjectFormData {
   client_id: string;
   engagement_name: string;
@@ -162,6 +176,7 @@ export interface ProjectFormData {
   period_selection: string;
   pbt_pbtco_question: string;
   materiality_metrics_notes: string;
+  materiality_metrics_table: MaterialityMetricItem[];
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -273,4 +288,5 @@ export const getInitialFormData = (): ProjectFormData => ({
   period_selection: '',
   pbt_pbtco_question: '',
   materiality_metrics_notes: '',
+  materiality_metrics_table: [],
 });
