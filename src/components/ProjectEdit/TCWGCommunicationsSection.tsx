@@ -33,10 +33,10 @@ const TCWGCommunicationsSection = ({
   const inquiries = (formData as any).tcwg_inquiries || [];
   const meetingMinutes = (formData as any).tcwg_meeting_minutes || [];
   const generateMeetingAgenda = (formData as any).tcwg_generate_meeting_agenda || false;
-  const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || 'Not selected';
+  const responsesUnsatisfactory = (formData as any).tcwg_responses_unsatisfactory || '';
   const resultsCommunications = (formData as any).tcwg_results_communications || [];
   const resultsAttachments = (formData as any).tcwg_results_attachments || [];
-  const adequateCommunication = (formData as any).tcwg_adequate_communication || 'Not selected';
+  const adequateCommunication = (formData as any).tcwg_adequate_communication || '';
 
   // Add upload states for meeting minutes attachments
   const [meetingMinuteUploads, setMeetingMinuteUploads] = React.useState<{[key: string]: {uploading: boolean, file: File | null}}>({});
@@ -511,10 +511,6 @@ const TCWGCommunicationsSection = ({
                     <RadioGroupItem value="No" id="no" />
                     <Label htmlFor="no" className="text-sm">No</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Not selected" id="not-selected" />
-                    <Label htmlFor="not-selected" className="text-sm">Not selected</Label>
-                  </div>
                 </RadioGroup>
               </div>
             </div>
@@ -819,10 +815,6 @@ const TCWGCommunicationsSection = ({
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="No" id="adequate-no" />
                     <Label htmlFor="adequate-no" className="text-sm">No</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Not selected" id="adequate-not-selected" />
-                    <Label htmlFor="adequate-not-selected" className="text-sm">Not selected</Label>
                   </div>
                 </RadioGroup>
               </div>

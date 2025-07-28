@@ -42,10 +42,6 @@ const IndependenceRequirementsSection = ({
               <RadioGroupItem value="No" id="ethics-no" />
               <Label htmlFor="ethics-no">No</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="ethics-not-selected" />
-              <Label htmlFor="ethics-not-selected">Not selected</Label>
-            </div>
           </RadioGroup>
         </div>
 
@@ -67,10 +63,6 @@ const IndependenceRequirementsSection = ({
               <RadioGroupItem value="No" id="quality-no" />
               <Label htmlFor="quality-no">No</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="quality-not-selected" />
-              <Label htmlFor="quality-not-selected">Not selected</Label>
-            </div>
           </RadioGroup>
         </div>
 
@@ -91,10 +83,6 @@ const IndependenceRequirementsSection = ({
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="No" id="independence-no" />
               <Label htmlFor="independence-no">No</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="independence-not-selected" />
-              <Label htmlFor="independence-not-selected">Not selected</Label>
             </div>
           </RadioGroup>
         </div>
@@ -120,10 +108,6 @@ const IndependenceRequirementsSection = ({
               <RadioGroupItem value="No" id="communicate-no" />
               <Label htmlFor="communicate-no">No</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="communicate-not-selected" />
-              <Label htmlFor="communicate-not-selected">Not selected</Label>
-            </div>
           </RadioGroup>
         </div>
 
@@ -144,10 +128,6 @@ const IndependenceRequirementsSection = ({
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="No" id="compliance-no" />
               <Label htmlFor="compliance-no">No</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="compliance-not-selected" />
-              <Label htmlFor="compliance-not-selected">Not selected</Label>
             </div>
           </RadioGroup>
           <p className="text-sm text-gray-700 mt-2 underline">
