@@ -240,6 +240,10 @@ export interface ProjectFormData {
   prior_audit_ampt_percentage: string;
   current_audit_ampt_amount: string;
   prior_audit_ampt_amount: string;
+  
+  // Re-evaluate materiality fields
+  materiality_changes_occurred: string;
+  materiality_revision_table: any[];
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -399,4 +403,8 @@ export const getInitialFormData = (): ProjectFormData => ({
   prior_audit_ampt_percentage: '',
   current_audit_ampt_amount: '',
   prior_audit_ampt_amount: '',
+  
+  // Re-evaluate materiality initial values
+  materiality_changes_occurred: '',
+  materiality_revision_table: [],
 });

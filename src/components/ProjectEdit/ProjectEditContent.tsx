@@ -201,6 +201,11 @@ const ProjectEditContent = ({
               {renderSectionHeader('Materiality', '2.')}
               <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
             </div>;
+        } else if (targetSection.id === 'materiality-reevaluate') {
+          renderedEntityContent = <div className="space-y-4">
+              {renderSectionHeader('Re-evaluate', '3.')}
+              <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} showReEvaluate={true} />
+            </div>;
         } else {
           // Render placeholder for other leaves
           renderedEntityContent = <div className="space-y-8">

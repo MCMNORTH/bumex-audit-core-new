@@ -166,6 +166,10 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       prior_audit_ampt_percentage: (projectData as any).prior_audit_ampt_percentage || '',
       current_audit_ampt_amount: (projectData as any).current_audit_ampt_amount || '',
       prior_audit_ampt_amount: (projectData as any).prior_audit_ampt_amount || '',
+      
+      // Re-evaluate materiality initialization
+      materiality_changes_occurred: (projectData as any).materiality_changes_occurred || '',
+      materiality_revision_table: (projectData as any).materiality_revision_table || [],
     });
   };
 

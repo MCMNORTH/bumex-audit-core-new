@@ -13,9 +13,10 @@ import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem, Material
 interface MaterialityMetricsSectionProps {
   formData: ProjectFormData;
   onFormDataChange: (updates: Partial<ProjectFormData>) => void;
+  showReEvaluate?: boolean;
 }
 
-const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMetricsSectionProps) => {
+const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate = false }: MaterialityMetricsSectionProps) => {
   const materialityTable = (formData as any).materiality_metrics_table || [];
   const qualitativeFactorsTable = (formData as any).qualitative_factors_table || [];
   const materialityAssessmentTable = (formData as any).materiality_assessment_table || [];
@@ -94,6 +95,212 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
     const updatedTable = materialityAssessmentTable.filter((item: MaterialityAssessmentItem) => item.id !== id);
     onFormDataChange({ materiality_assessment_table: updatedTable } as any);
   };
+
+  // Re-evaluate section handlers
+  const materialityRevisionTableData = (formData as any).materiality_revision_table || [];
+  
+  const addMaterialityRevisionRow = () => {
+    const newRow = {
+      id: Date.now().toString(),
+      relevant_metrics: '',
+      benchmark: '',
+      initial_amount: '',
+      materiality_percentage: '',
+      actual_amount: '',
+      adjusted_actual_amount: '',
+      adjusted_materiality_percentage: '',
+      percentage_change: ''
+    };
+    onFormDataChange({ materiality_revision_table: [...materialityRevisionTableData, newRow] } as any);
+  };
+
+  const removeMaterialityRevisionRow = (id: string) => {
+    const updatedTable = materialityRevisionTableData.filter((row: any) => row.id !== id);
+    onFormDataChange({ materiality_revision_table: updatedTable } as any);
+  };
+
+  const handleMaterialityRevisionChange = (id: string, field: string, value: string) => {
+    const updatedTable = materialityRevisionTableData.map((row: any) =>
+      row.id === id ? { ...row, [field]: value } : row
+    );
+    onFormDataChange({ materiality_revision_table: updatedTable } as any);
+  };
+
+  if (showReEvaluate) {
+    return (
+      <>
+        {/* Re-evaluate Materiality Section */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Determine whether to revise materiality and other materiality measures
+              </h3>
+              
+              <div className="space-y-4">
+                <h4 className="text-base font-medium text-gray-800">
+                  Consider whether changes in circumstances have occurred
+                </h4>
+                
+                <p className="text-sm text-gray-700">
+                  Have there been any events or changes in conditions that occurred after we established materiality for the financial statements as a whole (and the related materiality measures), that are likely to affect the users' perceptions about the entity?
+                </p>
+                
+                <RadioGroup
+                  value={(formData as any).materiality_changes_occurred || ''}
+                  onValueChange={(value) => onFormDataChange({ materiality_changes_occurred: value } as any)}
+                  className="flex flex-row space-x-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="changes-yes" />
+                    <Label htmlFor="changes-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="changes-no" />
+                    <Label htmlFor="changes-no">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Determine actual amount section */}
+        <Card className="mt-6">
+          <CardContent className="p-6">
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-gray-900">
+                Determine the actual amount of the relevant metrics, including the benchmark
+              </h3>
+              
+              <p className="text-sm text-gray-700">
+                Compare the amounts of the relevant metrics we used to establish materiality to the actual amounts of the relevant metrics
+              </p>
+              
+              <div className="flex items-center justify-between">
+                <div></div>
+                <Button 
+                  onClick={addMaterialityRevisionRow}
+                  size="sm"
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-blue-700 text-white">
+                      <th className="text-left p-4 font-medium border text-sm">Relevant metric(s)</th>
+                      <th className="text-left p-4 font-medium border text-sm">Benchmark</th>
+                      <th className="text-left p-4 font-medium border text-sm">Initial amount</th>
+                      <th className="text-left p-4 font-medium border text-sm">Materiality as a %</th>
+                      <th className="text-left p-4 font-medium border text-sm">Actual amount</th>
+                      <th className="text-left p-4 font-medium border text-sm">Adjust the actual amount, when appropriate</th>
+                      <th className="text-left p-4 font-medium border text-sm">Adjusted actual amount</th>
+                      <th className="text-left p-4 font-medium border text-sm">Materiality as a %</th>
+                      <th className="text-left p-4 font-medium border text-sm">% change in amount</th>
+                      <th className="text-center p-4 font-medium border text-sm">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {materialityRevisionTableData.length === 0 ? (
+                      <tr>
+                        <td colSpan={10} className="text-center p-12 text-gray-500 border">
+                          No metrics added yet. Click "Add" to create your first metric.
+                        </td>
+                      </tr>
+                    ) : (
+                      materialityRevisionTableData.map((row: any, index: number) => (
+                        <tr key={row.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.relevant_metrics}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'relevant_metrics', e.target.value)}
+                              placeholder="Enter metric..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.benchmark}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'benchmark', e.target.value)}
+                              placeholder="Enter benchmark..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.initial_amount}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'initial_amount', e.target.value)}
+                              placeholder="Enter amount..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.materiality_percentage}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'materiality_percentage', e.target.value)}
+                              placeholder="Enter %..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.actual_amount}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'actual_amount', e.target.value)}
+                              placeholder="Enter amount..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.adjusted_actual_amount}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'adjusted_actual_amount', e.target.value)}
+                              placeholder="Enter amount..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.adjusted_materiality_percentage}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'adjusted_materiality_percentage', e.target.value)}
+                              placeholder="Enter %..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 border">
+                            <Input
+                              value={row.percentage_change}
+                              onChange={(e) => handleMaterialityRevisionChange(row.id, 'percentage_change', e.target.value)}
+                              placeholder="Enter %..."
+                              className="text-sm"
+                            />
+                          </td>
+                          <td className="p-3 text-center border">
+                            <Button
+                              onClick={() => removeMaterialityRevisionRow(row.id)}
+                              size="sm"
+                              variant="destructive"
+                              className="h-8 w-8 p-0"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </>
+    );
+  }
 
   return (
     <>
