@@ -295,6 +295,27 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
                   </tbody>
                 </table>
               </div>
+              
+              <div className="space-y-4 pt-4">
+                <p className="text-sm text-gray-700">
+                  Do the adjusted actual amounts of the relevant metrics including the benchmark indicate a materiality that is significantly different?
+                </p>
+                
+                <RadioGroup
+                  value={(formData as any).materiality_significantly_different || ''}
+                  onValueChange={(value) => onFormDataChange({ materiality_significantly_different: value } as any)}
+                  className="flex flex-row space-x-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="significantly-different-yes" />
+                    <Label htmlFor="significantly-different-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="significantly-different-no" />
+                    <Label htmlFor="significantly-different-no">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
             </div>
           </CardContent>
         </Card>

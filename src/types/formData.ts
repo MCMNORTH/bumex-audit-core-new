@@ -244,6 +244,7 @@ export interface ProjectFormData {
   // Re-evaluate materiality fields
   materiality_changes_occurred: string;
   materiality_revision_table: any[];
+  materiality_significantly_different: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -407,4 +408,5 @@ export const getInitialFormData = (): ProjectFormData => ({
   // Re-evaluate materiality initial values
   materiality_changes_occurred: '',
   materiality_revision_table: [],
+  materiality_significantly_different: '',
 });

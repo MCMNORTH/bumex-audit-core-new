@@ -170,6 +170,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       // Re-evaluate materiality initialization
       materiality_changes_occurred: (projectData as any).materiality_changes_occurred || '',
       materiality_revision_table: (projectData as any).materiality_revision_table || [],
+      materiality_significantly_different: (projectData as any).materiality_significantly_different || '',
     });
   };
 
