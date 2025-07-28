@@ -346,6 +346,7 @@ export interface ProjectFormData {
   ceramic_control_environment_documentation: string;
   ceramic_risk_assessment_documentation: string;
   ceramic_communication_documentation: string;
+  ceramic_monitoring_activities_documentation: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -593,4 +594,5 @@ export const getInitialFormData = (): ProjectFormData => ({
   ceramic_control_environment_documentation: '',
   ceramic_risk_assessment_documentation: '',
   ceramic_communication_documentation: '',
+  ceramic_monitoring_activities_documentation: '',
 });

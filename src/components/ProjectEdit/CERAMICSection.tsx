@@ -480,6 +480,53 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
               </CollapsibleContent>
             </Collapsible>
           </div>
+
+          <div>
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center gap-2 w-full bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition-colors">
+                <ChevronDown className="h-4 w-4" />
+                <span className="font-medium">Monitoring Activities:</span>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4 space-y-4 p-4 bg-gray-50 rounded-md">
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 13</span>
+                    <div className="text-sm space-y-2">
+                      <p>
+                        The entity selects, develops, and performs ongoing and/or separate evaluations to 
+                        ascertain whether the components of internal control are present and functioning.
+                      </p>
+                      <p>
+                        Our understanding includes the sources of the information used in the entity's process to 
+                        monitor the system of internal control, and the basis upon which management considers 
+                        the information to be sufficiently reliable for the purpose.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 14</span>
+                    <span className="text-sm">
+                      The entity evaluates and communicates internal control deficiencies in a timely manner to 
+                      those parties responsible for taking corrective action.
+                    </span>
+                  </div>
+                  
+                  <div className="mt-6 space-y-3">
+                    <Label className="text-sm font-medium">
+                      Document our understanding of the processes that address each element above.
+                    </Label>
+                    <Textarea
+                      placeholder="Enter your documentation..."
+                      value={formData.ceramic_monitoring_activities_documentation || ''}
+                      onChange={(e) => onFormDataChange({ ceramic_monitoring_activities_documentation: e.target.value })}
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
         </div>
       </CardContent>
     </Card>
