@@ -427,6 +427,59 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
               </CollapsibleContent>
             </Collapsible>
           </div>
+
+          <div>
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center gap-2 w-full bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition-colors">
+                <ChevronDown className="h-4 w-4" />
+                <span className="font-medium">Communication:</span>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4 space-y-4 p-4 bg-gray-50 rounded-md">
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 10</span>
+                    <span className="text-sm">
+                      The entity communicates significant matters that support the preparation of the financial 
+                      statements and related reporting responsibilities in the information system and other 
+                      components of the system of internal control between people within the entity, including 
+                      how financial reporting roles and responsibilities are communicated.
+                    </span>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 11</span>
+                    <span className="text-sm">
+                      The entity communicates significant matters that support the preparation of the financial 
+                      statements and related reporting responsibilities in the information system and other 
+                      components of the system of internal control between management and those charged 
+                      with governance.
+                    </span>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 12</span>
+                    <span className="text-sm">
+                      The entity communicates significant matters that support the preparation of the financial 
+                      statements and related reporting responsibilities in the information system and other 
+                      components of the system of internal control to external parties such as regulatory bodies.
+                    </span>
+                  </div>
+                  
+                  <div className="mt-6 space-y-3">
+                    <Label className="text-sm font-medium">
+                      Document our understanding of how the entity communicates each element above.
+                    </Label>
+                    <Textarea
+                      placeholder="Enter your documentation..."
+                      value={formData.ceramic_communication_documentation || ''}
+                      onChange={(e) => onFormDataChange({ ceramic_communication_documentation: e.target.value })}
+                      rows={4}
+                    />
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
         </div>
       </CardContent>
     </Card>

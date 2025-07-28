@@ -253,6 +253,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       ceramic_extensive_changes: (projectData as any).ceramic_extensive_changes || false,
       ceramic_control_environment_documentation: (projectData as any).ceramic_control_environment_documentation || '',
       ceramic_risk_assessment_documentation: (projectData as any).ceramic_risk_assessment_documentation || '',
+      ceramic_communication_documentation: (projectData as any).ceramic_communication_documentation || '',
     });
   };
 
