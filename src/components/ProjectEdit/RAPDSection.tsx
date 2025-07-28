@@ -194,121 +194,6 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
               We confirm we discussed, at a minimum, the items included in the RAPD agenda unless the item is indicated as optional.
             </Label>
           </div>
-
-          <div className="space-y-3">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="rapd-document-accounting-policies"
-                checked={formData.rapd_document_accounting_policies || false}
-                onCheckedChange={(checked) => onFormDataChange({ rapd_document_accounting_policies: !!checked })}
-                className="mt-1"
-              />
-              <Label htmlFor="rapd-document-accounting-policies" className="text-sm leading-relaxed">
-                Document matters discussed and significant decisions reached with respect to the entity's selection and application of accounting policies or principles, including related disclosure requirements.
-              </Label>
-            </div>
-            {formData.rapd_document_accounting_policies && (
-              <Textarea
-                placeholder="Enter details..."
-                value={formData.rapd_document_accounting_policies_details || ''}
-                onChange={(e) => onFormDataChange({ rapd_document_accounting_policies_details: e.target.value })}
-                className="mt-2"
-                rows={4}
-              />
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="rapd-document-management-bias"
-                checked={formData.rapd_document_management_bias || false}
-                onCheckedChange={(checked) => onFormDataChange({ rapd_document_management_bias: !!checked })}
-                className="mt-1"
-              />
-              <Label htmlFor="rapd-document-management-bias" className="text-sm leading-relaxed">
-                Document matters discussed with respect to how the financial statements could be manipulated through management bias in accounting estimates.
-              </Label>
-            </div>
-            {formData.rapd_document_management_bias && (
-              <Textarea
-                placeholder="Enter details..."
-                value={formData.rapd_document_management_bias_details || ''}
-                onChange={(e) => onFormDataChange({ rapd_document_management_bias_details: e.target.value })}
-                className="mt-2"
-                rows={4}
-              />
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="rapd-document-misstatement-susceptibility"
-                checked={formData.rapd_document_misstatement_susceptibility || false}
-                onCheckedChange={(checked) => onFormDataChange({ rapd_document_misstatement_susceptibility: !!checked })}
-                className="mt-1"
-              />
-              <Label htmlFor="rapd-document-misstatement-susceptibility" className="text-sm leading-relaxed">
-                Document matters discussed and significant decisions reached with respect to the susceptibility of financial statements to material misstatement due to error or fraud. Fraud risk factors identified during the meeting are further evaluated at 2.4 Fraud.
-              </Label>
-            </div>
-            {formData.rapd_document_misstatement_susceptibility && (
-              <Textarea
-                placeholder="Enter details..."
-                value={formData.rapd_document_misstatement_susceptibility_details || ''}
-                onChange={(e) => onFormDataChange({ rapd_document_misstatement_susceptibility_details: e.target.value })}
-                className="mt-2"
-                rows={4}
-              />
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="rapd-no-other-significant-decisions"
-                checked={formData.rapd_no_other_significant_decisions || false}
-                onCheckedChange={(checked) => onFormDataChange({ rapd_no_other_significant_decisions: !!checked })}
-                className="mt-1"
-              />
-              <Label htmlFor="rapd-no-other-significant-decisions" className="text-sm leading-relaxed">
-                No other significant decisions reached with respect to other matters discussed at the RAPD meeting.
-              </Label>
-            </div>
-            {formData.rapd_no_other_significant_decisions && (
-              <Textarea
-                placeholder="Enter details..."
-                value={formData.rapd_no_other_significant_decisions_details || ''}
-                onChange={(e) => onFormDataChange({ rapd_no_other_significant_decisions_details: e.target.value })}
-                className="mt-2"
-                rows={4}
-              />
-            )}
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="rapd-document-other-significant-decisions"
-                checked={formData.rapd_document_other_significant_decisions || false}
-                onCheckedChange={(checked) => onFormDataChange({ rapd_document_other_significant_decisions: !!checked })}
-                className="mt-1"
-              />
-              <Label htmlFor="rapd-document-other-significant-decisions" className="text-sm leading-relaxed">
-                Document significant decisions reached with respect to other matters discussed at the RAPD meeting.
-              </Label>
-            </div>
-            {formData.rapd_document_other_significant_decisions && (
-              <Textarea
-                placeholder="Enter details..."
-                value={formData.rapd_document_other_significant_decisions_details || ''}
-                onChange={(e) => onFormDataChange({ rapd_document_other_significant_decisions_details: e.target.value })}
-                className="mt-2"
-                rows={4}
-              />
-            )}
-          </div>
         </div>
 
         <div className="space-y-6">
@@ -464,6 +349,123 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
               <p><strong>f.</strong> Compliance with Software Audit Tool (SAT) policies, including independence restrictions on sharing SAT outputs with audit clients. The purpose for using SATs is to assist auditors in the performance of the audit. Providing SAT outputs to an audit client could potentially go beyond the scope of the audit and be considered a non-audit service. Refer to Independence Considerations for Software Audit Tools for additional guidance.</p>
               <p><strong>g.</strong> How to resolve disagreements among team members</p>
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="rapd-document-accounting-policies"
+                checked={formData.rapd_document_accounting_policies || false}
+                onCheckedChange={(checked) => onFormDataChange({ rapd_document_accounting_policies: !!checked })}
+                className="mt-1"
+              />
+              <Label htmlFor="rapd-document-accounting-policies" className="text-sm leading-relaxed">
+                Document matters discussed and significant decisions reached with respect to the entity's selection and application of accounting policies or principles, including related disclosure requirements.
+              </Label>
+            </div>
+            {formData.rapd_document_accounting_policies && (
+              <Textarea
+                placeholder="Enter details..."
+                value={formData.rapd_document_accounting_policies_details || ''}
+                onChange={(e) => onFormDataChange({ rapd_document_accounting_policies_details: e.target.value })}
+                className="mt-2"
+                rows={4}
+              />
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="rapd-document-management-bias"
+                checked={formData.rapd_document_management_bias || false}
+                onCheckedChange={(checked) => onFormDataChange({ rapd_document_management_bias: !!checked })}
+                className="mt-1"
+              />
+              <Label htmlFor="rapd-document-management-bias" className="text-sm leading-relaxed">
+                Document matters discussed with respect to how the financial statements could be manipulated through management bias in accounting estimates.
+              </Label>
+            </div>
+            {formData.rapd_document_management_bias && (
+              <Textarea
+                placeholder="Enter details..."
+                value={formData.rapd_document_management_bias_details || ''}
+                onChange={(e) => onFormDataChange({ rapd_document_management_bias_details: e.target.value })}
+                className="mt-2"
+                rows={4}
+              />
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="rapd-document-misstatement-susceptibility"
+                checked={formData.rapd_document_misstatement_susceptibility || false}
+                onCheckedChange={(checked) => onFormDataChange({ rapd_document_misstatement_susceptibility: !!checked })}
+                className="mt-1"
+              />
+              <Label htmlFor="rapd-document-misstatement-susceptibility" className="text-sm leading-relaxed">
+                Document matters discussed and significant decisions reached with respect to the susceptibility of financial statements to material misstatement due to error or fraud. Fraud risk factors identified during the meeting are further evaluated at 2.4 Fraud.
+              </Label>
+            </div>
+            {formData.rapd_document_misstatement_susceptibility && (
+              <Textarea
+                placeholder="Enter details..."
+                value={formData.rapd_document_misstatement_susceptibility_details || ''}
+                onChange={(e) => onFormDataChange({ rapd_document_misstatement_susceptibility_details: e.target.value })}
+                className="mt-2"
+                rows={4}
+              />
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="rapd-no-other-significant-decisions"
+                checked={formData.rapd_no_other_significant_decisions || false}
+                onCheckedChange={(checked) => onFormDataChange({ rapd_no_other_significant_decisions: !!checked })}
+                className="mt-1"
+              />
+              <Label htmlFor="rapd-no-other-significant-decisions" className="text-sm leading-relaxed">
+                No other significant decisions reached with respect to other matters discussed at the RAPD meeting.
+              </Label>
+            </div>
+            {formData.rapd_no_other_significant_decisions && (
+              <Textarea
+                placeholder="Enter details..."
+                value={formData.rapd_no_other_significant_decisions_details || ''}
+                onChange={(e) => onFormDataChange({ rapd_no_other_significant_decisions_details: e.target.value })}
+                className="mt-2"
+                rows={4}
+              />
+            )}
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="rapd-document-other-significant-decisions"
+                checked={formData.rapd_document_other_significant_decisions || false}
+                onCheckedChange={(checked) => onFormDataChange({ rapd_document_other_significant_decisions: !!checked })}
+                className="mt-1"
+              />
+              <Label htmlFor="rapd-document-other-significant-decisions" className="text-sm leading-relaxed">
+                Document significant decisions reached with respect to other matters discussed at the RAPD meeting.
+              </Label>
+            </div>
+            {formData.rapd_document_other_significant_decisions && (
+              <Textarea
+                placeholder="Enter details..."
+                value={formData.rapd_document_other_significant_decisions_details || ''}
+                onChange={(e) => onFormDataChange({ rapd_document_other_significant_decisions_details: e.target.value })}
+                className="mt-2"
+                rows={4}
+              />
+            )}
           </div>
         </div>
       </CardContent>
