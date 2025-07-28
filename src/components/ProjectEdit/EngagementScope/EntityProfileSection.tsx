@@ -35,10 +35,6 @@ const EntityProfileSection = ({ formData, onFormDataChange }: EntityProfileSecti
               <RadioGroupItem value="no" id="revenue-no" />
               <Label htmlFor="revenue-no">No</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="not-selected" id="revenue-not-selected" />
-              <Label htmlFor="revenue-not-selected">Not selected</Label>
-            </div>
           </RadioGroup>
         </div>
 
@@ -88,10 +84,6 @@ const EntityProfileSection = ({ formData, onFormDataChange }: EntityProfileSecti
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="no" id="sats-no" />
               <Label htmlFor="sats-no">No</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="not-selected" id="sats-not-selected" />
-              <Label htmlFor="sats-not-selected">Not selected</Label>
             </div>
           </RadioGroup>
         </div>

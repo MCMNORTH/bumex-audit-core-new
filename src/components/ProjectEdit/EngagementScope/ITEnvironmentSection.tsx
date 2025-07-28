@@ -19,7 +19,7 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
       <div>
         <Label className="text-sm font-medium">Is the entity highly dependent on IT processes to maintain its financial reporting and accounting books and records, including IT processes performed by service organizations, so we cannot obtain sufficient appropriate audit evidence without relying on automated controls?</Label>
         <RadioGroup
-          value={formData.entity_highly_dependent_on_it || 'Not selected'}
+          value={formData.entity_highly_dependent_on_it || ''}
           onValueChange={(value) => onFormDataChange({ entity_highly_dependent_on_it: value })}
           className="flex space-x-6 mt-2"
         >
@@ -31,17 +31,13 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
             <RadioGroupItem value="No" id="it-no" />
             <Label htmlFor="it-no" className="text-sm">No</Label>
           </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Not selected" id="it-not-selected" />
-            <Label htmlFor="it-not-selected" className="text-sm">Not selected</Label>
-          </div>
         </RadioGroup>
       </div>
 
       <div>
         <Label className="text-sm font-medium">Do we plan to rely on the operating effectiveness of automated controls to respond to a significant risk?</Label>
         <RadioGroup
-          value={formData.plan_to_rely_on_automated_controls || 'Not selected'}
+          value={formData.plan_to_rely_on_automated_controls || ''}
           onValueChange={(value) => onFormDataChange({ plan_to_rely_on_automated_controls: value })}
           className="flex space-x-6 mt-2"
         >
@@ -52,10 +48,6 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="No" id="automated-controls-no" />
             <Label htmlFor="automated-controls-no" className="text-sm">No</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="Not selected" id="automated-controls-not-selected" />
-            <Label htmlFor="automated-controls-not-selected" className="text-sm">Not selected</Label>
           </div>
         </RadioGroup>
       </div>

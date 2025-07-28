@@ -29,7 +29,7 @@ const DataConsiderationsSection = ({
             Is the engagement team able to obtain trial balances and journal entry transactions in an electronic format for upload?
           </Label>
           <RadioGroup
-            value={formData.trial_balances_electronic_format || 'Not selected'}
+            value={formData.trial_balances_electronic_format || ''}
             onValueChange={(value) => onFormDataChange({ trial_balances_electronic_format: value })}
             className="flex space-x-6 mt-2"
           >
@@ -41,10 +41,6 @@ const DataConsiderationsSection = ({
               <RadioGroupItem value="No" id="trial-no" />
               <Label htmlFor="trial-no" className="text-sm">No</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="trial-not-selected" />
-              <Label htmlFor="trial-not-selected" className="text-sm">Not selected</Label>
-            </div>
           </RadioGroup>
         </div>
 
@@ -53,7 +49,7 @@ const DataConsiderationsSection = ({
             Does the entity process large batch journal entries?
           </Label>
           <RadioGroup
-            value={formData.large_batch_journal_entries || 'Not selected'}
+            value={formData.large_batch_journal_entries || ''}
             onValueChange={(value) => onFormDataChange({ large_batch_journal_entries: value })}
             className="flex space-x-6 mt-2"
           >
@@ -65,10 +61,6 @@ const DataConsiderationsSection = ({
               <RadioGroupItem value="No" id="batch-no" />
               <Label htmlFor="batch-no" className="text-sm">No</Label>
             </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="batch-not-selected" />
-              <Label htmlFor="batch-not-selected" className="text-sm">Not selected</Label>
-            </div>
           </RadioGroup>
         </div>
 
@@ -77,7 +69,7 @@ const DataConsiderationsSection = ({
             Are there any significant circumstances that would impair the use of D&A in the current audit?
           </Label>
           <RadioGroup
-            value={formData.significant_circumstances_impair_da || 'Not selected'}
+            value={formData.significant_circumstances_impair_da || ''}
             onValueChange={(value) => onFormDataChange({ significant_circumstances_impair_da: value })}
             className="flex space-x-6 mt-2"
           >
@@ -88,10 +80,6 @@ const DataConsiderationsSection = ({
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="No" id="da-no" />
               <Label htmlFor="da-no" className="text-sm">No</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Not selected" id="da-not-selected" />
-              <Label htmlFor="da-not-selected" className="text-sm">Not selected</Label>
             </div>
           </RadioGroup>
         </div>

@@ -486,7 +486,7 @@ const EngagementProfileSection = ({
             <div>
               <Label className="text-sm font-medium">Is this a first period we will be auditing the entity?</Label>
               <RadioGroup
-                value={formData.first_period_auditing}
+                value={formData.first_period_auditing || ''}
                 onValueChange={(value) => onFormDataChange({ first_period_auditing: value })}
                 className="flex space-x-6 mt-2"
               >
@@ -497,10 +497,6 @@ const EngagementProfileSection = ({
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="No" id="no" />
                   <Label htmlFor="no" className="text-sm">No</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Not selected" id="not-selected" />
-                  <Label htmlFor="not-selected" className="text-sm">Not selected</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -558,8 +554,8 @@ const EngagementProfileSection = ({
           plan_to_involve_specialists: formData.plan_to_involve_specialists || false,
           specialist_teams: formData.specialist_teams || [],
           // IT environment fields
-          entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it || 'Not selected',
-          plan_to_rely_on_automated_controls: (formData as any).plan_to_rely_on_automated_controls || 'Not selected',
+          entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it || '',
+          plan_to_rely_on_automated_controls: (formData as any).plan_to_rely_on_automated_controls || '',
           use_it_critically_checklist: (formData as any).use_it_critically_checklist || false,
           // Engagement team fields
           sufficient_appropriate_resources: (formData as any).sufficient_appropriate_resources || false,
@@ -613,9 +609,9 @@ const EngagementProfileSection = ({
 
       <DataConsiderationsSection
         formData={{
-          trial_balances_electronic_format: formData.trial_balances_electronic_format || 'Not selected',
-          large_batch_journal_entries: formData.large_batch_journal_entries || 'Not selected',
-          significant_circumstances_impair_da: formData.significant_circumstances_impair_da || 'Not selected'
+          trial_balances_electronic_format: formData.trial_balances_electronic_format || '',
+          large_batch_journal_entries: formData.large_batch_journal_entries || '',
+          significant_circumstances_impair_da: formData.significant_circumstances_impair_da || ''
         }}
         onFormDataChange={onFormDataChange}
       />
