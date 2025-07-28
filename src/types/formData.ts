@@ -245,6 +245,10 @@ export interface ProjectFormData {
   materiality_changes_occurred: string;
   materiality_revision_table: any[];
   materiality_significantly_different: string;
+
+  // Entity and environment fields
+  entity_industry: string;
+  financial_reporting_framework_main: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -409,4 +413,8 @@ export const getInitialFormData = (): ProjectFormData => ({
   materiality_changes_occurred: '',
   materiality_revision_table: [],
   materiality_significantly_different: '',
+
+  // Entity and environment initial values
+  entity_industry: '',
+  financial_reporting_framework_main: '',
 });

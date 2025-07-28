@@ -7,6 +7,7 @@ import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 import { Separator } from '@/components/ui/separator';
 import TCWGCommunicationsSection from './TCWGCommunicationsSection';
 import MaterialityMetricsSection from './MaterialityMetricsSection';
+import EntityEnvironmentSection from './EntityEnvironmentSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -205,6 +206,11 @@ const ProjectEditContent = ({
           renderedEntityContent = <div className="space-y-4">
               {renderSectionHeader('Re-evaluate', '3.')}
               <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} showReEvaluate={true} />
+            </div>;
+        } else if (targetSection.id === 'entity-and-env') {
+          renderedEntityContent = <div className="space-y-4">
+              {renderSectionHeader('Entity and its environment', '1.')}
+              <EntityEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
             </div>;
         } else {
           // Render placeholder for other leaves
