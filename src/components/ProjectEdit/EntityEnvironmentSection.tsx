@@ -482,6 +482,214 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                 </Button>
               </div>
             </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's management or shareholders are those charged with governance.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_management_governance_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_management_governance_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_management_governance_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_management_governance_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity is in a steady state and no significant changes to the business operations have occurred in current year.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_steady_state_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_steady_state_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_steady_state_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_steady_state_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's transactions are routine and non-complex in nature.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_transactions_routine_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_transactions_routine_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_transactions_routine_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_transactions_routine_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's capital, if any, remains consistent with the previous year.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_capital_consistent_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_capital_consistent_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_capital_consistent_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_capital_consistent_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's investments, if any, remain consistent with the previous year.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_investments_consistent_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_investments_consistent_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_investments_consistent_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_investments_consistent_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's financing agreements, if any, are simple.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_financing_simple_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_financing_simple_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_financing_simple_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_financing_simple_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's contracts and agreements with customers are standard and without complexity.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_customer_contracts_standard_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_customer_contracts_standard_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_customer_contracts_standard_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_customer_contracts_standard_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity's contracts and agreements with vendors are standard and without complexity.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.entity_vendor_contracts_standard_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_vendor_contracts_standard_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.entity_vendor_contracts_standard_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('entity_vendor_contracts_standard_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>

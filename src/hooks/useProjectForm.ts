@@ -190,6 +190,14 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       entity_nature_ownership_confirmation: (projectData as any).entity_nature_ownership_confirmation || '',
       entity_nature_products_confirmation: (projectData as any).entity_nature_products_confirmation || '',
       entity_nature_facilities_confirmation: (projectData as any).entity_nature_facilities_confirmation || '',
+      entity_management_governance_confirmation: (projectData as any).entity_management_governance_confirmation || '',
+      entity_steady_state_confirmation: (projectData as any).entity_steady_state_confirmation || '',
+      entity_transactions_routine_confirmation: (projectData as any).entity_transactions_routine_confirmation || '',
+      entity_capital_consistent_confirmation: (projectData as any).entity_capital_consistent_confirmation || '',
+      entity_investments_consistent_confirmation: (projectData as any).entity_investments_consistent_confirmation || '',
+      entity_financing_simple_confirmation: (projectData as any).entity_financing_simple_confirmation || '',
+      entity_customer_contracts_standard_confirmation: (projectData as any).entity_customer_contracts_standard_confirmation || '',
+      entity_vendor_contracts_standard_confirmation: (projectData as any).entity_vendor_contracts_standard_confirmation || '',
     });
   };
 

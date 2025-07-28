@@ -264,6 +264,14 @@ export interface ProjectFormData {
   entity_nature_ownership_confirmation: string;
   entity_nature_products_confirmation: string;
   entity_nature_facilities_confirmation: string;
+  entity_management_governance_confirmation: string;
+  entity_steady_state_confirmation: string;
+  entity_transactions_routine_confirmation: string;
+  entity_capital_consistent_confirmation: string;
+  entity_investments_consistent_confirmation: string;
+  entity_financing_simple_confirmation: string;
+  entity_customer_contracts_standard_confirmation: string;
+  entity_vendor_contracts_standard_confirmation: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -447,4 +455,12 @@ export const getInitialFormData = (): ProjectFormData => ({
   entity_nature_ownership_confirmation: '',
   entity_nature_products_confirmation: '',
   entity_nature_facilities_confirmation: '',
+  entity_management_governance_confirmation: '',
+  entity_steady_state_confirmation: '',
+  entity_transactions_routine_confirmation: '',
+  entity_capital_consistent_confirmation: '',
+  entity_investments_consistent_confirmation: '',
+  entity_financing_simple_confirmation: '',
+  entity_customer_contracts_standard_confirmation: '',
+  entity_vendor_contracts_standard_confirmation: '',
 });
