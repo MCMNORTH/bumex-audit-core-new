@@ -105,6 +105,12 @@ interface FormData {
   trial_balances_electronic_format: string;
   large_batch_journal_entries: string;
   significant_circumstances_impair_da: string;
+  // New IT fields
+  plan_to_rely_on_automated_controls: string;
+  use_it_critically_checklist: boolean;
+  it_plan_to_rely_on_automated_controls: string;
+  it_plan_benchmarking_strategy: string;
+  it_key_members_inquired: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -555,8 +561,11 @@ const EngagementProfileSection = ({
           specialist_teams: formData.specialist_teams || [],
           // IT environment fields
           entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it || '',
-          plan_to_rely_on_automated_controls: (formData as any).plan_to_rely_on_automated_controls || '',
-          use_it_critically_checklist: (formData as any).use_it_critically_checklist || false,
+          plan_to_rely_on_automated_controls: formData.plan_to_rely_on_automated_controls || '',
+          use_it_critically_checklist: formData.use_it_critically_checklist || false,
+          it_plan_to_rely_on_automated_controls: formData.it_plan_to_rely_on_automated_controls || '',
+          it_plan_benchmarking_strategy: formData.it_plan_benchmarking_strategy || '',
+          it_key_members_inquired: formData.it_key_members_inquired || '',
           // Engagement team fields
           sufficient_appropriate_resources: (formData as any).sufficient_appropriate_resources || false,
           team_competence_and_capabilities: (formData as any).team_competence_and_capabilities || false,

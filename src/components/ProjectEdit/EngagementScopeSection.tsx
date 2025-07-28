@@ -39,6 +39,9 @@ interface FormData {
   entity_highly_dependent_on_it: string;
   plan_to_rely_on_automated_controls: string;
   use_it_critically_checklist: boolean;
+  it_plan_to_rely_on_automated_controls: string;
+  it_plan_benchmarking_strategy: string;
+  it_key_members_inquired: string;
   sufficient_appropriate_resources: boolean;
   team_competence_and_capabilities: boolean;
   direction_supervision_documentation: string;
