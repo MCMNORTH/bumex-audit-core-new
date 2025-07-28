@@ -137,6 +137,11 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       prior_audit_materiality_amount: (projectData as any).prior_audit_materiality_amount || '',
       // Materiality assessment initialization
       materiality_assessment_table: (projectData as any).materiality_assessment_table || [],
+      // Additional materiality initialization
+      current_audit_materiality_percentage: (projectData as any).current_audit_materiality_percentage || '',
+      prior_audit_materiality_percentage: (projectData as any).prior_audit_materiality_percentage || '',
+      dpp_consultation_required: (projectData as any).dpp_consultation_required || '',
+      lower_materiality_required: (projectData as any).lower_materiality_required || '',
     });
   };
 

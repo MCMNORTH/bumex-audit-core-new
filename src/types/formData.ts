@@ -210,6 +210,12 @@ export interface ProjectFormData {
   
   // Materiality assessment fields
   materiality_assessment_table: MaterialityAssessmentItem[];
+  
+  // Additional materiality fields
+  current_audit_materiality_percentage: string;
+  prior_audit_materiality_percentage: string;
+  dpp_consultation_required: string;
+  lower_materiality_required: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -339,4 +345,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   
   // Materiality assessment initial values
   materiality_assessment_table: [],
+  
+  // Additional materiality initial values
+  current_audit_materiality_percentage: '',
+  prior_audit_materiality_percentage: '',
+  dpp_consultation_required: '',
+  lower_materiality_required: '',
 });

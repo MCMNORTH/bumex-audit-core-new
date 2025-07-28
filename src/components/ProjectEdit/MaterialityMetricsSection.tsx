@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem, MaterialityAssessmentItem } from '@/types/formData';
 
@@ -638,6 +639,77 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
               </table>
             </div>
           </div>
+
+          {/* Materiality as a percentage section */}
+          <div className="mt-8 space-y-4">
+            <p className="text-sm text-gray-900">
+              Materiality as a percentage of our benchmark between the current and prior audits
+            </p>
+
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-1">
+                <Label className="text-sm font-medium">Current audit</Label>
+                <Input
+                  value={(formData as any).current_audit_materiality_percentage || ''}
+                  onChange={(e) => onFormDataChange({ current_audit_materiality_percentage: e.target.value })}
+                  placeholder="Enter percentage..."
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-sm font-medium">Prior audit</Label>
+                <Input
+                  value={(formData as any).prior_audit_materiality_percentage || ''}
+                  onChange={(e) => onFormDataChange({ prior_audit_materiality_percentage: e.target.value })}
+                  placeholder="Enter percentage..."
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Does a circumstance exist for DPP consultation?</Label>
+              <RadioGroup
+                value={(formData as any).dpp_consultation_required || ''}
+                onValueChange={(value) => onFormDataChange({ dpp_consultation_required: value })}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="dpp-yes" />
+                  <Label htmlFor="dpp-yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="dpp-no" />
+                  <Label htmlFor="dpp-no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Lower Materiality Section */}
+    <Card className="mt-6">
+      <CardContent className="p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Determine whether to establish a lower materiality for particular accounts or disclosures
+        </h3>
+        <p className="text-sm text-gray-600 mb-6">
+          Are there particular accounts or disclosures where misstatements lower than the materiality established for the financial statements as a whole be considered material?
+        </p>
+
+        <div className="space-y-3">
+          <RadioGroup
+            value={(formData as any).lower_materiality_required || ''}
+            onValueChange={(value) => onFormDataChange({ lower_materiality_required: value })}
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="yes" id="lower-materiality-yes" />
+              <Label htmlFor="lower-materiality-yes">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="no" id="lower-materiality-no" />
+              <Label htmlFor="lower-materiality-no">No</Label>
+            </div>
+          </RadioGroup>
         </div>
       </CardContent>
     </Card>
