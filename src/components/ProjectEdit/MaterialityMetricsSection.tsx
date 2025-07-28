@@ -2,8 +2,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
 
 interface MaterialityMetricsSectionProps {
@@ -82,16 +80,6 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
               onChange={(e) => onFormDataChange({ pbt_pbtco_question: e.target.value })}
               className="mt-1"
             />
-          </div>
-          
-          <div className="flex items-center mt-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2 text-green-600 border-green-600 hover:bg-green-50"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
           </div>
           
           <div className="space-y-1 mt-6">

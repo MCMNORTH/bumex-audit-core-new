@@ -195,11 +195,19 @@ const ProjectEditContent = ({
         // Render cards for children
         renderedEntityContent = renderEntityWideProceduresContent(targetSection);
       } else {
-        // Render placeholder for leaves
-        renderedEntityContent = <div className="space-y-8">
-            {renderSectionHeader(targetSection.title, targetSection.number)}
-            {renderPlaceholderSection(targetSection.title + " coming soon")}
-          </div>;
+        // Check if this is a specific materiality section that should show content
+        if (targetSection.id === 'materiality-materiality') {
+          renderedEntityContent = <div className="space-y-4">
+              {renderSectionHeader('Materiality', '2.')}
+              <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>;
+        } else {
+          // Render placeholder for other leaves
+          renderedEntityContent = <div className="space-y-8">
+              {renderSectionHeader(targetSection.title, targetSection.number)}
+              {renderPlaceholderSection(targetSection.title + " coming soon")}
+            </div>;
+        }
       }
     }
   }
@@ -253,12 +261,6 @@ const ProjectEditContent = ({
             <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
           </div>}
         {/* END of engagement management custom blocks */}
-
-        {/* Materiality section */}
-        {activeSection === 'materiality-materiality' && <div className="space-y-4">
-            {renderSectionHeader('Materiality', '2.')}
-            <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
-          </div>}
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
         {renderedEntityContent}
