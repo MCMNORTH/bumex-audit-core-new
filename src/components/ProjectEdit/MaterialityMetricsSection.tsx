@@ -117,10 +117,18 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
             />
           </div>
           
+          <div className="space-y-1 mt-6">
+            <Textarea
+              placeholder="Additional notes or comments..."
+              value={(formData as any).materiality_metrics_notes || ''}
+              onChange={(e) => onFormDataChange({ materiality_metrics_notes: e.target.value })}
+              className="min-h-[120px] resize-none"
+            />
+          </div>
+
           {/* Materiality Metrics Table */}
           <div className="mt-8">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-md font-semibold">Materiality Metrics</h4>
+            <div className="flex items-center justify-end mb-4">
               <Button 
                 onClick={addNewTableItem}
                 size="sm"
@@ -258,15 +266,6 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
                 </tbody>
               </table>
             </div>
-          </div>
-
-          <div className="space-y-1 mt-6">
-            <Textarea
-              placeholder="Additional notes or comments..."
-              value={(formData as any).materiality_metrics_notes || ''}
-              onChange={(e) => onFormDataChange({ materiality_metrics_notes: e.target.value })}
-              className="min-h-[120px] resize-none"
-            />
           </div>
         </div>
       </CardContent>
