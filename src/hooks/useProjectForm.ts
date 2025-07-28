@@ -130,6 +130,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       prior_audit_adjusted_amount: (projectData as any).prior_audit_adjusted_amount || '',
       prior_audit_benchmark_not_metric: (projectData as any).prior_audit_benchmark_not_metric || false,
       different_benchmark_rationale: (projectData as any).different_benchmark_rationale || '',
+      // Qualitative factors initialization
+      qualitative_factors_table: (projectData as any).qualitative_factors_table || [],
     });
   };
 

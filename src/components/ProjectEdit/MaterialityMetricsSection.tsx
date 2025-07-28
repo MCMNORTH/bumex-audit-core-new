@@ -5,8 +5,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2 } from 'lucide-react';
-import { ProjectFormData, MaterialityMetricItem } from '@/types/formData';
+import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem } from '@/types/formData';
 
 interface MaterialityMetricsSectionProps {
   formData: ProjectFormData;
@@ -15,6 +16,7 @@ interface MaterialityMetricsSectionProps {
 
 const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMetricsSectionProps) => {
   const materialityTable = (formData as any).materiality_metrics_table || [];
+  const qualitativeFactorsTable = (formData as any).qualitative_factors_table || [];
 
   const handleTableItemChange = (id: string, field: keyof MaterialityMetricItem, value: string | boolean) => {
     const updatedTable = materialityTable.map((item: MaterialityMetricItem) =>
@@ -45,7 +47,30 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
     onFormDataChange({ materiality_metrics_table: updatedTable } as any);
   };
 
+  const handleQualitativeFactorChange = (id: string, field: keyof QualitativeFactorItem, value: string) => {
+    const updatedTable = qualitativeFactorsTable.map((item: QualitativeFactorItem) =>
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    onFormDataChange({ qualitative_factors_table: updatedTable } as any);
+  };
+
+  const addNewQualitativeFactorItem = () => {
+    const newItem: QualitativeFactorItem = {
+      id: Date.now().toString(),
+      factors: '',
+      higherLowerAmount: 'Higher',
+      consideration: ''
+    };
+    onFormDataChange({ qualitative_factors_table: [...qualitativeFactorsTable, newItem] } as any);
+  };
+
+  const removeQualitativeFactorItem = (id: string) => {
+    const updatedTable = qualitativeFactorsTable.filter((item: QualitativeFactorItem) => item.id !== id);
+    onFormDataChange({ qualitative_factors_table: updatedTable } as any);
+  };
+
   return (
+    <>
     <Card>
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">
@@ -362,6 +387,97 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
         </div>
       </CardContent>
     </Card>
+
+    {/* Qualitative Factors Section */}
+    <Card className="mt-6">
+      <CardContent className="p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Establish and assess the appropriateness of materiality
+        </h3>
+        <p className="text-sm text-gray-600 mb-6">
+          Consider the influence of qualitative factors when establishing materiality
+        </p>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-end mb-4">
+            <Button 
+              onClick={addNewQualitativeFactorItem}
+              size="sm"
+              className="bg-green-600 hover:bg-green-700"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add
+            </Button>
+          </div>
+          
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-blue-700 text-white">
+                  <th className="text-left p-4 font-medium border">Factors</th>
+                  <th className="text-center p-4 font-medium border">Higher/lower amount</th>
+                  <th className="text-left p-4 font-medium border">Consideration of qualitative factor(s) on the determination of a higher or lower amount of materiality</th>
+                  <th className="text-center p-4 font-medium border">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {qualitativeFactorsTable.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center p-12 text-gray-500 border">
+                      No qualitative factors added yet. Click "Add" to create your first factor item.
+                    </td>
+                  </tr>
+                ) : (
+                  qualitativeFactorsTable.map((item: QualitativeFactorItem, index: number) => (
+                    <tr key={item.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                      <td className="p-2 border">
+                        <Input
+                          value={item.factors}
+                          onChange={(e) => handleQualitativeFactorChange(item.id, 'factors', e.target.value)}
+                          placeholder="Enter factors..."
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="p-2 text-center border">
+                        <div className="flex items-center justify-center space-x-2">
+                          <span className={item.higherLowerAmount === 'Lower' ? 'text-gray-500' : 'font-medium'}>Higher</span>
+                          <Switch
+                            checked={item.higherLowerAmount === 'Lower'}
+                            onCheckedChange={(checked) => 
+                              handleQualitativeFactorChange(item.id, 'higherLowerAmount', checked ? 'Lower' : 'Higher')
+                            }
+                          />
+                          <span className={item.higherLowerAmount === 'Higher' ? 'text-gray-500' : 'font-medium'}>Lower</span>
+                        </div>
+                      </td>
+                      <td className="p-2 border">
+                        <Input
+                          value={item.consideration}
+                          onChange={(e) => handleQualitativeFactorChange(item.id, 'consideration', e.target.value)}
+                          placeholder="Enter consideration..."
+                          className="w-full"
+                        />
+                      </td>
+                      <td className="p-2 text-center border">
+                        <Button
+                          onClick={() => removeQualitativeFactorItem(item.id)}
+                          size="sm"
+                          variant="destructive"
+                          className="h-8 w-8 p-0"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  </>
   );
 };
 

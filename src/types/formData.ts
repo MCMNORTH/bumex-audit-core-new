@@ -50,6 +50,13 @@ export interface MaterialityMetricItem {
   expectedLowerRange: string;
 }
 
+export interface QualitativeFactorItem {
+  id: string;
+  factors: string;
+  higherLowerAmount: 'Higher' | 'Lower';
+  consideration: string;
+}
+
 export interface ProjectFormData {
   client_id: string;
   engagement_name: string;
@@ -184,6 +191,9 @@ export interface ProjectFormData {
   prior_audit_adjusted_amount: string;
   prior_audit_benchmark_not_metric: boolean;
   different_benchmark_rationale: string;
+  
+  // Qualitative factors fields
+  qualitative_factors_table: QualitativeFactorItem[];
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -303,4 +313,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   prior_audit_adjusted_amount: '',
   prior_audit_benchmark_not_metric: false,
   different_benchmark_rationale: '',
+  
+  // Qualitative factors initial values
+  qualitative_factors_table: [],
 });
