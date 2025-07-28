@@ -58,6 +58,14 @@ interface FormData {
   it_systems_documentation: string;
   it_attach_documentation: boolean;
   it_documentation_details: string;
+  it_service_organizations_used: boolean;
+  it_service_organizations: Array<{
+    id: string;
+    description: string;
+  }>;
+  it_new_accounting_software: string;
+  it_software_effects_description: string;
+  it_processes_understanding: string;
   sufficient_appropriate_resources: boolean;
   team_competence_and_capabilities: boolean;
   direction_supervision_documentation: string;

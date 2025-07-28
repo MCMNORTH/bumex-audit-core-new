@@ -126,6 +126,14 @@ interface FormData {
   it_systems_documentation: string;
   it_attach_documentation: boolean;
   it_documentation_details: string;
+  it_service_organizations_used: boolean;
+  it_service_organizations: Array<{
+    id: string;
+    description: string;
+  }>;
+  it_new_accounting_software: string;
+  it_software_effects_description: string;
+  it_processes_understanding: string;
 }
 
 interface EngagementProfileSectionProps {
@@ -583,6 +591,11 @@ const EngagementProfileSection = ({
           it_systems_documentation: formData.it_systems_documentation || '',
           it_attach_documentation: formData.it_attach_documentation || false,
           it_documentation_details: formData.it_documentation_details || '',
+          it_service_organizations_used: formData.it_service_organizations_used || false,
+          it_service_organizations: formData.it_service_organizations || [],
+          it_new_accounting_software: formData.it_new_accounting_software || '',
+          it_software_effects_description: formData.it_software_effects_description || '',
+          it_processes_understanding: formData.it_processes_understanding || '',
           // Engagement team fields
           sufficient_appropriate_resources: (formData as any).sufficient_appropriate_resources || false,
           team_competence_and_capabilities: (formData as any).team_competence_and_capabilities || false,

@@ -36,6 +36,14 @@ interface ITEnvironmentSectionProps {
     it_systems_documentation: string;
     it_attach_documentation: boolean;
     it_documentation_details: string;
+    it_service_organizations_used: boolean;
+    it_service_organizations: Array<{
+      id: string;
+      description: string;
+    }>;
+    it_new_accounting_software: string;
+    it_software_effects_description: string;
+    it_processes_understanding: string;
   };
   onFormDataChange: (updates: any) => void;
 }
@@ -93,6 +101,29 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
   const deleteSystemLayer = (id: string) => {
     const updatedLayers = (formData.it_systems_layers || []).filter(item => item.id !== id);
     onFormDataChange({ it_systems_layers: updatedLayers });
+  };
+
+  const addServiceOrganization = () => {
+    const newServiceOrg = {
+      id: Date.now().toString(),
+      description: '',
+    };
+    
+    onFormDataChange({
+      it_service_organizations: [...(formData.it_service_organizations || []), newServiceOrg]
+    });
+  };
+
+  const updateServiceOrganization = (id: string, field: string, value: string) => {
+    const updatedServiceOrgs = (formData.it_service_organizations || []).map(item =>
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    onFormDataChange({ it_service_organizations: updatedServiceOrgs });
+  };
+
+  const deleteServiceOrganization = (id: string) => {
+    const updatedServiceOrgs = (formData.it_service_organizations || []).filter(item => item.id !== id);
+    onFormDataChange({ it_service_organizations: updatedServiceOrgs });
   };
 
   return (
@@ -369,6 +400,129 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
               rows={3}
             />
           )}
+        </div>
+
+        {/* Service Organizations */}
+        <div className="space-y-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="service-organizations-used"
+              checked={formData.it_service_organizations_used || false}
+              onCheckedChange={(checked) => onFormDataChange({ it_service_organizations_used: checked === true })}
+            />
+            <Label htmlFor="service-organizations-used" className="text-sm font-medium">
+              Check if service organizations are used to support the entity's IT organization.
+            </Label>
+          </div>
+          
+          {formData.it_service_organizations_used && (
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <Label className="text-sm font-medium">Service Organizations</Label>
+                <Button onClick={addServiceOrganization} size="sm" className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add Service Organization
+                </Button>
+              </div>
+              
+              {(formData.it_service_organizations || []).length > 0 && (
+                <div className="border rounded-md">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Service organization's description</TableHead>
+                        <TableHead className="w-[50px]">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {(formData.it_service_organizations || []).map((serviceOrg) => (
+                        <TableRow key={serviceOrg.id}>
+                          <TableCell>
+                            <Input
+                              value={serviceOrg.id}
+                              onChange={(e) => updateServiceOrganization(serviceOrg.id, 'id', e.target.value)}
+                              placeholder="Enter ID"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              value={serviceOrg.description}
+                              onChange={(e) => updateServiceOrganization(serviceOrg.id, 'description', e.target.value)}
+                              placeholder="Enter service organization description"
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => deleteServiceOrganization(serviceOrg.id)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* New Accounting Software */}
+        <div>
+          <Label className="text-sm font-medium mb-2 block">
+            Has the client purchased a new accounting software application in the current year, or made any significant upgrades to IT systems / layers of technology compared to the versions used in the prior year?
+          </Label>
+          <RadioGroup
+            value={formData.it_new_accounting_software || ''}
+            onValueChange={(value) => onFormDataChange({ it_new_accounting_software: value })}
+            className="flex space-x-6 mt-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Yes" id="new-software-yes" />
+              <Label htmlFor="new-software-yes" className="text-sm">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="No" id="new-software-no" />
+              <Label htmlFor="new-software-no" className="text-sm">No</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Software Effects Description */}
+        <div>
+          <Label htmlFor="software-effects" className="text-sm font-medium mb-2 block">
+            Briefly describe the effects (if any) on the processing of accounting transactions, or on the summarization of financial data and preparation of financial statements, and on the related risks of material misstatement.
+          </Label>
+          <Textarea
+            id="software-effects"
+            value={formData.it_software_effects_description || ''}
+            onChange={(e) => onFormDataChange({ it_software_effects_description: e.target.value })}
+            rows={4}
+            placeholder="Enter description of effects..."
+          />
+        </div>
+      </div>
+
+      {/* New Container - IT Processes */}
+      <div className="border-t pt-6 mt-8">
+        <h4 className="font-medium text-gray-900 mb-4">Understand the entity's IT processes</h4>
+        
+        <div>
+          <Label htmlFor="it-processes" className="text-sm font-medium mb-2 block">
+            Document our understanding of how the entity manages IT processes
+          </Label>
+          <Textarea
+            id="it-processes"
+            value={formData.it_processes_understanding || ''}
+            onChange={(e) => onFormDataChange({ it_processes_understanding: e.target.value })}
+            rows={4}
+            placeholder="Enter understanding of IT processes..."
+          />
         </div>
       </div>
     </div>
