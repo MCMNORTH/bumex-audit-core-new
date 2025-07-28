@@ -232,6 +232,16 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       rapd_team_members: (projectData as any).rapd_team_members || [],
       rapd_fraud_brainstorming_same_meeting: (projectData as any).rapd_fraud_brainstorming_same_meeting || '',
       rapd_agenda_confirmation: (projectData as any).rapd_agenda_confirmation || false,
+      rapd_document_accounting_policies: (projectData as any).rapd_document_accounting_policies || false,
+      rapd_document_accounting_policies_details: (projectData as any).rapd_document_accounting_policies_details || '',
+      rapd_document_management_bias: (projectData as any).rapd_document_management_bias || false,
+      rapd_document_management_bias_details: (projectData as any).rapd_document_management_bias_details || '',
+      rapd_document_misstatement_susceptibility: (projectData as any).rapd_document_misstatement_susceptibility || false,
+      rapd_document_misstatement_susceptibility_details: (projectData as any).rapd_document_misstatement_susceptibility_details || '',
+      rapd_no_other_significant_decisions: (projectData as any).rapd_no_other_significant_decisions || false,
+      rapd_no_other_significant_decisions_details: (projectData as any).rapd_no_other_significant_decisions_details || '',
+      rapd_document_other_significant_decisions: (projectData as any).rapd_document_other_significant_decisions || false,
+      rapd_document_other_significant_decisions_details: (projectData as any).rapd_document_other_significant_decisions_details || '',
     });
   };
 

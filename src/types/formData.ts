@@ -316,6 +316,16 @@ export interface ProjectFormData {
   }>;
   rapd_fraud_brainstorming_same_meeting: string;
   rapd_agenda_confirmation: boolean;
+  rapd_document_accounting_policies: boolean;
+  rapd_document_accounting_policies_details: string;
+  rapd_document_management_bias: boolean;
+  rapd_document_management_bias_details: string;
+  rapd_document_misstatement_susceptibility: boolean;
+  rapd_document_misstatement_susceptibility_details: string;
+  rapd_no_other_significant_decisions: boolean;
+  rapd_no_other_significant_decisions_details: string;
+  rapd_document_other_significant_decisions: boolean;
+  rapd_document_other_significant_decisions_details: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -538,7 +548,17 @@ export const getInitialFormData = (): ProjectFormData => ({
     
     // RAPD Section
     rapd_meeting_date: '',
-    rapd_team_members: [],
-    rapd_fraud_brainstorming_same_meeting: '',
-    rapd_agenda_confirmation: false,
+  rapd_team_members: [],
+  rapd_fraud_brainstorming_same_meeting: '',
+  rapd_agenda_confirmation: false,
+  rapd_document_accounting_policies: false,
+  rapd_document_accounting_policies_details: '',
+  rapd_document_management_bias: false,
+  rapd_document_management_bias_details: '',
+  rapd_document_misstatement_susceptibility: false,
+  rapd_document_misstatement_susceptibility_details: '',
+  rapd_no_other_significant_decisions: false,
+  rapd_no_other_significant_decisions_details: '',
+  rapd_document_other_significant_decisions: false,
+  rapd_document_other_significant_decisions_details: '',
 });
