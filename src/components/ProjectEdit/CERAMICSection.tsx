@@ -274,12 +274,58 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                     The entity demonstrates a commitment to integrity and ethical values.
                   </p>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex gap-4">
                       <span className="font-medium text-sm min-w-[80px]">Element 1</span>
                       <span className="text-sm">
                         Our understanding includes how management's oversight responsibilities are carried out, 
                         such as creating and maintaining the entity's culture.
+                      </span>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <span className="font-medium text-sm min-w-[80px]">Element 2</span>
+                      <div className="text-sm space-y-2">
+                        <p>
+                          When those charged with governance are separate from management, those charged with 
+                          governance (a) demonstrate independence from management, when appropriate, and (b) 
+                          exercise oversight of the development and performance of internal control.
+                        </p>
+                        <p>
+                          Our understanding includes the nature and extent of oversight and governance in place 
+                          over management's process for making accounting estimates.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <span className="font-medium text-sm min-w-[80px]">Element 3</span>
+                      <span className="text-sm">
+                        Entity's management establishes, with board oversight, structures, reporting lines, and 
+                        appropriate authorities and responsibilities in the pursuit of objectives.
+                      </span>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <span className="font-medium text-sm min-w-[80px]">Element 4</span>
+                      <div className="text-sm space-y-2">
+                        <p>
+                          The entity demonstrates a commitment to attract, develop, and retain competent 
+                          individuals in alignment with objectives.
+                        </p>
+                        <p>
+                          Our understanding includes how management identifies the need for, and applies, 
+                          specialized skills or knowledge related to accounting estimates, including with respect to 
+                          the use of a specialist.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4">
+                      <span className="font-medium text-sm min-w-[80px]">Element 5</span>
+                      <span className="text-sm">
+                        The entity holds individuals accountable for their internal control responsibilities in the 
+                        pursuit of objectives.
                       </span>
                     </div>
                   </div>
