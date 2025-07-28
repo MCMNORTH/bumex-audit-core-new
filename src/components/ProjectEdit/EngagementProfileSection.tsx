@@ -76,8 +76,6 @@ interface FormData {
     name: string;
     title: string;
   }>;
-  // IT environment field
-  entity_highly_dependent_on_it: string;
   // Other strategy or planning considerations fields
   significant_factors_directing_activities: string;
   additional_information_documentation: string;
@@ -106,8 +104,6 @@ interface FormData {
   large_batch_journal_entries: string;
   significant_circumstances_impair_da: string;
   // New IT fields
-  plan_to_rely_on_automated_controls: string;
-  use_it_critically_checklist: boolean;
   it_plan_to_rely_on_automated_controls: string;
   it_plan_benchmarking_strategy: string;
   it_key_members_inquired: string;
@@ -560,9 +556,6 @@ const EngagementProfileSection = ({
           plan_to_involve_specialists: formData.plan_to_involve_specialists || false,
           specialist_teams: formData.specialist_teams || [],
           // IT environment fields
-          entity_highly_dependent_on_it: formData.entity_highly_dependent_on_it || '',
-          plan_to_rely_on_automated_controls: formData.plan_to_rely_on_automated_controls || '',
-          use_it_critically_checklist: formData.use_it_critically_checklist || false,
           it_plan_to_rely_on_automated_controls: formData.it_plan_to_rely_on_automated_controls || '',
           it_plan_benchmarking_strategy: formData.it_plan_benchmarking_strategy || '',
           it_key_members_inquired: formData.it_key_members_inquired || '',

@@ -36,9 +36,6 @@ interface FormData {
   entity_uses_service_organization: boolean;
   plan_to_involve_specialists: boolean;
   specialist_teams: SpecialistTeam[];
-  entity_highly_dependent_on_it: string;
-  plan_to_rely_on_automated_controls: string;
-  use_it_critically_checklist: boolean;
   it_plan_to_rely_on_automated_controls: string;
   it_plan_benchmarking_strategy: string;
   it_key_members_inquired: string;

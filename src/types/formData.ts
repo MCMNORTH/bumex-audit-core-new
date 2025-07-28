@@ -117,9 +117,6 @@ export interface ProjectFormData {
     name: string;
     title: string;
   }>;
-  entity_highly_dependent_on_it: string;
-  plan_to_rely_on_automated_controls: string;
-  use_it_critically_checklist: boolean;
   sufficient_appropriate_resources: boolean;
   team_competence_and_capabilities: boolean;
   direction_supervision_documentation: string;
@@ -406,9 +403,6 @@ export const getInitialFormData = (): ProjectFormData => ({
   entity_uses_service_organization: false,
   plan_to_involve_specialists: false,
   specialist_teams: [],
-  entity_highly_dependent_on_it: 'Not selected',
-  plan_to_rely_on_automated_controls: 'Not selected',
-  use_it_critically_checklist: false,
   sufficient_appropriate_resources: false,
   team_competence_and_capabilities: false,
   direction_supervision_documentation: '',
