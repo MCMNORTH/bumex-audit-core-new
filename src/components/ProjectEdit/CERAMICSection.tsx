@@ -346,6 +346,61 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
               </CollapsibleContent>
             </Collapsible>
           </div>
+
+          <div>
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center gap-2 w-full bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition-colors">
+                <ChevronDown className="h-4 w-4" />
+                <span className="font-medium">Risk Assessment:</span>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4 space-y-4 p-4 bg-gray-50 rounded-md">
+                <div className="space-y-4">
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 6</span>
+                    <div className="text-sm space-y-2">
+                      <p>
+                        The entity specifies objectives with sufficient clarity to enable the identification and 
+                        assessment of risks relating to objectives.
+                      </p>
+                      <p>
+                        The objectives are those relevant to financial reporting objectives, including accounting 
+                        estimates.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 7</span>
+                    <div className="text-sm space-y-2">
+                      <p>
+                        The entity identifies risks to the achievement of its objectives and analyzes risks as a basis 
+                        for determining how the risks should be managed.
+                      </p>
+                      <p>
+                        These risks are business risks relevant to financial reporting objectives, including risks 
+                        related to accounting estimates.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-4">
+                    <span className="font-medium text-sm min-w-[80px]">Element 8</span>
+                    <div className="text-sm space-y-2">
+                      <p>
+                        The entity considers the potential for fraud in assessing risks to the achievement of 
+                        objectives.
+                      </p>
+                      <p>
+                        Our understanding includes the entity's process for considering the potential for fraud in 
+                        accounting estimates, including the susceptibility of accounting estimates to management 
+                        bias.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
         </div>
       </CardContent>
     </Card>
