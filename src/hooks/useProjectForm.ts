@@ -115,6 +115,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       tcwg_results_communications: (projectData as any).tcwg_results_communications || [],
       tcwg_results_attachments: (projectData as any).tcwg_results_attachments || [],
       tcwg_adequate_communication: (projectData as any).tcwg_adequate_communication || 'Not selected',
+      // Materiality initialization
+      materiality_mbt_applicable: (projectData as any).materiality_mbt_applicable || 'MBT for profit-seeking entities',
+      materiality_mbt_industry_scenarios: (projectData as any).materiality_mbt_industry_scenarios || 'General',
+      materiality_financial_info_calculation: (projectData as any).materiality_financial_info_calculation || 'Periods',
+      materiality_period_selection: (projectData as any).materiality_period_selection || '',
+      materiality_pbt_equals_pbtco: (projectData as any).materiality_pbt_equals_pbtco || 'Yes',
     });
   };
 

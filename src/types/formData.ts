@@ -155,6 +155,12 @@ export interface ProjectFormData {
   tcwg_results_communications: TCWGResultsCommunicationItem[];
   tcwg_results_attachments: Array<{name: string, url: string, type: string}>;
   tcwg_adequate_communication: string;
+  // Materiality fields
+  materiality_mbt_applicable: string;
+  materiality_mbt_industry_scenarios: string;
+  materiality_financial_info_calculation: string;
+  materiality_period_selection: string;
+  materiality_pbt_equals_pbtco: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -259,4 +265,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   tcwg_results_communications: [],
   tcwg_results_attachments: [],
   tcwg_adequate_communication: 'Not selected',
+  // Materiality initial values
+  materiality_mbt_applicable: 'MBT for profit-seeking entities',
+  materiality_mbt_industry_scenarios: 'General',
+  materiality_financial_info_calculation: 'Periods',
+  materiality_period_selection: '',
+  materiality_pbt_equals_pbtco: 'Yes',
 });

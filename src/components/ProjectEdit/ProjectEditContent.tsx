@@ -6,6 +6,7 @@ import EngagementProfileSection from './EngagementProfileSection';
 import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 import { Separator } from '@/components/ui/separator';
 import TCWGCommunicationsSection from './TCWGCommunicationsSection';
+import { MaterialitySection } from './MaterialitySection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -194,11 +195,19 @@ const ProjectEditContent = ({
         // Render cards for children
         renderedEntityContent = renderEntityWideProceduresContent(targetSection);
       } else {
-        // Render placeholder for leaves
-        renderedEntityContent = <div className="space-y-8">
-            {renderSectionHeader(targetSection.title, targetSection.number)}
-            {renderPlaceholderSection(targetSection.title + " coming soon")}
-          </div>;
+        // Render specific components for certain leaf sections
+        if (targetSection.id === 'materiality-materiality') {
+          renderedEntityContent = <div className="space-y-8">
+              {renderSectionHeader(targetSection.title, targetSection.number)}
+              <MaterialitySection formData={formData} handleFormDataChange={onFormDataChange} />
+            </div>;
+        } else {
+          // Render placeholder for other leaves
+          renderedEntityContent = <div className="space-y-8">
+              {renderSectionHeader(targetSection.title, targetSection.number)}
+              {renderPlaceholderSection(targetSection.title + " coming soon")}
+            </div>;
+        }
       }
     }
   }
