@@ -263,6 +263,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       ceramic_eval_risk_process: (projectData as any).ceramic_eval_risk_process || '',
       ceramic_eval_communication_support: (projectData as any).ceramic_eval_communication_support || '',
       ceramic_eval_monitoring_process: (projectData as any).ceramic_eval_monitoring_process || '',
+      it_plan_to_rely_on_automated_controls: (projectData as any).it_plan_to_rely_on_automated_controls || '',
+      it_plan_benchmarking_strategy: (projectData as any).it_plan_benchmarking_strategy || '',
+      it_key_members_inquired: (projectData as any).it_key_members_inquired || '',
     });
   };
 
