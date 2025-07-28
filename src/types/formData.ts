@@ -382,6 +382,18 @@ export interface ProjectFormData {
   it_new_accounting_software: string;
   it_software_effects_description: string;
   it_processes_understanding: string;
+  it_processes_table: Array<{
+    id: string;
+    itProcess: string;
+    understanding: string;
+  }>;
+  it_risk_assessment_procedures_text: string;
+  it_risk_assessment_procedures: Array<{
+    id: string;
+    procedure: string;
+  }>;
+  it_information_used_risk_assessment: string;
+  cybersecurity_risks_understanding: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -648,4 +660,9 @@ export const getInitialFormData = (): ProjectFormData => ({
   it_new_accounting_software: '',
   it_software_effects_description: '',
   it_processes_understanding: '',
+  it_processes_table: [],
+  it_risk_assessment_procedures_text: '',
+  it_risk_assessment_procedures: [],
+  it_information_used_risk_assessment: '',
+  cybersecurity_risks_understanding: '',
 });

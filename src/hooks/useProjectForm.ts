@@ -273,6 +273,11 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       it_new_accounting_software: (projectData as any).it_new_accounting_software || '',
       it_software_effects_description: (projectData as any).it_software_effects_description || '',
       it_processes_understanding: (projectData as any).it_processes_understanding || '',
+      it_processes_table: (projectData as any).it_processes_table || [],
+      it_risk_assessment_procedures_text: (projectData as any).it_risk_assessment_procedures_text || '',
+      it_risk_assessment_procedures: (projectData as any).it_risk_assessment_procedures || [],
+      it_information_used_risk_assessment: (projectData as any).it_information_used_risk_assessment || '',
+      cybersecurity_risks_understanding: (projectData as any).cybersecurity_risks_understanding || '',
     });
   };
 

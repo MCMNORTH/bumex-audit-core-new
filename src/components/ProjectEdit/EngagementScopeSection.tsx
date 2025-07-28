@@ -66,6 +66,18 @@ interface FormData {
   it_new_accounting_software: string;
   it_software_effects_description: string;
   it_processes_understanding: string;
+  it_processes_table: Array<{
+    id: string;
+    itProcess: string;
+    understanding: string;
+  }>;
+  it_risk_assessment_procedures_text: string;
+  it_risk_assessment_procedures: Array<{
+    id: string;
+    procedure: string;
+  }>;
+  it_information_used_risk_assessment: string;
+  cybersecurity_risks_understanding: string;
   sufficient_appropriate_resources: boolean;
   team_competence_and_capabilities: boolean;
   direction_supervision_documentation: string;

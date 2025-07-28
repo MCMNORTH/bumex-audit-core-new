@@ -44,6 +44,18 @@ interface ITEnvironmentSectionProps {
     it_new_accounting_software: string;
     it_software_effects_description: string;
     it_processes_understanding: string;
+    it_processes_table: Array<{
+      id: string;
+      itProcess: string;
+      understanding: string;
+    }>;
+    it_risk_assessment_procedures_text: string;
+    it_risk_assessment_procedures: Array<{
+      id: string;
+      procedure: string;
+    }>;
+    it_information_used_risk_assessment: string;
+    cybersecurity_risks_understanding: string;
   };
   onFormDataChange: (updates: any) => void;
 }
@@ -124,6 +136,53 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
   const deleteServiceOrganization = (id: string) => {
     const updatedServiceOrgs = (formData.it_service_organizations || []).filter(item => item.id !== id);
     onFormDataChange({ it_service_organizations: updatedServiceOrgs });
+  };
+
+  const addITProcess = () => {
+    const newProcess = {
+      id: Date.now().toString(),
+      itProcess: '',
+      understanding: '',
+    };
+    
+    onFormDataChange({
+      it_processes_table: [...(formData.it_processes_table || []), newProcess]
+    });
+  };
+
+  const updateITProcess = (id: string, field: string, value: string) => {
+    const updatedProcesses = (formData.it_processes_table || []).map(item =>
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    onFormDataChange({ it_processes_table: updatedProcesses });
+  };
+
+  const deleteITProcess = (id: string) => {
+    const updatedProcesses = (formData.it_processes_table || []).filter(item => item.id !== id);
+    onFormDataChange({ it_processes_table: updatedProcesses });
+  };
+
+  const addRiskAssessmentProcedure = () => {
+    const newProcedure = {
+      id: Date.now().toString(),
+      procedure: '',
+    };
+    
+    onFormDataChange({
+      it_risk_assessment_procedures: [...(formData.it_risk_assessment_procedures || []), newProcedure]
+    });
+  };
+
+  const updateRiskAssessmentProcedure = (id: string, field: string, value: string) => {
+    const updatedProcedures = (formData.it_risk_assessment_procedures || []).map(item =>
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    onFormDataChange({ it_risk_assessment_procedures: updatedProcedures });
+  };
+
+  const deleteRiskAssessmentProcedure = (id: string) => {
+    const updatedProcedures = (formData.it_risk_assessment_procedures || []).filter(item => item.id !== id);
+    onFormDataChange({ it_risk_assessment_procedures: updatedProcedures });
   };
 
   return (
@@ -522,6 +581,149 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
             onChange={(e) => onFormDataChange({ it_processes_understanding: e.target.value })}
             rows={4}
             placeholder="Enter understanding of IT processes..."
+          />
+        </div>
+
+        {/* IT Processes Table */}
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <Label className="text-sm font-medium">IT Processes Details</Label>
+            <Button onClick={addITProcess} size="sm" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Add IT Process
+            </Button>
+          </div>
+          
+          {(formData.it_processes_table || []).length > 0 && (
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>IT Process</TableHead>
+                    <TableHead>Understanding of how the entity manages the IT process</TableHead>
+                    <TableHead className="w-[50px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(formData.it_processes_table || []).map((process) => (
+                    <TableRow key={process.id}>
+                      <TableCell>
+                        <Input
+                          value={process.itProcess}
+                          onChange={(e) => updateITProcess(process.id, 'itProcess', e.target.value)}
+                          placeholder="Enter IT process"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Input
+                          value={process.understanding}
+                          onChange={(e) => updateITProcess(process.id, 'understanding', e.target.value)}
+                          placeholder="Enter understanding"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteITProcess(process.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+
+        {/* Risk Assessment Procedures */}
+        <div>
+          <Label className="text-sm font-medium mb-2 block">
+            Document the risk assessment procedures performed to obtain an understanding of how the entity uses IT as part of financial reporting (i.e., understanding of the IT systems, IT organization and IT processes).
+          </Label>
+          
+          <div className="flex justify-between items-center mb-3">
+            <span></span>
+            <Button onClick={addRiskAssessmentProcedure} size="sm" className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Add Procedure
+            </Button>
+          </div>
+          
+          {(formData.it_risk_assessment_procedures || []).length > 0 && (
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Procedure performed</TableHead>
+                    <TableHead className="w-[50px]">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {(formData.it_risk_assessment_procedures || []).map((procedure) => (
+                    <TableRow key={procedure.id}>
+                      <TableCell>
+                        <Input
+                          value={procedure.procedure}
+                          onChange={(e) => updateRiskAssessmentProcedure(procedure.id, 'procedure', e.target.value)}
+                          placeholder="Enter procedure performed"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteRiskAssessmentProcedure(procedure.id)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </div>
+
+        {/* Information Used in Risk Assessment */}
+        <div>
+          <Label className="text-sm font-medium">Is information used in our risk assessment procedures performed to obtain an understanding of how the entity uses IT as part of financial reporting?</Label>
+          <RadioGroup
+            value={formData.it_information_used_risk_assessment || ''}
+            onValueChange={(value) => onFormDataChange({ it_information_used_risk_assessment: value })}
+            className="flex space-x-6 mt-2"
+          >
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="Yes" id="info-used-yes" />
+              <Label htmlFor="info-used-yes" className="text-sm">Yes</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="No" id="info-used-no" />
+              <Label htmlFor="info-used-no" className="text-sm">No</Label>
+            </div>
+          </RadioGroup>
+        </div>
+      </div>
+
+      {/* New Container - Cybersecurity */}
+      <div className="border-t pt-6 mt-8">
+        <h4 className="font-medium text-gray-900 mb-4">Understand the entity's cybersecurity risks and incidents</h4>
+        
+        <div>
+          <Label htmlFor="cybersecurity-risks" className="text-sm font-medium mb-2 block">
+            Document who of those primarily responsible and knowledgeable about cybersecurity matters and risks we met with and the results of inquiries into how management's risk assessment process evaluated cybersecurity risks across the entity, including cybersecurity risks at service organizations relevant to the audit, how they analyzed and assessed the significance of the risks to financial reporting and how they manage the risks.
+          </Label>
+          <Textarea
+            id="cybersecurity-risks"
+            value={formData.cybersecurity_risks_understanding || ''}
+            onChange={(e) => onFormDataChange({ cybersecurity_risks_understanding: e.target.value })}
+            rows={4}
+            placeholder="Enter cybersecurity risks understanding..."
           />
         </div>
       </div>
