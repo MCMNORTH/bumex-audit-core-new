@@ -713,6 +713,161 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
         </div>
       </CardContent>
     </Card>
+
+    {/* Performance Materiality Container */}
+    <Card>
+      <CardContent className="p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Determine performance materiality
+        </h3>
+        <p className="text-sm text-gray-600 mb-6">
+          Consider the factors that affect aggregation risk
+        </p>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="bg-blue-700 text-white">
+                <th className="text-left p-4 font-medium border">
+                  Document the impact of the following factors on our assessment of aggregation risk
+                </th>
+                <th className="text-center p-4 font-medium border">
+                  Impact on the level of aggregation risk
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-gray-50">
+                <td className="p-4 border">
+                  Deficiencies in the CERAMIC
+                </td>
+                <td className="p-4 border">
+                  <RadioGroup
+                    value={(formData as any).deficiencies_ceramic || ''}
+                    onValueChange={(value) => onFormDataChange({ deficiencies_ceramic: value })}
+                    className="flex items-center justify-center space-x-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-greater" id="ceramic-not-greater" />
+                      <Label htmlFor="ceramic-not-greater">Not Greater</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="greater" id="ceramic-greater" />
+                      <Label htmlFor="ceramic-greater">Greater</Label>
+                    </div>
+                  </RadioGroup>
+                </td>
+              </tr>
+              <tr className="bg-white">
+                <td className="p-4 border">
+                  Number and severity of deficiencies in control activities, including pervasiveness of internal control deficiencies
+                </td>
+                <td className="p-4 border">
+                  <RadioGroup
+                    value={(formData as any).control_deficiencies || ''}
+                    onValueChange={(value) => onFormDataChange({ control_deficiencies: value })}
+                    className="flex items-center justify-center space-x-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-greater" id="control-not-greater" />
+                      <Label htmlFor="control-not-greater">Not Greater</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="greater" id="control-greater" />
+                      <Label htmlFor="control-greater">Greater</Label>
+                    </div>
+                  </RadioGroup>
+                </td>
+              </tr>
+              <tr className="bg-gray-50">
+                <td className="p-4 border">
+                  History of misstatements (the nature, cause (if known), and amount) that were accumulated in audits of the financial statements of prior periods (both corrected or uncorrected)
+                </td>
+                <td className="p-4 border">
+                  <RadioGroup
+                    value={(formData as any).history_misstatements || ''}
+                    onValueChange={(value) => onFormDataChange({ history_misstatements: value })}
+                    className="flex items-center justify-center space-x-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-greater" id="history-not-greater" />
+                      <Label htmlFor="history-not-greater">Not Greater</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="greater" id="history-greater" />
+                      <Label htmlFor="history-greater">Greater</Label>
+                    </div>
+                  </RadioGroup>
+                </td>
+              </tr>
+              <tr className="bg-white">
+                <td className="p-4 border">
+                  Level of turnover of senior management or key financial reporting personnel
+                </td>
+                <td className="p-4 border">
+                  <RadioGroup
+                    value={(formData as any).turnover_management || ''}
+                    onValueChange={(value) => onFormDataChange({ turnover_management: value })}
+                    className="flex items-center justify-center space-x-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-greater" id="turnover-not-greater" />
+                      <Label htmlFor="turnover-not-greater">Not Greater</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="greater" id="turnover-greater" />
+                      <Label htmlFor="turnover-greater">Greater</Label>
+                    </div>
+                  </RadioGroup>
+                </td>
+              </tr>
+              <tr className="bg-gray-50">
+                <td className="p-4 border">
+                  Management's preparedness/willingness to correct misstatements
+                </td>
+                <td className="p-4 border">
+                  <RadioGroup
+                    value={(formData as any).management_preparedness || ''}
+                    onValueChange={(value) => onFormDataChange({ management_preparedness: value })}
+                    className="flex items-center justify-center space-x-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-greater" id="management-not-greater" />
+                      <Label htmlFor="management-not-greater">Not Greater</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="greater" id="management-greater" />
+                      <Label htmlFor="management-greater">Greater</Label>
+                    </div>
+                  </RadioGroup>
+                </td>
+              </tr>
+              <tr className="bg-white">
+                <td className="p-4 border">
+                  Proportion of accounts not identified as significant accounts
+                </td>
+                <td className="p-4 border">
+                  <RadioGroup
+                    value={(formData as any).proportion_accounts || ''}
+                    onValueChange={(value) => onFormDataChange({ proportion_accounts: value })}
+                    className="flex items-center justify-center space-x-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="not-greater" id="proportion-not-greater" />
+                      <Label htmlFor="proportion-not-greater">Not Greater</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="greater" id="proportion-greater" />
+                      <Label htmlFor="proportion-greater">Greater</Label>
+                    </div>
+                  </RadioGroup>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </CardContent>
+    </Card>
   </>
   );
 };

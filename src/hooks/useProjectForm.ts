@@ -142,6 +142,14 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       prior_audit_materiality_percentage: (projectData as any).prior_audit_materiality_percentage || '',
       dpp_consultation_required: (projectData as any).dpp_consultation_required || '',
       lower_materiality_required: (projectData as any).lower_materiality_required || '',
+      
+      // Performance materiality aggregation risk factors initialization
+      deficiencies_ceramic: (projectData as any).deficiencies_ceramic || '',
+      control_deficiencies: (projectData as any).control_deficiencies || '',
+      history_misstatements: (projectData as any).history_misstatements || '',
+      turnover_management: (projectData as any).turnover_management || '',
+      management_preparedness: (projectData as any).management_preparedness || '',
+      proportion_accounts: (projectData as any).proportion_accounts || '',
     });
   };
 

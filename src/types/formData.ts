@@ -216,6 +216,14 @@ export interface ProjectFormData {
   prior_audit_materiality_percentage: string;
   dpp_consultation_required: string;
   lower_materiality_required: string;
+  
+  // Performance materiality aggregation risk factors
+  deficiencies_ceramic: string;
+  control_deficiencies: string;
+  history_misstatements: string;
+  turnover_management: string;
+  management_preparedness: string;
+  proportion_accounts: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -351,4 +359,12 @@ export const getInitialFormData = (): ProjectFormData => ({
   prior_audit_materiality_percentage: '',
   dpp_consultation_required: '',
   lower_materiality_required: '',
+  
+  // Performance materiality aggregation risk factors initial values
+  deficiencies_ceramic: '',
+  control_deficiencies: '',
+  history_misstatements: '',
+  turnover_management: '',
+  management_preparedness: '',
+  proportion_accounts: '',
 });
