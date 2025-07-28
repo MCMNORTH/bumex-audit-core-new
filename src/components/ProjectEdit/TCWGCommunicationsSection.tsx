@@ -407,7 +407,7 @@ const TCWGCommunicationsSection = ({
                     <th className="text-left p-4 font-medium border">Interviewee name</th>
                     <th className="text-left p-4 font-medium border">Interviewee role</th>
                     <th className="text-left p-4 font-medium border">Interviewee position</th>
-                    <th className="text-left p-4 font-medium border">KPMG interviewer(s)</th>
+                    <th className="text-left p-4 font-medium border">Bumex interviewer(s)</th>
                     <th className="text-left p-4 font-medium border">Date of meeting</th>
                     <th className="text-center p-4 font-medium border">Actions</th>
                   </tr>
@@ -450,7 +450,7 @@ const TCWGCommunicationsSection = ({
                           <Input
                             value={inquiry.kpmgInterviewer}
                             onChange={(e) => handleInquiryChange(inquiry.id, 'kpmgInterviewer', e.target.value)}
-                            placeholder="Enter KPMG interviewer"
+                            placeholder="Enter Bumex interviewer"
                             className="text-sm"
                           />
                         </td>

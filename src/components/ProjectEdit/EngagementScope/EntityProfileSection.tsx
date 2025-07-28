@@ -59,8 +59,8 @@ const EntityProfileSection = ({ formData, onFormDataChange }: EntityProfileSecti
             
             <div className="font-medium mt-4">The engagement:</div>
             <div className="italic">- is part of a non-U.S. member firm performing an audit of financial statements in accordance with the ISAS and/or local country auditing standards, other than PCAOB or U.S. GAAS</div>
-            <div className="italic">- has not been designated by member firm risk management partner or head of audit to use KPMG Clara workflow - Enhanced</div>
-            <div className="italic">- meets the additional member firm criteria, if any are specified restricting the use of KPMG Clara workflow - Standard</div>
+            <div className="italic">- has not been designated by member firm risk management partner or head of audit to use Bumex workflow - Enhanced</div>
+            <div className="italic">- meets the additional member firm criteria, if any are specified restricting the use of Bumex workflow - Standard</div>
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@ const EntityProfileSection = ({ formData, onFormDataChange }: EntityProfileSecti
         
         <div>
           <Label className="text-sm font-medium mb-3 block">
-            Besides KPMG Clara workflow – Standard, are you using <span className="underline">SATs</span> on the engagement which are not <span className="underline">already</span> on the <span className="underline">member firm SAT list</span>?
+            Besides Bumex workflow – Standard, are you using <span className="underline">SATs</span> on the engagement which are not <span className="underline">already</span> on the <span className="underline">member firm SAT list</span>?
           </Label>
           <RadioGroup 
             value={formData.using_sats_not_on_firm_list || ''} 

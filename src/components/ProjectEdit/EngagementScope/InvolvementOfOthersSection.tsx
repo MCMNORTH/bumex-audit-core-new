@@ -66,7 +66,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
             checked={formData.plan_to_involve_specialists || false}
             onCheckedChange={(checked) => onFormDataChange({ plan_to_involve_specialists: checked as boolean })}
           />
-          <Label htmlFor="plan_to_involve_specialists">We plan to involve specific team members with specialized skills in accounting and auditing and/or use the work of employed/engaged KPMG specialists and/or management's specialists</Label>
+          <Label htmlFor="plan_to_involve_specialists">We plan to involve specific team members with specialized skills in accounting and auditing and/or use the work of employed/engaged Bumex specialists and/or management's specialists</Label>
         </div>
       </div>
 
