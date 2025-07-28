@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
 import { Plus, Trash2 } from 'lucide-react';
-import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem } from '@/types/formData';
+import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem, MaterialityAssessmentItem } from '@/types/formData';
 
 interface MaterialityMetricsSectionProps {
   formData: ProjectFormData;
@@ -17,6 +17,7 @@ interface MaterialityMetricsSectionProps {
 const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMetricsSectionProps) => {
   const materialityTable = (formData as any).materiality_metrics_table || [];
   const qualitativeFactorsTable = (formData as any).qualitative_factors_table || [];
+  const materialityAssessmentTable = (formData as any).materiality_assessment_table || [];
 
   const handleTableItemChange = (id: string, field: keyof MaterialityMetricItem, value: string | boolean) => {
     const updatedTable = materialityTable.map((item: MaterialityMetricItem) =>
@@ -67,6 +68,30 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
   const removeQualitativeFactorItem = (id: string) => {
     const updatedTable = qualitativeFactorsTable.filter((item: QualitativeFactorItem) => item.id !== id);
     onFormDataChange({ qualitative_factors_table: updatedTable } as any);
+  };
+
+  const handleMaterialityAssessmentChange = (id: string, field: keyof MaterialityAssessmentItem, value: string) => {
+    const updatedTable = materialityAssessmentTable.map((item: MaterialityAssessmentItem) =>
+      item.id === id ? { ...item, [field]: value } : item
+    );
+    onFormDataChange({ materiality_assessment_table: updatedTable } as any);
+  };
+
+  const addNewMaterialityAssessmentItem = () => {
+    const newItem: MaterialityAssessmentItem = {
+      id: Date.now().toString(),
+      metrics: '',
+      benchmark: '',
+      amountOfMetric: '',
+      materialityPercentage: '',
+      guidelineRange: ''
+    };
+    onFormDataChange({ materiality_assessment_table: [...materialityAssessmentTable, newItem] } as any);
+  };
+
+  const removeMaterialityAssessmentItem = (id: string) => {
+    const updatedTable = materialityAssessmentTable.filter((item: MaterialityAssessmentItem) => item.id !== id);
+    onFormDataChange({ materiality_assessment_table: updatedTable } as any);
   };
 
   return (
@@ -473,6 +498,145 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange }: MaterialityMe
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+
+    {/* Materiality Level Section */}
+    <Card className="mt-6">
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          <p className="text-sm font-bold text-gray-900">
+            Establish a materiality level for the financial statements as a whole as a specified amount
+          </p>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div></div>
+              <div className="text-center">
+                <Label className="text-sm font-medium">Current Audit</Label>
+              </div>
+              <div className="text-center">
+                <Label className="text-sm font-medium">Prior Audit</Label>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4 items-center">
+              <div>
+                <Label className="text-sm font-medium">Amount of Materiality</Label>
+              </div>
+              <div>
+                <Input
+                  value={(formData as any).current_audit_materiality_amount || ''}
+                  onChange={(e) => onFormDataChange({ current_audit_materiality_amount: e.target.value })}
+                  placeholder="Enter amount..."
+                />
+              </div>
+              <div>
+                <Input
+                  value={(formData as any).prior_audit_materiality_amount || ''}
+                  onChange={(e) => onFormDataChange({ prior_audit_materiality_amount: e.target.value })}
+                  placeholder="Enter amount..."
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h4 className="text-md font-semibold text-gray-900 mb-4">
+              Assess the appropriateness of materiality
+            </h4>
+
+            <div className="flex items-center justify-end mb-4">
+              <Button 
+                onClick={addNewMaterialityAssessmentItem}
+                size="sm"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Plus className="h-4 w-4 mr-1" />
+                Add
+              </Button>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-blue-700 text-white">
+                    <th className="text-left p-4 font-medium border">Metrics</th>
+                    <th className="text-left p-4 font-medium border">Benchmark</th>
+                    <th className="text-left p-4 font-medium border">Amount of the metric</th>
+                    <th className="text-left p-4 font-medium border">Materiality as a %</th>
+                    <th className="text-left p-4 font-medium border">Guideline range</th>
+                    <th className="text-center p-4 font-medium border">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {materialityAssessmentTable.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="text-center p-12 text-gray-500 border">
+                        No assessment items added yet. Click "Add" to create your first assessment item.
+                      </td>
+                    </tr>
+                  ) : (
+                    materialityAssessmentTable.map((item: MaterialityAssessmentItem, index: number) => (
+                      <tr key={item.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                        <td className="p-2 border">
+                          <Input
+                            value={item.metrics}
+                            onChange={(e) => handleMaterialityAssessmentChange(item.id, 'metrics', e.target.value)}
+                            placeholder="Enter metrics..."
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="p-2 border">
+                          <Input
+                            value={item.benchmark}
+                            onChange={(e) => handleMaterialityAssessmentChange(item.id, 'benchmark', e.target.value)}
+                            placeholder="Enter benchmark..."
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="p-2 border">
+                          <Input
+                            value={item.amountOfMetric}
+                            onChange={(e) => handleMaterialityAssessmentChange(item.id, 'amountOfMetric', e.target.value)}
+                            placeholder="Enter amount..."
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="p-2 border">
+                          <Input
+                            value={item.materialityPercentage}
+                            onChange={(e) => handleMaterialityAssessmentChange(item.id, 'materialityPercentage', e.target.value)}
+                            placeholder="Enter percentage..."
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="p-2 border">
+                          <Input
+                            value={item.guidelineRange}
+                            onChange={(e) => handleMaterialityAssessmentChange(item.id, 'guidelineRange', e.target.value)}
+                            placeholder="Enter range..."
+                            className="w-full"
+                          />
+                        </td>
+                        <td className="p-2 text-center border">
+                          <Button
+                            onClick={() => removeMaterialityAssessmentItem(item.id)}
+                            size="sm"
+                            variant="destructive"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </CardContent>

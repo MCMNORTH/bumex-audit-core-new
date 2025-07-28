@@ -57,6 +57,15 @@ export interface QualitativeFactorItem {
   consideration: string;
 }
 
+export interface MaterialityAssessmentItem {
+  id: string;
+  metrics: string;
+  benchmark: string;
+  amountOfMetric: string;
+  materialityPercentage: string;
+  guidelineRange: string;
+}
+
 export interface ProjectFormData {
   client_id: string;
   engagement_name: string;
@@ -194,6 +203,13 @@ export interface ProjectFormData {
   
   // Qualitative factors fields
   qualitative_factors_table: QualitativeFactorItem[];
+  
+  // Materiality level fields
+  current_audit_materiality_amount: string;
+  prior_audit_materiality_amount: string;
+  
+  // Materiality assessment fields
+  materiality_assessment_table: MaterialityAssessmentItem[];
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -316,4 +332,11 @@ export const getInitialFormData = (): ProjectFormData => ({
   
   // Qualitative factors initial values
   qualitative_factors_table: [],
+  
+  // Materiality level initial values
+  current_audit_materiality_amount: '',
+  prior_audit_materiality_amount: '',
+  
+  // Materiality assessment initial values
+  materiality_assessment_table: [],
 });

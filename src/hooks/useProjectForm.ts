@@ -132,6 +132,11 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       different_benchmark_rationale: (projectData as any).different_benchmark_rationale || '',
       // Qualitative factors initialization
       qualitative_factors_table: (projectData as any).qualitative_factors_table || [],
+      // Materiality level initialization
+      current_audit_materiality_amount: (projectData as any).current_audit_materiality_amount || '',
+      prior_audit_materiality_amount: (projectData as any).prior_audit_materiality_amount || '',
+      // Materiality assessment initialization
+      materiality_assessment_table: (projectData as any).materiality_assessment_table || [],
     });
   };
 
