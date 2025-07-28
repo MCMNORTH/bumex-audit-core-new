@@ -59,6 +59,12 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
     });
   };
 
+  const handleConfirmationChange = (field: string, value: string) => {
+    onFormDataChange({
+      [field]: value
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -179,6 +185,168 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
               />
             </div>
           )}
+        </div>
+
+        <div className="space-y-6">
+          <h4 className="font-medium text-gray-900">Confirm the understanding of industry, regulatory environment and other external factors:</h4>
+          
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                There are no significant changes in general economic conditions.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.economic_conditions_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('economic_conditions_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.economic_conditions_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('economic_conditions_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The entity operates in a legal and/or political environment that is stable.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.legal_environment_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('legal_environment_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.legal_environment_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('legal_environment_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The laws and regulations relevant to the entity are those that are generally applicable for all entities.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.laws_regulations_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('laws_regulations_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.laws_regulations_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('laws_regulations_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                Technologies relevant to the entity's products or services remain unchanged.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.technologies_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('technologies_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.technologies_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('technologies_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                Competitors relevant to the entity remain unchanged.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.competitors_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('competitors_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.competitors_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('competitors_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-700 flex-1 pr-4">
+                The industry relevant to the entity is stable and is without significant new developments such as disruptions, decline, or growth.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={formData.industry_stability_confirmation === 'not_confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('industry_stability_confirmation', 'not_confirmed')}
+                  className="text-xs"
+                >
+                  NOT CONFIRMED
+                </Button>
+                <Button
+                  type="button"
+                  variant={formData.industry_stability_confirmation === 'confirmed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleConfirmationChange('industry_stability_confirmation', 'confirmed')}
+                  className="text-xs"
+                >
+                  CONFIRMED
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>

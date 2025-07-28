@@ -178,6 +178,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       entity_markets: (projectData as any).entity_markets || [],
       provide_brief_understanding: (projectData as any).provide_brief_understanding || false,
       entity_brief_understanding: (projectData as any).entity_brief_understanding || '',
+      economic_conditions_confirmation: (projectData as any).economic_conditions_confirmation || '',
+      legal_environment_confirmation: (projectData as any).legal_environment_confirmation || '',
+      laws_regulations_confirmation: (projectData as any).laws_regulations_confirmation || '',
+      technologies_confirmation: (projectData as any).technologies_confirmation || '',
+      competitors_confirmation: (projectData as any).competitors_confirmation || '',
+      industry_stability_confirmation: (projectData as any).industry_stability_confirmation || '',
     });
   };
 

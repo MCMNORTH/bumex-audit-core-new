@@ -252,6 +252,12 @@ export interface ProjectFormData {
   entity_markets: string[];
   provide_brief_understanding: boolean;
   entity_brief_understanding: string;
+  economic_conditions_confirmation: string;
+  legal_environment_confirmation: string;
+  laws_regulations_confirmation: string;
+  technologies_confirmation: string;
+  competitors_confirmation: string;
+  industry_stability_confirmation: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -423,4 +429,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   entity_markets: [],
   provide_brief_understanding: false,
   entity_brief_understanding: '',
+  economic_conditions_confirmation: '',
+  legal_environment_confirmation: '',
+  laws_regulations_confirmation: '',
+  technologies_confirmation: '',
+  competitors_confirmation: '',
+  industry_stability_confirmation: '',
 });
