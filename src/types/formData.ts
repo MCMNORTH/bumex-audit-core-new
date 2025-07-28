@@ -304,6 +304,16 @@ export interface ProjectFormData {
   
   // Other engagements
   other_services_impact_rmms: string;
+  
+  // RAPD Section
+  rapd_meeting_date: string;
+  rapd_team_members: Array<{
+    id: string;
+    member: string;
+    role: string;
+    attendedMeeting: string;
+    documentMatters: string;
+  }>;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -523,4 +533,8 @@ export const getInitialFormData = (): ProjectFormData => ({
     
     // Other engagements
     other_services_impact_rmms: '',
+    
+    // RAPD Section
+    rapd_meeting_date: '',
+    rapd_team_members: [],
 });

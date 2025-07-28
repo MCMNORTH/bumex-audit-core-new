@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import TCWGCommunicationsSection from './TCWGCommunicationsSection';
 import MaterialityMetricsSection from './MaterialityMetricsSection';
 import EntityEnvironmentSection from './EntityEnvironmentSection';
+import RAPDSection from './RAPDSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -211,6 +212,11 @@ const ProjectEditContent = ({
           renderedEntityContent = <div className="space-y-4">
               {renderSectionHeader('Entity and its environment', '1.')}
               <EntityEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>;
+        } else if (targetSection.id === 'rapd') {
+          renderedEntityContent = <div className="space-y-4">
+              {renderSectionHeader('RAPD', '4.')}
+              <RAPDSection formData={formData} onFormDataChange={onFormDataChange} />
             </div>;
         } else {
           // Render placeholder for other leaves

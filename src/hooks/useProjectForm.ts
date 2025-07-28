@@ -226,6 +226,10 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       
       // Other engagements
       other_services_impact_rmms: (projectData as any).other_services_impact_rmms || '',
+      
+      // RAPD Section
+      rapd_meeting_date: (projectData as any).rapd_meeting_date || '',
+      rapd_team_members: (projectData as any).rapd_team_members || [],
     });
   };
 
