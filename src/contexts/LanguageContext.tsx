@@ -68,7 +68,12 @@ const translations = {
     // Languages
     language: 'Language',
     english: 'English',
-    french: 'Français'
+    french: 'Français',
+    
+    // 404 page
+    pageNotFound: 'Page Not Found',
+    pageNotFoundDesc: 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.',
+    returnHome: 'Return to Home'
   },
   fr: {
     // Navigation
@@ -126,7 +131,12 @@ const translations = {
     // Languages
     language: 'Langue',
     english: 'English',
-    french: 'Français'
+    french: 'Français',
+    
+    // 404 page
+    pageNotFound: 'Page non trouvée',
+    pageNotFoundDesc: 'La page que vous recherchez a peut-être été supprimée, son nom a changé ou elle est temporairement indisponible.',
+    returnHome: 'Retour à l\'accueil'
   }
 };
 
