@@ -284,6 +284,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       cybersecurity_additional_inquiries_details: (projectData as any).cybersecurity_additional_inquiries_details || '',
       cybersecurity_incidents_experienced: (projectData as any).cybersecurity_incidents_experienced || '',
       cybersecurity_risks_rmm: (projectData as any).cybersecurity_risks_rmm || '',
+
+      // Business processes
+      selected_business_processes: (projectData as any).selected_business_processes || [],
     });
   };
 

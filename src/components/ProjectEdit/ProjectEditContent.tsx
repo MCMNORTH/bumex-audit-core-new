@@ -11,6 +11,7 @@ import EntityEnvironmentSection from './EntityEnvironmentSection';
 import RAPDSection from './RAPDSection';
 import CERAMICSection from './CERAMICSection';
 import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
+import BusinessProcessesSection from './BusinessProcessesSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -233,6 +234,11 @@ const ProjectEditContent = ({
                   <ITEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
                 </CardContent>
               </Card>
+            </div>;
+        } else if (targetSection.id === 'business-processes') {
+          renderedEntityContent = <div className="space-y-4">
+              {renderSectionHeader('Business processes', '3.')}
+              <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
             </div>;
         } else {
           // Render placeholder for other leaves

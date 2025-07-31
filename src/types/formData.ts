@@ -400,6 +400,9 @@ export interface ProjectFormData {
   cybersecurity_additional_inquiries_details: string;
   cybersecurity_incidents_experienced: string;
   cybersecurity_risks_rmm: string;
+
+  // Business processes
+  selected_business_processes: string[];
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -677,4 +680,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   cybersecurity_additional_inquiries_details: '',
   cybersecurity_incidents_experienced: '',
   cybersecurity_risks_rmm: '',
+
+  // Business processes
+  selected_business_processes: [],
 });
