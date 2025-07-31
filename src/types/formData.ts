@@ -403,6 +403,7 @@ export interface ProjectFormData {
 
   // Business processes
   selected_business_processes: string[];
+  selected_business_accounts: string[];
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -683,4 +684,5 @@ export const getInitialFormData = (): ProjectFormData => ({
 
   // Business processes
   selected_business_processes: [],
+  selected_business_accounts: [],
 });

@@ -87,6 +87,9 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
   const [selectedProcesses, setSelectedProcesses] = useState<string[]>(
     formData.selected_business_processes || []
   );
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>(
+    formData.selected_business_accounts || []
+  );
 
   const handleProcessToggle = (processId: string, checked: boolean) => {
     const updatedProcesses = checked 
@@ -95,6 +98,15 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
     
     setSelectedProcesses(updatedProcesses);
     onFormDataChange({ selected_business_processes: updatedProcesses });
+  };
+
+  const handleAccountToggle = (accountNumber: string, checked: boolean) => {
+    const updatedAccounts = checked
+      ? [...selectedAccounts, accountNumber]
+      : selectedAccounts.filter(acc => acc !== accountNumber);
+    
+    setSelectedAccounts(updatedAccounts);
+    onFormDataChange({ selected_business_accounts: updatedAccounts });
   };
 
   return (
@@ -146,11 +158,20 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
                     
                     return (
                       <div key={processId} className="space-y-2">
-                        <div className="flex flex-wrap gap-1">
-                          {process.accounts.map((account, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {account}
-                            </Badge>
+                        <div className="grid grid-cols-2 gap-2">
+                          {process.accounts.map((account) => (
+                            <div key={`${processId}-${account}`} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`account-${processId}-${account}`}
+                                checked={selectedAccounts.includes(account)}
+                                onCheckedChange={(checked) => 
+                                  handleAccountToggle(account, checked as boolean)
+                                }
+                              />
+                              <Label htmlFor={`account-${processId}-${account}`} className="text-xs">
+                                {account}
+                              </Label>
+                            </div>
                           ))}
                         </div>
                       </div>

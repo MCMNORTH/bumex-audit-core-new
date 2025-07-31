@@ -287,6 +287,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
 
       // Business processes
       selected_business_processes: (projectData as any).selected_business_processes || [],
+      selected_business_accounts: (projectData as any).selected_business_accounts || [],
     });
   };
 
