@@ -8,26 +8,33 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
-
 interface FinancialReportingProcessSectionProps {
   formData: any;
   onFormDataChange: (updates: any) => void;
 }
-
 const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectionProps> = ({
   formData,
   onFormDataChange
 }) => {
-  const [itSystems, setItSystems] = useState([
-    { id: 1, reference: '', systemLayer: '', description: '', layerType: 'Application', outsourced: false, automated: false, manual: false }
-  ]);
-  const [serviceOrganizations, setServiceOrganizations] = useState([
-    { id: 1, description: '' }
-  ]);
-  const [relatedPartyArrangements, setRelatedPartyArrangements] = useState([
-    { id: 1, idField: '', description: '' }
-  ]);
-
+  const [itSystems, setItSystems] = useState([{
+    id: 1,
+    reference: '',
+    systemLayer: '',
+    description: '',
+    layerType: 'Application',
+    outsourced: false,
+    automated: false,
+    manual: false
+  }]);
+  const [serviceOrganizations, setServiceOrganizations] = useState([{
+    id: 1,
+    description: ''
+  }]);
+  const [relatedPartyArrangements, setRelatedPartyArrangements] = useState([{
+    id: 1,
+    idField: '',
+    description: ''
+  }]);
   const addItSystem = () => {
     const newId = Math.max(...itSystems.map(s => s.id), 0) + 1;
     setItSystems([...itSystems, {
@@ -41,43 +48,49 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
       manual: false
     }]);
   };
-
   const removeItSystem = (id: number) => {
     setItSystems(itSystems.filter(s => s.id !== id));
   };
-
   const updateItSystem = (id: number, field: string, value: any) => {
-    setItSystems(itSystems.map(s => s.id === id ? { ...s, [field]: value } : s));
+    setItSystems(itSystems.map(s => s.id === id ? {
+      ...s,
+      [field]: value
+    } : s));
   };
-
   const addServiceOrganization = () => {
     const newId = Math.max(...serviceOrganizations.map(s => s.id), 0) + 1;
-    setServiceOrganizations([...serviceOrganizations, { id: newId, description: '' }]);
+    setServiceOrganizations([...serviceOrganizations, {
+      id: newId,
+      description: ''
+    }]);
   };
-
   const removeServiceOrganization = (id: number) => {
     setServiceOrganizations(serviceOrganizations.filter(s => s.id !== id));
   };
-
   const updateServiceOrganization = (id: number, field: string, value: string) => {
-    setServiceOrganizations(serviceOrganizations.map(s => s.id === id ? { ...s, [field]: value } : s));
+    setServiceOrganizations(serviceOrganizations.map(s => s.id === id ? {
+      ...s,
+      [field]: value
+    } : s));
   };
-
   const addRelatedPartyArrangement = () => {
     const newId = Math.max(...relatedPartyArrangements.map(r => r.id), 0) + 1;
-    setRelatedPartyArrangements([...relatedPartyArrangements, { id: newId, idField: '', description: '' }]);
+    setRelatedPartyArrangements([...relatedPartyArrangements, {
+      id: newId,
+      idField: '',
+      description: ''
+    }]);
   };
-
   const removeRelatedPartyArrangement = (id: number) => {
     setRelatedPartyArrangements(relatedPartyArrangements.filter(r => r.id !== id));
   };
-
   const updateRelatedPartyArrangement = (id: number, field: string, value: string) => {
-    setRelatedPartyArrangements(relatedPartyArrangements.map(r => r.id === id ? { ...r, [field]: value } : r));
+    setRelatedPartyArrangements(relatedPartyArrangements.map(r => r.id === id ? {
+      ...r,
+      [field]: value
+    } : r));
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>1. Financial reporting process</CardTitle>
@@ -89,10 +102,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
             <p className="text-sm text-muted-foreground">
               The following are relevant to the process and procedures to enter transaction totals into the general ledger:
             </p>
-            <Textarea
-              placeholder="Document the process and procedures to enter transaction totals into the general ledger..."
-              className="min-h-[100px]"
-            />
+            <Textarea placeholder="Document the process and procedures to enter transaction totals into the general ledger..." className="min-h-[100px]" />
           </div>
 
           {/* Translation of financial statements */}
@@ -145,71 +155,40 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {itSystems.map((system) => (
-                    <TableRow key={system.id}>
+                  {itSystems.map(system => <TableRow key={system.id}>
                       <TableCell>
-                        <Input
-                          value={system.reference}
-                          onChange={(e) => updateItSystem(system.id, 'reference', e.target.value)}
-                          placeholder="System reference ID"
-                        />
+                        <Input value={system.reference} onChange={e => updateItSystem(system.id, 'reference', e.target.value)} placeholder="System reference ID" />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={system.systemLayer}
-                          onChange={(e) => updateItSystem(system.id, 'systemLayer', e.target.value)}
-                          placeholder="IT system layer name"
-                        />
+                        <Input value={system.systemLayer} onChange={e => updateItSystem(system.id, 'systemLayer', e.target.value)} placeholder="IT system layer name" />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={system.description}
-                          onChange={(e) => updateItSystem(system.id, 'description', e.target.value)}
-                          placeholder="Description of IT system layer"
-                        />
+                        <Input value={system.description} onChange={e => updateItSystem(system.id, 'description', e.target.value)} placeholder="Description of IT system layer" />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={system.layerType}
-                          onChange={(e) => updateItSystem(system.id, 'layerType', e.target.value)}
-                          placeholder="Layer type"
-                        />
+                        <Input value={system.layerType} onChange={e => updateItSystem(system.id, 'layerType', e.target.value)} placeholder="Layer type" />
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          <Checkbox
-                            checked={system.outsourced}
-                            onCheckedChange={(checked) => updateItSystem(system.id, 'outsourced', checked)}
-                          />
+                          <Checkbox checked={system.outsourced} onCheckedChange={checked => updateItSystem(system.id, 'outsourced', checked)} />
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          <Checkbox
-                            checked={system.automated}
-                            onCheckedChange={(checked) => updateItSystem(system.id, 'automated', checked)}
-                          />
+                          <Checkbox checked={system.automated} onCheckedChange={checked => updateItSystem(system.id, 'automated', checked)} />
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex justify-center">
-                          <Checkbox
-                            checked={system.manual}
-                            onCheckedChange={(checked) => updateItSystem(system.id, 'manual', checked)}
-                          />
+                          <Checkbox checked={system.manual} onCheckedChange={checked => updateItSystem(system.id, 'manual', checked)} />
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeItSystem(system.id)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => removeItSystem(system.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </div>
@@ -259,32 +238,19 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {serviceOrganizations.map((org) => (
-                    <TableRow key={org.id}>
+                  {serviceOrganizations.map(org => <TableRow key={org.id}>
                       <TableCell>
-                        <Input
-                          value={org.id.toString()}
-                          readOnly
-                        />
+                        <Input value={org.id.toString()} readOnly />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={org.description}
-                          onChange={(e) => updateServiceOrganization(org.id, 'description', e.target.value)}
-                          placeholder="Service organization description"
-                        />
+                        <Input value={org.description} onChange={e => updateServiceOrganization(org.id, 'description', e.target.value)} placeholder="Service organization description" />
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeServiceOrganization(org.id)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => removeServiceOrganization(org.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </div>
@@ -352,10 +318,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
               <p className="text-sm">
                 Document our understanding and include, if applicable, financial reporting standards, laws, and regulations that are new to the entity, setting out when and how the entity will adopt such requirements.
               </p>
-              <Textarea
-                placeholder="Document understanding of financial reporting standards, laws, and regulations new to the entity..."
-                className="min-h-[100px]"
-              />
+              <Textarea placeholder="Document understanding of financial reporting standards, laws, and regulations new to the entity..." className="min-h-[100px]" />
             </div>
           </div>
 
@@ -406,33 +369,19 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {relatedPartyArrangements.map((arrangement) => (
-                    <TableRow key={arrangement.id}>
+                  {relatedPartyArrangements.map(arrangement => <TableRow key={arrangement.id}>
                       <TableCell>
-                        <Input
-                          value={arrangement.idField}
-                          onChange={(e) => updateRelatedPartyArrangement(arrangement.id, 'idField', e.target.value)}
-                          placeholder="Arrangement ID"
-                        />
+                        <Input value={arrangement.idField} onChange={e => updateRelatedPartyArrangement(arrangement.id, 'idField', e.target.value)} placeholder="Arrangement ID" />
                       </TableCell>
                       <TableCell>
-                        <Input
-                          value={arrangement.description}
-                          onChange={(e) => updateRelatedPartyArrangement(arrangement.id, 'description', e.target.value)}
-                          placeholder="Description of related party arrangement"
-                        />
+                        <Input value={arrangement.description} onChange={e => updateRelatedPartyArrangement(arrangement.id, 'description', e.target.value)} placeholder="Description of related party arrangement" />
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => removeRelatedPartyArrangement(arrangement.id)}
-                        >
+                        <Button variant="ghost" size="sm" onClick={() => removeRelatedPartyArrangement(arrangement.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                    </TableRow>)}
                 </TableBody>
               </Table>
             </div>
@@ -479,10 +428,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
               <Label htmlFor="service-org-unusual">The entity uses a service organization that is relevant to this process</Label>
             </div>
 
-            <Textarea
-              placeholder="Document understanding of entity's process for identifying significant unusual transactions..."
-              className="min-h-[100px]"
-            />
+            <Textarea placeholder="Document understanding of entity's process for identifying significant unusual transactions..." className="min-h-[100px]" />
           </div>
 
           {/* Process understanding table */}
@@ -553,14 +499,11 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
               Assess risk of misstatement, identify PRPs and evaluate controls related to the identification of related parties and significant unusual transactions
             </h3>
             
-            <Textarea
-              placeholder="Document assessment of risks related to identification of related parties and significant unusual transactions..."
-              className="min-h-[100px]"
-            />
+            <Textarea placeholder="Document assessment of risks related to identification of related parties and significant unusual transactions..." className="min-h-[100px]" />
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded">CAR</span>
+                
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
                   Add
@@ -613,10 +556,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <div className="flex">
-                  <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded-l">Procedure</span>
-                  <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded-r">Result</span>
-                </div>
+                
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
                   Add
@@ -692,7 +632,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded">CAR</span>
+                
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
                   Add
@@ -750,8 +690,6 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default FinancialReportingProcessSection;
