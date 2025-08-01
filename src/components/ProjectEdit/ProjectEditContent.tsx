@@ -15,6 +15,7 @@ import BusinessProcessesSection from './BusinessProcessesSection';
 import DISection from './DISection';
 import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
+import FinancialReportingProcessSection from './FinancialReportingProcessSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -384,6 +385,11 @@ const ProjectEditContent = ({
         {/* BUSINESS PROCESSES LOGIC (section 3 and its tree) */}
         {activeSection === 'business-processes' && renderBusinessProcessesContent()}
         {activeSection === 'financial-reporting' && renderFinancialReportingContent()}
+        {activeSection === 'financial-reporting-process' && (
+          <div className="space-y-4">
+            <FinancialReportingProcessSection formData={formData} onFormDataChange={onFormDataChange} />
+          </div>
+        )}
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
         {renderedEntityContent}
