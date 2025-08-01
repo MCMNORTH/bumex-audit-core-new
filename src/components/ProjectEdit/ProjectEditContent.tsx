@@ -397,10 +397,22 @@ const ProjectEditContent = ({
           </div>
         )}
         {activeSection === 'controle-24' && (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {renderSectionHeader('Contrôle 24', '')}
             <p className="text-sm text-muted-foreground">Réconciliation des états financiers</p>
-            {renderPlaceholderSection('Contrôle 24 - Réconciliation des états financiers')}
+            {renderCardsForSection(businessProcessesSection?.children?.find(c => c.id === 'financial-reporting')?.children?.find(c => c.id === 'control-activities')?.children?.find(c => c.id === 'controle-24'))}
+          </div>
+        )}
+        {activeSection === 'controle-24-d-i' && (
+          <div className="space-y-4">
+            {renderSectionHeader('1 - D&I', '')}
+            {renderPlaceholderSection('Contrôle 24 - D&I')}
+          </div>
+        )}
+        {activeSection === 'controle-24-toe' && (
+          <div className="space-y-4">
+            {renderSectionHeader('2 - TOE', '')}
+            {renderPlaceholderSection('Contrôle 24 - TOE')}
           </div>
         )}
         {activeSection === 'controle-25' && (

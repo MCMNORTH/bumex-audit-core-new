@@ -216,7 +216,17 @@ const ProjectEdit = () => {
               active: false,
               isParent: true,
               children: [
-                { id: 'controle-24', title: 'Contrôle 24', subtitle: 'Réconciliation des états financiers', active: false },
+                { 
+                  id: 'controle-24', 
+                  title: 'Contrôle 24', 
+                  subtitle: 'Réconciliation des états financiers', 
+                  active: false,
+                  isParent: true,
+                  children: [
+                    { id: 'controle-24-d-i', title: '1', subtitle: 'D&I', active: false },
+                    { id: 'controle-24-toe', title: '2', subtitle: 'TOE', active: false },
+                  ]
+                },
                 { id: 'controle-25', title: 'Contrôle 25', subtitle: 'SOD', active: false },
               ]
             },
