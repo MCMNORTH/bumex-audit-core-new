@@ -198,6 +198,20 @@ export interface ProjectFormData {
   prior_audit_benchmark_not_metric: boolean;
   different_benchmark_rationale: string;
   
+  // D&I Section fields
+  control_attributes_judgment?: string;
+  procedure_nature?: string;
+  procedure_type?: string;
+  procedure_frequency?: string;
+  operator_authority?: string;
+  information_used?: string;
+  eval_inquiry?: boolean;
+  eval_inspection?: boolean;
+  eval_observation?: boolean;
+  eval_procedures_documentation?: string;
+  design_conclusion?: string;
+  implementation_conclusion?: string;
+  plan_operating_test?: string;
   // Qualitative factors fields
   qualitative_factors_table: QualitativeFactorItem[];
   

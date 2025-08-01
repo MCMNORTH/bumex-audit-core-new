@@ -139,7 +139,21 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       prior_audit_materiality_percentage: (projectData as any).prior_audit_materiality_percentage || '',
       dpp_consultation_required: (projectData as any).dpp_consultation_required || '',
       lower_materiality_required: (projectData as any).lower_materiality_required || '',
-      
+    
+    // D&I Section fields
+    control_attributes_judgment: '',
+    procedure_nature: 'AUTOMATED',
+    procedure_type: 'PREVENTIVE',
+    procedure_frequency: 'Ad-hoc',
+    operator_authority: '',
+    information_used: '',
+    eval_inquiry: false,
+    eval_inspection: false,
+    eval_observation: false,
+    eval_procedures_documentation: '',
+    design_conclusion: '',
+    implementation_conclusion: '',
+    plan_operating_test: '',
       // Performance materiality aggregation risk factors initialization
       deficiencies_ceramic: (projectData as any).deficiencies_ceramic || '',
       control_deficiencies: (projectData as any).control_deficiencies || '',
