@@ -303,6 +303,30 @@ const ProjectEditContent = ({
     }
   }
 
+  // Business processes section logic
+  const businessProcessesSection = sidebarSections.find(s => s.id === 'business-processes');
+  
+  const renderBusinessProcessesContent = () => {
+    if (!businessProcessesSection) return null;
+    return (
+      <div className="space-y-8">
+        {renderSectionHeader(businessProcessesSection.title, businessProcessesSection.number)}
+        {renderCardsForSection(businessProcessesSection)}
+      </div>
+    );
+  };
+
+  const renderFinancialReportingContent = () => {
+    const financialReportingSection = businessProcessesSection?.children?.find(c => c.id === 'financial-reporting');
+    if (!financialReportingSection) return null;
+    return (
+      <div className="space-y-8">
+        {renderSectionHeader(financialReportingSection.title, financialReportingSection.number)}
+        {renderCardsForSection(financialReportingSection)}
+      </div>
+    );
+  };
+
   // Engagement management cards logic
   const engagementManagementSection = sidebarSections.find(s => s.id === "engagement-management");
 
@@ -356,6 +380,10 @@ const ProjectEditContent = ({
             <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
           </div>}
         {/* END of engagement management custom blocks */}
+
+        {/* BUSINESS PROCESSES LOGIC (section 3 and its tree) */}
+        {activeSection === 'business-processes' && renderBusinessProcessesContent()}
+        {activeSection === 'financial-reporting' && renderFinancialReportingContent()}
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
         {renderedEntityContent}
