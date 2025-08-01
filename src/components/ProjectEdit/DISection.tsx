@@ -174,15 +174,24 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
-          <RadioGroup 
-            value={formData.control_attributes_judgment || ""} 
-            onValueChange={(value) => handleRadioChange('control_attributes_judgment', value)}
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="false" id="judgment-false" />
-              <Label htmlFor="judgment-false">False</Label>
-            </div>
-          </RadioGroup>
+          <div className="flex">
+            <Button
+              variant={formData.control_attributes_judgment === 'true' ? 'default' : 'outline'}
+              size="sm"
+              className="rounded-r-none"
+              onClick={() => handleToggleChange('control_attributes_judgment', 'true')}
+            >
+              True
+            </Button>
+            <Button
+              variant={formData.control_attributes_judgment === 'false' ? 'default' : 'outline'}
+              size="sm"
+              className="rounded-l-none"
+              onClick={() => handleToggleChange('control_attributes_judgment', 'false')}
+            >
+              False
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -218,7 +227,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               <Label className="text-sm font-medium mb-2 block">Type</Label>
               <div className="flex">
                 <Button
-                  variant={formData.procedure_type === 'DETECTIVE' ? 'outline' : 'default'}
+                  variant={formData.procedure_type === 'DETECTIVE' ? 'default' : 'outline'}
                   size="sm"
                   className="rounded-r-none"
                   onClick={() => handleToggleChange('procedure_type', 'DETECTIVE')}
