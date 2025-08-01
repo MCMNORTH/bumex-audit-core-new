@@ -285,13 +285,19 @@ const ProjectEditContent = ({
             renderedEntityContent = <div className="space-y-4">
                 {renderSectionHeader(targetSection.title)}
                 {renderPlaceholderSection(targetSection.title)}
+               </div>;
+          } else if (targetSection.id === 'fraud-risk') {
+            // Fraud risk assessment section
+            renderedEntityContent = <div className="space-y-4">
+                {renderSectionHeader('Fraud risk assessment and response', '1.')}
+                <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
               </div>;
-         } else {
-          // Render placeholder for other leaves
-          renderedEntityContent = <div className="space-y-8">
-              {renderSectionHeader(targetSection.title, targetSection.number)}
-              {renderPlaceholderSection(targetSection.title + " coming soon")}
-            </div>;
+          } else {
+           // Render placeholder for other leaves
+           renderedEntityContent = <div className="space-y-8">
+               {renderSectionHeader(targetSection.title, targetSection.number)}
+               {renderPlaceholderSection(targetSection.title + " coming soon")}
+             </div>;
         }
       }
     }
