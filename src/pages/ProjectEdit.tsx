@@ -140,7 +140,16 @@ const ProjectEdit = () => {
               active: false,
               isParent: true,
               children: [
-                { id: 'ad-1-1-apd-1', title: 'AD 1.1APD-1 - Configuration des mots de passe', active: false },
+                { 
+                  id: 'ad-1-1-apd-1', 
+                  title: 'AD 1.1APD-1 - Configuration des mots de passe', 
+                  active: false,
+                  isParent: true,
+                  children: [
+                    { id: 'ad-1-1-apd-1-d-i', title: '1 - D&I', active: false },
+                    { id: 'ad-1-1-apd-1-toe', title: '2 - TOE', active: false },
+                  ]
+                },
                 { id: 'ad-1-4-apd-1', title: 'AD 1.4 APD-1 - Comptes à pouvoir', active: false },
                 { id: 'ad-2-1-pc-2', title: 'AD 2.1 PC-2 - Validation de la mise en production des changements', active: false },
                 { id: 'seebi-1-1-apd-1', title: 'Seebi 1.1 APD-1 - Configuration des mots de passe', active: false },
