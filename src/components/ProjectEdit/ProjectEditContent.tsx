@@ -390,6 +390,26 @@ const ProjectEditContent = ({
             <FinancialReportingProcessSection formData={formData} onFormDataChange={onFormDataChange} />
           </div>
         )}
+        {activeSection === 'control-activities' && (
+          <div className="space-y-8">
+            {renderSectionHeader('CA - Control activities')}
+            {renderCardsForSection(businessProcessesSection?.children?.find(c => c.id === 'financial-reporting')?.children?.find(c => c.id === 'control-activities'))}
+          </div>
+        )}
+        {activeSection === 'controle-24' && (
+          <div className="space-y-4">
+            {renderSectionHeader('Contrôle 24', '')}
+            <p className="text-sm text-muted-foreground">Réconciliation des états financiers</p>
+            {renderPlaceholderSection('Contrôle 24 - Réconciliation des états financiers')}
+          </div>
+        )}
+        {activeSection === 'controle-25' && (
+          <div className="space-y-4">
+            {renderSectionHeader('Contrôle 25', '')}
+            <p className="text-sm text-muted-foreground">SOD</p>
+            {renderPlaceholderSection('Contrôle 25 - SOD')}
+          </div>
+        )}
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
         {renderedEntityContent}
