@@ -19,13 +19,13 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
   onFormDataChange
 }) => {
   const [itSystems, setItSystems] = useState([
-    { id: 1, reference: 'JDE APP', systemLayer: 'JDE APP', description: 'ERP', layerType: 'Application', outsourced: false, automated: true, manual: true }
+    { id: 1, reference: '', systemLayer: '', description: '', layerType: 'Application', outsourced: false, automated: false, manual: false }
   ]);
   const [serviceOrganizations, setServiceOrganizations] = useState([
-    { id: 1, description: 'Financial Statement Making' }
+    { id: 1, description: '' }
   ]);
   const [relatedPartyArrangements, setRelatedPartyArrangements] = useState([
-    { id: 1, idField: 'Intercos', description: 'Réconciliation des comptes intercos' }
+    { id: 1, idField: '', description: '' }
   ]);
 
   const addItSystem = () => {
@@ -90,7 +90,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
               The following are relevant to the process and procedures to enter transaction totals into the general ledger:
             </p>
             <Textarea
-              placeholder="WT relevant to the FR process are attached under CA. Control activities (Controls 24 and 25)"
+              placeholder="Document the process and procedures to enter transaction totals into the general ledger..."
               className="min-h-[100px]"
             />
           </div>
@@ -151,24 +151,28 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                         <Input
                           value={system.reference}
                           onChange={(e) => updateItSystem(system.id, 'reference', e.target.value)}
+                          placeholder="System reference ID"
                         />
                       </TableCell>
                       <TableCell>
                         <Input
                           value={system.systemLayer}
                           onChange={(e) => updateItSystem(system.id, 'systemLayer', e.target.value)}
+                          placeholder="IT system layer name"
                         />
                       </TableCell>
                       <TableCell>
                         <Input
                           value={system.description}
                           onChange={(e) => updateItSystem(system.id, 'description', e.target.value)}
+                          placeholder="Description of IT system layer"
                         />
                       </TableCell>
                       <TableCell>
                         <Input
                           value={system.layerType}
                           onChange={(e) => updateItSystem(system.id, 'layerType', e.target.value)}
+                          placeholder="Layer type"
                         />
                       </TableCell>
                       <TableCell>
@@ -267,6 +271,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                         <Input
                           value={org.description}
                           onChange={(e) => updateServiceOrganization(org.id, 'description', e.target.value)}
+                          placeholder="Service organization description"
                         />
                       </TableCell>
                       <TableCell>
@@ -348,7 +353,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 Document our understanding and include, if applicable, financial reporting standards, laws, and regulations that are new to the entity, setting out when and how the entity will adopt such requirements.
               </p>
               <Textarea
-                placeholder="Pas de changement en 2023 chez CDT et ZD en terme de méthodes comptables ou de traitement des estimations comptables. Les estimations comptables restent les mêmes : Dépréciation du mali de fusion et du fond de commerce."
+                placeholder="Document understanding of financial reporting standards, laws, and regulations new to the entity..."
                 className="min-h-[100px]"
               />
             </div>
@@ -407,12 +412,14 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                         <Input
                           value={arrangement.idField}
                           onChange={(e) => updateRelatedPartyArrangement(arrangement.id, 'idField', e.target.value)}
+                          placeholder="Arrangement ID"
                         />
                       </TableCell>
                       <TableCell>
                         <Input
                           value={arrangement.description}
                           onChange={(e) => updateRelatedPartyArrangement(arrangement.id, 'description', e.target.value)}
+                          placeholder="Description of related party arrangement"
                         />
                       </TableCell>
                       <TableCell>
@@ -473,7 +480,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
             </div>
 
             <Textarea
-              placeholder="Les SUT sont rares et validées par la direction."
+              placeholder="Document understanding of entity's process for identifying significant unusual transactions..."
               className="min-h-[100px]"
             />
           </div>
@@ -547,7 +554,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
             </h3>
             
             <Textarea
-              placeholder="Les RMM identifiés sur le process FRP ; sont les suivants le FRP 002.01.04 et le FRP 002.01.05. Nous n'arrivons pas à supprimer les RMM en doublon, ni le RMM FRP002.01.03 suite à un bug Kcw."
+              placeholder="Document assessment of risks related to identification of related parties and significant unusual transactions..."
               className="min-h-[100px]"
             />
 
@@ -572,10 +579,10 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <Input value="FRP002.1.03" readOnly />
+                      <Input placeholder="Risk ID" />
                     </TableCell>
                     <TableCell>
-                      <Input value="Significant unusual transactions are not completely identified." />
+                      <Input placeholder="Risk description" />
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -627,10 +634,10 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <Input placeholder="Procedure description" />
+                      <Input placeholder="Describe procedure to evaluate related parties identification" />
                     </TableCell>
                     <TableCell>
-                      <Input placeholder="Result" />
+                      <Input placeholder="Document procedure result" />
                     </TableCell>
                     <TableCell>
                       <Button variant="ghost" size="sm">
@@ -704,10 +711,10 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <Input placeholder="ID" />
+                      <Input placeholder="Response ID" />
                     </TableCell>
                     <TableCell>
-                      <Input placeholder="Description" />
+                      <Input placeholder="Response description for subsequent events RMM" />
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
