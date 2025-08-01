@@ -287,6 +287,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
 
       // Business processes
       selected_business_processes: (projectData as any).selected_business_processes || [],
+      entity_has_material_inventory: (projectData as any).entity_has_material_inventory || '',
+      confirm_inventory_workpaper: (projectData as any).confirm_inventory_workpaper || false,
     });
   };
 

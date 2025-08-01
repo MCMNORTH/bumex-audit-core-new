@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 interface BusinessProcess {
   id: string;
@@ -88,6 +89,14 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
     formData.selected_business_processes || []
   );
 
+  const handleInventoryMaterialChange = (value: string) => {
+    onFormDataChange({ entity_has_material_inventory: value });
+  };
+
+  const handleInventoryWorkpaperChange = (checked: boolean) => {
+    onFormDataChange({ confirm_inventory_workpaper: checked });
+  };
+
   const handleProcessToggle = (processId: string, checked: boolean) => {
     const updatedProcesses = checked 
       ? [...selectedProcesses, processId]
@@ -157,6 +166,46 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
                     );
                   })
                 )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Inventory section */}
+        <div className="mt-8 space-y-6">
+          <div className="space-y-4">
+            <h4 className="font-medium text-base">Perform relevant procedures over inventory</h4>
+            
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium mb-3 block">
+                  Does the entity have inventory that is material to the financial statements?
+                </Label>
+                <RadioGroup 
+                  value={formData.entity_has_material_inventory || ''} 
+                  onValueChange={handleInventoryMaterialChange}
+                  className="flex gap-6"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="inventory-yes" />
+                    <Label htmlFor="inventory-yes" className="text-sm font-normal">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="inventory-no" />
+                    <Label htmlFor="inventory-no" className="text-sm font-normal">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="inventory-workpaper"
+                  checked={formData.confirm_inventory_workpaper || false}
+                  onCheckedChange={handleInventoryWorkpaperChange}
+                />
+                <Label htmlFor="inventory-workpaper" className="text-sm font-normal leading-relaxed">
+                  Confirm we will complete the relevant inventory workpaper (either at the accounting process level or as part of procedures over MNSA)
+                </Label>
               </div>
             </div>
           </div>

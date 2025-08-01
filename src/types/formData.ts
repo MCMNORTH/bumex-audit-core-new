@@ -403,6 +403,8 @@ export interface ProjectFormData {
 
   // Business processes
   selected_business_processes: string[];
+  entity_has_material_inventory: string;
+  confirm_inventory_workpaper: boolean;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -683,4 +685,6 @@ export const getInitialFormData = (): ProjectFormData => ({
 
   // Business processes
   selected_business_processes: [],
+  entity_has_material_inventory: '',
+  confirm_inventory_workpaper: false,
 });
