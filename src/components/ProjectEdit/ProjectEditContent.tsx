@@ -344,6 +344,10 @@ const ProjectEditContent = ({
             {renderSectionHeader('Initial independence and conclusion', '1.')}
             <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
           </div>}
+        {activeSection === 'fraud-risk' && <div className="space-y-4">
+            {renderSectionHeader('Fraud risk assessment and response', '1.')}
+            <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
+          </div>}
         {/* END of engagement management custom blocks */}
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
