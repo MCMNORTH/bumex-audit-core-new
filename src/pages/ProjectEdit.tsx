@@ -121,7 +121,7 @@ const ProjectEdit = () => {
           children: [
             { id: 'entity-and-env', title: 'Entity and its environment', number: '1.', active: false },
             { id: 'planning-analytics', title: 'Planning analytics', number: '2.', active: false },
-            { id: 'business-processes', title: 'Business processes', number: '3.', active: false },
+            { id: 'risk-business-processes', title: 'Business processes', number: '3.', active: false },
             { id: 'rapd', title: 'RAPD', number: '4.', active: false },
           ],
         },

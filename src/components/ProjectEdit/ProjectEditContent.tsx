@@ -245,7 +245,7 @@ const ProjectEditContent = ({
                 </CardContent>
               </Card>
             </div>;
-        } else if (targetSection.id === 'business-processes') {
+        } else if (targetSection.id === 'risk-business-processes') {
            renderedEntityContent = <div className="space-y-4">
                {renderSectionHeader('Business processes', '3.')}
                <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
