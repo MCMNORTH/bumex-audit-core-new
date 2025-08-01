@@ -250,29 +250,35 @@ const ProjectEditContent = ({
          } else if (targetSection.id === 'gitc-controls') {
            // Show cards for GITC Controls children
            renderedEntityContent = renderEntityWideProceduresContent(targetSection);
-         } else if (targetSection.id === 'ad-1-1-apd-1') {
-           // Show cards for AD 1.1APD-1 children
-           renderedEntityContent = renderEntityWideProceduresContent(targetSection);
-         } else if (targetSection.id === 'ad-1-1-apd-1-d-i') {
-           // D&I Section content
-           renderedEntityContent = <div className="space-y-4">
-               {renderSectionHeader('1 - D&I')}
-               <Card>
-                 <CardContent className="p-6">
-                   <DISection formData={formData} onFormDataChange={onFormDataChange} />
-                 </CardContent>
-               </Card>
-             </div>;
-          } else if (targetSection.id === 'ad-1-4-apd-1') {
-            // AD 1.4 APD-1 - Comptes à pouvoir Section content
+          } else if (targetSection.id === 'ad-1-1-apd-1') {
+            // Show cards for AD 1.1APD-1 children
+            renderedEntityContent = renderEntityWideProceduresContent(targetSection);
+          } else if (targetSection.id === 'ad-1-1-apd-1-d-i') {
+            // D&I Section content
             renderedEntityContent = <div className="space-y-4">
-                {renderSectionHeader('AD 1.4 APD-1 - Comptes à pouvoir')}
+                {renderSectionHeader('1 - D&I')}
                 <Card>
                   <CardContent className="p-6">
-                    <ComptesAPouvoirSection formData={formData} handleFormDataChange={handleFormDataFieldChange} />
+                    <DISection formData={formData} onFormDataChange={onFormDataChange} />
                   </CardContent>
                 </Card>
               </div>;
+           } else if (targetSection.id === 'ad-1-1-apd-1-2-toe') {
+             // 2 - TOE Section content (moved from Comptes à pouvoir)
+             renderedEntityContent = <div className="space-y-4">
+                 {renderSectionHeader('2 - TOE')}
+                 <Card>
+                   <CardContent className="p-6">
+                     <ComptesAPouvoirSection formData={formData} handleFormDataChange={handleFormDataFieldChange} />
+                   </CardContent>
+                 </Card>
+               </div>;
+           } else if (targetSection.id === 'ad-1-4-apd-1') {
+             // AD 1.4 APD-1 - Comptes à pouvoir Section content (empty state restored)
+             renderedEntityContent = <div className="space-y-4">
+                 {renderSectionHeader('AD 1.4 APD-1 - Comptes à pouvoir')}
+                 {renderPlaceholderSection('AD 1.4 APD-1 - Comptes à pouvoir')}
+               </div>;
           } else if (targetSection.id.startsWith('ad-1-1-apd-1-') || targetSection.id.startsWith('ad-') || targetSection.id.startsWith('seebi-') || targetSection.id.startsWith('talend-')) {
             // Individual GITC control items and their children
             renderedEntityContent = <div className="space-y-4">
