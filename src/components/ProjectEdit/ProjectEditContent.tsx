@@ -12,7 +12,6 @@ import RAPDSection from './RAPDSection';
 import CERAMICSection from './CERAMICSection';
 import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
 import BusinessProcessesSection from './BusinessProcessesSection';
-import GitcControlsSection from './GitcControlsSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -240,11 +239,6 @@ const ProjectEditContent = ({
           renderedEntityContent = <div className="space-y-4">
               {renderSectionHeader('Business processes', '3.')}
               <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>;
-        } else if (targetSection.id === 'gitc-controls') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('GITC. Controls')}
-              <GitcControlsSection formData={formData} onFormDataChange={onFormDataChange} />
             </div>;
         } else {
           // Render placeholder for other leaves
