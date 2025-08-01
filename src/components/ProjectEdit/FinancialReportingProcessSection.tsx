@@ -477,6 +477,270 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
               className="min-h-[100px]"
             />
           </div>
+
+          {/* Process understanding table */}
+          <div className="space-y-4">
+            <div className="bg-blue-900 text-white p-2 rounded flex justify-between">
+              <span className="font-medium">Process understanding</span>
+              <span className="font-medium">Reference</span>
+            </div>
+            
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Process</TableHead>
+                  <TableHead>Walkthrough</TableHead>
+                  <TableHead>Financial Statement Making</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    <div className="text-sm">
+                      Understand the entity's process to identify, authorize, and approve significant unusual transactions.
+                    </div>
+                  </TableCell>
+                  <TableCell>Walkthrough</TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <span>Financial Statement Making</span>
+                      <Button variant="ghost" size="sm">
+                        <span className="text-blue-600">🔗</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>
+                    <div className="text-sm">
+                      Understand the entity's process to identify, authorize, and approve significant unusual transactions.
+                    </div>
+                  </TableCell>
+                  <TableCell>Walkthrough</TableCell>
+                  <TableCell>
+                    <div className="flex items-center space-x-2">
+                      <span>Financial Statement Making</span>
+                      <Button variant="ghost" size="sm">
+                        <span className="text-blue-600">🔗</span>
+                      </Button>
+                    </div>
+                  </TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox id="identify-sut" />
+              <Label htmlFor="identify-sut" className="text-sm">
+                Identify significant unusual transactions (except for related party SUTs identified based on our inquiries with management)
+              </Label>
+            </div>
+          </div>
+
+          {/* Risk assessment section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">
+              Assess risk of misstatement, identify PRPs and evaluate controls related to the identification of related parties and significant unusual transactions
+            </h3>
+            
+            <Textarea
+              placeholder="Les RMM identifiés sur le process FRP ; sont les suivants le FRP 002.01.04 et le FRP 002.01.05. Nous n'arrivons pas à supprimer les RMM en doublon, ni le RMM FRP002.01.03 suite à un bug Kcw."
+              className="min-h-[100px]"
+            />
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded">CAR</span>
+                <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>CAR</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Input value="FRP002.1.03" readOnly />
+                    </TableCell>
+                    <TableCell>
+                      <Input value="Significant unusual transactions are not completely identified." />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm" className="bg-green-600 text-white">S</Button>
+                        <Button variant="outline" size="sm" className="bg-gray-600 text-white">N</Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          {/* Evaluate related parties section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">
+              Evaluate whether all related parties, relationships and transactions have been identified
+            </h3>
+            
+            <p className="text-sm text-muted-foreground">
+              To address the identified risks, perform procedures to evaluate whether the entity has identified its related parties, relationships and transactions:
+            </p>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <div className="flex">
+                  <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded-l">Procedure</span>
+                  <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded-r">Result</span>
+                </div>
+                <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Procedure</TableHead>
+                    <TableHead>Result</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Input placeholder="Procedure description" />
+                    </TableCell>
+                    <TableCell>
+                      <Input placeholder="Result" />
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm">
+                  Are additional procedures necessary to obtain sufficient appropriate evidence?
+                </p>
+                <RadioGroup>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="additional-procedures-yes" />
+                    <Label htmlFor="additional-procedures-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="additional-procedures-no" />
+                    <Label htmlFor="additional-procedures-no">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm">
+                  Did we discover related parties, or significant related party transactions that management did not identify or disclose to us?
+                </p>
+                <RadioGroup>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="yes" id="discover-related-yes" />
+                    <Label htmlFor="discover-related-yes">Yes</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="no" id="discover-related-no" />
+                    <Label htmlFor="discover-related-no">No</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+            </div>
+          </div>
+
+          {/* Design response section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">
+              Design a response to address the RMM(s) related to subsequent events
+            </h3>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded">CAR</span>
+                <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  Add
+                </Button>
+              </div>
+
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>CAR</TableHead>
+                    <TableHead></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>
+                      <Input placeholder="ID" />
+                    </TableCell>
+                    <TableCell>
+                      <Input placeholder="Description" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button variant="outline" size="sm" className="bg-green-600 text-white">S</Button>
+                        <Button variant="outline" size="sm" className="bg-gray-600 text-white">N</Button>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button variant="ghost" size="sm">
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm">
+                Sufficient appropriate audit evidence obtained for all RMMs associated with the subsequent events:
+              </p>
+              <RadioGroup>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="yes" id="sufficient-evidence-yes" />
+                  <Label htmlFor="sufficient-evidence-yes">Yes</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="no" id="sufficient-evidence-no" />
+                  <Label htmlFor="sufficient-evidence-no">No</Label>
+                </div>
+              </RadioGroup>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>
