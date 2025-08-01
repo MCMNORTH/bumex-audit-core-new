@@ -210,7 +210,16 @@ const ProjectEdit = () => {
           isParent: true,
           children: [
             { id: 'financial-reporting-process', title: 'Financial reporting process', number: '1.', active: false },
-            { id: 'control-activities', title: 'CA - Control activities', active: false },
+            { 
+              id: 'control-activities', 
+              title: 'CA - Control activities', 
+              active: false,
+              isParent: true,
+              children: [
+                { id: 'controle-24', title: 'Contrôle 24', subtitle: 'Réconciliation des états financiers', active: false },
+                { id: 'controle-25', title: 'Contrôle 25', subtitle: 'SOD', active: false },
+              ]
+            },
             { id: 'related-parties', title: 'RP - Related parties', active: false },
           ]
         },
