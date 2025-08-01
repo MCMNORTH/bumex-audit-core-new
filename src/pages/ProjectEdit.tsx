@@ -202,7 +202,18 @@ const ProjectEdit = () => {
       active: false,
       number: '3.',
       children: [
-        { id: 'financial-reporting', title: 'Financial reporting', number: '1.', active: false },
+        { 
+          id: 'financial-reporting', 
+          title: 'Financial reporting', 
+          number: '1.', 
+          active: false,
+          isParent: true,
+          children: [
+            { id: 'financial-reporting-process', title: 'Financial reporting process', number: '1.', active: false },
+            { id: 'control-activities', title: 'CA - Control activities', active: false },
+            { id: 'related-parties', title: 'RP - Related parties', active: false },
+          ]
+        },
         { id: 'litigation-claims', title: 'Litigation, claims and assessments', number: '2.', active: false },
         { id: 'ventes-clients', title: 'Ventes - Clients', number: '3.', active: false },
         { id: 'achats-fournisseurs', title: 'Achats - Fournisseurs', number: '4.', active: false },
