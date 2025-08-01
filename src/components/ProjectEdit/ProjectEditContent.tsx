@@ -12,6 +12,7 @@ import RAPDSection from './RAPDSection';
 import CERAMICSection from './CERAMICSection';
 import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
 import BusinessProcessesSection from './BusinessProcessesSection';
+import MainBusinessProcessesSection from './MainBusinessProcessesSection';
 import DISection from './DISection';
 import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
@@ -312,7 +313,7 @@ const ProjectEditContent = ({
     return (
       <div className="space-y-8">
         {renderSectionHeader(businessProcessesSection.title, businessProcessesSection.number)}
-        {renderCardsForSection(businessProcessesSection)}
+        <MainBusinessProcessesSection onSectionChange={onSectionChange} />
       </div>
     );
   };
