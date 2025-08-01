@@ -506,7 +506,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Add
+                  RM LIBRARY
                 </Button>
               </div>
 
