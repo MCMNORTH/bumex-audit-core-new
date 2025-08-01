@@ -201,6 +201,16 @@ const ProjectEdit = () => {
       isParent: true,
       active: false,
       number: '3.',
+      children: [
+        { id: 'financial-reporting', title: 'Financial reporting', number: '1.', active: false },
+        { id: 'litigation-claims', title: 'Litigation, claims and assessments', number: '2.', active: false },
+        { id: 'ventes-clients', title: 'Ventes - Clients', number: '3.', active: false },
+        { id: 'achats-fournisseurs', title: 'Achats - Fournisseurs', number: '4.', active: false },
+        { id: 'immobilisations-incorporelles', title: 'Immobilisations Incorporelles', number: '5.', active: false },
+        { id: 'stocks', title: 'Stocks', number: '6.', active: false },
+        { id: 'tresorerie', title: 'Trésorerie', number: '7.', active: false },
+        { id: 'mnsa-material-accounts', title: 'MNSA. Material non-significant accounts', number: '8.', active: false },
+      ],
     },
     {
       id: 'conclusions-and-reporting',
