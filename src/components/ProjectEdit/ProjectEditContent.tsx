@@ -236,11 +236,20 @@ const ProjectEditContent = ({
               </Card>
             </div>;
         } else if (targetSection.id === 'business-processes') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('Business processes', '3.')}
-              <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>;
-        } else {
+           renderedEntityContent = <div className="space-y-4">
+               {renderSectionHeader('Business processes', '3.')}
+               <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
+             </div>;
+         } else if (targetSection.id === 'gitc-controls') {
+           // Show cards for GITC Controls children
+           renderedEntityContent = renderEntityWideProceduresContent(targetSection);
+         } else if (targetSection.id.startsWith('ad-') || targetSection.id.startsWith('seebi-') || targetSection.id.startsWith('talend-')) {
+           // Individual GITC control items
+           renderedEntityContent = <div className="space-y-4">
+               {renderSectionHeader(targetSection.title)}
+               {renderPlaceholderSection(targetSection.title)}
+             </div>;
+         } else {
           // Render placeholder for other leaves
           renderedEntityContent = <div className="space-y-8">
               {renderSectionHeader(targetSection.title, targetSection.number)}

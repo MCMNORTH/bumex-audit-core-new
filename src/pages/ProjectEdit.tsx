@@ -134,7 +134,22 @@ const ProjectEdit = () => {
           children: [
             { id: 'ceramic', title: 'CERAMIC', number: '1.', active: false },
             { id: 'it-understanding', title: 'IT Understanding', number: '2.', active: false },
-            { id: 'gitc-controls', title: 'GITC. Controls', active: false },
+            { 
+              id: 'gitc-controls', 
+              title: 'GITC. Controls', 
+              active: false,
+              isParent: true,
+              children: [
+                { id: 'ad-1-1-apd-1', title: 'AD 1.1APD-1 - Configuration des mots de passe', active: false },
+                { id: 'ad-1-4-apd-1', title: 'AD 1.4 APD-1 - Comptes à pouvoir', active: false },
+                { id: 'ad-2-1-pc-2', title: 'AD 2.1 PC-2 - Validation de la mise en production des changements', active: false },
+                { id: 'seebi-1-1-apd-1', title: 'Seebi 1.1 APD-1 - Configuration des mots de passe', active: false },
+                { id: 'seebi-1-4-apd-1', title: 'Seebi 1.4 APD-1 - Compte à pouvoir', active: false },
+                { id: 'seebi-2-1-pc-1', title: 'Seebi 2.1 PC-1 - Validation de la mise en production des changements', active: false },
+                { id: 'talend-4-1-co-1', title: 'Talend 4.1 CO-1 - Paramétrage de l\'ordonnanceur', active: false },
+                { id: 'talend-4-1-co-2', title: 'Talend 4.1 CO-2 - Suivi et résolution des anomalies', active: false },
+              ]
+            },
             { id: 'significant-control-deficiencies', title: 'Significant Control Deficiencies', number: '3.', active: false },
             { id: 'def-deficiencies', title: 'DEF. Deficiencies', active: false },
             { id: 'so-service-org', title: 'SO. Service Organization', active: false },
