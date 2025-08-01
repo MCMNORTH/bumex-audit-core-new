@@ -16,7 +16,6 @@ import DISection from './DISection';
 import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
 import FinancialReportingProcessSection from './FinancialReportingProcessSection';
-import Controle24DISection from './Controle24DISection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -406,7 +405,8 @@ const ProjectEditContent = ({
         )}
         {activeSection === 'controle-24-d-i' && (
           <div className="space-y-4">
-            <Controle24DISection formData={formData} onFormDataChange={onFormDataChange} />
+            {renderSectionHeader('1 - D&I', '')}
+            {renderPlaceholderSection('Contrôle 24 - D&I')}
           </div>
         )}
         {activeSection === 'controle-24-toe' && (
