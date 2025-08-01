@@ -303,6 +303,24 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       selected_business_processes: (projectData as any).selected_business_processes || [],
       entity_has_material_inventory: (projectData as any).entity_has_material_inventory || '',
       confirm_inventory_workpaper: (projectData as any).confirm_inventory_workpaper || false,
+      
+      // TOE fields (with defaults)
+      comptesAPouvoir_design_procedures_table: (projectData as any).comptesAPouvoir_design_procedures_table || [],
+      
+      // Fraud Risk Assessment fields (with defaults)
+      fraud_risk_financial: (projectData as any).fraud_risk_financial || [],
+      fraud_risk_management: (projectData as any).fraud_risk_management || [],
+      fraud_risk_other_management: (projectData as any).fraud_risk_other_management || [],
+      fraud_risk_other_internal: (projectData as any).fraud_risk_other_internal || [],
+      fraud_risk_external: (projectData as any).fraud_risk_external || [],
+      fraud_risk_misappropriation: (projectData as any).fraud_risk_misappropriation || [],
+      fraud_risk_other_factors: (projectData as any).fraud_risk_other_factors || [],
+      fraud_risk_summary: (projectData as any).fraud_risk_summary || '',
+      fraud_assertion_level: (projectData as any).fraud_assertion_level || [],
+      fraud_financial_statement: (projectData as any).fraud_financial_statement || [],
+      revenue_recognition_fraud_risk: (projectData as any).revenue_recognition_fraud_risk || '',
+      revenue_recognition_identified: (projectData as any).revenue_recognition_identified || '',
+      overall_fraud_response: (projectData as any).overall_fraud_response || ''
     });
   };
 

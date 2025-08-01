@@ -14,6 +14,7 @@ import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
 import BusinessProcessesSection from './BusinessProcessesSection';
 import DISection from './DISection';
 import ComptesAPouvoirSection from './ComptesAPouvoirSection';
+import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];

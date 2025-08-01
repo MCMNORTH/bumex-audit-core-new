@@ -454,6 +454,68 @@ export interface ProjectFormData {
   comptesaPouvoir_deviations?: string;
   comptesaPouvoir_test_result?: string;
   comptesaPouvoir_period_result?: string;
+
+  // TOE fields (moved from ComptesAPouvoirSection)
+  comptesAPouvoir_gitc_rawtc_assessment?: string;
+  comptesAPouvoir_design_procedures_table: ComptesAPouvoirProcedureItem[];
+  comptesAPouvoir_timing_procedures?: string;
+  comptesAPouvoir_extent_procedures?: string;
+  comptesAPouvoir_sample_size?: string;
+  comptesAPouvoir_test_operating_effectiveness?: boolean;
+
+  // Fraud Risk Assessment fields
+  fraud_risk_financial?: FraudRiskFactor[];
+  fraud_risk_management?: FraudRiskFactor[];
+  fraud_risk_other_management?: FraudRiskFactor[];
+  fraud_risk_other_internal?: FraudRiskFactor[];
+  fraud_risk_external?: FraudRiskFactor[];
+  fraud_risk_misappropriation?: FraudRiskFactor[];
+  fraud_risk_other_factors?: FraudRiskFactor[];
+  fraud_risk_summary?: string;
+  fraud_assertion_level?: FraudRiskAssessment[];
+  fraud_financial_statement?: FinancialStatementFraudRisk[];
+  revenue_recognition_fraud_risk?: string;
+  revenue_recognition_identified?: string;
+  overall_fraud_response?: string;
+}
+
+// Fraud Risk Factor interface
+export interface FraudRiskFactor {
+  id: string;
+  description: string;
+  identified: boolean;
+  incentives: boolean;
+  opportunities: boolean;
+  attitudes: boolean;
+  conditions: string | boolean;
+  attachment: string;
+}
+
+// Fraud Risk Assessment interface
+export interface FraudRiskAssessment {
+  id: string;
+  description: string;
+  inherentRisk: string;
+  assertions: string;
+  controlApproach: string;
+}
+
+// Financial Statement Fraud Risk interface
+export interface FinancialStatementFraudRisk {
+  id: string;
+  description: string;
+  fraudulentReporting: boolean;
+  misappropriationAssets: boolean;
+}
+
+// ComptesAPouvoir Procedure Item interface (needed for TOE section)
+export interface ComptesAPouvoirProcedureItem {
+  id: string;
+  inquire: boolean;
+  inspect: boolean;
+  observe: boolean;
+  reperform: boolean;
+  involvesJudgment: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
@@ -736,4 +798,22 @@ export const getInitialFormData = (): ProjectFormData => ({
   selected_business_processes: [],
   entity_has_material_inventory: '',
   confirm_inventory_workpaper: false,
+
+  // TOE fields initial values  
+  comptesAPouvoir_design_procedures_table: [],
+
+  // Fraud Risk Assessment initial values
+  fraud_risk_financial: [],
+  fraud_risk_management: [],
+  fraud_risk_other_management: [],
+  fraud_risk_other_internal: [],
+  fraud_risk_external: [],
+  fraud_risk_misappropriation: [],
+  fraud_risk_other_factors: [],
+  fraud_risk_summary: '',
+  fraud_assertion_level: [],
+  fraud_financial_statement: [],
+  revenue_recognition_fraud_risk: '',
+  revenue_recognition_identified: '',
+  overall_fraud_response: '',
 });

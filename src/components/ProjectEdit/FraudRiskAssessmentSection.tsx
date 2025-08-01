@@ -287,7 +287,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                 </td>
                 <td className="border border-gray-200 p-2">
                   <Input
-                    value={row.conditions}
+                    value={typeof row.conditions === 'string' ? row.conditions : ''}
                     onChange={(e) => updateRow(index, 'conditions', e.target.value, setRows, fieldName)}
                     className="w-full border-0 p-1"
                   />
