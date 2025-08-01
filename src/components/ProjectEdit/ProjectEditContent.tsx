@@ -13,6 +13,7 @@ import CERAMICSection from './CERAMICSection';
 import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
 import BusinessProcessesSection from './BusinessProcessesSection';
 import DISection from './DISection';
+import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -76,6 +77,11 @@ const ProjectEditContent = ({
     onFormDataChange({
       assigned_to: updatedAssignments
     });
+  };
+
+  // Wrapper function to handle form data changes in individual field format
+  const handleFormDataFieldChange = (field: string, value: any) => {
+    onFormDataChange({ [field]: value });
   };
 
   // Renders summary info for the Engagement Management overview
@@ -257,12 +263,22 @@ const ProjectEditContent = ({
                  </CardContent>
                </Card>
              </div>;
-         } else if (targetSection.id.startsWith('ad-1-1-apd-1-') || targetSection.id.startsWith('ad-') || targetSection.id.startsWith('seebi-') || targetSection.id.startsWith('talend-')) {
-           // Individual GITC control items and their children
-           renderedEntityContent = <div className="space-y-4">
-               {renderSectionHeader(targetSection.title)}
-               {renderPlaceholderSection(targetSection.title)}
-             </div>;
+          } else if (targetSection.id === 'ad-1-4-apd-1') {
+            // AD 1.4 APD-1 - Comptes à pouvoir Section content
+            renderedEntityContent = <div className="space-y-4">
+                {renderSectionHeader('AD 1.4 APD-1 - Comptes à pouvoir')}
+                <Card>
+                  <CardContent className="p-6">
+                    <ComptesAPouvoirSection formData={formData} handleFormDataChange={handleFormDataFieldChange} />
+                  </CardContent>
+                </Card>
+              </div>;
+          } else if (targetSection.id.startsWith('ad-1-1-apd-1-') || targetSection.id.startsWith('ad-') || targetSection.id.startsWith('seebi-') || targetSection.id.startsWith('talend-')) {
+            // Individual GITC control items and their children
+            renderedEntityContent = <div className="space-y-4">
+                {renderSectionHeader(targetSection.title)}
+                {renderPlaceholderSection(targetSection.title)}
+              </div>;
          } else {
           // Render placeholder for other leaves
           renderedEntityContent = <div className="space-y-8">

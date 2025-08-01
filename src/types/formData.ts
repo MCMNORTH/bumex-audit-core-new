@@ -419,6 +419,41 @@ export interface ProjectFormData {
   selected_business_processes: string[];
   entity_has_material_inventory: string;
   confirm_inventory_workpaper: boolean;
+
+  // Comptes à pouvoir section
+  comptesaPouvoir_rawtc_impact?: boolean;
+  comptesaPouvoir_rawtc_deficiencies?: boolean;
+  comptesaPouvoir_rawtc_infrequent?: boolean;
+  comptesaPouvoir_rawtc_competence?: boolean;
+  comptesaPouvoir_rawtc_complex?: boolean;
+  comptesaPouvoir_rawtc_prior_deficiencies?: boolean;
+  comptesaPouvoir_rawtc_changes?: boolean;
+  comptesaPouvoir_rawtc_judgments?: boolean;
+  comptesaPouvoir_rawtc_other?: boolean;
+  comptesaPouvoir_rawtc_significant?: string;
+  comptesaPouvoir_assessed_rawtc?: string;
+  comptesaPouvoir_procedures?: Array<{
+    id: string;
+    inquire: boolean;
+    inspect: boolean;
+    observe: boolean;
+    reperform: boolean;
+    involvesJudgment: string;
+  }>;
+  comptesaPouvoir_procedures_description?: string;
+  comptesaPouvoir_period_start?: string;
+  comptesaPouvoir_period_end?: string;
+  comptesaPouvoir_extent_description?: string;
+  comptesaPouvoir_internal_info?: string;
+  comptesaPouvoir_sample_size?: string;
+  comptesaPouvoir_increased_sample?: boolean;
+  comptesaPouvoir_unpredictability?: boolean;
+  comptesaPouvoir_sampling_tool?: boolean;
+  comptesaPouvoir_generate_template?: boolean;
+  comptesaPouvoir_attach_documentation?: boolean;
+  comptesaPouvoir_deviations?: string;
+  comptesaPouvoir_test_result?: string;
+  comptesaPouvoir_period_result?: string;
 }
 
 export const getInitialFormData = (): ProjectFormData => ({
