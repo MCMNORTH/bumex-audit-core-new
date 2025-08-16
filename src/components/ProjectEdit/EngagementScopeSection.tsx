@@ -11,6 +11,7 @@ import EngagementTeamSection from './EngagementScope/EngagementTeamSection';
 import DirectionSupervisionSection from './EngagementScope/DirectionSupervisionSection';
 import StrategyConsiderationsSection from './EngagementScope/StrategyConsiderationsSection';
 import AuditStrategySection from './EngagementScope/AuditStrategySection';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface SpecialistTeam {
   id: string;
@@ -120,12 +121,13 @@ const EngagementScopeSection = ({
   onDownloadMRRFile,
   mrrFileInputRef
 }: EngagementScopeSectionProps) => {
+  const { t } = useTranslation();
   console.log('EngagementScopeSection - mrrFileInputRef:', mrrFileInputRef);
   
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Engagement scope and scale and other strategic matters</CardTitle>
+        <CardTitle>{t('engagement.scopeAndScale')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <EngagementTypeSection 

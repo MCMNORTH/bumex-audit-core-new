@@ -142,6 +142,7 @@ const translations = {
     'engagement.otherDocuments': 'Other documents, if applicable',
     'engagement.entityProfile': 'Entity Profile',
     'engagement.teamAssignment': 'Team Assignment',
+    'engagement.scopeAndScale': 'Engagement scope and scale and other strategic matters',
   },
   fr: {
     // Navigation
@@ -273,6 +274,7 @@ const translations = {
     'engagement.otherDocuments': 'Autres documents, le cas échéant',
     'engagement.entityProfile': 'Profil de l\'entité',
     'engagement.teamAssignment': 'Affectation d\'équipe',
+    'engagement.scopeAndScale': 'Portée et échelle de l\'engagement et autres questions stratégiques',
   },
 };
 
