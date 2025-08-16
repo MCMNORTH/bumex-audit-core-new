@@ -333,22 +333,22 @@ const EngagementProfileSection = ({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="jurisdiction">Jurisdiction</Label>
+              <Label htmlFor="jurisdiction">{t('engagement.jurisdiction')}</Label>
               <Input
                 id="jurisdiction"
                 value={formData.jurisdiction}
                 onChange={(e) => onFormDataChange({ jurisdiction: e.target.value })}
-                placeholder="Enter jurisdiction"
+                placeholder={t('engagement.placeholders.jurisdiction')}
               />
             </div>
             <div>
-              <Label htmlFor="bumex_office">BUMEX Office</Label>
+              <Label htmlFor="bumex_office">{t('engagement.bumexOffice')}</Label>
               <Select
                 value={formData.bumex_office}
                 onValueChange={(value) => onFormDataChange({ bumex_office: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select BUMEX office" />
+                  <SelectValue placeholder={t('engagement.placeholders.selectBumexOffice')} />
                 </SelectTrigger>
                 <SelectContent>
                   {bumexOffices.map((office) => (
@@ -363,7 +363,7 @@ const EngagementProfileSection = ({
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="period_start">Period Start</Label>
+              <Label htmlFor="period_start">{t('engagement.periodStart')}</Label>
               <Input
                 id="period_start"
                 type="date"
@@ -372,7 +372,7 @@ const EngagementProfileSection = ({
               />
             </div>
             <div>
-              <Label htmlFor="period_end">Period End</Label>
+              <Label htmlFor="period_end">{t('engagement.periodEnd')}</Label>
               <Input
                 id="period_end"
                 type="date"
@@ -381,7 +381,7 @@ const EngagementProfileSection = ({
               />
             </div>
             <div>
-              <Label htmlFor="expected_start_date">Expected start date</Label>
+              <Label htmlFor="expected_start_date">{t('engagement.expectedStartDate')}</Label>
               <div className="relative">
                 <Input
                   id="expected_start_date"
@@ -401,7 +401,7 @@ const EngagementProfileSection = ({
                 checked={formData.is_first_audit}
                 onCheckedChange={(checked) => onFormDataChange({ is_first_audit: checked as boolean })}
               />
-              <Label htmlFor="is_first_audit">First-time audit</Label>
+              <Label htmlFor="is_first_audit">{t('engagement.firstTimeAudit')}</Label>
             </div>
             
             <div className="flex items-center space-x-2">
@@ -410,7 +410,7 @@ const EngagementProfileSection = ({
                 checked={formData.plan_to_roll_forward}
                 onCheckedChange={(checked) => onFormDataChange({ plan_to_roll_forward: checked as boolean })}
               />
-              <Label htmlFor="plan_to_roll_forward">Plan to roll forward an engagement</Label>
+              <Label htmlFor="plan_to_roll_forward">{t('engagement.planToRollForward')}</Label>
             </div>
             
             <div className="flex items-center space-x-2">
@@ -419,7 +419,7 @@ const EngagementProfileSection = ({
                 checked={formData.enable_external_documents}
                 onCheckedChange={(checked) => onFormDataChange({ enable_external_documents: checked as boolean })}
               />
-              <Label htmlFor="enable_external_documents">Enable the ability to receive external documents</Label>
+              <Label htmlFor="enable_external_documents">{t('engagement.enableExternalDocuments')}</Label>
             </div>
           </div>
 
@@ -440,16 +440,16 @@ const EngagementProfileSection = ({
         <CardContent className="space-y-6">
           <div className="grid grid-cols-4 gap-4">
             <div>
-              <Label htmlFor="engagement_evaluation_id">Engagement evaluation ID</Label>
+              <Label htmlFor="engagement_evaluation_id">{t('engagement.evaluationId')}</Label>
               <Input
                 id="engagement_evaluation_id"
                 value={formData.engagement_evaluation_id}
                 onChange={(e) => onFormDataChange({ engagement_evaluation_id: e.target.value })}
-                placeholder="Enter evaluation ID"
+                placeholder={t('engagement.placeholders.evaluationId')}
               />
             </div>
             <div>
-              <Label htmlFor="engagement_evaluation_status">Engagement evaluation status</Label>
+              <Label htmlFor="engagement_evaluation_status">{t('engagement.evaluationStatus')}</Label>
               <Select
                 value={formData.engagement_evaluation_status}
                 onValueChange={(value) => onFormDataChange({ engagement_evaluation_status: value })}
@@ -467,7 +467,7 @@ const EngagementProfileSection = ({
               </Select>
             </div>
             <div>
-              <Label htmlFor="evaluation_approval_date">Evaluation approval date</Label>
+              <Label htmlFor="evaluation_approval_date">{t('engagement.evaluationApprovalDate')}</Label>
               <Input
                 id="evaluation_approval_date"
                 type="date"
@@ -476,7 +476,7 @@ const EngagementProfileSection = ({
               />
             </div>
             <div>
-              <Label htmlFor="planned_expiration_date">Planned expiration date</Label>
+              <Label htmlFor="planned_expiration_date">{t('engagement.plannedExpirationDate')}</Label>
               <Input
                 id="planned_expiration_date"
                 type="date"
@@ -488,16 +488,16 @@ const EngagementProfileSection = ({
 
           <div className="grid grid-cols-4 gap-4">
             <div>
-              <Label htmlFor="sentinel_approval_number">Sentinel approval number</Label>
+              <Label htmlFor="sentinel_approval_number">{t('engagement.sentinelApprovalNumber')}</Label>
               <Input
                 id="sentinel_approval_number"
                 value={formData.sentinel_approval_number}
                 onChange={(e) => onFormDataChange({ sentinel_approval_number: e.target.value })}
-                placeholder="Enter approval number"
+                placeholder={t('engagement.placeholders.sentinelNumber')}
               />
             </div>
             <div>
-              <Label htmlFor="sentinel_approval_status">Sentinel approval status</Label>
+              <Label htmlFor="sentinel_approval_status">{t('engagement.sentinelApprovalStatus')}</Label>
               <Select
                 value={formData.sentinel_approval_status}
                 onValueChange={(value) => onFormDataChange({ sentinel_approval_status: value })}
@@ -515,7 +515,7 @@ const EngagementProfileSection = ({
               </Select>
             </div>
             <div>
-              <Label htmlFor="sentinel_approval_date">Sentinel approval date</Label>
+              <Label htmlFor="sentinel_approval_date">{t('engagement.sentinelApprovalDate')}</Label>
               <Input
                 id="sentinel_approval_date"
                 type="date"
@@ -524,7 +524,7 @@ const EngagementProfileSection = ({
               />
             </div>
             <div>
-              <Label htmlFor="sentinel_expiration_date">Sentinel expiration date</Label>
+              <Label htmlFor="sentinel_expiration_date">{t('engagement.sentinelExpirationDate')}</Label>
               <Input
                 id="sentinel_expiration_date"
                 type="date"
@@ -535,9 +535,9 @@ const EngagementProfileSection = ({
           </div>
 
           <div className="space-y-3">
-            <h4 className="font-medium text-gray-900">Perform procedures over client and engagement acceptance or continuance</h4>
+            <h4 className="font-medium text-gray-900">{t('engagement.performProcedures')}</h4>
             <div>
-              <Label className="text-sm font-medium">Is this a first period we will be auditing the entity?</Label>
+              <Label className="text-sm font-medium">{t('engagement.isFirstPeriod')}</Label>
               <RadioGroup
                 value={formData.first_period_auditing || ''}
                 onValueChange={(value) => onFormDataChange({ first_period_auditing: value })}
@@ -545,22 +545,22 @@ const EngagementProfileSection = ({
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="Yes" id="yes" />
-                  <Label htmlFor="yes" className="text-sm">Yes</Label>
+                  <Label htmlFor="yes" className="text-sm">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="No" id="no" />
-                  <Label htmlFor="no" className="text-sm">No</Label>
+                  <Label htmlFor="no" className="text-sm">{t('common.no')}</Label>
                 </div>
               </RadioGroup>
             </div>
           </div>
 
           <div className="space-y-4">
-            <h4 className="font-medium text-gray-900">Attach the following client/engagement acceptance continuance documents:</h4>
+            <h4 className="font-medium text-gray-900">{t('engagement.attachDocuments')}</h4>
             
             <div className="bg-gray-50 p-4 rounded-lg space-y-4">
               <DocumentAttachmentSection
-                title="Sentinel approval email"
+                title={t('engagement.sentinelApprovalEmail')}
                 files={formData.sentinel_approval_email_files}
                 onFilesChange={(files) => onFormDataChange({ sentinel_approval_email_files: files })}
                 projectId={projectId}
@@ -568,7 +568,7 @@ const EngagementProfileSection = ({
               />
               
               <DocumentAttachmentSection
-                title="CEAC approval email"
+                title={t('engagement.ceacApprovalEmail')}
                 files={formData.ceac_approval_email_files}
                 onFilesChange={(files) => onFormDataChange({ ceac_approval_email_files: files })}
                 projectId={projectId}
@@ -576,7 +576,7 @@ const EngagementProfileSection = ({
               />
               
               <DocumentAttachmentSection
-                title="Other documents, if applicable"
+                title={t('engagement.otherDocuments')}
                 files={formData.other_documents_files}
                 onFilesChange={(files) => onFormDataChange({ other_documents_files: files })}
                 projectId={projectId}
@@ -659,7 +659,7 @@ const EngagementProfileSection = ({
 
       <Card>
         <CardHeader>
-          <CardTitle>Entity Profile</CardTitle>
+          <CardTitle>{t('engagement.entityProfile')}</CardTitle>
         </CardHeader>
         <CardContent>
           <EntityProfileSection
@@ -692,7 +692,7 @@ const EngagementProfileSection = ({
 
       <Card>
         <CardHeader>
-          <CardTitle>Team Assignment</CardTitle>
+          <CardTitle>{t('engagement.teamAssignment')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-2">

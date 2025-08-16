@@ -123,6 +123,25 @@ const translations = {
     'engagement.placeholders.selectBumexOffice': 'Select BUMEX office',
     'engagement.placeholders.evaluationId': 'Enter evaluation ID',
     'engagement.placeholders.sentinelNumber': 'Enter sentinel number',
+    'engagement.selectEngagementStructure': 'Select engagement structure',
+    'engagement.uploadPdf': 'Upload PDF',
+    
+    // File Upload Section
+    'fileUpload.uploadStructure': 'Upload engagement structure file',
+    'fileUpload.dragDrop': 'Drag and drop your file here, or click to browse',
+    'fileUpload.supportedFormats': 'Supported formats: PDF, DOC, DOCX, XLS, XLSX',
+    'fileUpload.uploading': 'Uploading...',
+    'fileUpload.uploaded': 'File uploaded successfully',
+    'fileUpload.download': 'Download',
+    'fileUpload.remove': 'Remove',
+    'engagement.performProcedures': 'Perform procedures over client and engagement acceptance or continuance',
+    'engagement.isFirstPeriod': 'Is this a first period we will be auditing the entity?',
+    'engagement.attachDocuments': 'Attach the following client/engagement acceptance continuance documents:',
+    'engagement.sentinelApprovalEmail': 'Sentinel approval email',
+    'engagement.ceacApprovalEmail': 'CEAC approval email',
+    'engagement.otherDocuments': 'Other documents, if applicable',
+    'engagement.entityProfile': 'Entity Profile',
+    'engagement.teamAssignment': 'Team Assignment',
   },
   fr: {
     // Navigation
@@ -235,6 +254,25 @@ const translations = {
     'engagement.placeholders.selectBumexOffice': 'Sélectionner un bureau BUMEX',
     'engagement.placeholders.evaluationId': 'Entrer l\'ID d\'évaluation',
     'engagement.placeholders.sentinelNumber': 'Entrer le numéro sentinelle',
+    'engagement.selectEngagementStructure': 'Sélectionner la structure d\'engagement',
+    'engagement.uploadPdf': 'Télécharger PDF',
+    
+    // File Upload Section
+    'fileUpload.uploadStructure': 'Télécharger le fichier de structure d\'engagement',
+    'fileUpload.dragDrop': 'Glissez et déposez votre fichier ici, ou cliquez pour parcourir',
+    'fileUpload.supportedFormats': 'Formats pris en charge: PDF, DOC, DOCX, XLS, XLSX',
+    'fileUpload.uploading': 'Téléchargement...',
+    'fileUpload.uploaded': 'Fichier téléchargé avec succès',
+    'fileUpload.download': 'Télécharger',
+    'fileUpload.remove': 'Supprimer',
+    'engagement.performProcedures': 'Effectuer des procédures sur l\'acceptation ou la continuité du client et de l\'engagement',
+    'engagement.isFirstPeriod': 'S\'agit-il d\'une première période où nous auditerons l\'entité?',
+    'engagement.attachDocuments': 'Joindre les documents d\'acceptation/continuité client/engagement suivants:',
+    'engagement.sentinelApprovalEmail': 'E-mail d\'approbation Sentinel',
+    'engagement.ceacApprovalEmail': 'E-mail d\'approbation CEAC',
+    'engagement.otherDocuments': 'Autres documents, le cas échéant',
+    'engagement.entityProfile': 'Profil de l\'entité',
+    'engagement.teamAssignment': 'Affectation d\'équipe',
   },
 };
 
