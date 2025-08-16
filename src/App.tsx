@@ -15,6 +15,7 @@ import Logs from "./pages/Logs";
 import AppControlPage from "./pages/AppControl";
 import NotFound from "./pages/NotFound";
 import { ReferenceDataProvider } from "./hooks/useReferenceData";
+import { TranslationProvider } from "./contexts/TranslationContext";
 
 const queryClient = new QueryClient();
 
@@ -23,9 +24,10 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AuthProvider>
-        <ReferenceDataProvider>
-          <BrowserRouter>
+      <TranslationProvider>
+        <AuthProvider>
+          <ReferenceDataProvider>
+            <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
@@ -83,8 +85,9 @@ const App = () => (
           </BrowserRouter>
         </ReferenceDataProvider>
       </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
+    </TranslationProvider>
+  </TooltipProvider>
+</QueryClientProvider>
 );
 
 export default App;

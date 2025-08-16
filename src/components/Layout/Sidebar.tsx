@@ -4,28 +4,30 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut } from 'lucide-react';
-const navigationItems = [{
-  name: 'Dashboard',
+import { useTranslation } from '@/contexts/TranslationContext';
+import { LanguageSelector } from '@/components/LanguageSelector';
+const getNavigationItems = (t: (key: string) => string) => [{
+  name: t('nav.dashboard'),
   href: '/dashboard',
   icon: Home,
   roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
 }, {
-  name: 'Clients',
+  name: t('nav.clients'),
   href: '/clients',
   icon: Users,
   roles: ['dev', 'partner', 'manager', 'incharge']
 }, {
-  name: 'Projects',
+  name: t('nav.projects'),
   href: '/projects',
   icon: FolderOpen,
   roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
 }, {
-  name: 'Logs',
+  name: t('nav.logs'),
   href: '/logs',
   icon: FileText,
   roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
 }, {
-  name: 'App Control',
+  name: t('nav.appControl'),
   href: '/app-control',
   icon: Settings,
   roles: ['dev']
@@ -36,7 +38,9 @@ export const Sidebar = () => {
     user,
     logout
   } = useAuth();
+  const { t } = useTranslation();
   const location = useLocation();
+  const navigationItems = getNavigationItems(t);
   const filteredItems = navigationItems.filter(item => user && item.roles.includes(user.role));
   const handleLogout = async () => {
     try {
@@ -71,13 +75,17 @@ export const Sidebar = () => {
           </nav>
 
           <div className="p-4">
+            <div className="mb-3">
+              <LanguageSelector />
+            </div>
+            
             <Button 
               variant="ghost" 
               onClick={handleLogout} 
               className="flex items-center justify-start w-full px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors mb-3"
             >
               <LogOut className="mr-3 h-4 w-4" />
-              Log out
+              {t('nav.logout')}
             </Button>
             
             <div className="border-t border-gray-200 pt-3">
