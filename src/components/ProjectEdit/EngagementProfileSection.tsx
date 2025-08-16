@@ -12,6 +12,7 @@ import EngagementScopeSection from './EngagementScopeSection';
 import EntityProfileSection from './EngagementScope/EntityProfileSection';
 import MultiReportingSection from './MultiReportingSection';
 import DataConsiderationsSection from './DataConsiderationsSection';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface DocumentFile {
   name: string;
@@ -195,37 +196,42 @@ const EngagementProfileSection = ({
   onRemoveMRRFile,
   onDownloadMRRFile
 }: EngagementProfileSectionProps) => {
+  const { t } = useTranslation();
+  
   const auditTypes = [
-    'Financial Audit',
-    'Compliance Audit',
-    'Operational Audit',
-    'IT Audit',
-    'Internal Audit',
-    'Tax Audit',
-    'Forensic Audit',
-    'Environmental Audit'
+    { value: 'Financial Audit', label: t('engagement.auditTypes.financial') },
+    { value: 'Compliance Audit', label: t('engagement.auditTypes.compliance') },
+    { value: 'Operational Audit', label: t('engagement.auditTypes.operational') },
+    { value: 'IT Audit', label: t('engagement.auditTypes.it') },
+    { value: 'Internal Audit', label: t('engagement.auditTypes.internal') },
+    { value: 'Tax Audit', label: t('engagement.auditTypes.tax') },
+    { value: 'Forensic Audit', label: t('engagement.auditTypes.forensic') },
+    { value: 'Environmental Audit', label: t('engagement.auditTypes.environmental') }
   ];
 
   const languages = ['English', 'Spanish', 'French', 'German', 'Portuguese', 'Other'];
   const bumexOffices = ['Nouakchott'];
-  const approvalStatuses = ['Not Selected', 'Approved'];
+  const approvalStatuses = [
+    { value: 'Not Selected', label: t('engagement.statuses.notSelected') },
+    { value: 'Approved', label: t('engagement.statuses.approved') }
+  ];
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
+          <CardTitle>{t('engagement.basicInformation')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="client_id">Client</Label>
+              <Label htmlFor="client_id">{t('engagement.client')}</Label>
               <Select
                 value={formData.client_id}
                 onValueChange={(value) => onFormDataChange({ client_id: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select client" />
+                  <SelectValue placeholder={t('engagement.placeholders.selectClient')} />
                 </SelectTrigger>
                 <SelectContent>
                   {clients.map((client) => (
@@ -237,7 +243,7 @@ const EngagementProfileSection = ({
               </Select>
             </div>
             <div>
-              <Label htmlFor="status">Status</Label>
+              <Label htmlFor="status">{t('engagement.status')}</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => onFormDataChange({ status: value as Project['status'] })}
@@ -246,67 +252,67 @@ const EngagementProfileSection = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="new">New</SelectItem>
-                  <SelectItem value="inprogress">In Progress</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
+                  <SelectItem value="new">{t('engagement.statuses.new')}</SelectItem>
+                  <SelectItem value="inprogress">{t('engagement.statuses.inprogress')}</SelectItem>
+                  <SelectItem value="closed">{t('engagement.statuses.closed')}</SelectItem>
+                  <SelectItem value="archived">{t('engagement.statuses.archived')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
           <div>
-            <Label htmlFor="engagement_name">Engagement Name</Label>
+            <Label htmlFor="engagement_name">{t('engagement.engagementName')}</Label>
             <Input
               id="engagement_name"
               value={formData.engagement_name}
               onChange={(e) => onFormDataChange({ engagement_name: e.target.value })}
-              placeholder="Enter engagement name"
+              placeholder={t('engagement.placeholders.engagementName')}
             />
           </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="engagement_id">Engagement ID</Label>
+              <Label htmlFor="engagement_id">{t('engagement.engagementId')}</Label>
               <Input
                 id="engagement_id"
                 value={formData.engagement_id}
                 onChange={(e) => onFormDataChange({ engagement_id: e.target.value })}
-                placeholder="Enter engagement ID"
+                placeholder={t('engagement.placeholders.engagementId')}
               />
             </div>
             <div>
-              <Label htmlFor="project_id">Project ID</Label>
+              <Label htmlFor="project_id">{t('engagement.projectId')}</Label>
               <Input
                 id="project_id"
                 value={formData.project_id}
                 onChange={(e) => onFormDataChange({ project_id: e.target.value })}
-                placeholder="Enter project ID"
+                placeholder={t('engagement.placeholders.projectId')}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="audit_type">Audit Type</Label>
+              <Label htmlFor="audit_type">{t('engagement.auditType')}</Label>
               <Select
                 value={formData.audit_type}
                 onValueChange={(value) => onFormDataChange({ audit_type: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select audit type" />
+                  <SelectValue placeholder={t('engagement.placeholders.selectAuditType')} />
                 </SelectTrigger>
                 <SelectContent>
                   {auditTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label htmlFor="language">Language</Label>
+              <Label htmlFor="language">{t('engagement.language')}</Label>
               <Select
                 value={formData.language}
                 onValueChange={(value) => onFormDataChange({ language: value })}
@@ -429,7 +435,7 @@ const EngagementProfileSection = ({
 
       <Card>
         <CardHeader>
-          <CardTitle>Engagement evaluation and sentinel approval information</CardTitle>
+          <CardTitle>{t('engagement.evaluationInfo')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-4 gap-4">
@@ -453,8 +459,8 @@ const EngagementProfileSection = ({
                 </SelectTrigger>
                 <SelectContent>
                   {approvalStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -501,8 +507,8 @@ const EngagementProfileSection = ({
                 </SelectTrigger>
                 <SelectContent>
                   {approvalStatuses.map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
