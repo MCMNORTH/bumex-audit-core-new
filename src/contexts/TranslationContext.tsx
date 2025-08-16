@@ -143,6 +143,37 @@ const translations = {
     'engagement.entityProfile': 'Entity Profile',
     'engagement.teamAssignment': 'Team Assignment',
     'engagement.scopeAndScale': 'Engagement scope and scale and other strategic matters',
+    
+    // Engagement Type Section
+    'engagementType.selectType': 'Select type of engagement',
+    'engagementType.financialStatementAuditReport': 'Financial statement audit report',
+    'engagementType.auditReportDate': 'Audit report date',
+    'engagementType.requiredAuditFileCloseoutDate': 'Required audit file closeout date',
+    
+    // Auditing Standards Section
+    'auditingStandards.title': 'Applicable auditing standards and other legislative and regulatory requirements:',
+    'auditingStandards.placeholder': 'Enter auditing standard',
+    
+    // Reporting Framework Section
+    'reportingFramework.title': 'Applicable financial reporting framework and other legislative and regulatory requirements:',
+    'reportingFramework.placeholder': 'Enter financial reporting framework',
+    
+    // Component Reporting Section
+    'componentReporting.title': 'Component reporting',
+    'componentReporting.details': 'Component reporting details',
+    'componentReporting.placeholder': 'Describe the nature and scope of component reporting requirements, including any specific instructions received from group auditors...',
+    'componentReporting.groupAuditor': 'Group auditor',
+    
+    // Reviewer Selection Section
+    'reviewerSelection.title': 'Select the type of reviewer(s) which have been identified for the engagement:',
+    'reviewerSelection.engagementQualityControlReviewer': 'Engagement quality control reviewer',
+    'reviewerSelection.limitedScopeQualityControlReviewer': 'Limited scope quality control reviewer',
+    'reviewerSelection.otherReviewer': 'Other reviewer',
+    
+    // Management Governance Section
+    'managementGovernance.title': 'Management, those charged with governance and internal audit function:',
+    'managementGovernance.samePersons': 'Those charged with governance and management are the same persons',
+    'managementGovernance.internalAuditFunction': 'The entity has an internal audit function or equivalent, including others under the direction of management or those charged with governance',
   },
   fr: {
     // Navigation
@@ -275,6 +306,37 @@ const translations = {
     'engagement.entityProfile': 'Profil de l\'entité',
     'engagement.teamAssignment': 'Affectation d\'équipe',
     'engagement.scopeAndScale': 'Portée et échelle de l\'engagement et autres questions stratégiques',
+    
+    // Engagement Type Section
+    'engagementType.selectType': 'Sélectionner le type d\'engagement',
+    'engagementType.financialStatementAuditReport': 'Rapport d\'audit des états financiers',
+    'engagementType.auditReportDate': 'Date du rapport d\'audit',
+    'engagementType.requiredAuditFileCloseoutDate': 'Date de clôture du dossier d\'audit requise',
+    
+    // Auditing Standards Section
+    'auditingStandards.title': 'Normes d\'audit applicables et autres exigences législatives et réglementaires:',
+    'auditingStandards.placeholder': 'Entrer la norme d\'audit',
+    
+    // Reporting Framework Section
+    'reportingFramework.title': 'Cadre de présentation de l\'information financière applicable et autres exigences législatives et réglementaires:',
+    'reportingFramework.placeholder': 'Entrer le cadre de présentation de l\'information financière',
+    
+    // Component Reporting Section
+    'componentReporting.title': 'Rapport de composant',
+    'componentReporting.details': 'Détails du rapport de composant',
+    'componentReporting.placeholder': 'Décrire la nature et la portée des exigences de rapport de composant, y compris toute instruction spécifique reçue des auditeurs de groupe...',
+    'componentReporting.groupAuditor': 'Auditeur de groupe',
+    
+    // Reviewer Selection Section
+    'reviewerSelection.title': 'Sélectionner le type de réviseur(s) qui ont été identifiés pour la mission:',
+    'reviewerSelection.engagementQualityControlReviewer': 'Réviseur de contrôle qualité de la mission',
+    'reviewerSelection.limitedScopeQualityControlReviewer': 'Réviseur de contrôle qualité à portée limitée',
+    'reviewerSelection.otherReviewer': 'Autre réviseur',
+    
+    // Management Governance Section
+    'managementGovernance.title': 'Direction, responsables de la gouvernance et fonction d\'audit interne:',
+    'managementGovernance.samePersons': 'Les responsables de la gouvernance et la direction sont les mêmes personnes',
+    'managementGovernance.internalAuditFunction': 'L\'entité a une fonction d\'audit interne ou équivalente, y compris d\'autres sous la direction de la direction ou des responsables de la gouvernance',
   },
 };
 

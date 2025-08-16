@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface AuditingStandardsSectionProps {
   formData: {
@@ -12,6 +13,8 @@ interface AuditingStandardsSectionProps {
 }
 
 const AuditingStandardsSection = ({ formData, onFormDataChange }: AuditingStandardsSectionProps) => {
+  const { t } = useTranslation();
+  
   const handleAddAuditingStandard = () => {
     const newStandards = [...formData.auditing_standards, ''];
     onFormDataChange({ auditing_standards: newStandards });
@@ -31,7 +34,7 @@ const AuditingStandardsSection = ({ formData, onFormDataChange }: AuditingStanda
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label className="font-medium text-gray-900">Applicable auditing standards and other legislative and regulatory requirements:</Label>
+        <Label className="font-medium text-gray-900">{t('auditingStandards.title')}</Label>
         <Button
           type="button"
           variant="outline"
@@ -39,7 +42,7 @@ const AuditingStandardsSection = ({ formData, onFormDataChange }: AuditingStanda
           onClick={handleAddAuditingStandard}
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add
+          {t('common.add')}
         </Button>
       </div>
       {formData.auditing_standards.map((standard, index) => (
@@ -47,7 +50,7 @@ const AuditingStandardsSection = ({ formData, onFormDataChange }: AuditingStanda
           <Input
             value={standard}
             onChange={(e) => handleAuditingStandardChange(index, e.target.value)}
-            placeholder="Enter auditing standard"
+            placeholder={t('auditingStandards.placeholder')}
             className="flex-1"
           />
           <Button

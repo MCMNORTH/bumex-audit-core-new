@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ReportingFrameworkSectionProps {
   formData: {
@@ -12,6 +13,8 @@ interface ReportingFrameworkSectionProps {
 }
 
 const ReportingFrameworkSection = ({ formData, onFormDataChange }: ReportingFrameworkSectionProps) => {
+  const { t } = useTranslation();
+  
   const handleAddReportingFramework = () => {
     const newFrameworks = [...formData.financial_reporting_framework, ''];
     onFormDataChange({ financial_reporting_framework: newFrameworks });
@@ -31,7 +34,7 @@ const ReportingFrameworkSection = ({ formData, onFormDataChange }: ReportingFram
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label className="font-medium text-gray-900">Applicable financial reporting framework and other legislative and regulatory requirements:</Label>
+        <Label className="font-medium text-gray-900">{t('reportingFramework.title')}</Label>
         <Button
           type="button"
           variant="outline"
@@ -39,7 +42,7 @@ const ReportingFrameworkSection = ({ formData, onFormDataChange }: ReportingFram
           onClick={handleAddReportingFramework}
         >
           <Plus className="h-4 w-4 mr-2" />
-          Add
+          {t('common.add')}
         </Button>
       </div>
       {formData.financial_reporting_framework.map((framework, index) => (
@@ -47,7 +50,7 @@ const ReportingFrameworkSection = ({ formData, onFormDataChange }: ReportingFram
           <Input
             value={framework}
             onChange={(e) => handleReportingFrameworkChange(index, e.target.value)}
-            placeholder="Enter financial reporting framework"
+            placeholder={t('reportingFramework.placeholder')}
             className="flex-1"
           />
           <Button

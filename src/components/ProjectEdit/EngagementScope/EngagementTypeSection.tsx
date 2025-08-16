@@ -2,6 +2,7 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface EngagementTypeSectionProps {
   formData: {
@@ -13,23 +14,25 @@ interface EngagementTypeSectionProps {
 }
 
 const EngagementTypeSection = ({ formData, onFormDataChange }: EngagementTypeSectionProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Select type of engagement</h4>
+        <h4 className="font-medium text-gray-900">{t('engagementType.selectType')}</h4>
         <div className="flex items-center space-x-2">
           <Checkbox
             id="financial_statement_audit_report"
             checked={formData.financial_statement_audit_report}
             onCheckedChange={(checked) => onFormDataChange({ financial_statement_audit_report: checked as boolean })}
           />
-          <Label htmlFor="financial_statement_audit_report">Financial statement audit report</Label>
+          <Label htmlFor="financial_statement_audit_report">{t('engagementType.financialStatementAuditReport')}</Label>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="audit_report_date">Audit report date</Label>
+          <Label htmlFor="audit_report_date">{t('engagementType.auditReportDate')}</Label>
           <Input
             id="audit_report_date"
             type="date"
@@ -38,7 +41,7 @@ const EngagementTypeSection = ({ formData, onFormDataChange }: EngagementTypeSec
           />
         </div>
         <div>
-          <Label htmlFor="required_audit_file_closeout_date">Required audit file closeout date</Label>
+          <Label htmlFor="required_audit_file_closeout_date">{t('engagementType.requiredAuditFileCloseoutDate')}</Label>
           <Input
             id="required_audit_file_closeout_date"
             type="date"

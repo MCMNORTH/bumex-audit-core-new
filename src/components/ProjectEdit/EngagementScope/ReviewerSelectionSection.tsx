@@ -1,6 +1,7 @@
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ReviewerSelectionSectionProps {
   formData: {
@@ -12,9 +13,11 @@ interface ReviewerSelectionSectionProps {
 }
 
 const ReviewerSelectionSection = ({ formData, onFormDataChange }: ReviewerSelectionSectionProps) => {
+  const { t } = useTranslation();
+  
   return (
     <div className="space-y-4">
-      <h4 className="font-medium text-gray-900">Select the type of reviewer(s) which have been identified for the engagement:</h4>
+      <h4 className="font-medium text-gray-900">{t('reviewerSelection.title')}</h4>
       
       <div className="space-y-3">
         <div className="flex items-center space-x-2">
@@ -23,7 +26,7 @@ const ReviewerSelectionSection = ({ formData, onFormDataChange }: ReviewerSelect
             checked={formData.engagement_quality_control_reviewer}
             onCheckedChange={(checked) => onFormDataChange({ engagement_quality_control_reviewer: checked as boolean })}
           />
-          <Label htmlFor="engagement_quality_control_reviewer">Engagement quality control reviewer</Label>
+          <Label htmlFor="engagement_quality_control_reviewer">{t('reviewerSelection.engagementQualityControlReviewer')}</Label>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -32,7 +35,7 @@ const ReviewerSelectionSection = ({ formData, onFormDataChange }: ReviewerSelect
             checked={formData.limited_scope_quality_control_reviewer}
             onCheckedChange={(checked) => onFormDataChange({ limited_scope_quality_control_reviewer: checked as boolean })}
           />
-          <Label htmlFor="limited_scope_quality_control_reviewer">Limited scope quality control reviewer</Label>
+          <Label htmlFor="limited_scope_quality_control_reviewer">{t('reviewerSelection.limitedScopeQualityControlReviewer')}</Label>
         </div>
         
         <div className="flex items-center space-x-2">
@@ -41,7 +44,7 @@ const ReviewerSelectionSection = ({ formData, onFormDataChange }: ReviewerSelect
             checked={formData.other_reviewer}
             onCheckedChange={(checked) => onFormDataChange({ other_reviewer: checked as boolean })}
           />
-          <Label htmlFor="other_reviewer">Other reviewer</Label>
+          <Label htmlFor="other_reviewer">{t('reviewerSelection.otherReviewer')}</Label>
         </div>
       </div>
     </div>
