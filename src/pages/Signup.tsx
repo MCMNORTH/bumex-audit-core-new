@@ -25,12 +25,10 @@ const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const roles = [
+  // SECURITY: Limit role self-assignment to prevent privilege escalation
+  const allowedSelfAssignRoles = [
     { value: 'staff', label: 'Staff' },
-    { value: 'incharge', label: 'In-Charge' },
-    { value: 'manager', label: 'Manager' },
-    { value: 'partner', label: 'Partner' },
-    { value: 'dev', label: 'Developer' }
+    { value: 'incharge', label: 'In-Charge' }
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -68,12 +66,15 @@ const Signup = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // Save user data to Firestore
+      // Save user data to Firestore with security constraints
       await setDoc(doc(db, 'users', user.uid), {
         email: formData.email,
         first_name: formData.firstName,
         last_name: formData.lastName,
-        role: formData.role as 'dev' | 'partner' | 'manager' | 'incharge' | 'staff'
+        // SECURITY: Default to lowest privilege role, admin approval required for elevation
+        role: allowedSelfAssignRoles.some(r => r.value === formData.role) ? formData.role : 'staff',
+        created_at: new Date(),
+        approved: false // Requires admin approval
       });
 
       toast({
@@ -161,7 +162,7 @@ const Signup = () => {
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
-                    {roles.map((role) => (
+                    {allowedSelfAssignRoles.map((role) => (
                       <SelectItem key={role.value} value={role.value}>
                         {role.label}
                       </SelectItem>
@@ -207,9 +208,9 @@ const Signup = () => {
               <div className="text-center">
                 <p className="text-sm text-gray-600">
                   Already have an account?{' '}
-                  <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                    Sign in
-                  </Link>
+                   <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500" rel="noopener noreferrer">
+                     Sign in
+                   </Link>
                 </p>
               </div>
             </form>

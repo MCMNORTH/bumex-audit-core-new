@@ -23,7 +23,7 @@ const Login = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (!authLoading && user) {
-      console.log('User is logged in, redirecting to dashboard');
+      // SECURITY: Reduced logging for sensitive operations
       navigate('/dashboard');
     }
   }, [user, authLoading, navigate]);
@@ -89,7 +89,7 @@ const Login = () => {
               <div className="text-center">
                 <p className="text-sm text-gray-600">
                   Don't have an account?{' '}
-                  <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500" rel="noopener noreferrer">
                     Create account
                   </Link>
                 </p>

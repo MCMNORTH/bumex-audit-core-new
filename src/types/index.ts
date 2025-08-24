@@ -4,6 +4,8 @@ export interface User {
   first_name: string;
   last_name: string;
   role: 'dev' | 'partner' | 'manager' | 'incharge' | 'staff';
+  approved?: boolean;
+  created_at?: Date;
 }
 
 export interface Client {

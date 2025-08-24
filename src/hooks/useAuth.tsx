@@ -29,9 +29,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('Setting up auth state listener');
+    // SECURITY: Reduced logging for production security
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('Auth state changed:', firebaseUser?.email);
       if (firebaseUser) {
         setFirebaseUser(firebaseUser);
         try {
@@ -39,18 +38,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           if (userDoc.exists()) {
             const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
-            console.log('User data loaded:', userData);
-            setUser(userData);
+            // SECURITY: Only set user if account is approved
+            if (userData.approved !== false) {
+              setUser(userData);
+            } else {
+              setUser(null);
+              // Account pending approval - should show appropriate message
+            }
           } else {
-            console.log('No user document found in Firestore');
             setUser(null);
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error('Auth error'); // SECURITY: Generic error message
           setUser(null);
         }
       } else {
-        console.log('User signed out');
         setUser(null);
         setFirebaseUser(null);
       }
@@ -62,11 +64,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('Attempting login for:', email);
+      // SECURITY: Reduced logging for sensitive operations
       await signInWithEmailAndPassword(auth, email, password);
-      console.log('Login successful');
     } catch (error) {
-      console.error('Login error:', error);
+      // SECURITY: Generic error logging
+      console.error('Authentication failed');
       throw error;
     }
   };
@@ -75,7 +77,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
     } catch (error) {
-      console.error('Logout error:', error);
+      // SECURITY: Generic error logging
+      console.error('Logout failed');
       throw error;
     }
   };
