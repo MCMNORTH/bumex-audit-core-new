@@ -3,6 +3,7 @@ import { collection, getDocs, doc, updateDoc, addDoc, serverTimestamp } from 'fi
 import { db, auth } from '@/lib/firebase';
 import { User } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
+import { useLogging } from '@/hooks/useLogging';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,6 +38,7 @@ const Users = () => {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const { user: currentUser } = useAuth();
+  const { logUserAction } = useLogging();
 
   const createUserForm = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
@@ -162,7 +164,10 @@ const Users = () => {
         blocked: false
       };
 
-      await addDoc(collection(db, 'users'), userDoc);
+      const docRef = await addDoc(collection(db, 'users'), userDoc);
+
+      // Log the user creation
+      await logUserAction.create(docRef.id, `Created user: ${data.first_name} ${data.last_name} (${data.email})`);
 
       // Refresh users list
       await fetchUsers();
@@ -188,6 +193,14 @@ const Users = () => {
     
     try {
       await updateDoc(doc(db, 'users', userId), { blocked });
+      
+      // Log the block/unblock action
+      if (blocked) {
+        await logUserAction.block(userId);
+      } else {
+        await logUserAction.unblock(userId);
+      }
+      
       setUsers(prev => prev.map(user => 
         user.id === userId ? { ...user, blocked } : user
       ));
@@ -227,6 +240,12 @@ const Users = () => {
         throw new Error(error.error.message || 'Failed to send password reset email');
       }
 
+      // Log the password reset
+      const targetUser = users.find(u => u.email === userEmail);
+      if (targetUser) {
+        await logUserAction.resetPassword(targetUser.id);
+      }
+      
       toast.success('Password reset email sent successfully');
     } catch (error: any) {
       console.error('Error sending password reset:', error);

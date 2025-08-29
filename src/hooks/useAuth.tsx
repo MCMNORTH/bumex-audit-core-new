@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
 
 interface AuthContextType {
@@ -41,6 +41,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             // SECURITY: Only set user if account is approved and not blocked
             if (userData.approved !== false && !userData.blocked) {
               setUser(userData);
+              
+              // Log successful login
+              await addDoc(collection(db, 'logs'), {
+                user_id: userData.id,
+                action: 'login',
+                target_id: userData.id,
+                timestamp: new Date(),
+                details: 'User logged in'
+              });
             } else {
               setUser(null);
               // Account pending approval or blocked - should show appropriate message
@@ -75,6 +84,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
+      // Log logout before signing out
+      if (user) {
+        await addDoc(collection(db, 'logs'), {
+          user_id: user.id,
+          action: 'logout',
+          target_id: user.id,
+          timestamp: new Date(),
+          details: 'User logged out'
+        });
+      }
+      
       await signOut(auth);
     } catch (error) {
       // SECURITY: Generic error logging
