@@ -36,11 +36,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           // Fetch user data from Firestore
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          console.log('User document exists:', userDoc.exists());
           if (userDoc.exists()) {
             const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
+            console.log('User data:', { approved: userData.approved, blocked: userData.blocked, role: userData.role });
             // SECURITY: Only set user if account is approved and not blocked
             if (userData.approved !== false && !userData.blocked) {
               setUser(userData);
+              console.log('User logged in successfully');
               
               // Log successful login
               await addDoc(collection(db, 'logs'), {
@@ -51,14 +54,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 details: 'User logged in'
               });
             } else {
+              console.log('Login blocked - approved:', userData.approved, 'blocked:', userData.blocked);
               setUser(null);
               // Account pending approval or blocked - should show appropriate message
             }
           } else {
+            console.log('User document does not exist in Firestore');
             setUser(null);
           }
         } catch (error) {
-          console.error('Auth error'); // SECURITY: Generic error message
+          console.error('Auth error:', error); // More detailed error for debugging
           setUser(null);
         }
       } else {
