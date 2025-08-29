@@ -24,7 +24,7 @@ const getNavigationItems = (t: (key: string) => string) => [{
 }, {
   name: 'IT Section',
   icon: Monitor,
-  roles: ['dev'],
+  roles: ['dev', 'partner', 'manager'],
   isParent: true,
   children: [
     {
