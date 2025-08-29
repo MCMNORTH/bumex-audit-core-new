@@ -7,7 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Log } from '@/types';
-import { Search, Activity, Clock, User as UserIcon } from 'lucide-react';
+import { Search, Activity, Clock, User as UserIcon, ChevronDown } from 'lucide-react';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const Logs = () => {
   const { users, loading: refLoading } = useReferenceData();
@@ -146,37 +147,91 @@ const Logs = () => {
           </CardHeader>
           <CardContent>
             {filteredLogs.length > 0 ? (
-              <div className="space-y-4">
+              <Accordion type="multiple" className="space-y-2">
                 {filteredLogs.map((log) => (
-                  <div key={log.id} className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50">
-                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                      {getActionIcon(log.action)}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <p className="font-medium text-gray-900">{log.user_name}</p>
-                        <Badge className={getActionColor(log.action)}>
-                          {log.action}
-                        </Badge>
+                  <AccordionItem key={log.id} value={log.id} className="border rounded-lg">
+                    <AccordionTrigger className="flex items-center space-x-4 p-4 hover:bg-gray-50 [&[data-state=open]]:bg-gray-50">
+                      <div className="flex items-center space-x-4 flex-1">
+                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                          {getActionIcon(log.action)}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0 text-left">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <p className="font-medium text-gray-900">{log.user_name}</p>
+                            <Badge className={getActionColor(log.action)}>
+                              {log.action}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            Target: {log.target_id}
+                            {log.details && (
+                              <span className="ml-2 text-gray-500">• {log.details}</span>
+                            )}
+                          </p>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2 text-sm text-gray-500">
+                          <Clock className="h-4 w-4" />
+                          <span>
+                            {log.timestamp.toLocaleDateString()} {log.timestamp.toLocaleTimeString()}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-600">
-                        Target: {log.target_id}
+                    </AccordionTrigger>
+                    <AccordionContent className="px-4 pb-4">
+                      <div className="space-y-3 pt-2 border-t border-gray-100">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">Log Details</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Log ID:</span>
+                                <span className="text-gray-900 font-mono text-xs">{log.id}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">User ID:</span>
+                                <span className="text-gray-900 font-mono text-xs">{log.user_id}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Target ID:</span>
+                                <span className="text-gray-900 font-mono text-xs">{log.target_id}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Action:</span>
+                                <span className="text-gray-900">{log.action}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">Timestamp Information</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Date:</span>
+                                <span className="text-gray-900">{log.timestamp.toLocaleDateString()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Time:</span>
+                                <span className="text-gray-900">{log.timestamp.toLocaleTimeString()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-500">Full Timestamp:</span>
+                                <span className="text-gray-900 font-mono text-xs">{log.timestamp.toISOString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                         {log.details && (
-                          <span className="ml-2 text-gray-500">• {log.details}</span>
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">Additional Details</h4>
+                            <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">{log.details}</p>
+                          </div>
                         )}
-                      </p>
-                    </div>
-                    
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <Clock className="h-4 w-4" />
-                      <span>
-                        {log.timestamp.toLocaleDateString()} {log.timestamp.toLocaleTimeString()}
-                      </span>
-                    </div>
-                  </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 ))}
-              </div>
+              </Accordion>
             ) : (
               <div className="text-center py-8">
                 <Activity className="mx-auto h-12 w-12 text-gray-400" />
