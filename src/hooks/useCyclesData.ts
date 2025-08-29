@@ -21,6 +21,7 @@ interface Substantive {
 }
 
 interface Cycle {
+  firebaseId: string;
   id: string;
   description: string;
   risks: Risk[];
@@ -45,7 +46,8 @@ export const useCyclesData = () => {
       // Fetch all cycles
       const cyclesSnapshot = await getDocs(collection(db, 'cycles'));
       const cyclesData = cyclesSnapshot.docs.map(doc => ({
-        id: doc.data().id || doc.id,
+        firebaseId: doc.id,
+        id: doc.data().id || '',
         description: doc.data().description || '',
       }));
 
@@ -57,29 +59,29 @@ export const useCyclesData = () => {
       ]);
 
       const risks = risksSnapshot.docs.map(doc => ({
-        id: doc.data().id || doc.id,
+        id: doc.data().id || '',
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
       const responses = responsesSnapshot.docs.map(doc => ({
-        id: doc.data().id || doc.id,
+        id: doc.data().id || '',
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
       const substantives = substantivesSnapshot.docs.map(doc => ({
-        id: doc.data().id || doc.id,
+        id: doc.data().id || '',
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
-      // Combine cycles with their related data
+      // Combine cycles with their related data using Firebase document ID
       const enrichedCycles: Cycle[] = cyclesData.map(cycle => ({
         ...cycle,
-        risks: risks.filter(risk => risk.cycles_ref === cycle.id),
-        responses: responses.filter(response => response.cycles_ref === cycle.id),
-        substantives: substantives.filter(substantive => substantive.cycles_ref === cycle.id),
+        risks: risks.filter(risk => risk.cycles_ref === cycle.firebaseId),
+        responses: responses.filter(response => response.cycles_ref === cycle.firebaseId),
+        substantives: substantives.filter(substantive => substantive.cycles_ref === cycle.firebaseId),
       }));
 
       setCycles(enrichedCycles);
