@@ -38,12 +38,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           if (userDoc.exists()) {
             const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
-            // SECURITY: Only set user if account is approved
-            if (userData.approved !== false) {
+            // SECURITY: Only set user if account is approved and not blocked
+            if (userData.approved !== false && !userData.blocked) {
               setUser(userData);
             } else {
               setUser(null);
-              // Account pending approval - should show appropriate message
+              // Account pending approval or blocked - should show appropriate message
             }
           } else {
             setUser(null);

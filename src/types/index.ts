@@ -5,6 +5,7 @@ export interface User {
   last_name: string;
   role: 'dev' | 'partner' | 'manager' | 'incharge' | 'staff';
   approved?: boolean;
+  blocked?: boolean;
   created_at?: Date;
 }
 
