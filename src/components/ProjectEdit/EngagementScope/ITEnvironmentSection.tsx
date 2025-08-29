@@ -11,6 +11,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import CyclesSection from '../CyclesSection';
 
 interface ITEnvironmentSectionProps {
   formData: {
@@ -818,6 +819,11 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
             </div>
           </RadioGroup>
         </div>
+      </div>
+
+      {/* Cycles Section */}
+      <div className="border-t pt-6 mt-8">
+        <CyclesSection />
       </div>
     </div>
   );
