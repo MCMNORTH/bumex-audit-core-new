@@ -14,6 +14,7 @@ import Projects from "./pages/Projects";
 import ProjectEdit from "./pages/ProjectEdit";
 import Users from "./pages/Users";
 import Logs from "./pages/Logs";
+import Cycles from "./pages/Cycles";
 import AppControlPage from "./pages/AppControl";
 import NotFound from "./pages/NotFound";
 import { ReferenceDataProvider } from "./hooks/useReferenceData";
@@ -81,6 +82,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <Logs />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cycles"
+                element={
+                  <ProtectedRoute>
+                    <Cycles />
                   </ProtectedRoute>
                 }
               />

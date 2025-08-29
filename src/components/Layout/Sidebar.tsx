@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut, ChevronDown, ChevronRight, Monitor } from 'lucide-react';
+import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut, ChevronDown, ChevronRight, Monitor, Target } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LanguageSelector } from '@/components/LanguageSelector';
 const getNavigationItems = (t: (key: string) => string) => [{
@@ -37,6 +37,12 @@ const getNavigationItems = (t: (key: string) => string) => [{
       name: t('nav.logs'),
       href: '/logs',
       icon: FileText,
+      roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+    },
+    {
+      name: 'Cycles',
+      href: '/cycles',
+      icon: Target,
       roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
     },
     {
