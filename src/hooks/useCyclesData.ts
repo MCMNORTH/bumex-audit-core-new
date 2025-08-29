@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 interface Risk {
+  firebaseId: string;
   id: string;
   description: string;
   cycles_ref: string;
 }
 
 interface Response {
+  firebaseId: string;
   id: string;
   description: string;
   cycles_ref: string;
 }
 
 interface Substantive {
+  firebaseId: string;
   id: string;
   description: string;
   cycles_ref: string;
@@ -59,18 +62,21 @@ export const useCyclesData = () => {
       ]);
 
       const risks = risksSnapshot.docs.map(doc => ({
+        firebaseId: doc.id,
         id: doc.data().id || '',
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
       const responses = responsesSnapshot.docs.map(doc => ({
+        firebaseId: doc.id,
         id: doc.data().id || '',
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
       const substantives = substantivesSnapshot.docs.map(doc => ({
+        firebaseId: doc.id,
         id: doc.data().id || '',
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
@@ -93,10 +99,34 @@ export const useCyclesData = () => {
     }
   };
 
+  const updateCycle = async (firebaseId: string, field: 'id' | 'description', value: string) => {
+    await updateDoc(doc(db, 'cycles', firebaseId), { [field]: value });
+    await fetchCyclesData(); // Refresh data
+  };
+
+  const updateRisk = async (firebaseId: string, field: 'id' | 'description', value: string) => {
+    await updateDoc(doc(db, 'risks', firebaseId), { [field]: value });
+    await fetchCyclesData(); // Refresh data
+  };
+
+  const updateResponse = async (firebaseId: string, field: 'id' | 'description', value: string) => {
+    await updateDoc(doc(db, 'responses', firebaseId), { [field]: value });
+    await fetchCyclesData(); // Refresh data
+  };
+
+  const updateSubstantive = async (firebaseId: string, field: 'id' | 'description', value: string) => {
+    await updateDoc(doc(db, 'substantives', firebaseId), { [field]: value });
+    await fetchCyclesData(); // Refresh data
+  };
+
   return {
     cycles,
     loading,
     error,
     refetch: fetchCyclesData,
+    updateCycle,
+    updateRisk,
+    updateResponse,
+    updateSubstantive,
   };
 };

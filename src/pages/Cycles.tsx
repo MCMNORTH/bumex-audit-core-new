@@ -4,10 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useCyclesData } from "@/hooks/useCyclesData";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EditableField } from "@/components/EditableField";
 import { AlertTriangle, Shield, FileText, Target } from "lucide-react";
 
 const Cycles = () => {
-  const { cycles, loading, error } = useCyclesData();
+  const { cycles, loading, error, updateCycle, updateRisk, updateResponse, updateSubstantive } = useCyclesData();
 
   if (loading) {
     return (
@@ -80,10 +81,20 @@ const Cycles = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Target className="h-5 w-5" />
-                    Cycle ID: {cycle.id}
+                    <EditableField
+                      value={cycle.id}
+                      onSave={(value) => updateCycle(cycle.firebaseId, 'id', value)}
+                      placeholder="Enter cycle ID..."
+                      variant="title"
+                    />
                   </CardTitle>
                   <CardDescription>
-                    {cycle.description || "No description available"}
+                    <EditableField
+                      value={cycle.description}
+                      onSave={(value) => updateCycle(cycle.firebaseId, 'description', value)}
+                      placeholder="Enter cycle description..."
+                      variant="description"
+                    />
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -98,15 +109,25 @@ const Cycles = () => {
                       <div className="grid gap-2">
                         {cycle.risks.map((risk) => (
                           <div
-                            key={risk.id}
+                            key={risk.firebaseId}
                             className="p-3 rounded-lg bg-destructive/5 border border-destructive/10"
                           >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <p className="text-sm font-medium">Risk ID: {risk.id}</p>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {risk.description || "No description available"}
-                                </p>
+                            <div className="space-y-2">
+                              <div className="font-medium text-sm">
+                                <EditableField
+                                  value={risk.id}
+                                  onSave={(value) => updateRisk(risk.firebaseId, 'id', value)}
+                                  placeholder="Enter risk ID..."
+                                  variant="title"
+                                />
+                              </div>
+                              <div className="text-sm">
+                                <EditableField
+                                  value={risk.description}
+                                  onSave={(value) => updateRisk(risk.firebaseId, 'description', value)}
+                                  placeholder="Enter risk description..."
+                                  variant="description"
+                                />
                               </div>
                             </div>
                           </div>
@@ -130,15 +151,25 @@ const Cycles = () => {
                       <div className="grid gap-2">
                         {cycle.responses.map((response) => (
                           <div
-                            key={response.id}
+                            key={response.firebaseId}
                             className="p-3 rounded-lg bg-primary/5 border border-primary/10"
                           >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <p className="text-sm font-medium">Response ID: {response.id}</p>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {response.description || "No description available"}
-                                </p>
+                            <div className="space-y-2">
+                              <div className="font-medium text-sm">
+                                <EditableField
+                                  value={response.id}
+                                  onSave={(value) => updateResponse(response.firebaseId, 'id', value)}
+                                  placeholder="Enter response ID..."
+                                  variant="title"
+                                />
+                              </div>
+                              <div className="text-sm">
+                                <EditableField
+                                  value={response.description}
+                                  onSave={(value) => updateResponse(response.firebaseId, 'description', value)}
+                                  placeholder="Enter response description..."
+                                  variant="description"
+                                />
                               </div>
                             </div>
                           </div>
@@ -162,15 +193,25 @@ const Cycles = () => {
                       <div className="grid gap-2">
                         {cycle.substantives.map((substantive) => (
                           <div
-                            key={substantive.id}
+                            key={substantive.firebaseId}
                             className="p-3 rounded-lg bg-secondary/5 border border-secondary/10"
                           >
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <p className="text-sm font-medium">Substantive ID: {substantive.id}</p>
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  {substantive.description || "No description available"}
-                                </p>
+                            <div className="space-y-2">
+                              <div className="font-medium text-sm">
+                                <EditableField
+                                  value={substantive.id}
+                                  onSave={(value) => updateSubstantive(substantive.firebaseId, 'id', value)}
+                                  placeholder="Enter substantive ID..."
+                                  variant="title"
+                                />
+                              </div>
+                              <div className="text-sm">
+                                <EditableField
+                                  value={substantive.description}
+                                  onSave={(value) => updateSubstantive(substantive.firebaseId, 'description', value)}
+                                  placeholder="Enter substantive description..."
+                                  variant="description"
+                                />
                               </div>
                             </div>
                           </div>
