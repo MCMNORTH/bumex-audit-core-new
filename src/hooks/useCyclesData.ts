@@ -45,7 +45,7 @@ export const useCyclesData = () => {
       // Fetch all cycles
       const cyclesSnapshot = await getDocs(collection(db, 'cycles'));
       const cyclesData = cyclesSnapshot.docs.map(doc => ({
-        id: doc.id,
+        id: doc.data().id || doc.id,
         description: doc.data().description || '',
       }));
 
@@ -57,19 +57,19 @@ export const useCyclesData = () => {
       ]);
 
       const risks = risksSnapshot.docs.map(doc => ({
-        id: doc.id,
+        id: doc.data().id || doc.id,
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
       const responses = responsesSnapshot.docs.map(doc => ({
-        id: doc.id,
+        id: doc.data().id || doc.id,
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
 
       const substantives = substantivesSnapshot.docs.map(doc => ({
-        id: doc.id,
+        id: doc.data().id || doc.id,
         description: doc.data().description || '',
         cycles_ref: doc.data().cycles_ref?.id || doc.data().cycles_ref || '',
       }));
