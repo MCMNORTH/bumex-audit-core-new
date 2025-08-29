@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Projects from "./pages/Projects";
 import ProjectEdit from "./pages/ProjectEdit";
+import Users from "./pages/Users";
 import Logs from "./pages/Logs";
 import AppControlPage from "./pages/AppControl";
 import NotFound from "./pages/NotFound";
@@ -61,6 +62,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <ProjectEdit />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/users"
+                element={
+                  <ProtectedRoute requiredRoles={['dev', 'partner', 'manager']}>
+                    <Users />
                   </ProtectedRoute>
                 }
               />

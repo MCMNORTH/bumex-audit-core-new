@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut } from 'lucide-react';
+import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut, ChevronDown, ChevronRight, Monitor } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LanguageSelector } from '@/components/LanguageSelector';
 const getNavigationItems = (t: (key: string) => string) => [{
@@ -22,18 +22,34 @@ const getNavigationItems = (t: (key: string) => string) => [{
   icon: FolderOpen,
   roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
 }, {
-  name: t('nav.logs'),
-  href: '/logs',
-  icon: FileText,
-  roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
-}, {
-  name: t('nav.appControl'),
-  href: '/app-control',
-  icon: Settings,
-  roles: ['dev']
+  name: 'IT Section',
+  icon: Monitor,
+  roles: ['dev', 'partner', 'manager'],
+  isParent: true,
+  children: [
+    {
+      name: 'Users',
+      href: '/users',
+      icon: Users,
+      roles: ['dev', 'partner', 'manager']
+    },
+    {
+      name: t('nav.logs'),
+      href: '/logs',
+      icon: FileText,
+      roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+    },
+    {
+      name: t('nav.appControl'),
+      href: '/app-control',
+      icon: Settings,
+      roles: ['dev']
+    }
+  ]
 }];
 export const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
   const {
     user,
     logout
@@ -42,6 +58,16 @@ export const Sidebar = () => {
   const location = useLocation();
   const navigationItems = getNavigationItems(t);
   const filteredItems = navigationItems.filter(item => user && item.roles.includes(user.role));
+
+  const toggleSection = (itemName: string) => {
+    const newExpanded = new Set(expandedSections);
+    if (newExpanded.has(itemName)) {
+      newExpanded.delete(itemName);
+    } else {
+      newExpanded.add(itemName);
+    }
+    setExpandedSections(newExpanded);
+  };
   const handleLogout = async () => {
     try {
       await logout();
@@ -65,13 +91,69 @@ export const Sidebar = () => {
 
           <nav className="flex-1 px-4 py-6 space-y-2">
             {filteredItems.map(item => {
-            const Icon = item.icon;
-            const isActive = location.pathname === item.href;
-            return <Link key={item.name} to={item.href} className={cn("flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors", isActive ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900")} onClick={() => setIsOpen(false)}>
+              const Icon = item.icon;
+              
+              if (item.isParent && item.children) {
+                const isExpanded = expandedSections.has(item.name);
+                const filteredChildren = item.children.filter(child => user && child.roles.includes(user.role));
+                
+                return (
+                  <div key={item.name}>
+                    <div
+                      className="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors text-gray-600 hover:bg-gray-100 hover:text-gray-900 cursor-pointer"
+                      onClick={() => toggleSection(item.name)}
+                    >
+                      <Icon className="mr-3 h-5 w-5" />
+                      <span className="flex-1">{item.name}</span>
+                      {isExpanded ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </div>
+                    
+                    {isExpanded && (
+                      <div className="ml-6 mt-1 space-y-1">
+                        {filteredChildren.map(child => {
+                          const ChildIcon = child.icon;
+                          const isActive = location.pathname === child.href;
+                          return (
+                            <Link
+                              key={child.name}
+                              to={child.href}
+                              className={cn(
+                                "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                                isActive ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                              )}
+                              onClick={() => setIsOpen(false)}
+                            >
+                              <ChildIcon className="mr-3 h-4 w-4" />
+                              {child.name}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+              
+              const isActive = location.pathname === item.href;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={cn(
+                    "flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isActive ? "bg-blue-100 text-blue-700" : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
                   <Icon className="mr-3 h-5 w-5" />
                   {item.name}
-                </Link>;
-          })}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="p-4">
