@@ -133,7 +133,16 @@ const ProjectEdit = () => {
           active: false,
           children: [
             { id: 'ceramic', title: 'CERAMIC', number: '1.', active: false },
-            { id: 'it-understanding', title: 'IT Understanding', number: '2.', active: false },
+            { 
+              id: 'it-understanding', 
+              title: 'IT Understanding', 
+              number: '2.', 
+              active: false,
+              isParent: true,
+              children: [
+                { id: 'cycles', title: 'Cycles', active: false },
+              ]
+            },
             { 
               id: 'gitc-controls', 
               title: 'GITC. Controls', 
