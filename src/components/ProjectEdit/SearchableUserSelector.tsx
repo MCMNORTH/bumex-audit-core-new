@@ -8,6 +8,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from "@/components/ui/command";
 import {
   Popover,
@@ -87,34 +88,36 @@ export function SearchableUserSelector({
         <Command>
           <CommandInput placeholder={`Search ${emptyText.toLowerCase()}...`} />
           <CommandEmpty>No users found.</CommandEmpty>
-          <CommandGroup className="max-h-64 overflow-auto">
-            {safeUsers.map((user) => (
-              <CommandItem
-                key={user.id}
-                value={`${user.first_name} ${user.last_name} ${user.email} ${user.role}`}
-                onSelect={() => handleSelect(user.id)}
-                className="flex items-center gap-2"
-              >
-                <Check
-                  className={cn(
-                    "h-4 w-4",
-                    value === user.id ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                <div className="flex flex-col flex-1">
-                  <span className="font-medium">
-                    {user.first_name} {user.last_name}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {user.email}
-                  </span>
-                </div>
-                <Badge variant="outline" className="text-xs">
-                  {user.role}
-                </Badge>
-              </CommandItem>
-            ))}
-          </CommandGroup>
+          <CommandList>
+            <CommandGroup className="max-h-64 overflow-auto">
+              {safeUsers.map((user) => (
+                <CommandItem
+                  key={user.id}
+                  value={`${user.first_name} ${user.last_name} ${user.email} ${user.role}`}
+                  onSelect={() => handleSelect(user.id)}
+                  className="flex items-center gap-2"
+                >
+                  <Check
+                    className={cn(
+                      "h-4 w-4",
+                      value === user.id ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  <div className="flex flex-col flex-1">
+                    <span className="font-medium">
+                      {user.first_name} {user.last_name}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {user.email}
+                    </span>
+                  </div>
+                  <Badge variant="outline" className="text-xs">
+                    {user.role}
+                  </Badge>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
         </Command>
       </PopoverContent>
     </Popover>
