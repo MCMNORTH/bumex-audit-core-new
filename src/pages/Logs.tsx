@@ -15,6 +15,7 @@ const Logs = () => {
   const [logs, setLogs] = useState<(Log & { user_name?: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [expandedUserAgents, setExpandedUserAgents] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!refLoading) fetchLogs();
@@ -95,6 +96,18 @@ const Logs = () => {
     (log as any).city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (log as any).isp?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const toggleUserAgent = (logId: string) => {
+    setExpandedUserAgents(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(logId)) {
+        newSet.delete(logId);
+      } else {
+        newSet.add(logId);
+      }
+      return newSet;
+    });
+  };
 
   if (loading) {
     return (
@@ -273,11 +286,27 @@ const Logs = () => {
                                 <Monitor className="h-3 w-3 text-gray-400 mt-0.5" />
                                 <div className="flex-1">
                                   <span className="text-gray-500">User Agent:</span>
-                                  <div className="text-gray-900 text-xs mt-1 break-all">
-                                    {(log as any).user_agent ? 
-                                      `${(log as any).user_agent.substring(0, 100)}${(log as any).user_agent.length > 100 ? '...' : ''}` 
-                                      : 'N/A'
-                                    }
+                                  <div className="text-gray-900 text-xs mt-1">
+                                    {(log as any).user_agent ? (
+                                      <div className="space-y-1">
+                                        <div className={expandedUserAgents.has(log.id) ? '' : 'break-all'}>
+                                          {expandedUserAgents.has(log.id) 
+                                            ? (log as any).user_agent 
+                                            : `${(log as any).user_agent.substring(0, 100)}${(log as any).user_agent.length > 100 ? '...' : ''}`
+                                          }
+                                        </div>
+                                        {(log as any).user_agent.length > 100 && (
+                                          <button
+                                            onClick={() => toggleUserAgent(log.id)}
+                                            className="text-blue-600 hover:text-blue-800 text-xs underline"
+                                          >
+                                            {expandedUserAgents.has(log.id) ? 'Show less' : 'Show more'}
+                                          </button>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      'N/A'
+                                    )}
                                   </div>
                                 </div>
                               </div>
