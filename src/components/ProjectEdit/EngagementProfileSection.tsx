@@ -690,27 +690,6 @@ const EngagementProfileSection = ({
         onFormDataChange={onFormDataChange}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('engagement.teamAssignment')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-2">
-            {users.map((user) => (
-              <div key={user.id} className="flex items-center space-x-2">
-                <Checkbox
-                  id={user.id}
-                  checked={formData.assigned_to.includes(user.id)}
-                  onCheckedChange={(checked) => onAssignmentChange(user.id, checked as boolean)}
-                />
-                <Label htmlFor={user.id} className="text-sm">
-                  {user.first_name} {user.last_name} ({user.role})
-                </Label>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 };
