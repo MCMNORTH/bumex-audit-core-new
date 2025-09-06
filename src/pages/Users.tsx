@@ -24,7 +24,7 @@ const createUserSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
   first_name: z.string().min(1, 'First name is required'),
   last_name: z.string().min(1, 'Last name is required'),
-  role: z.enum(['staff', 'incharge', 'manager', 'partner', 'dev']),
+  role: z.enum(['users', 'semi-admin', 'admin', 'dev']),
   approved: z.boolean().default(false)
 });
 
@@ -47,7 +47,7 @@ const Users = () => {
       password: '',
       first_name: '',
       last_name: '',
-      role: 'staff',
+      role: 'users',
       approved: false
     }
   });
@@ -73,7 +73,7 @@ const Users = () => {
   };
 
   const updateUserApproval = async (userId: string, approved: boolean) => {
-    if (!currentUser || currentUser.role !== 'dev') {
+    if (!currentUser || !['dev', 'admin'].includes(currentUser.role)) {
       toast.error('Unauthorized');
       return;
     }
@@ -99,8 +99,15 @@ const Users = () => {
   };
 
   const updateUserRole = async (userId: string, role: string) => {
-    if (!currentUser || currentUser.role !== 'dev') {
+    if (!currentUser || !['dev', 'admin'].includes(currentUser.role)) {
       toast.error('Unauthorized');
+      return;
+    }
+
+    // Admins cannot assign dev role or modify dev users
+    const targetUser = users.find(u => u.id === userId);
+    if (currentUser.role === 'admin' && (role === 'dev' || targetUser?.role === 'dev')) {
+      toast.error('Insufficient permissions');
       return;
     }
 
@@ -184,8 +191,15 @@ const Users = () => {
   };
 
   const blockUser = async (userId: string, blocked: boolean) => {
-    if (!currentUser || currentUser.role !== 'dev') {
+    if (!currentUser || !['dev', 'admin'].includes(currentUser.role)) {
       toast.error('Unauthorized');
+      return;
+    }
+
+    // Admins cannot block dev users
+    const targetUser = users.find(u => u.id === userId);
+    if (currentUser.role === 'admin' && targetUser?.role === 'dev') {
+      toast.error('Cannot block dev users');
       return;
     }
 
@@ -218,7 +232,7 @@ const Users = () => {
   };
 
   const resetUserPassword = async (userEmail: string) => {
-    if (!currentUser || currentUser.role !== 'dev') {
+    if (!currentUser || !['dev', 'admin'].includes(currentUser.role)) {
       toast.error('Unauthorized');
       return;
     }
@@ -256,10 +270,9 @@ const Users = () => {
   const getRoleBadgeVariant = (role: string) => {
     switch (role) {
       case 'dev': return 'default';
-      case 'partner': return 'secondary';
-      case 'manager': return 'outline';
-      case 'incharge': return 'secondary';
-      case 'staff': return 'outline';
+      case 'admin': return 'secondary';
+      case 'semi-admin': return 'outline';
+      case 'users': return 'outline';
       default: return 'outline';
     }
   };
@@ -271,7 +284,7 @@ const Users = () => {
     user.role?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (!currentUser || !['dev', 'partner', 'manager'].includes(currentUser.role)) {
+  if (!currentUser || !['dev', 'admin'].includes(currentUser.role)) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
@@ -391,10 +404,9 @@ const Users = () => {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="staff">Staff</SelectItem>
-                            <SelectItem value="incharge">In Charge</SelectItem>
-                            <SelectItem value="manager">Manager</SelectItem>
-                            <SelectItem value="partner">Partner</SelectItem>
+                            <SelectItem value="users">Users</SelectItem>
+                            <SelectItem value="semi-admin">Semi Admin</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
                             <SelectItem value="dev">Developer</SelectItem>
                           </SelectContent>
                         </Select>
@@ -505,7 +517,7 @@ const Users = () => {
                           <Switch
                             checked={user.approved || false}
                             onCheckedChange={(checked) => updateUserApproval(user.id, checked)}
-                            disabled={updatingUsers.has(user.id) || currentUser.role !== 'dev'}
+                            disabled={updatingUsers.has(user.id) || !['dev', 'admin'].includes(currentUser.role)}
                           />
                         </div>
                         <div className="flex items-center space-x-2">
@@ -513,10 +525,10 @@ const Users = () => {
                           <Switch
                             checked={(user as any).blocked || false}
                             onCheckedChange={(checked) => blockUser(user.id, checked)}
-                            disabled={updatingUsers.has(user.id) || currentUser.role !== 'dev'}
+                            disabled={updatingUsers.has(user.id) || !['dev', 'admin'].includes(currentUser.role) || (currentUser.role === 'admin' && user.role === 'dev')}
                           />
                         </div>
-                        {currentUser.role === 'dev' && (
+                        {['dev', 'admin'].includes(currentUser.role) && !(currentUser.role === 'admin' && user.role === 'dev') && (
                           <div className="flex items-center space-x-2">
                             <span className="text-sm font-medium">Role:</span>
                             <Select
@@ -528,11 +540,10 @@ const Users = () => {
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="staff">Staff</SelectItem>
-                                <SelectItem value="incharge">In Charge</SelectItem>
-                                <SelectItem value="manager">Manager</SelectItem>
-                                <SelectItem value="partner">Partner</SelectItem>
-                                <SelectItem value="dev">Developer</SelectItem>
+                                <SelectItem value="users">Users</SelectItem>
+                                <SelectItem value="semi-admin">Semi Admin</SelectItem>
+                                <SelectItem value="admin" disabled={currentUser.role === 'admin'}>Admin</SelectItem>
+                                <SelectItem value="dev" disabled={currentUser.role === 'admin'}>Developer</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -545,7 +556,7 @@ const Users = () => {
                       )}
                     </div>
                     
-                    {currentUser.role === 'dev' && (
+                    {['dev', 'admin'].includes(currentUser.role) && (
                       <div className="flex items-center space-x-2 pt-2 border-t">
                         <Button
                           variant="outline"

@@ -40,8 +40,8 @@ const TeamSection = ({
     });
   };
 
-  const getUsersByRole = (role: string) => {
-    return users.filter(user => user.role === role && user.approved && !user.blocked);
+  const getSelectableUsers = () => {
+    return users.filter(user => user.approved && !user.blocked);
   };
 
   if (!isLeadDeveloper) {
@@ -124,11 +124,11 @@ const TeamSection = ({
           <div className="space-y-2">
             <Label className="font-medium">Lead Partner</Label>
             <SearchableUserSelector
-              users={getUsersByRole('partner')}
+              users={getSelectableUsers()}
               value={formData.team_assignments.lead_partner_id}
               onValueChange={(value) => handleTeamAssignmentChange('lead_partner_id', value)}
               placeholder="Select lead partner"
-              emptyText="partners"
+              emptyText="users"
               disabled={!isLeadDeveloper}
             />
           </div>
@@ -136,11 +136,11 @@ const TeamSection = ({
           <div className="space-y-2">
             <Label className="font-medium">Partner</Label>
             <SearchableUserSelector
-              users={getUsersByRole('partner')}
+              users={getSelectableUsers()}
               value={formData.team_assignments.partner_id}
               onValueChange={(value) => handleTeamAssignmentChange('partner_id', value)}
               placeholder="Select partner"
-              emptyText="partners"
+              emptyText="users"
               disabled={!isLeadDeveloper}
             />
           </div>
@@ -148,11 +148,11 @@ const TeamSection = ({
           <div className="space-y-2">
             <Label className="font-medium">In Charge</Label>
             <SearchableUserSelector
-              users={getUsersByRole('incharge')}
+              users={getSelectableUsers()}
               value={formData.team_assignments.in_charge_id}
               onValueChange={(value) => handleTeamAssignmentChange('in_charge_id', value)}
               placeholder="Select in charge"
-              emptyText="managers"
+              emptyText="users"
               disabled={!isLeadDeveloper}
             />
           </div>
@@ -160,11 +160,11 @@ const TeamSection = ({
           <div className="space-y-2">
             <Label className="font-medium">Staff</Label>
             <SearchableUserSelector
-              users={getUsersByRole('staff')}
+              users={getSelectableUsers()}
               value={formData.team_assignments.staff_id}
               onValueChange={(value) => handleTeamAssignmentChange('staff_id', value)}
               placeholder="Select staff member"
-              emptyText="staff members"
+              emptyText="users"
               disabled={!isLeadDeveloper}
             />
           </div>

@@ -10,40 +10,40 @@ const getNavigationItems = (t: (key: string) => string) => [{
   name: t('nav.dashboard'),
   href: '/dashboard',
   icon: Home,
-  roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+  roles: ['dev', 'admin', 'semi-admin', 'users']
 }, {
   name: t('nav.clients'),
   href: '/clients',
   icon: Users,
-  roles: ['dev', 'partner', 'manager', 'incharge']
+  roles: ['dev', 'admin', 'semi-admin']
 }, {
   name: t('nav.projects'),
   href: '/projects',
   icon: FolderOpen,
-  roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+  roles: ['dev', 'admin', 'semi-admin', 'users']
 }, {
   name: 'IT Section',
   icon: Monitor,
-  roles: ['dev', 'partner', 'manager'],
+  roles: ['dev', 'admin'],
   isParent: true,
   children: [
     {
       name: 'Users',
       href: '/users',
       icon: Users,
-      roles: ['dev', 'partner', 'manager']
+      roles: ['dev', 'admin']
     },
     {
       name: t('nav.logs'),
       href: '/logs',
       icon: FileText,
-      roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+      roles: ['dev', 'admin']
     },
     {
       name: 'Cycles',
       href: '/cycles',
       icon: Target,
-      roles: ['dev', 'partner', 'manager', 'incharge', 'staff']
+      roles: ['dev', 'admin', 'semi-admin']
     },
     {
       name: t('nav.appControl'),

@@ -235,8 +235,8 @@ const Projects = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const canCreateProject = user?.role === 'dev' || user?.role === 'partner';
-  const canEditProject = user?.role === 'dev' || user?.role === 'partner' || user?.role === 'manager';
+  const canCreateProject = user?.role === 'dev' || user?.role === 'admin';
+  const canEditProject = user?.role === 'dev' || user?.role === 'admin' || user?.role === 'semi-admin';
 
   if (loading) {
     return (

@@ -44,7 +44,7 @@ const App = () => (
               <Route
                 path="/clients"
                 element={
-                  <ProtectedRoute requiredRoles={['dev', 'partner', 'manager', 'incharge']}>
+                  <ProtectedRoute requiredRoles={['dev', 'admin', 'semi-admin']}>
                     <Clients />
                   </ProtectedRoute>
                 }
@@ -68,7 +68,7 @@ const App = () => (
               <Route
                 path="/users"
                 element={
-                  <ProtectedRoute requiredRoles={['dev', 'partner', 'manager']}>
+                  <ProtectedRoute requiredRoles={['dev', 'admin']}>
                     <MainLayout>
                       <Users />
                     </MainLayout>
@@ -78,7 +78,7 @@ const App = () => (
               <Route
                 path="/logs"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRoles={['dev', 'admin']}>
                     <Logs />
                   </ProtectedRoute>
                 }
@@ -86,7 +86,7 @@ const App = () => (
               <Route
                 path="/cycles"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute requiredRoles={['dev', 'admin', 'semi-admin']}>
                     <Cycles />
                   </ProtectedRoute>
                 }

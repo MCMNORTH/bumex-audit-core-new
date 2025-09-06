@@ -3,7 +3,7 @@ export interface User {
   email: string;
   first_name: string;
   last_name: string;
-  role: 'dev' | 'partner' | 'manager' | 'incharge' | 'staff';
+  role: 'dev' | 'admin' | 'semi-admin' | 'users';
   approved?: boolean;
   blocked?: boolean;
   created_at?: Date;
