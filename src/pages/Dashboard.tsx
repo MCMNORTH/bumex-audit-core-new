@@ -129,7 +129,7 @@ const Dashboard = () => {
           })
           .filter((project): project is ProjectWithRole => project !== null);
 
-        // Find sections ready to sign off
+        // Find sections ready to sign off for current user
         const readySections: Array<{
           projectId: string;
           projectName: string;
@@ -154,16 +154,19 @@ const Dashboard = () => {
 
           signOffSections.forEach(section => {
             const isAlreadySigned = projectFormData.signoffs[section.id]?.signed;
-            const canSign = canSignOffSection(user, projectFormData as any, section.level);
-            
-            if (!isAlreadySigned && canSign) {
-              readySections.push({
-                projectId: project.id,
-                projectName: project.engagement_name,
-                sectionId: section.id,
-                sectionTitle: section.title,
-                level: section.level,
-              });
+            // Only check sections that aren't already signed
+            if (!isAlreadySigned) {
+              const canSign = canSignOffSection(user, projectFormData as any, section.level);
+              
+              if (canSign) {
+                readySections.push({
+                  projectId: project.id,
+                  projectName: project.engagement_name,
+                  sectionId: section.id,
+                  sectionTitle: section.title,
+                  level: section.level,
+                });
+              }
             }
           });
         });
@@ -240,6 +243,15 @@ const Dashboard = () => {
     navigate(`/projects/${projectId}?section=${sectionId}`);
   };
 
+  const handleViewAllReadySections = () => {
+    // Navigate to the first project's sign-offs summary, or projects page if no projects
+    if (userProjects.length > 0) {
+      navigate(`/projects/${userProjects[0].id}?section=project-signoffs-summary`);
+    } else {
+      navigate('/projects');
+    }
+  };
+
   if (loading) {
     return (
       <MainLayout>
@@ -305,7 +317,7 @@ const Dashboard = () => {
                   </div>
                 ))}
                 {readyToSignSections.length > 4 && (
-                  <Button variant="outline" className="w-full mt-2">
+                  <Button variant="outline" className="w-full mt-2" onClick={handleViewAllReadySections}>
                     View All {stats.readyToSignCount} Ready Sections
                   </Button>
                 )}
