@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
 import { useLogging } from '@/hooks/useLogging';
 
@@ -132,29 +132,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               // Account pending approval or blocked - should show appropriate message
             }
           } else {
-            console.log('User document does not exist - creating one');
-            // Create a new user document with default values
-            const newUserData: User = {
-              id: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              first_name: '',
-              last_name: '',
-              role: 'users',
-              approved: true, // Auto-approve for now
-              blocked: false,
-              created_at: new Date()
-            };
-            
-            // Save to Firestore using the Firebase UID as document ID
-            await setDoc(doc(db, 'users', firebaseUser.uid), {
-              ...newUserData
-            });
-            
-            console.log('Created new user document:', newUserData);
-            setUser(newUserData);
-            
-            // Log successful login with IP tracking
-            await createLogWithClientInfo('login', newUserData.id, 'User logged in (new account)', newUserData.id);
+            console.log('User document does not exist');
+            setUser(null);
           }
         } catch (error) {
           console.error('Auth error:', error); // SECURITY: Generic error message
