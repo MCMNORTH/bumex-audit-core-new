@@ -195,8 +195,8 @@ export const Sidebar = () => {
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {user?.first_name} {user?.last_name}
                   </p>
-                  <p className="text-xs text-gray-500 uppercase">
-                    {user?.role}
+                  <p className="text-xs text-gray-500 truncate">
+                    {user?.email}
                   </p>
                 </div>
               </div>

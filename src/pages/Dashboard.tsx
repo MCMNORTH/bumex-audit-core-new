@@ -446,9 +446,6 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
-                      <Badge className={getRoleColor(project.user_role)}>
-                        {getRoleLabel(project.user_role)}
-                      </Badge>
                       <div className="flex items-center space-x-1 text-sm text-gray-500">
                         <Calendar className="h-3 w-3" />
                         <span>{project.period_end.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
