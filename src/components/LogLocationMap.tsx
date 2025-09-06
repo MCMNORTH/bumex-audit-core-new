@@ -1,10 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Wrapper, Status } from '@googlemaps/react-wrapper';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { MapPin } from 'lucide-react';
+import { MapPin, Loader2 } from 'lucide-react';
+
+// Ensure Google Maps types are available
+declare global {
+  interface Window {
+    google: typeof google;
+  }
+}
 
 interface LogLocationMapProps {
   logs: Array<{
@@ -20,127 +26,173 @@ interface LogLocationMapProps {
   }>;
 }
 
-export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
+interface GoogleMapComponentProps {
+  logs: LogLocationMapProps['logs'];
+}
+
+const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
 
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || !logs.length) return;
+    if (!mapRef.current || !window.google) return;
 
-    try {
-      // Initialize map
-      mapboxgl.accessToken = mapboxToken;
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
-        zoom: 2,
-        center: [0, 20],
+    // Initialize map
+    const map = new google.maps.Map(mapRef.current, {
+      zoom: 2,
+      center: { lat: 20, lng: 0 },
+      mapTypeId: google.maps.MapTypeId.ROADMAP,
+    });
+
+    mapInstanceRef.current = map;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current = [];
+
+    // Add markers for each log with location
+    const logsWithLocation = logs.filter(log => log.latitude && log.longitude);
+    const bounds = new google.maps.LatLngBounds();
+
+    logsWithLocation.forEach((log) => {
+      if (!log.latitude || !log.longitude) return;
+
+      const position = { lat: log.latitude, lng: log.longitude };
+
+      // Create marker
+      const marker = new google.maps.Marker({
+        position,
+        map,
+        title: `${log.user_name} - ${log.action}`,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 6,
+          fillColor: log.precise_location ? '#10b981' : '#f59e0b',
+          fillOpacity: 1,
+          strokeColor: '#ffffff',
+          strokeWeight: 2,
+        },
       });
 
-      // Add navigation controls
-      map.current.addControl(
-        new mapboxgl.NavigationControl(),
-        'top-right'
-      );
-
-      // Add markers for each log with location
-      const logsWithLocation = logs.filter(log => log.latitude && log.longitude);
-      
-      logsWithLocation.forEach((log) => {
-        if (!log.latitude || !log.longitude) return;
-
-        // Create a custom marker element
-        const markerElement = document.createElement('div');
-        markerElement.className = 'log-marker';
-        markerElement.style.cssText = `
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background-color: ${log.precise_location ? '#10b981' : '#f59e0b'};
-          border: 2px solid white;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-          cursor: pointer;
-        `;
-
-        // Create popup content
-        const popupContent = `
-          <div class="p-3 min-w-[200px]">
-            <div class="font-semibold text-sm mb-2">${log.user_name || 'Unknown User'}</div>
-            <div class="text-xs space-y-1">
-              <div><span class="font-medium">Action:</span> ${log.action}</div>
-              <div><span class="font-medium">Time:</span> ${log.timestamp.toLocaleString()}</div>
-              <div><span class="font-medium">Location:</span> ${log.city}, ${log.country}</div>
-              <div><span class="font-medium">Type:</span> ${log.precise_location ? 'Precise GPS' : 'IP-based'}</div>
-            </div>
+      // Create info window content
+      const infoWindowContent = `
+        <div style="padding: 8px; min-width: 200px;">
+          <div style="font-weight: 600; font-size: 14px; margin-bottom: 8px;">${log.user_name || 'Unknown User'}</div>
+          <div style="font-size: 12px; line-height: 1.4;">
+            <div><strong>Action:</strong> ${log.action}</div>
+            <div><strong>Time:</strong> ${log.timestamp.toLocaleString()}</div>
+            <div><strong>Location:</strong> ${log.city}, ${log.country}</div>
+            <div><strong>Type:</strong> ${log.precise_location ? 'Precise GPS' : 'IP-based'}</div>
           </div>
-        `;
+        </div>
+      `;
 
-        const popup = new mapboxgl.Popup({
-          offset: 15,
-          closeButton: true,
-          closeOnClick: false
-        }).setHTML(popupContent);
-
-        // Add marker to map
-        new mapboxgl.Marker(markerElement)
-          .setLngLat([log.longitude, log.latitude])
-          .setPopup(popup)
-          .addTo(map.current!);
+      const infoWindow = new google.maps.InfoWindow({
+        content: infoWindowContent,
       });
 
-      // Fit map to show all markers
-      if (logsWithLocation.length > 0) {
-        const bounds = new mapboxgl.LngLatBounds();
-        logsWithLocation.forEach(log => {
-          if (log.latitude && log.longitude) {
-            bounds.extend([log.longitude, log.latitude]);
-          }
-        });
-        map.current.fitBounds(bounds, { padding: 50 });
-      }
+      marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+      });
 
-    } catch (error) {
-      console.error('Error initializing map:', error);
-      setShowTokenInput(true);
+      markersRef.current.push(marker);
+      bounds.extend(position);
+    });
+
+    // Fit map to show all markers
+    if (logsWithLocation.length > 0) {
+      map.fitBounds(bounds);
+      
+      // Ensure minimum zoom level
+      google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
+        if (map.getZoom()! > 15) {
+          map.setZoom(15);
+        }
+      });
     }
 
-    // Cleanup
+    // Cleanup function
     return () => {
-      map.current?.remove();
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
     };
-  }, [mapboxToken, logs]);
+  }, [logs]);
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
+  return <div ref={mapRef} className="w-full h-96 rounded-lg border" />;
+};
+
+const MapLoadingComponent = () => (
+  <div className="w-full h-96 rounded-lg border flex items-center justify-center bg-gray-50">
+    <div className="text-center">
+      <Loader2 className="h-8 w-8 animate-spin mx-auto mb-2 text-gray-400" />
+      <p className="text-sm text-gray-600">Loading Google Maps...</p>
+    </div>
+  </div>
+);
+
+const MapErrorComponent = ({ status }: { status: Status }) => (
+  <div className="w-full h-96 rounded-lg border flex items-center justify-center bg-red-50">
+    <div className="text-center">
+      <MapPin className="h-8 w-8 mx-auto mb-2 text-red-400" />
+      <p className="text-sm text-red-600">Failed to load Google Maps: {status}</p>
+    </div>
+  </div>
+);
+
+export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
+  const [googleMapsApiKey, setGoogleMapsApiKey] = useState('');
+  const [showApiKeyInput, setShowApiKeyInput] = useState(true);
+
+  const handleApiKeySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mapboxToken.trim()) {
-      setShowTokenInput(false);
+    if (googleMapsApiKey.trim()) {
+      setShowApiKeyInput(false);
     }
   };
 
+  const renderMap = useCallback((status: Status) => {
+    switch (status) {
+      case Status.LOADING:
+        return <MapLoadingComponent />;
+      case Status.FAILURE:
+        return <MapErrorComponent status={status} />;
+      case Status.SUCCESS:
+        return <GoogleMapComponent logs={logs} />;
+      default:
+        return <MapLoadingComponent />;
+    }
+  }, [logs]);
+
   const logsWithLocation = logs.filter(log => log.latitude && log.longitude);
 
-  if (showTokenInput) {
+  if (showApiKeyInput) {
     return (
       <div className="space-y-4">
         <Alert>
           <MapPin className="h-4 w-4" />
           <AlertDescription>
-            To view log locations on the map, please enter your Mapbox public token.
-            You can get one from <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">mapbox.com</a>
+            To view log locations on the map, please enter your Google Maps API key.
+            You can get one from the{' '}
+            <a 
+              href="https://console.cloud.google.com/google/maps-apis" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-blue-600 hover:underline"
+            >
+              Google Cloud Console
+            </a>
           </AlertDescription>
         </Alert>
-        <form onSubmit={handleTokenSubmit} className="space-y-2">
-          <Label htmlFor="mapbox-token">Mapbox Public Token</Label>
+        <form onSubmit={handleApiKeySubmit} className="space-y-2">
+          <Label htmlFor="google-maps-api-key">Google Maps API Key</Label>
           <div className="flex space-x-2">
             <Input
-              id="mapbox-token"
+              id="google-maps-api-key"
               type="text"
-              placeholder="pk.eyJ1IjoieW91ci11c2VybmFtZSIsImEiOiJjbGl..."
-              value={mapboxToken}
-              onChange={(e) => setMapboxToken(e.target.value)}
+              placeholder="AIzaSyC..."
+              value={googleMapsApiKey}
+              onChange={(e) => setGoogleMapsApiKey(e.target.value)}
               className="flex-1"
             />
             <button
@@ -181,12 +233,14 @@ export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
           </div>
         </div>
       </div>
-      <div ref={mapContainer} className="w-full h-96 rounded-lg border" />
+      
+      <Wrapper apiKey={googleMapsApiKey} render={renderMap} />
+      
       <button
-        onClick={() => setShowTokenInput(true)}
+        onClick={() => setShowApiKeyInput(true)}
         className="text-sm text-blue-600 hover:underline"
       >
-        Change Mapbox Token
+        Change Google Maps API Key
       </button>
     </div>
   );
