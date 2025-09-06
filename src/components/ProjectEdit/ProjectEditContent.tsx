@@ -230,30 +230,90 @@ const ProjectEditContent = ({
       } else {
         // Check if this is a specific materiality section that should show content
         if (targetSection.id === 'materiality-materiality') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('Materiality', '2.')}
-              <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>;
+          renderedEntityContent = (
+            <SectionWrapper
+              sectionId="materiality-materiality"
+              formData={formData}
+              users={users}
+              currentUser={currentUser}
+              signOffLevel="incharge"
+              onSignOff={handleSignOffWrapper}
+              onUnsign={onUnsign}
+            >
+              <div className="space-y-4">
+                {renderSectionHeader('Materiality', '2.')}
+                <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
+              </div>
+            </SectionWrapper>
+          );
         } else if (targetSection.id === 'materiality-reevaluate') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('Re-evaluate', '3.')}
-              <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} showReEvaluate={true} />
-            </div>;
+          renderedEntityContent = (
+            <SectionWrapper
+              sectionId="materiality-reevaluate"
+              formData={formData}
+              users={users}
+              currentUser={currentUser}
+              signOffLevel="incharge"
+              onSignOff={handleSignOffWrapper}
+              onUnsign={onUnsign}
+            >
+              <div className="space-y-4">
+                {renderSectionHeader('Re-evaluate', '3.')}
+                <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} showReEvaluate={true} />
+              </div>
+            </SectionWrapper>
+          );
         } else if (targetSection.id === 'entity-and-env') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('Entity and its environment', '1.')}
-              <EntityEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>;
+          renderedEntityContent = (
+            <SectionWrapper
+              sectionId="entity-and-env"
+              formData={formData}
+              users={users}
+              currentUser={currentUser}
+              signOffLevel="incharge"
+              onSignOff={handleSignOffWrapper}
+              onUnsign={onUnsign}
+            >
+              <div className="space-y-4">
+                {renderSectionHeader('Entity and its environment', '1.')}
+                <EntityEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
+              </div>
+            </SectionWrapper>
+          );
         } else if (targetSection.id === 'rapd') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('RAPD', '4.')}
-              <RAPDSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>;
+          renderedEntityContent = (
+            <SectionWrapper
+              sectionId="rapd"
+              formData={formData}
+              users={users}
+              currentUser={currentUser}
+              signOffLevel="incharge"
+              onSignOff={handleSignOffWrapper}
+              onUnsign={onUnsign}
+            >
+              <div className="space-y-4">
+                {renderSectionHeader('RAPD', '4.')}
+                <RAPDSection formData={formData} onFormDataChange={onFormDataChange} />
+              </div>
+            </SectionWrapper>
+          );
         } else if (targetSection.id === 'ceramic') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('CERAMIC', '1.')}
-              <CERAMICSection formData={formData} onFormDataChange={onFormDataChange} />
-            </div>;
+          renderedEntityContent = (
+            <SectionWrapper
+              sectionId="ceramic"
+              formData={formData}
+              users={users}
+              currentUser={currentUser}
+              signOffLevel="incharge"
+              onSignOff={handleSignOffWrapper}
+              onUnsign={onUnsign}
+            >
+              <div className="space-y-4">
+                {renderSectionHeader('CERAMIC', '1.')}
+                <CERAMICSection formData={formData} onFormDataChange={onFormDataChange} />
+              </div>
+            </SectionWrapper>
+          );
         } else if (targetSection.id === 'it-understanding') {
           renderedEntityContent = <div className="space-y-4">
               {renderSectionHeader('IT Understanding', '2.')}
@@ -446,27 +506,75 @@ const ProjectEditContent = ({
         {activeSection === 'sign-off-1' && renderSignOffContent()}
         {activeSection === 'sign-off-2' && renderSignOffContent()}
         {activeSection === 'sign-off-3' && renderSignOffContent()}
-        {activeSection === 'tech-risk-corp' && <div className="space-y-4">
-            {renderSectionHeader('Tech Risk Corp - IT Audit')}
-            {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
-          </div>}
-        {activeSection === 'initial-independence' && <div className="space-y-4">
-            {renderSectionHeader('Initial independence and conclusion', '1.')}
-            <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
-          </div>}
-        {activeSection === 'fraud-risk' && <div className="space-y-4">
-            {renderSectionHeader('Fraud risk assessment and response', '1.')}
-            <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
-          </div>}
+        {activeSection === 'tech-risk-corp' && (
+          <SectionWrapper
+            sectionId="tech-risk-corp"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            <div className="space-y-4">
+              {renderSectionHeader('Tech Risk Corp - IT Audit')}
+              {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
+            </div>
+          </SectionWrapper>
+        )}
+        
+        {activeSection === 'initial-independence' && (
+          <SectionWrapper
+            sectionId="initial-independence"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            <div className="space-y-4">
+              {renderSectionHeader('Initial independence and conclusion', '1.')}
+              <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>
+          </SectionWrapper>
+        )}
+        
+        {activeSection === 'fraud-risk' && (
+          <SectionWrapper
+            sectionId="fraud-risk"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            <div className="space-y-4">
+              {renderSectionHeader('Fraud risk assessment and response', '1.')}
+              <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>
+          </SectionWrapper>
+        )}
         {/* END of engagement management custom blocks */}
 
         {/* BUSINESS PROCESSES LOGIC (section 3 and its tree) */}
         {activeSection === 'business-processes' && renderBusinessProcessesContent()}
         {activeSection === 'financial-reporting' && renderFinancialReportingContent()}
         {activeSection === 'financial-reporting-process' && (
-          <div className="space-y-4">
-            <FinancialReportingProcessSection formData={formData} onFormDataChange={onFormDataChange} />
-          </div>
+          <SectionWrapper
+            sectionId="financial-reporting-process"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            <div className="space-y-4">
+              <FinancialReportingProcessSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>
+          </SectionWrapper>
         )}
         {activeSection === 'control-activities' && (
           <div className="space-y-8">

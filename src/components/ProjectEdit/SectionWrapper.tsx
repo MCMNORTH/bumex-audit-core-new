@@ -55,9 +55,9 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
       
       <div className={signOffData.signed ? 'relative' : ''}>
         {signOffData.signed && (
-          <div className="absolute inset-0 bg-gray-50/50 z-10 pointer-events-none rounded-lg" />
+          <div className="absolute inset-0 bg-gray-50/30 z-10 rounded-lg pointer-events-none" />
         )}
-        <div className={signOffData.signed ? 'pointer-events-none opacity-70' : ''}>
+        <div className={signOffData.signed ? 'relative' : ''}>
           {children}
         </div>
       </div>

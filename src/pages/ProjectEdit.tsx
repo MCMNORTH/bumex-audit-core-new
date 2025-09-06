@@ -66,16 +66,21 @@ const ProjectEdit = () => {
           number: '1.',
           signOffLevel: 'incharge' as const,
           isParent: true,
-          children: [
-          ]
+          children: []
         },
         { 
           id: 'sp-specialists-section', 
           title: 'SP. Specialists', 
           active: false,
+          signOffLevel: 'incharge' as const,
           isParent: true,
           children: [
-            { id: 'tech-risk-corp', title: 'Tech Risk Corp - IT Audit', active: false },
+            { 
+              id: 'tech-risk-corp', 
+              title: 'Tech Risk Corp - IT Audit', 
+              active: false,
+              signOffLevel: 'incharge' as const,
+            },
           ]
         },
         {
@@ -86,7 +91,13 @@ const ProjectEdit = () => {
           number: '2.',
           signOffLevel: 'incharge' as const,
           children: [
-            { id: 'initial-independence', title: 'Initial independence and conclusion', active: false, number: '1.' },
+            { 
+              id: 'initial-independence', 
+              title: 'Initial independence and conclusion', 
+              active: false, 
+              number: '1.',
+              signOffLevel: 'incharge' as const,
+            },
           ]
         },
         {
@@ -96,8 +107,7 @@ const ProjectEdit = () => {
           isParent: true,
           number: '4.',
           signOffLevel: 'incharge' as const,
-          children: [
-          ]
+          children: []
         }
       ]
     },
@@ -115,10 +125,11 @@ const ProjectEdit = () => {
           isParent: true,
           number: '1.',
           active: false,
+          signOffLevel: 'incharge' as const,
           children: [
-            { id: 'materiality-summary', title: 'Summary', number: '1.', active: false },
-            { id: 'materiality-materiality', title: 'Materiality', number: '2.', active: false },
-            { id: 'materiality-reevaluate', title: 'Re-evaluate', number: '3.', active: false },
+            { id: 'materiality-summary', title: 'Summary', number: '1.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'materiality-materiality', title: 'Materiality', number: '2.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'materiality-reevaluate', title: 'Re-evaluate', number: '3.', active: false, signOffLevel: 'incharge' as const },
           ],
         },
         {
@@ -127,11 +138,12 @@ const ProjectEdit = () => {
           isParent: true,
           number: '2.',
           active: false,
+          signOffLevel: 'incharge' as const,
           children: [
-            { id: 'entity-and-env', title: 'Entity and its environment', number: '1.', active: false },
-            { id: 'planning-analytics', title: 'Planning analytics', number: '2.', active: false },
-            { id: 'risk-business-processes', title: 'Business processes', number: '3.', active: false },
-            { id: 'rapd', title: 'RAPD', number: '4.', active: false },
+            { id: 'entity-and-env', title: 'Entity and its environment', number: '1.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'planning-analytics', title: 'Planning analytics', number: '2.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'risk-business-processes', title: 'Business processes', number: '3.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'rapd', title: 'RAPD', number: '4.', active: false, signOffLevel: 'incharge' as const },
           ],
         },
         {
@@ -140,37 +152,40 @@ const ProjectEdit = () => {
           isParent: true,
           number: '3.',
           active: false,
+          signOffLevel: 'incharge' as const,
           children: [
-            { id: 'ceramic', title: 'CERAMIC', number: '1.', active: false },
-            { id: 'it-understanding', title: 'IT Understanding', number: '2.', active: false },
+            { id: 'ceramic', title: 'CERAMIC', number: '1.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'it-understanding', title: 'IT Understanding', number: '2.', active: false, signOffLevel: 'incharge' as const },
             { 
               id: 'gitc-controls', 
               title: 'GITC. Controls', 
               active: false,
               isParent: true,
+              signOffLevel: 'incharge' as const,
               children: [
                 { 
                   id: 'ad-1-1-apd-1', 
                   title: 'AD 1.1APD-1 - Configuration des mots de passe', 
                   active: false,
                   isParent: true,
+                  signOffLevel: 'incharge' as const,
                   children: [
-                    { id: 'ad-1-1-apd-1-d-i', title: '1 - D&I', active: false },
-                    { id: 'ad-1-1-apd-1-toe', title: '2 - TOE', active: false },
+                    { id: 'ad-1-1-apd-1-d-i', title: '1 - D&I', active: false, signOffLevel: 'incharge' as const },
+                    { id: 'ad-1-1-apd-1-toe', title: '2 - TOE', active: false, signOffLevel: 'incharge' as const },
                   ]
                 },
-                { id: 'ad-1-4-apd-1', title: 'AD 1.4 APD-1 - Comptes à pouvoir', active: false },
-                { id: 'ad-2-1-pc-2', title: 'AD 2.1 PC-2 - Validation de la mise en production des changements', active: false },
-                { id: 'seebi-1-1-apd-1', title: 'Seebi 1.1 APD-1 - Configuration des mots de passe', active: false },
-                { id: 'seebi-1-4-apd-1', title: 'Seebi 1.4 APD-1 - Compte à pouvoir', active: false },
-                { id: 'seebi-2-1-pc-1', title: 'Seebi 2.1 PC-1 - Validation de la mise en production des changements', active: false },
-                { id: 'talend-4-1-co-1', title: 'Talend 4.1 CO-1 - Paramétrage de l\'ordonnanceur', active: false },
-                { id: 'talend-4-1-co-2', title: 'Talend 4.1 CO-2 - Suivi et résolution des anomalies', active: false },
+                { id: 'ad-1-4-apd-1', title: 'AD 1.4 APD-1 - Comptes à pouvoir', active: false, signOffLevel: 'incharge' as const },
+                { id: 'ad-2-1-pc-2', title: 'AD 2.1 PC-2 - Validation de la mise en production des changements', active: false, signOffLevel: 'incharge' as const },
+                { id: 'seebi-1-1-apd-1', title: 'Seebi 1.1 APD-1 - Configuration des mots de passe', active: false, signOffLevel: 'incharge' as const },
+                { id: 'seebi-1-4-apd-1', title: 'Seebi 1.4 APD-1 - Compte à pouvoir', active: false, signOffLevel: 'incharge' as const },
+                { id: 'seebi-2-1-pc-1', title: 'Seebi 2.1 PC-1 - Validation de la mise en production des changements', active: false, signOffLevel: 'incharge' as const },
+                { id: 'talend-4-1-co-1', title: 'Talend 4.1 CO-1 - Paramétrage de l\'ordonnanceur', active: false, signOffLevel: 'incharge' as const },
+                { id: 'talend-4-1-co-2', title: 'Talend 4.1 CO-2 - Suivi et résolution des anomalies', active: false, signOffLevel: 'incharge' as const },
               ]
             },
-            { id: 'significant-control-deficiencies', title: 'Significant Control Deficiencies', number: '3.', active: false },
-            { id: 'def-deficiencies', title: 'DEF. Deficiencies', active: false },
-            { id: 'so-service-org', title: 'SO. Service Organization', active: false },
+            { id: 'significant-control-deficiencies', title: 'Significant Control Deficiencies', number: '3.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'def-deficiencies', title: 'DEF. Deficiencies', active: false, signOffLevel: 'incharge' as const },
+            { id: 'so-service-org', title: 'SO. Service Organization', active: false, signOffLevel: 'incharge' as const },
           ],
         },
         {
@@ -179,9 +194,10 @@ const ProjectEdit = () => {
           isParent: true,
           number: '4.',
           active: false,
+          signOffLevel: 'incharge' as const,
           children: [
-            { id: 'fraud-risk', title: 'Fraud risk assessment and response', number: '1.', active: false },
-            { id: 'je-plan-testwork', title: 'Journal entry plan and testwork', number: '2.', active: false },
+            { id: 'fraud-risk', title: 'Fraud risk assessment and response', number: '1.', active: false, signOffLevel: 'incharge' as const },
+            { id: 'je-plan-testwork', title: 'Journal entry plan and testwork', number: '2.', active: false, signOffLevel: 'incharge' as const },
           ],
         },
         {
@@ -190,8 +206,9 @@ const ProjectEdit = () => {
           isParent: true,
           number: '5.',
           active: false,
+          signOffLevel: 'incharge' as const,
           children: [
-            { id: 'general', title: 'General', number: '1.', active: false },
+            { id: 'general', title: 'General', number: '1.', active: false, signOffLevel: 'incharge' as const },
           ],
         },
         {
@@ -200,6 +217,7 @@ const ProjectEdit = () => {
           isParent: false,
           number: '6.',
           active: false,
+          signOffLevel: 'incharge' as const,
           // no children
         },
       ],
@@ -218,13 +236,15 @@ const ProjectEdit = () => {
           number: '1.', 
           active: false,
           isParent: true,
+          signOffLevel: 'incharge' as const,
           children: [
-            { id: 'financial-reporting-process', title: 'Financial reporting process', number: '1.', active: false },
+            { id: 'financial-reporting-process', title: 'Financial reporting process', number: '1.', active: false, signOffLevel: 'incharge' as const },
             { 
               id: 'control-activities', 
               title: 'CA - Control activities', 
               active: false,
               isParent: true,
+              signOffLevel: 'incharge' as const,
               children: [
                 { 
                   id: 'controle-24', 
@@ -232,24 +252,25 @@ const ProjectEdit = () => {
                   subtitle: 'Réconciliation des états financiers', 
                   active: false,
                   isParent: true,
+                  signOffLevel: 'incharge' as const,
                   children: [
-                    { id: 'controle-24-d-i', title: '1 - D&I', active: false },
-                    { id: 'controle-24-toe', title: '2 - TOE', active: false },
+                    { id: 'controle-24-d-i', title: '1 - D&I', active: false, signOffLevel: 'incharge' as const },
+                    { id: 'controle-24-toe', title: '2 - TOE', active: false, signOffLevel: 'incharge' as const },
                   ]
                 },
-                { id: 'controle-25', title: 'Contrôle 25', subtitle: 'SOD', active: false },
+                { id: 'controle-25', title: 'Contrôle 25', subtitle: 'SOD', active: false, signOffLevel: 'incharge' as const },
               ]
             },
-            { id: 'related-parties', title: 'RP - Related parties', active: false },
+            { id: 'related-parties', title: 'RP - Related parties', active: false, signOffLevel: 'incharge' as const },
           ]
         },
-        { id: 'litigation-claims', title: 'Litigation, claims and assessments', number: '2.', active: false },
-        { id: 'ventes-clients', title: 'Ventes - Clients', number: '3.', active: false },
-        { id: 'achats-fournisseurs', title: 'Achats - Fournisseurs', number: '4.', active: false },
-        { id: 'immobilisations-incorporelles', title: 'Immobilisations Incorporelles', number: '5.', active: false },
-        { id: 'stocks', title: 'Stocks', number: '6.', active: false },
-        { id: 'tresorerie', title: 'Trésorerie', number: '7.', active: false },
-        { id: 'mnsa-material-accounts', title: 'MNSA. Material non-significant accounts', number: '8.', active: false },
+        { id: 'litigation-claims', title: 'Litigation, claims and assessments', number: '2.', active: false, signOffLevel: 'incharge' as const },
+        { id: 'ventes-clients', title: 'Ventes - Clients', number: '3.', active: false, signOffLevel: 'incharge' as const },
+        { id: 'achats-fournisseurs', title: 'Achats - Fournisseurs', number: '4.', active: false, signOffLevel: 'incharge' as const },
+        { id: 'immobilisations-incorporelles', title: 'Immobilisations Incorporelles', number: '5.', active: false, signOffLevel: 'incharge' as const },
+        { id: 'stocks', title: 'Stocks', number: '6.', active: false, signOffLevel: 'incharge' as const },
+        { id: 'tresorerie', title: 'Trésorerie', number: '7.', active: false, signOffLevel: 'incharge' as const },
+        { id: 'mnsa-material-accounts', title: 'MNSA. Material non-significant accounts', number: '8.', active: false, signOffLevel: 'incharge' as const },
       ],
     },
     {
