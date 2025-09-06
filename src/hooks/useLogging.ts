@@ -2,7 +2,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './useAuth';
 
-// Cache for IP address and geolocation data to avoid multiple API calls
+// Clear cache periodically to get fresh location data
 let cachedIpData: { 
   ip: string; 
   userAgent: string;
@@ -14,6 +14,7 @@ let cachedIpData: {
   latitude?: number;
   longitude?: number;
   precise_location?: boolean;
+  timestamp?: number;
 } | null = null;
 
 export const useLogging = () => {
@@ -58,6 +59,13 @@ export const useLogging = () => {
   };
 
   const getClientInfo = async () => {
+    // Check if cached data is too old (more than 5 minutes)
+    if (cachedIpData && cachedIpData.timestamp && 
+        Date.now() - cachedIpData.timestamp > 5 * 60 * 1000) {
+      console.log('Cached location data is stale, refreshing...');
+      cachedIpData = null;
+    }
+    
     if (cachedIpData) return cachedIpData;
 
     try {
@@ -65,6 +73,7 @@ export const useLogging = () => {
       
       // Get precise location first
       const preciseLocation = await getPreciseLocation();
+      console.log('Precise location result:', preciseLocation);
       
       // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
       const geoResponse = await fetch('https://ipapi.co/json/');
@@ -76,6 +85,13 @@ export const useLogging = () => {
       const userAgent = navigator.userAgent;
       console.log('User agent:', userAgent);
       
+      // Determine if we have precise location
+      const hasPreciseLocation = preciseLocation !== null && 
+                                preciseLocation.latitude !== undefined && 
+                                preciseLocation.longitude !== undefined;
+      
+      console.log('Has precise location:', hasPreciseLocation);
+      
       cachedIpData = { 
         ip: geoData.ip || 'unknown',
         userAgent,
@@ -84,10 +100,13 @@ export const useLogging = () => {
         region: geoData.region,
         timezone: geoData.timezone,
         isp: geoData.org,
-        latitude: preciseLocation?.latitude || geoData.latitude,
-        longitude: preciseLocation?.longitude || geoData.longitude,
-        precise_location: !!preciseLocation
+        latitude: hasPreciseLocation ? preciseLocation.latitude : geoData.latitude,
+        longitude: hasPreciseLocation ? preciseLocation.longitude : geoData.longitude,
+        precise_location: hasPreciseLocation,
+        timestamp: Date.now()
       };
+      
+      console.log('Final client info with precise location flag:', cachedIpData);
       
       return cachedIpData;
     } catch (error) {

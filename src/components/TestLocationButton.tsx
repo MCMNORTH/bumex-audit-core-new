@@ -15,6 +15,8 @@ export const TestLocationButton = () => {
     }
     
     console.log('Testing location logging...');
+    // Clear any cached location data to force fresh request
+    (window as any).cachedIpData = null;
     await createLog('test_location', user.id, 'Location test triggered by user');
     console.log('Test location log created');
   };
