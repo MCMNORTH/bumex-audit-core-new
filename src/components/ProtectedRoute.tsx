@@ -1,8 +1,10 @@
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
+import { isCountryAllowed, getClientInfo } from '@/lib/clientInfo';
+import { GeoRestricted } from '@/components/GeoRestricted';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -11,8 +13,36 @@ interface ProtectedRouteProps {
 
 export const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
+  const [geoLoading, setGeoLoading] = useState(true);
+  const [isGeoAllowed, setIsGeoAllowed] = useState(true);
+  const [clientInfo, setClientInfo] = useState<{ country: string; country_code: string } | null>(null);
 
-  if (loading) {
+  useEffect(() => {
+    const checkGeolocation = async () => {
+      try {
+        const allowed = await isCountryAllowed();
+        setIsGeoAllowed(allowed);
+        
+        if (!allowed) {
+          const info = await getClientInfo();
+          setClientInfo({
+            country: info.country,
+            country_code: info.country_code
+          });
+        }
+      } catch (error) {
+        console.error('Error checking geolocation:', error);
+        // Fail-open: allow access on error
+        setIsGeoAllowed(true);
+      } finally {
+        setGeoLoading(false);
+      }
+    };
+
+    checkGeolocation();
+  }, []);
+
+  if (loading || geoLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="space-y-4">
@@ -22,6 +52,10 @@ export const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps)
         </div>
       </div>
     );
+  }
+
+  if (!isGeoAllowed) {
+    return <GeoRestricted country={clientInfo?.country} countryCode={clientInfo?.country_code} />;
   }
 
   if (!user) {

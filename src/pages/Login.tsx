@@ -6,10 +6,16 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
+import { isCountryAllowed, getClientInfo } from '@/lib/clientInfo';
+import { GeoRestricted } from '@/components/GeoRestricted';
+import { Skeleton } from '@/components/ui/skeleton';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(true);
+  const [isGeoAllowed, setIsGeoAllowed] = useState(true);
+  const [clientInfo, setClientInfo] = useState<{ country: string; country_code: string } | null>(null);
   const {
     login,
     user,
@@ -19,6 +25,32 @@ const Login = () => {
     toast
   } = useToast();
   const navigate = useNavigate();
+
+  // Check geolocation on component mount
+  useEffect(() => {
+    const checkGeolocation = async () => {
+      try {
+        const allowed = await isCountryAllowed();
+        setIsGeoAllowed(allowed);
+        
+        if (!allowed) {
+          const info = await getClientInfo();
+          setClientInfo({
+            country: info.country,
+            country_code: info.country_code
+          });
+        }
+      } catch (error) {
+        console.error('Error checking geolocation:', error);
+        // Fail-open: allow access on error
+        setIsGeoAllowed(true);
+      } finally {
+        setGeoLoading(false);
+      }
+    };
+
+    checkGeolocation();
+  }, []);
 
   // Redirect if user is already logged in
   useEffect(() => {
@@ -48,14 +80,19 @@ const Login = () => {
     }
   };
 
-  // Show loading if auth is still initializing
-  if (authLoading) {
+  // Show loading if auth is still initializing or checking geolocation
+  if (authLoading || geoLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>;
+  }
+
+  // Show geo restriction if not allowed
+  if (!isGeoAllowed) {
+    return <GeoRestricted country={clientInfo?.country} countryCode={clientInfo?.country_code} />;
   }
   return <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
