@@ -19,6 +19,7 @@ const Login = () => {
   const {
     login,
     user,
+    authError,
     loading: authLoading
   } = useAuth();
   const {
@@ -79,6 +80,17 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  // Show auth error if user authentication failed due to approval/blocking
+  useEffect(() => {
+    if (authError) {
+      toast({
+        title: 'Authentication Error',
+        description: authError,
+        variant: 'destructive'
+      });
+    }
+  }, [authError, toast]);
 
   // Show loading if auth is still initializing or checking geolocation
   if (authLoading || geoLoading) {

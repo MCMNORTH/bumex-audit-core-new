@@ -20,6 +20,7 @@ interface AuthContextType {
   user: User | null;
   firebaseUser: FirebaseUser | null;
   loading: boolean;
+  authError: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -104,11 +105,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     // SECURITY: Reduced logging for production security
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       console.log('Auth state changed:', firebaseUser?.uid);
+      setAuthError(null); // Clear any previous auth errors
+      
       if (firebaseUser) {
         setFirebaseUser(firebaseUser);
         try {
@@ -119,24 +123,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
             console.log('User data:', userData);
             console.log('User approved:', userData.approved, 'User blocked:', userData.blocked);
-            // SECURITY: Only set user if account is approved and not blocked
-            if (userData.approved !== false && !userData.blocked) {
-              console.log('Setting user in context');
-              setUser(userData);
-              
-              // Log successful login with IP tracking
-              await createLogWithClientInfo('login', userData.id, 'User logged in', userData.id);
-            } else {
-              console.log('User not approved or blocked');
+            
+            // Check if user is blocked
+            if (userData.blocked) {
+              setAuthError('Your account has been blocked. Please contact support for assistance.');
               setUser(null);
-              // Account pending approval or blocked - should show appropriate message
+              await signOut(auth); // Sign out blocked users
+              return;
             }
+            
+            // Check if user is approved
+            if (userData.approved === false) {
+              setAuthError('Your account is pending approval. Please wait for an administrator to approve your account.');
+              setUser(null);
+              await signOut(auth); // Sign out unapproved users
+              return;
+            }
+            
+            // User is approved and not blocked
+            console.log('Setting user in context');
+            setUser(userData);
+            
+            // Log successful login with IP tracking
+            await createLogWithClientInfo('login', userData.id, 'User logged in', userData.id);
           } else {
             console.log('User document does not exist');
+            setAuthError('User account not found. Please contact support.');
             setUser(null);
+            await signOut(auth);
           }
         } catch (error) {
           console.error('Auth error:', error); // SECURITY: Generic error message
+          setAuthError('An error occurred while accessing your account. Please try again.');
           setUser(null);
         }
       } else {
@@ -180,6 +198,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     firebaseUser,
     loading,
+    authError,
     login,
     logout,
   };
