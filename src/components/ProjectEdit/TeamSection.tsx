@@ -32,10 +32,11 @@ const TeamSection = ({
   const staff = users.find(u => u.id === formData.team_assignments.staff_id);
 
   const handleTeamAssignmentChange = (role: keyof ProjectFormData['team_assignments'], userId: string) => {
+    const value = userId === 'none' ? '' : userId;
     onFormDataChange({
       team_assignments: {
         ...formData.team_assignments,
-        [role]: userId
+        [role]: value
       }
     });
   };
@@ -128,7 +129,7 @@ const TeamSection = ({
                 <SelectValue placeholder="Select lead partner" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No assignment</SelectItem>
+                <SelectItem value="none">No assignment</SelectItem>
                 {getUsersByRole('partner').map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.first_name} {user.last_name}
@@ -148,7 +149,7 @@ const TeamSection = ({
                 <SelectValue placeholder="Select partner" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No assignment</SelectItem>
+                <SelectItem value="none">No assignment</SelectItem>
                 {getUsersByRole('partner').map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.first_name} {user.last_name}
@@ -168,7 +169,7 @@ const TeamSection = ({
                 <SelectValue placeholder="Select in charge" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No assignment</SelectItem>
+                <SelectItem value="none">No assignment</SelectItem>
                 {getUsersByRole('incharge').map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.first_name} {user.last_name}
@@ -188,7 +189,7 @@ const TeamSection = ({
                 <SelectValue placeholder="Select staff" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No assignment</SelectItem>
+                <SelectItem value="none">No assignment</SelectItem>
                 {getUsersByRole('staff').map((user) => (
                   <SelectItem key={user.id} value={user.id}>
                     {user.first_name} {user.last_name}
