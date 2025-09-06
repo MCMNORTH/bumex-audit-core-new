@@ -10,6 +10,7 @@ import { Log } from '@/types';
 import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { LogLocationMap } from '@/components/LogLocationMap';
+import { TestLocationButton } from '@/components/TestLocationButton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
@@ -167,6 +168,7 @@ const Logs = () => {
             <CardDescription>Latest 100 system activities</CardDescription>
           </CardHeader>
           <CardContent>
+            <TestLocationButton />
             {filteredLogs.length > 0 ? (
               <Accordion type="multiple" className="space-y-2">
                 {filteredLogs.map((log) => (

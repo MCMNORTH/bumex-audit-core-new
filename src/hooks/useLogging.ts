@@ -119,7 +119,7 @@ export const useLogging = () => {
       const clientInfo = await getClientInfo();
       console.log('Creating log with client info:', clientInfo);
       
-      await addDoc(collection(db, 'logs'), {
+      const logData = {
         user_id: user.id,
         action,
         target_id: targetId,
@@ -135,9 +135,19 @@ export const useLogging = () => {
         latitude: clientInfo.latitude,
         longitude: clientInfo.longitude,
         precise_location: clientInfo.precise_location
-      });
+      };
       
-      console.log('Log created successfully');
+      console.log('About to save log data:', logData);
+      
+      await addDoc(collection(db, 'logs'), logData);
+      
+      console.log('Log created successfully with location data:', {
+        latitude: clientInfo.latitude,
+        longitude: clientInfo.longitude,
+        precise_location: clientInfo.precise_location,
+        city: clientInfo.city,
+        country: clientInfo.country
+      });
     } catch (error) {
       console.error('Error creating log:', error);
     }
