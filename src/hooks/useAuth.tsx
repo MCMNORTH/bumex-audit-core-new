@@ -4,7 +4,7 @@ import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, s
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
 
-// Cache for IP address to avoid multiple API calls
+// Cache for IP address and geolocation data to avoid multiple API calls
 let cachedIpData: { 
   ip: string; 
   userAgent: string;
@@ -13,6 +13,10 @@ let cachedIpData: {
   region?: string;
   timezone?: string;
   isp?: string;
+  latitude?: number;
+  longitude?: number;
+  precise_location?: boolean;
+  timestamp?: number;
 } | null = null;
 
 interface AuthContextType {
@@ -33,16 +37,63 @@ export const useAuth = () => {
   return context;
 };
 
+const getPreciseLocation = async () => {
+  try {
+    // Check if geolocation is supported
+    if (!navigator.geolocation) {
+      console.warn('Geolocation is not supported by this browser');
+      return null;
+    }
+
+    return new Promise<{ latitude: number; longitude: number } | null>((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          console.warn('Precise location failed:', error.message);
+          resolve(null);
+        },
+        { 
+          enableHighAccuracy: true, 
+          timeout: 10000, 
+          maximumAge: 0 // Always get fresh location
+        }
+      );
+    });
+  } catch (error) {
+    console.warn('Error getting precise location:', error);
+    return null;
+  }
+};
+
 const getClientInfo = async () => {
+  // Check if cached data is too old (more than 5 minutes)
+  if (cachedIpData && cachedIpData.timestamp && 
+      Date.now() - cachedIpData.timestamp > 5 * 60 * 1000) {
+    cachedIpData = null;
+  }
+  
   if (cachedIpData) return cachedIpData;
 
   try {
+    // Get precise location first
+    const preciseLocation = await getPreciseLocation();
+    
     // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
     const geoResponse = await fetch('https://ipapi.co/json/');
     const geoData = await geoResponse.json();
     
     // Get user agent
     const userAgent = navigator.userAgent;
+    
+    // Determine if we have precise location
+    const hasPreciseLocation = preciseLocation !== null && 
+                              preciseLocation.latitude !== undefined && 
+                              preciseLocation.longitude !== undefined;
     
     cachedIpData = { 
       ip: geoData.ip || 'unknown',
@@ -51,7 +102,11 @@ const getClientInfo = async () => {
       city: geoData.city,
       region: geoData.region,
       timezone: geoData.timezone,
-      isp: geoData.org
+      isp: geoData.org,
+      latitude: hasPreciseLocation ? preciseLocation.latitude : geoData.latitude,
+      longitude: hasPreciseLocation ? preciseLocation.longitude : geoData.longitude,
+      precise_location: hasPreciseLocation,
+      timestamp: Date.now()
     };
     
     return cachedIpData;
@@ -92,7 +147,10 @@ const createLogWithClientInfo = async (action: string, targetId: string, details
       city: clientInfo.city,
       region: clientInfo.region,
       timezone: clientInfo.timezone,
-      isp: clientInfo.isp
+      isp: clientInfo.isp,
+      latitude: clientInfo.latitude || null,
+      longitude: clientInfo.longitude || null,
+      precise_location: clientInfo.precise_location || false
     });
   } catch (error) {
     console.error('Error creating log:', error);
