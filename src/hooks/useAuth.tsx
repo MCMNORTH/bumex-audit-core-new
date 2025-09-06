@@ -5,7 +5,15 @@ import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
 
 // Cache for IP address to avoid multiple API calls
-let cachedIpData: { ip: string; userAgent: string } | null = null;
+let cachedIpData: { 
+  ip: string; 
+  userAgent: string;
+  country?: string;
+  city?: string;
+  region?: string;
+  timezone?: string;
+  isp?: string;
+} | null = null;
 
 interface AuthContextType {
   user: User | null;
@@ -29,22 +37,42 @@ const getClientInfo = async () => {
   if (cachedIpData) return cachedIpData;
 
   try {
-    // Get user's public IP address
-    const ipResponse = await fetch('https://api.ipify.org?format=json');
-    const { ip } = await ipResponse.json();
+    // Get user's public IP address with geolocation data
+    const geoResponse = await fetch('http://ip-api.com/json/');
+    const geoData = await geoResponse.json();
     
     // Get user agent
     const userAgent = navigator.userAgent;
     
-    cachedIpData = { ip, userAgent };
+    cachedIpData = { 
+      ip: geoData.query || 'unknown',
+      userAgent,
+      country: geoData.country,
+      city: geoData.city,
+      region: geoData.regionName,
+      timezone: geoData.timezone,
+      isp: geoData.isp
+    };
+    
     return cachedIpData;
   } catch (error) {
-    console.warn('Failed to fetch IP address:', error);
-    // Return fallback data
-    return { 
-      ip: 'unknown', 
-      userAgent: navigator.userAgent || 'unknown' 
-    };
+    console.warn('Failed to fetch IP/geolocation data:', error);
+    // Fallback to basic IP service
+    try {
+      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const { ip } = await ipResponse.json();
+      
+      cachedIpData = { 
+        ip, 
+        userAgent: navigator.userAgent || 'unknown'
+      };
+      return cachedIpData;
+    } catch (fallbackError) {
+      return { 
+        ip: 'unknown', 
+        userAgent: navigator.userAgent || 'unknown' 
+      };
+    }
   }
 };
 
@@ -59,7 +87,12 @@ const createLogWithClientInfo = async (action: string, targetId: string, details
       timestamp: new Date(),
       details: details || null,
       ip_address: clientInfo.ip,
-      user_agent: clientInfo.userAgent
+      user_agent: clientInfo.userAgent,
+      country: clientInfo.country,
+      city: clientInfo.city,
+      region: clientInfo.region,
+      timezone: clientInfo.timezone,
+      isp: clientInfo.isp
     });
   } catch (error) {
     console.error('Error creating log:', error);

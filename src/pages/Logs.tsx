@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Log } from '@/types';
-import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor } from 'lucide-react';
+import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const Logs = () => {
@@ -90,7 +90,10 @@ const Logs = () => {
     log.target_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
     log.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (log as any).ip_address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (log as any).user_agent?.toLowerCase().includes(searchTerm.toLowerCase())
+    (log as any).user_agent?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log as any).country?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log as any).city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log as any).isp?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -224,27 +227,59 @@ const Logs = () => {
                           </div>
                           <div>
                             <h4 className="text-sm font-medium text-gray-900 mb-2">Client Information</h4>
-                            <div className="space-y-2 text-sm">
-                              <div className="flex items-center space-x-2">
-                                <Globe className="h-3 w-3 text-gray-400" />
-                                <span className="text-gray-500">IP Address:</span>
+                            <div className="space-y-3 text-sm">
+                              <div className="flex items-start space-x-2">
+                                <Globe className="h-3 w-3 text-gray-400 mt-0.5" />
+                                <div className="flex-1">
+                                  <span className="text-gray-500">IP Address:</span>
+                                  <div className="text-gray-900 font-mono text-xs mt-1">
+                                    {(log as any).ip_address || 'N/A'}
+                                  </div>
+                                </div>
                               </div>
-                              <div className="ml-5">
-                                <span className="text-gray-900 font-mono text-xs">
-                                  {(log as any).ip_address || 'N/A'}
-                                </span>
-                              </div>
-                              <div className="flex items-center space-x-2 pt-2">
-                                <Monitor className="h-3 w-3 text-gray-400" />
-                                <span className="text-gray-500">User Agent:</span>
-                              </div>
-                              <div className="ml-5">
-                                <span className="text-gray-900 text-xs break-all">
-                                  {(log as any).user_agent ? 
-                                    `${(log as any).user_agent.substring(0, 50)}${(log as any).user_agent.length > 50 ? '...' : ''}` 
-                                    : 'N/A'
-                                  }
-                                </span>
+                              
+                              {((log as any).country || (log as any).city) && (
+                                <div className="flex items-start space-x-2">
+                                  <MapPin className="h-3 w-3 text-gray-400 mt-0.5" />
+                                  <div className="flex-1">
+                                    <span className="text-gray-500">Location:</span>
+                                    <div className="text-gray-900 text-xs mt-1">
+                                      {[(log as any).city, (log as any).region, (log as any).country]
+                                        .filter(Boolean)
+                                        .join(', ') || 'N/A'}
+                                    </div>
+                                    {(log as any).timezone && (
+                                      <div className="text-gray-600 text-xs">
+                                        Timezone: {(log as any).timezone}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {(log as any).isp && (
+                                <div className="flex items-start space-x-2">
+                                  <Wifi className="h-3 w-3 text-gray-400 mt-0.5" />
+                                  <div className="flex-1">
+                                    <span className="text-gray-500">ISP:</span>
+                                    <div className="text-gray-900 text-xs mt-1">
+                                      {(log as any).isp}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <div className="flex items-start space-x-2">
+                                <Monitor className="h-3 w-3 text-gray-400 mt-0.5" />
+                                <div className="flex-1">
+                                  <span className="text-gray-500">User Agent:</span>
+                                  <div className="text-gray-900 text-xs mt-1 break-all">
+                                    {(log as any).user_agent ? 
+                                      `${(log as any).user_agent.substring(0, 100)}${(log as any).user_agent.length > 100 ? '...' : ''}` 
+                                      : 'N/A'
+                                    }
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
