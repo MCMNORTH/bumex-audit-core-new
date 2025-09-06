@@ -378,6 +378,7 @@ const ProjectEditContent = ({
             signOffLevel="manager"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            childSections={['engagement-profile-section', 'sp-specialists-section', 'independence-section', 'communications-section']}
           >
             <div className="space-y-8">
               {renderOverviewInfo()}
@@ -386,16 +387,62 @@ const ProjectEditContent = ({
           </SectionWrapper>
         )}
 
-        {/* Section 1, Engagement management children keep as before */}
-        {activeSection === 'engagement-profile-section' && <div className="space-y-8">
+        {/* Section 1, Engagement management children with sign-off */}
+        {activeSection === 'engagement-profile-section' && (
+          <SectionWrapper
+            sectionId="engagement-profile-section"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
             {renderEngagementProfileContent()}
-            <div className="ml-4">
-              {renderSignOffContent()}
-            </div>
-          </div>}
-        {activeSection === 'sp-specialists-section' && renderSPSpecialistsContent()}
-        {activeSection === 'independence-section' && renderIndependenceContent()}
-        {activeSection === 'communications-section' && renderCommunicationsContent()}
+          </SectionWrapper>
+        )}
+        
+        {activeSection === 'sp-specialists-section' && (
+          <SectionWrapper
+            sectionId="sp-specialists-section"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            {renderSPSpecialistsContent()}
+          </SectionWrapper>
+        )}
+        
+        {activeSection === 'independence-section' && (
+          <SectionWrapper
+            sectionId="independence-section"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            {renderIndependenceContent()}
+          </SectionWrapper>
+        )}
+        
+        {activeSection === 'communications-section' && (
+          <SectionWrapper
+            sectionId="communications-section"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            {renderCommunicationsContent()}
+          </SectionWrapper>
+        )}
         {activeSection === 'sign-off-1' && renderSignOffContent()}
         {activeSection === 'sign-off-2' && renderSignOffContent()}
         {activeSection === 'sign-off-3' && renderSignOffContent()}

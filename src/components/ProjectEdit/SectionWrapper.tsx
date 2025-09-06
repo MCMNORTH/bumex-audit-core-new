@@ -13,6 +13,7 @@ interface SectionWrapperProps {
   signOffLevel: 'incharge' | 'manager';
   onSignOff: (sectionId: string) => void;
   onUnsign: (sectionId: string) => void;
+  childSections?: string[]; // Optional array of child section IDs for parent sections
 }
 
 const SectionWrapper: React.FC<SectionWrapperProps> = ({
@@ -23,24 +24,34 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
   currentUser,
   signOffLevel,
   onSignOff,
-  onUnsign
+  onUnsign,
+  childSections = []
 }) => {
   const signOffData = formData.signoffs?.[sectionId] || { signed: false };
   const canSignOff = canSignOffSection(currentUser, formData, signOffLevel);
   const canUnsign = canSignOff; // Same permission for unsigning
   
+  // Check if all child sections are signed off (for parent sections)
+  const areAllChildrenSignedOff = childSections.length === 0 || 
+    childSections.every(childId => formData.signoffs?.[childId]?.signed);
+  
+  // For parent sections, only show sign-off if all children are signed
+  const showSignOff = childSections.length === 0 || areAllChildrenSignedOff;
+  
   return (
     <div>
-      <SignOffBar
-        sectionId={sectionId}
-        signOffData={signOffData}
-        users={users}
-        canSignOff={canSignOff}
-        canUnsign={canUnsign}
-        onSignOff={onSignOff}
-        onUnsign={onUnsign}
-        signOffLevel={signOffLevel}
-      />
+      {showSignOff && (
+        <SignOffBar
+          sectionId={sectionId}
+          signOffData={signOffData}
+          users={users}
+          canSignOff={canSignOff}
+          canUnsign={canUnsign}
+          onSignOff={onSignOff}
+          onUnsign={onUnsign}
+          signOffLevel={signOffLevel}
+        />
+      )}
       
       <div className={signOffData.signed ? 'relative' : ''}>
         {signOffData.signed && (
