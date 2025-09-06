@@ -28,6 +28,7 @@ const TeamSection = ({
   const leadDeveloper = users.find(u => u.id === formData.lead_developer_id);
   const leadPartner = users.find(u => u.id === formData.team_assignments.lead_partner_id);
   const partner = users.find(u => u.id === formData.team_assignments.partner_id);
+  const manager = users.find(u => u.id === formData.team_assignments.manager_id);
   const inCharge = users.find(u => u.id === formData.team_assignments.in_charge_id);
   const staff = users.find(u => u.id === formData.team_assignments.staff_id);
 
@@ -77,6 +78,13 @@ const TeamSection = ({
               <Label className="font-medium">Partner</Label>
               <div className="p-3 bg-muted rounded-md">
                 {partner ? `${partner.first_name} ${partner.last_name}` : 'Not assigned'}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="font-medium">Manager</Label>
+              <div className="p-3 bg-muted rounded-md">
+                {manager ? `${manager.first_name} ${manager.last_name}` : 'Not assigned'}
               </div>
             </div>
             
@@ -141,6 +149,18 @@ const TeamSection = ({
               value={formData.team_assignments.partner_id}
               onValueChange={(value) => handleTeamAssignmentChange('partner_id', value)}
               placeholder="Select partner"
+              emptyText="users"
+              disabled={!isLeadDeveloper}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label className="font-medium">Manager</Label>
+            <SearchableUserSelector
+              users={getSelectableUsers()}
+              value={formData.team_assignments.manager_id}
+              onValueChange={(value) => handleTeamAssignmentChange('manager_id', value)}
+              placeholder="Select manager"
               emptyText="users"
               disabled={!isLeadDeveloper}
             />

@@ -29,6 +29,7 @@ export interface Project {
   team_assignments?: {
     lead_partner_id?: string;
     partner_id?: string;
+    manager_id?: string;
     in_charge_id?: string;
     staff_id?: string;
   };

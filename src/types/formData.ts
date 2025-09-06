@@ -75,6 +75,7 @@ export interface ProjectFormData {
   team_assignments: {
     lead_partner_id: string;
     partner_id: string;
+    manager_id: string;
     in_charge_id: string;
     staff_id: string;
   };
@@ -534,6 +535,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   team_assignments: {
     lead_partner_id: '',
     partner_id: '',
+    manager_id: '',
     in_charge_id: '',
     staff_id: '',
   },

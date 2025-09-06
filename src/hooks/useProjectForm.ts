@@ -22,6 +22,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       team_assignments: {
         lead_partner_id: projectData.team_assignments?.lead_partner_id || '',
         partner_id: projectData.team_assignments?.partner_id || '',
+        manager_id: projectData.team_assignments?.manager_id || '',
         in_charge_id: projectData.team_assignments?.in_charge_id || '',
         staff_id: projectData.team_assignments?.staff_id || '',
       },
