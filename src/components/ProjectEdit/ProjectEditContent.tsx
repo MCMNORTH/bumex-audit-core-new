@@ -18,6 +18,9 @@ import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
 import FinancialReportingProcessSection from './FinancialReportingProcessSection';
 import TeamSection from './TeamSection';
+import SectionWrapper from './SectionWrapper';
+import ProjectSignOffsSummary from './ProjectSignOffsSummary';
+import { canEditProject, canViewTeamManagement } from '@/utils/permissions';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -46,6 +49,8 @@ interface ProjectEditContentProps {
   onDownloadMRRFile: () => void;
   onSectionChange?: (sectionId: string) => void; // NEW, optional, fallback gracefully
   sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
+  onSignOff?: (sectionId: string, userId: string) => void;
+  onUnsign?: (sectionId: string) => void;
 }
 const ProjectEditContent = ({
   project,
@@ -74,9 +79,19 @@ const ProjectEditContent = ({
   onRemoveMRRFile,
   onDownloadMRRFile,
   onSectionChange = () => {},
-  sidebarSections = []
+  sidebarSections = [],
+  onSignOff = () => {},
+  onUnsign = () => {}
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
+  const currentUser = users.find(u => u.id === currentUserId);
+  const canEdit = canEditProject(currentUser || null, formData);
+  
+  const handleSignOffWrapper = (sectionId: string) => {
+    if (currentUserId) {
+      onSignOff(sectionId, currentUserId);
+    }
+  };
   const handleAssignmentChange = (userId: string, checked: boolean) => {
     const currentAssignments = formData.assigned_to || [];
     const updatedAssignments = checked ? [...currentAssignments, userId] : currentAssignments.filter(id => id !== userId);

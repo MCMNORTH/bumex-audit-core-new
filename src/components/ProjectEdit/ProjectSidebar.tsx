@@ -9,6 +9,8 @@ interface SidebarSection {
   isParent?: boolean;
   children?: SidebarSection[];
   number?: string;
+  devOnly?: boolean;
+  signOffLevel?: 'incharge' | 'manager';
 }
 
 interface ProjectSidebarProps {
@@ -16,6 +18,7 @@ interface ProjectSidebarProps {
   clientName?: string;
   sections: SidebarSection[];
   activeSection: string;
+  currentUserRole?: string;
   onBack: () => void;
   onSectionChange: (sectionId: string) => void;
 }
@@ -25,6 +28,7 @@ const ProjectSidebar = ({
   clientName,
   sections,
   activeSection,
+  currentUserRole,
   onBack,
   onSectionChange
 }: ProjectSidebarProps) => {
@@ -61,6 +65,11 @@ const ProjectSidebar = ({
   const renderSection = (section: SidebarSection, level: number = 0) => {
     const isExpanded = expandedSections.has(section.id);
     const isActive = activeSection === section.id;
+
+    // Hide developer-only sections for non-developers
+    if (section.devOnly && currentUserRole !== 'dev') {
+      return null;
+    }
 
     return (
       <div key={section.id}>
@@ -119,7 +128,7 @@ const ProjectSidebar = ({
       </div>
       <nav className="flex-1 p-4 overflow-y-auto">
         <div className="space-y-1">
-          {sections.map(section => renderSection(section))}
+          {sections.map(section => renderSection(section)).filter(Boolean)}
         </div>
       </nav>
     </div>

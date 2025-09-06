@@ -11,6 +11,8 @@ export const useProjectData = () => {
     handleSave,
     handleAssignmentChange,
     handleFormDataChange,
+    handleSignOff,
+    handleUnsign,
     initializeFormData,
     setFormData
   } = useProjectForm(project, id);
@@ -33,6 +35,8 @@ export const useProjectData = () => {
     handleSave,
     handleAssignmentChange,
     handleFormDataChange,
+    handleSignOff,
+    handleUnsign,
     setFormData
   };
 };

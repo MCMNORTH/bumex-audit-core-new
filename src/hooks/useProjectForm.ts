@@ -8,7 +8,10 @@ import { ProjectFormData, getInitialFormData } from '@/types/formData';
 
 export const useProjectForm = (project: Project | null, projectId?: string) => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState<ProjectFormData>(getInitialFormData());
+  const [formData, setFormData] = useState<ProjectFormData>({
+    ...getInitialFormData(),
+    signoffs: {}
+  });
   const [saving, setSaving] = useState(false);
 
   // Initialize form data from project
@@ -328,7 +331,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       fraud_financial_statement: (projectData as any).fraud_financial_statement || [],
       revenue_recognition_fraud_risk: (projectData as any).revenue_recognition_fraud_risk || '',
       revenue_recognition_identified: (projectData as any).revenue_recognition_identified || '',
-      overall_fraud_response: (projectData as any).overall_fraud_response || ''
+      overall_fraud_response: (projectData as any).overall_fraud_response || '',
+      signoffs: (projectData as any).signoffs || {}
     });
   };
 
@@ -373,12 +377,84 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
+  const handleSignOff = async (sectionId: string, userId: string) => {
+    if (!projectId) return;
+    
+    const signOffData = {
+      signed: true,
+      signedBy: userId,
+      signedAt: new Date().toISOString()
+    };
+
+    // Update local state
+    setFormData(prev => ({
+      ...prev,
+      signoffs: {
+        ...prev.signoffs,
+        [sectionId]: signOffData
+      }
+    }));
+
+    // Update database immediately
+    try {
+      await updateDoc(doc(db, 'projects', projectId), {
+        [`signoffs.${sectionId}`]: signOffData
+      });
+      
+      toast({
+        title: 'Success',
+        description: 'Section signed off successfully',
+      });
+    } catch (error) {
+      console.error('Error signing off section:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to sign off section',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleUnsign = async (sectionId: string) => {
+    if (!projectId) return;
+
+    // Update local state
+    setFormData(prev => ({
+      ...prev,
+      signoffs: {
+        ...prev.signoffs,
+        [sectionId]: { signed: false }
+      }
+    }));
+
+    // Update database immediately
+    try {
+      await updateDoc(doc(db, 'projects', projectId), {
+        [`signoffs.${sectionId}`]: { signed: false }
+      });
+      
+      toast({
+        title: 'Success',
+        description: 'Section unsigned successfully',
+      });
+    } catch (error) {
+      console.error('Error unsigning section:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to unsign section',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return {
     formData,
     saving,
     handleSave,
     handleAssignmentChange,
     handleFormDataChange,
+    handleSignOff,
+    handleUnsign,
     initializeFormData,
     setFormData
   };

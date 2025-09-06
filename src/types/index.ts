@@ -33,6 +33,13 @@ export interface Project {
     in_charge_ids?: string[];
     staff_ids?: string[];
   };
+  signoffs?: {
+    [sectionId: string]: {
+      signed: boolean;
+      signedBy?: string;
+      signedAt?: string;
+    };
+  };
   assigned_to: string[]; // Deprecated but kept for backward compatibility
   status: 'new' | 'inprogress' | 'closed' | 'archived';
   period_start: Date;

@@ -6,6 +6,7 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 import ProjectSidebar from '@/components/ProjectEdit/ProjectSidebar';
 import ProjectEditContent from '@/components/ProjectEdit/ProjectEditContent';
 import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
+import { canViewTeamManagement } from '@/utils/permissions';
 
 const ProjectEdit = () => {
   console.log('ProjectEdit component loaded - no teamDialogOpen references');
@@ -24,6 +25,8 @@ const ProjectEdit = () => {
     handleSave,
     handleAssignmentChange,
     handleFormDataChange,
+    handleSignOff,
+    handleUnsign,
   } = useProjectData();
 
   const {
@@ -54,12 +57,14 @@ const ProjectEdit = () => {
       active: true,
       isParent: true,
       number: '1.',
+      signOffLevel: 'manager' as const,
       children: [
         { 
           id: 'engagement-profile-section', 
           title: 'Engagement profile & Strategy', 
           active: true, 
           number: '1.',
+          signOffLevel: 'incharge' as const,
           isParent: true,
           children: [
           ]
@@ -79,6 +84,7 @@ const ProjectEdit = () => {
           active: false,
           isParent: true,
           number: '2.',
+          signOffLevel: 'incharge' as const,
           children: [
             { id: 'initial-independence', title: 'Initial independence and conclusion', active: false, number: '1.' },
           ]
@@ -89,6 +95,7 @@ const ProjectEdit = () => {
           active: false,
           isParent: true,
           number: '4.',
+          signOffLevel: 'incharge' as const,
           children: [
           ]
         }
@@ -100,6 +107,7 @@ const ProjectEdit = () => {
       isParent: true,
       active: false,
       number: '2.',
+      signOffLevel: 'manager' as const,
       children: [
         {
           id: 'materiality',
@@ -202,6 +210,7 @@ const ProjectEdit = () => {
       isParent: true,
       active: false,
       number: '3.',
+      signOffLevel: 'manager' as const,
       children: [
         { 
           id: 'financial-reporting', 
@@ -249,10 +258,18 @@ const ProjectEdit = () => {
       isParent: true,
       active: false,
       number: '4.',
+      signOffLevel: 'manager' as const,
     },
     {
       id: 'team-section',
       title: 'Team Management',
+      isParent: false,
+      active: false,
+      devOnly: true,
+    },
+    {
+      id: 'project-signoffs-summary',
+      title: 'Project Sign-offs Summary',
       isParent: false,
       active: false,
     },
@@ -303,6 +320,7 @@ const ProjectEdit = () => {
         clientName={selectedClient?.name}
         sections={sidebarSections}
         activeSection={activeSection}
+        currentUserRole={user?.role}
         onBack={() => navigate('/projects')}
         onSectionChange={setActiveSection}
       />
@@ -333,9 +351,11 @@ const ProjectEdit = () => {
         onMRRFileUpload={handleMRRFileUpload}
         onRemoveMRRFile={handleRemoveMRRFileWrapper}
         onDownloadMRRFile={handleDownloadMRRFileWrapper}
-        // Pass sidebarSections for dynamic cards
+        // Pass sidebarSections for dynamic cards and sign-off handlers
         sidebarSections={sidebarSections}
         onSectionChange={setActiveSection}
+        onSignOff={handleSignOff}
+        onUnsign={handleUnsign}
       />
     </div>
   );

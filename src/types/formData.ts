@@ -79,6 +79,13 @@ export interface ProjectFormData {
     in_charge_ids: string[];
     staff_ids: string[];
   };
+  signoffs: {
+    [sectionId: string]: {
+      signed: boolean;
+      signedBy?: string;
+      signedAt?: string;
+    };
+  };
   assigned_to: string[]; // Deprecated but kept for backward compatibility
   status: 'new' | 'inprogress' | 'closed' | 'archived';
   period_start: string;
@@ -539,6 +546,7 @@ export const getInitialFormData = (): ProjectFormData => ({
     in_charge_ids: [],
     staff_ids: [],
   },
+  signoffs: {},
   assigned_to: [],
   status: 'new',
   period_start: '',
