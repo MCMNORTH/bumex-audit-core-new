@@ -1,52 +1,191 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Check, X, Clock, ChevronRight, ChevronDown, User as UserIcon } from 'lucide-react';
 import { User } from '@/types';
 import { ProjectFormData } from '@/types/formData';
+import { canSignOffSection } from '@/utils/permissions';
 
 interface ProjectSignOffsSummaryProps {
   formData: ProjectFormData;
   users: User[];
   sidebarSections: any[];
+  currentUser: User | null;
+  onUnsign?: (sectionId: string) => void;
 }
+
+interface TreeNodeProps {
+  section: any;
+  formData: ProjectFormData;
+  users: User[];
+  currentUser: User | null;
+  level: number;
+  onUnsign?: (sectionId: string) => void;
+}
+
+const TreeNode: React.FC<TreeNodeProps> = ({ 
+  section, 
+  formData, 
+  users, 
+  currentUser, 
+  level, 
+  onUnsign 
+}) => {
+  const [isExpanded, setIsExpanded] = React.useState(true);
+  const signOffData = formData.signoffs?.[section.id] || { signed: false };
+  const signedByUser = signOffData.signedBy ? users.find(u => u.id === signOffData.signedBy) : null;
+  
+  // Check if this section has sign-off capability
+  const hasSignOff = section.signOffLevel && ['incharge', 'manager'].includes(section.signOffLevel);
+  
+  // Check if user can unsign this section
+  const canUnsign = hasSignOff && currentUser && canSignOffSection(currentUser, formData, section.signOffLevel);
+  
+  const formatDate = (dateString?: string) => {
+    return dateString ? new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }) : '';
+  };
+
+  const handleUnsign = () => {
+    if (onUnsign && section.id) {
+      onUnsign(section.id);
+    }
+  };
+
+  const indent = level * 24;
+  const hasChildren = section.children && section.children.length > 0;
+
+  return (
+    <div className="border-l border-gray-200 ml-4">
+      <div 
+        className="flex items-center py-2 px-3 hover:bg-gray-50 rounded-md transition-colors"
+        style={{ marginLeft: `${indent}px` }}
+      >
+        {hasChildren && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex items-center justify-center w-5 h-5 mr-2 hover:bg-gray-200 rounded"
+          >
+            {isExpanded ? (
+              <ChevronDown className="h-3 w-3" />
+            ) : (
+              <ChevronRight className="h-3 w-3" />
+            )}
+          </button>
+        )}
+        
+        {!hasChildren && <div className="w-7" />}
+
+        <div className="flex items-center space-x-3 flex-1">
+          {hasSignOff && (
+            <>
+              {signOffData.signed ? (
+                <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+              ) : (
+                <X className="h-4 w-4 text-gray-400 flex-shrink-0" />
+              )}
+            </>
+          )}
+          
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm text-gray-500">{section.number}</span>
+              <span className="font-medium text-gray-900 truncate">{section.title}</span>
+              
+              {hasSignOff && (
+                <Badge 
+                  variant={signOffData.signed ? "default" : "secondary"}
+                  className="text-xs"
+                >
+                  {section.signOffLevel === 'manager' ? 'Manager+' : 'In Charge+'}
+                </Badge>
+              )}
+            </div>
+            
+            {hasSignOff && signOffData.signed && signedByUser && signOffData.signedAt && (
+              <div className="flex items-center space-x-4 mt-1">
+                <div className="flex items-center space-x-1 text-xs text-gray-600">
+                  <UserIcon className="h-3 w-3" />
+                  <span>{signedByUser.first_name} {signedByUser.last_name}</span>
+                </div>
+                <div className="flex items-center space-x-1 text-xs text-gray-600">
+                  <Clock className="h-3 w-3" />
+                  <span>{formatDate(signOffData.signedAt)}</span>
+                </div>
+                {canUnsign && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleUnsign}
+                    className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    Unsign
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      {hasChildren && isExpanded && (
+        <div className="ml-2">
+          {section.children.map((child: any) => (
+            <TreeNode
+              key={child.id}
+              section={child}
+              formData={formData}
+              users={users}
+              currentUser={currentUser}
+              level={level + 1}
+              onUnsign={onUnsign}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ProjectSignOffsSummary: React.FC<ProjectSignOffsSummaryProps> = ({
   formData,
   users,
-  sidebarSections
+  sidebarSections,
+  currentUser,
+  onUnsign
 }) => {
-  // Define sections that require sign-offs with their levels
-  const signOffSections = [
-    { id: 'engagement-profile-section', title: 'Engagement Profile & Strategy', level: 'incharge' },
-    { id: 'independence-section', title: 'Independence', level: 'incharge' },
-    { id: 'communications-section', title: 'Communications, Inquiries and Minutes', level: 'incharge' },
-    { id: 'materiality', title: 'Materiality', level: 'incharge' },
-    { id: 'risk-assessment', title: 'Risk Assessment', level: 'incharge' },
-    { id: 'components-of-internal-control', title: 'Components of Internal Control', level: 'incharge' },
-    { id: 'fraud', title: 'Fraud', level: 'incharge' },
-    { id: 'overall-response', title: 'Overall Response', level: 'incharge' },
-    { id: 'engagement-management', title: 'Engagement Management (Complete)', level: 'manager' },
-    { id: 'entity-wide-procedures', title: 'Entity Wide Procedures (Complete)', level: 'manager' },
-    { id: 'business-processes', title: 'Business Processes (Complete)', level: 'manager' },
-    { id: 'conclusions-and-reporting', title: 'Conclusions and Reporting (Complete)', level: 'manager' },
-  ];
-
-  const getSignOffData = (sectionId: string) => {
-    return formData.signoffs?.[sectionId] || { signed: false };
+  // Get all sections that can be signed off
+  const getAllSignOffSections = (sections: any[]): any[] => {
+    const result: any[] = [];
+    
+    const traverse = (sectionList: any[]) => {
+      sectionList.forEach(section => {
+        if (section.signOffLevel) {
+          result.push(section);
+        }
+        if (section.children) {
+          traverse(section.children);
+        }
+      });
+    };
+    
+    traverse(sections);
+    return result;
   };
 
-  const getSignedByUser = (signedBy?: string) => {
-    return signedBy ? users.find(u => u.id === signedBy) : null;
-  };
-
-  const formatDate = (dateString?: string) => {
-    return dateString ? new Date(dateString).toLocaleString() : '';
-  };
-
+  const signOffSections = getAllSignOffSections(sidebarSections);
+  
   const getProgressStats = () => {
     const total = signOffSections.length;
-    const signed = signOffSections.filter(section => getSignOffData(section.id).signed).length;
+    const signed = signOffSections.filter(section => 
+      formData.signoffs?.[section.id]?.signed
+    ).length;
     const percentage = total > 0 ? Math.round((signed / total) * 100) : 0;
     
     return { total, signed, percentage };
@@ -95,90 +234,29 @@ const ProjectSignOffsSummary: React.FC<ProjectSignOffsSummaryProps> = ({
         </CardContent>
       </Card>
 
-      {/* Sections by Level */}
-      <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4">In Charge+ Sections</h3>
-          <div className="space-y-3">
-            {signOffSections
-              .filter(section => section.level === 'incharge')
-              .map(section => {
-                const signOffData = getSignOffData(section.id);
-                const signedByUser = getSignedByUser(signOffData.signedBy);
-                
-                return (
-                  <Card key={section.id} className={`border-l-4 ${
-                    signOffData.signed ? 'border-l-green-500 bg-green-50' : 'border-l-yellow-500 bg-yellow-50'
-                  }`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          {signOffData.signed ? (
-                            <Check className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <X className="h-5 w-5 text-yellow-600" />
-                          )}
-                          <div>
-                            <h4 className="font-medium text-gray-900">{section.title}</h4>
-                            {signOffData.signed && signedByUser && signOffData.signedAt && (
-                              <p className="text-sm text-gray-600">
-                                Signed by {signedByUser.first_name} {signedByUser.last_name} on {formatDate(signOffData.signedAt)}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <Badge variant={signOffData.signed ? "default" : "secondary"}>
-                          {signOffData.signed ? "Signed" : "Pending"}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+      {/* Project Tree View */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Project Structure & Sign-offs</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            {sidebarSections
+              .filter(section => !section.devOnly)
+              .map((section) => (
+                <TreeNode
+                  key={section.id}
+                  section={section}
+                  formData={formData}
+                  users={users}
+                  currentUser={currentUser}
+                  level={0}
+                  onUnsign={onUnsign}
+                />
+              ))}
           </div>
-        </div>
-
-        <div>
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Manager+ Sections</h3>
-          <div className="space-y-3">
-            {signOffSections
-              .filter(section => section.level === 'manager')
-              .map(section => {
-                const signOffData = getSignOffData(section.id);
-                const signedByUser = getSignedByUser(signOffData.signedBy);
-                
-                return (
-                  <Card key={section.id} className={`border-l-4 ${
-                    signOffData.signed ? 'border-l-green-500 bg-green-50' : 'border-l-red-500 bg-red-50'
-                  }`}>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          {signOffData.signed ? (
-                            <Check className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <X className="h-5 w-5 text-red-600" />
-                          )}
-                          <div>
-                            <h4 className="font-medium text-gray-900">{section.title}</h4>
-                            {signOffData.signed && signedByUser && signOffData.signedAt && (
-                              <p className="text-sm text-gray-600">
-                                Signed by {signedByUser.first_name} {signedByUser.last_name} on {formatDate(signOffData.signedAt)}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <Badge variant={signOffData.signed ? "default" : "destructive"}>
-                          {signOffData.signed ? "Signed" : "Requires Manager+"}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-          </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

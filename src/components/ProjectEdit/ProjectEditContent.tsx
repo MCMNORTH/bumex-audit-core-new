@@ -505,7 +505,7 @@ const ProjectEditContent = ({
         {renderedEntityContent}
 
         {/* TEAM SECTION */}
-        {activeSection === 'team-section' && (
+        {activeSection === 'team-section' && canViewTeamManagement(currentUser) && (
           <div className="space-y-4">
             {renderSectionHeader('Team Management')}
             <TeamSection
@@ -519,6 +519,17 @@ const ProjectEditContent = ({
               projectId={project?.id}
             />
           </div>
+        )}
+        
+        {/* PROJECT SIGN-OFFS SUMMARY */}
+        {activeSection === 'project-signoffs-summary' && (
+          <ProjectSignOffsSummary
+            formData={formData}
+            users={users}
+            sidebarSections={sidebarSections}
+            currentUser={currentUser}
+            onUnsign={onUnsign}
+          />
         )}
       </div>
     </div>
