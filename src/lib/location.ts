@@ -11,7 +11,14 @@ interface LocationOptions {
   maximumAge?: number;
   accuracyThreshold?: number;
   maxAttempts?: number;
+  useWatchPosition?: boolean;
+  watchDuration?: number;
 }
+
+// Detect if we're on mobile for better accuracy thresholds
+const isMobileDevice = (): boolean => {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
 
 /**
  * Attempts to get the most accurate location possible using multiple strategies
@@ -19,12 +26,22 @@ interface LocationOptions {
 export const getBestEffortLocation = async (
   options: LocationOptions = {}
 ): Promise<LocationResult | null> => {
+  const mobile = isMobileDevice();
   const {
-    timeout = 15000,
-    maximumAge = 0,
-    accuracyThreshold = 100, // 100 meters
-    maxAttempts = 3
+    timeout = 20000,
+    maximumAge = 300000, // 5 minutes - allow cached positions
+    accuracyThreshold = mobile ? 100 : 500, // Mobile: 100m, Desktop: 500m
+    maxAttempts = 3,
+    useWatchPosition = true,
+    watchDuration = 8000 // 8 seconds of watching
   } = options;
+
+  console.log('Starting location request with enhanced strategy:', {
+    mobile,
+    accuracyThreshold,
+    useWatchPosition,
+    watchDuration
+  });
 
   if (!navigator.geolocation) {
     console.warn('Geolocation is not supported by this browser');
@@ -32,11 +49,86 @@ export const getBestEffortLocation = async (
   }
 
   let bestLocation: LocationResult | null = null;
+  const locations: LocationResult[] = [];
 
-  // Strategy 1: High accuracy GPS
+  // Strategy 1: Watch position for multiple fixes (more accurate)
+  if (useWatchPosition) {
+    try {
+      console.log('Strategy 1: Using watchPosition for aggregated location fixes');
+      
+      bestLocation = await new Promise<LocationResult | null>((resolve) => {
+        let watchId: number;
+        let timeoutId: NodeJS.Timeout;
+        let bestResult: LocationResult | null = null;
+        
+        const cleanup = () => {
+          if (watchId !== undefined) {
+            navigator.geolocation.clearWatch(watchId);
+          }
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+        };
+
+        timeoutId = setTimeout(() => {
+          cleanup();
+          console.log('Watch position timeout, returning best result:', bestResult);
+          resolve(bestResult);
+        }, watchDuration);
+
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            const result: LocationResult = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              method: 'gps',
+              timestamp: position.timestamp
+            };
+
+            locations.push(result);
+            console.log(`Watch position fix ${locations.length}:`, {
+              accuracy: result.accuracy,
+              coords: `${result.latitude}, ${result.longitude}`
+            });
+
+            // Keep the most accurate result
+            if (!bestResult || result.accuracy < bestResult.accuracy) {
+              bestResult = result;
+              console.log('New best location from watch:', bestResult.accuracy + 'm');
+            }
+
+            // If we achieve excellent accuracy, resolve early
+            if (result.accuracy <= accuracyThreshold * 0.5) {
+              console.log('Excellent accuracy achieved, stopping watch early');
+              cleanup();
+              resolve(bestResult);
+            }
+          },
+          (error) => {
+            console.warn('Watch position error:', error);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: timeout / 2,
+            maximumAge: 0
+          }
+        );
+      });
+
+      if (bestLocation && bestLocation.accuracy <= accuracyThreshold) {
+        console.log('Watch position achieved target accuracy:', bestLocation.accuracy + 'm');
+        return bestLocation;
+      }
+    } catch (error) {
+      console.warn('Watch position strategy failed:', error);
+    }
+  }
+
+  // Strategy 2: Multiple getCurrentPosition attempts
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      console.log(`Location attempt ${attempt}/${maxAttempts} - High accuracy GPS`);
+      console.log(`Strategy 2: getCurrentPosition attempt ${attempt}/${maxAttempts}`);
       
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
@@ -45,7 +137,7 @@ export const getBestEffortLocation = async (
           {
             enableHighAccuracy: true,
             timeout: timeout / maxAttempts,
-            maximumAge: 0
+            maximumAge: attempt === 1 ? 0 : maximumAge
           }
         );
       });
@@ -58,7 +150,7 @@ export const getBestEffortLocation = async (
         timestamp: position.timestamp
       };
 
-      console.log(`Attempt ${attempt} result:`, {
+      console.log(`getCurrentPosition attempt ${attempt} result:`, {
         accuracy: result.accuracy,
         method: result.method,
         coords: `${result.latitude}, ${result.longitude}`
@@ -80,10 +172,10 @@ export const getBestEffortLocation = async (
     }
   }
 
-  // Strategy 2: If no good result yet, try network-based location
+  // Strategy 3: Network-based fallback with longer cache time
   if (!bestLocation || bestLocation.accuracy > accuracyThreshold * 2) {
     try {
-      console.log('Trying network-based location as fallback');
+      console.log('Strategy 3: Network-based location fallback');
       
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
@@ -91,8 +183,8 @@ export const getBestEffortLocation = async (
           reject,
           {
             enableHighAccuracy: false,
-            timeout: 5000,
-            maximumAge: 60000 // Allow slightly older cached position
+            timeout: 8000,
+            maximumAge: 600000 // 10 minutes for network-based
           }
         );
       });
@@ -126,7 +218,8 @@ export const getBestEffortLocation = async (
       accuracy: bestLocation.accuracy,
       method: bestLocation.method,
       isPrecise: bestLocation.accuracy <= accuracyThreshold,
-      coords: `${bestLocation.latitude}, ${bestLocation.longitude}`
+      coords: `${bestLocation.latitude}, ${bestLocation.longitude}`,
+      totalFixes: locations.length + 1
     });
   } else {
     console.warn('No location could be obtained');

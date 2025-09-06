@@ -43,10 +43,14 @@ export const useAuth = () => {
 const getPreciseLocation = async () => {
   try {
     console.log('Getting best effort location for auth...');
+    const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const locationResult = await getBestEffortLocation({
-      timeout: 15000,
-      accuracyThreshold: 100,
-      maxAttempts: 3
+      timeout: 20000,
+      accuracyThreshold: mobile ? 100 : 500,
+      maxAttempts: 3,
+      useWatchPosition: true,
+      watchDuration: 8000,
+      maximumAge: 300000 // Allow 5-minute cached positions
     });
 
     if (locationResult) {
