@@ -122,11 +122,9 @@ const ProjectEditContent = ({
       <Separator className="mt-2" />
     </div>;
   const renderEngagementProfileContent = () => <div className="space-y-6">
-      {renderSectionHeader('Engagement Profile & Strategy', '1.')}
       <EngagementProfileSection formData={formData} clients={clients} users={users} uploadedFile={uploadedFile} uploadStatus={uploadStatus} onFormDataChange={onFormDataChange} onAssignmentChange={handleAssignmentChange} onFileUpload={onFileUpload} onRemoveFile={onRemoveFile} onDownloadFile={onDownloadFile} projectId={projectId} mrrUploadedFile={mrrUploadedFile} mrrUploadStatus={mrrUploadStatus} mrrFileInputRef={mrrFileInputRef} onMRRFileUpload={onMRRFileUpload} onRemoveMRRFile={onRemoveMRRFile} onDownloadMRRFile={onDownloadMRRFile} />
     </div>;
   const renderSignOffContent = (title: string = 'Sign-off') => <div className="space-y-4">
-      {renderSectionHeader(title)}
       {renderPlaceholderSection('Sign-off')}
     </div>;
   const renderSPSpecialistsContent = () => {
@@ -134,12 +132,10 @@ const ProjectEditContent = ({
     const spSection = engagementManagementSection?.children?.find(c => c.id === "sp-specialists-section");
     if (!spSection) return null;
     return <div className="space-y-8">
-        {renderSectionHeader(spSection.title)}
         {renderCardsForSection(spSection)}
       </div>;
   };
   const renderCommunicationsContent = () => <div className="space-y-6">
-      {renderSectionHeader('Communications, Inquiries and Minutes', '4.')}
       <TCWGCommunicationsSection formData={formData} onFormDataChange={onFormDataChange} />
       
       <div className="ml-4 space-y-4">
@@ -188,7 +184,6 @@ const ProjectEditContent = ({
     // If not provided, show root entity section
     if (!section) section = entitySection;
     return <div className="space-y-8">
-        {renderSectionHeader(section.title, section.number)}
         {renderCardsForSection(section)}
       </div>;
   };
@@ -241,10 +236,9 @@ const ProjectEditContent = ({
               onUnsign={onUnsign}
               sidebarSections={sidebarSections}
             >
-              <div className="space-y-4">
-                {renderSectionHeader('Materiality', '2.')}
-                <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
-              </div>
+               <div className="space-y-4">
+                 <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} />
+               </div>
             </SectionWrapper>
           );
         } else if (targetSection.id === 'materiality-reevaluate') {
@@ -259,10 +253,9 @@ const ProjectEditContent = ({
               onUnsign={onUnsign}
               sidebarSections={sidebarSections}
             >
-              <div className="space-y-4">
-                {renderSectionHeader('Re-evaluate', '3.')}
-                <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} showReEvaluate={true} />
-              </div>
+               <div className="space-y-4">
+                 <MaterialityMetricsSection formData={formData} onFormDataChange={onFormDataChange} showReEvaluate={true} />
+               </div>
             </SectionWrapper>
           );
         } else if (targetSection.id === 'entity-and-env') {
@@ -277,10 +270,9 @@ const ProjectEditContent = ({
               onUnsign={onUnsign}
               sidebarSections={sidebarSections}
             >
-              <div className="space-y-4">
-                {renderSectionHeader('Entity and its environment', '1.')}
-                <EntityEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
-              </div>
+               <div className="space-y-4">
+                 <EntityEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
+               </div>
             </SectionWrapper>
           );
         } else if (targetSection.id === 'rapd') {
@@ -295,10 +287,9 @@ const ProjectEditContent = ({
               onUnsign={onUnsign}
               sidebarSections={sidebarSections}
             >
-              <div className="space-y-4">
-                {renderSectionHeader('RAPD', '4.')}
-                <RAPDSection formData={formData} onFormDataChange={onFormDataChange} />
-              </div>
+               <div className="space-y-4">
+                 <RAPDSection formData={formData} onFormDataChange={onFormDataChange} />
+               </div>
             </SectionWrapper>
           );
         } else if (targetSection.id === 'ceramic') {
@@ -313,26 +304,23 @@ const ProjectEditContent = ({
               onUnsign={onUnsign}
               sidebarSections={sidebarSections}
             >
-              <div className="space-y-4">
-                {renderSectionHeader('CERAMIC', '1.')}
-                <CERAMICSection formData={formData} onFormDataChange={onFormDataChange} />
-              </div>
+               <div className="space-y-4">
+                 <CERAMICSection formData={formData} onFormDataChange={onFormDataChange} />
+               </div>
             </SectionWrapper>
           );
         } else if (targetSection.id === 'it-understanding') {
-          renderedEntityContent = <div className="space-y-4">
-              {renderSectionHeader('IT Understanding', '2.')}
-              <Card>
-                <CardContent className="p-6">
-                  <ITEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
-                </CardContent>
-              </Card>
-            </div>;
+           renderedEntityContent = <div className="space-y-4">
+               <Card>
+                 <CardContent className="p-6">
+                   <ITEnvironmentSection formData={formData} onFormDataChange={onFormDataChange} />
+                 </CardContent>
+               </Card>
+             </div>;
         } else if (targetSection.id === 'risk-business-processes') {
            renderedEntityContent = <div className="space-y-4">
-               {renderSectionHeader('Business processes', '3.')}
-               <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
-             </div>;
+                <BusinessProcessesSection formData={formData} onFormDataChange={onFormDataChange} />
+              </div>;
          } else if (targetSection.id === 'gitc-controls') {
            // Show cards for GITC Controls children
            renderedEntityContent = renderEntityWideProceduresContent(targetSection);
@@ -341,48 +329,42 @@ const ProjectEditContent = ({
             renderedEntityContent = renderEntityWideProceduresContent(targetSection);
           } else if (targetSection.id === 'ad-1-1-apd-1-d-i') {
             // D&I Section content
-            renderedEntityContent = <div className="space-y-4">
-                {renderSectionHeader('1 - D&I')}
-                <Card>
-                  <CardContent className="p-6">
-                    <DISection formData={formData} onFormDataChange={onFormDataChange} />
-                  </CardContent>
-                </Card>
-              </div>;
-           } else if (targetSection.id === 'ad-1-1-apd-1-2-toe') {
-             // 2 - TOE Section content (moved from Comptes à pouvoir)
              renderedEntityContent = <div className="space-y-4">
-                 {renderSectionHeader('2 - TOE')}
                  <Card>
                    <CardContent className="p-6">
-                     <ComptesAPouvoirSection formData={formData} handleFormDataChange={handleFormDataFieldChange} />
+                     <DISection formData={formData} onFormDataChange={onFormDataChange} />
                    </CardContent>
                  </Card>
                </div>;
+           } else if (targetSection.id === 'ad-1-1-apd-1-2-toe') {
+             // 2 - TOE Section content (moved from Comptes à pouvoir)
+              renderedEntityContent = <div className="space-y-4">
+                  <Card>
+                    <CardContent className="p-6">
+                      <ComptesAPouvoirSection formData={formData} handleFormDataChange={handleFormDataFieldChange} />
+                    </CardContent>
+                  </Card>
+                </div>;
            } else if (targetSection.id === 'ad-1-4-apd-1') {
              // AD 1.4 APD-1 - Comptes à pouvoir Section content (empty state restored)
-             renderedEntityContent = <div className="space-y-4">
-                 {renderSectionHeader('AD 1.4 APD-1 - Comptes à pouvoir')}
-                 {renderPlaceholderSection('AD 1.4 APD-1 - Comptes à pouvoir')}
-               </div>;
+              renderedEntityContent = <div className="space-y-4">
+                  {renderPlaceholderSection('AD 1.4 APD-1 - Comptes à pouvoir')}
+                </div>;
           } else if (targetSection.id.startsWith('ad-1-1-apd-1-') || targetSection.id.startsWith('ad-') || targetSection.id.startsWith('seebi-') || targetSection.id.startsWith('talend-')) {
             // Individual GITC control items and their children
-            renderedEntityContent = <div className="space-y-4">
-                {renderSectionHeader(targetSection.title)}
-                {renderPlaceholderSection(targetSection.title)}
-               </div>;
+             renderedEntityContent = <div className="space-y-4">
+                 {renderPlaceholderSection(targetSection.title)}
+                </div>;
           } else if (targetSection.id === 'fraud-risk') {
             // Fraud risk assessment section
-            renderedEntityContent = <div className="space-y-4">
-                {renderSectionHeader('Fraud risk assessment and response', '1.')}
-                <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
-              </div>;
+             renderedEntityContent = <div className="space-y-4">
+                 <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
+               </div>;
           } else {
            // Render placeholder for other leaves
-           renderedEntityContent = <div className="space-y-8">
-               {renderSectionHeader(targetSection.title, targetSection.number)}
-               {renderPlaceholderSection(targetSection.title + " coming soon")}
-             </div>;
+            renderedEntityContent = <div className="space-y-8">
+                {renderPlaceholderSection(targetSection.title + " coming soon")}
+              </div>;
         }
       }
     }
@@ -395,7 +377,6 @@ const ProjectEditContent = ({
     if (!businessProcessesSection) return null;
     return (
       <div className="space-y-8">
-        {renderSectionHeader(businessProcessesSection.title, businessProcessesSection.number)}
         <MainBusinessProcessesSection onSectionChange={onSectionChange} />
       </div>
     );
@@ -406,7 +387,6 @@ const ProjectEditContent = ({
     if (!financialReportingSection) return null;
     return (
       <div className="space-y-8">
-        {renderSectionHeader(financialReportingSection.title, financialReportingSection.number)}
         {renderCardsForSection(financialReportingSection)}
       </div>
     );
@@ -422,7 +402,6 @@ const ProjectEditContent = ({
     if (!independenceSection) return null;
     return (
       <div className="space-y-8">
-        {renderSectionHeader(independenceSection.title, independenceSection.number)}
         {renderCardsForSection(independenceSection)}
       </div>
     );
@@ -527,7 +506,6 @@ const ProjectEditContent = ({
             sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
-              {renderSectionHeader('Tech Risk Corp - IT Audit')}
               {renderPlaceholderSection('Tech Risk Corp - IT Audit')}
             </div>
           </SectionWrapper>
@@ -545,7 +523,6 @@ const ProjectEditContent = ({
             sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
-              {renderSectionHeader('Initial independence and conclusion', '1.')}
               <IndependenceRequirementsSection formData={formData} onFormDataChange={onFormDataChange} />
             </div>
           </SectionWrapper>
@@ -591,32 +568,27 @@ const ProjectEditContent = ({
         )}
         {activeSection === 'control-activities' && (
           <div className="space-y-8">
-            {renderSectionHeader('CA - Control activities')}
             {renderCardsForSection(businessProcessesSection?.children?.find(c => c.id === 'financial-reporting')?.children?.find(c => c.id === 'control-activities'))}
           </div>
         )}
         {activeSection === 'controle-24' && (
           <div className="space-y-8">
-            {renderSectionHeader('Contrôle 24', '')}
             <p className="text-sm text-muted-foreground">Réconciliation des états financiers</p>
             {renderCardsForSection(businessProcessesSection?.children?.find(c => c.id === 'financial-reporting')?.children?.find(c => c.id === 'control-activities')?.children?.find(c => c.id === 'controle-24'))}
           </div>
         )}
         {activeSection === 'controle-24-d-i' && (
           <div className="space-y-4">
-            {renderSectionHeader('1 - D&I', '')}
             {renderPlaceholderSection('Contrôle 24 - D&I')}
           </div>
         )}
         {activeSection === 'controle-24-toe' && (
           <div className="space-y-4">
-            {renderSectionHeader('2 - TOE', '')}
             {renderPlaceholderSection('Contrôle 24 - TOE')}
           </div>
         )}
         {activeSection === 'controle-25' && (
           <div className="space-y-4">
-            {renderSectionHeader('Contrôle 25', '')}
             <p className="text-sm text-muted-foreground">SOD</p>
             {renderPlaceholderSection('Contrôle 25 - SOD')}
           </div>
@@ -628,7 +600,6 @@ const ProjectEditContent = ({
         {/* TEAM SECTION */}
         {activeSection === 'team-section' && canViewTeamManagement(currentUser) && (
           <div className="space-y-4">
-            {renderSectionHeader('Team Management')}
             <TeamSection
               formData={formData}
               users={users}
