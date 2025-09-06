@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Log } from '@/types';
-import { Search, Activity, Clock, User as UserIcon, ChevronDown } from 'lucide-react';
+import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const Logs = () => {
@@ -88,7 +88,9 @@ const Logs = () => {
     log.action.toLowerCase().includes(searchTerm.toLowerCase()) ||
     log.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     log.target_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    log.details?.toLowerCase().includes(searchTerm.toLowerCase())
+    log.details?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log as any).ip_address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (log as any).user_agent?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (loading) {
@@ -181,7 +183,7 @@ const Logs = () => {
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-4">
                       <div className="space-y-3 pt-2 border-t border-gray-100">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
                             <h4 className="text-sm font-medium text-gray-900 mb-2">Log Details</h4>
                             <div className="space-y-2 text-sm">
@@ -217,6 +219,32 @@ const Logs = () => {
                               <div className="flex justify-between">
                                 <span className="text-gray-500">Full Timestamp:</span>
                                 <span className="text-gray-900 font-mono text-xs">{log.timestamp.toISOString()}</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">Client Information</h4>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex items-center space-x-2">
+                                <Globe className="h-3 w-3 text-gray-400" />
+                                <span className="text-gray-500">IP Address:</span>
+                              </div>
+                              <div className="ml-5">
+                                <span className="text-gray-900 font-mono text-xs">
+                                  {(log as any).ip_address || 'N/A'}
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-2 pt-2">
+                                <Monitor className="h-3 w-3 text-gray-400" />
+                                <span className="text-gray-500">User Agent:</span>
+                              </div>
+                              <div className="ml-5">
+                                <span className="text-gray-900 text-xs break-all">
+                                  {(log as any).user_agent ? 
+                                    `${(log as any).user_agent.substring(0, 50)}${(log as any).user_agent.length > 50 ? '...' : ''}` 
+                                    : 'N/A'
+                                  }
+                                </span>
                               </div>
                             </div>
                           </div>

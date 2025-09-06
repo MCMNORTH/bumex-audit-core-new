@@ -2,19 +2,49 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './useAuth';
 
+// Cache for IP address to avoid multiple API calls
+let cachedIpData: { ip: string; userAgent: string } | null = null;
+
 export const useLogging = () => {
   const { user } = useAuth();
+
+  const getClientInfo = async () => {
+    if (cachedIpData) return cachedIpData;
+
+    try {
+      // Get user's public IP address
+      const ipResponse = await fetch('https://api.ipify.org?format=json');
+      const { ip } = await ipResponse.json();
+      
+      // Get user agent
+      const userAgent = navigator.userAgent;
+      
+      cachedIpData = { ip, userAgent };
+      return cachedIpData;
+    } catch (error) {
+      console.warn('Failed to fetch IP address:', error);
+      // Return fallback data
+      return { 
+        ip: 'unknown', 
+        userAgent: navigator.userAgent || 'unknown' 
+      };
+    }
+  };
 
   const createLog = async (action: string, targetId: string, details?: string) => {
     if (!user) return;
 
     try {
+      const clientInfo = await getClientInfo();
+      
       await addDoc(collection(db, 'logs'), {
         user_id: user.id,
         action,
         target_id: targetId,
         timestamp: new Date(),
-        details: details || null
+        details: details || null,
+        ip_address: clientInfo.ip,
+        user_agent: clientInfo.userAgent
       });
     } catch (error) {
       console.error('Error creating log:', error);
