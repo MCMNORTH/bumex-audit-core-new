@@ -34,7 +34,14 @@ const Projects = () => {
     engagement_name: '',
     engagement_id: '',
     project_id: '',
-    assigned_to: [] as string[],
+    lead_developer_id: '',
+    team_assignments: {
+      lead_partner_id: '',
+      partner_id: '',
+      in_charge_id: '',
+      staff_id: '',
+    },
+    assigned_to: [] as string[], // Deprecated but kept for backward compatibility
     status: 'new' as Project['status'],
     period_start: '',
     period_end: '',
@@ -144,6 +151,13 @@ const Projects = () => {
       engagement_name: '',
       engagement_id: '',
       project_id: '',
+      lead_developer_id: '',
+      team_assignments: {
+        lead_partner_id: '',
+        partner_id: '',
+        in_charge_id: '',
+        staff_id: '',
+      },
       assigned_to: [],
       status: 'new',
       period_start: '',
@@ -165,6 +179,13 @@ const Projects = () => {
       engagement_name: project.engagement_name,
       engagement_id: project.engagement_id,
       project_id: project.project_id || '',
+      lead_developer_id: project.lead_developer_id,
+      team_assignments: {
+        lead_partner_id: project.team_assignments?.lead_partner_id || '',
+        partner_id: project.team_assignments?.partner_id || '',
+        in_charge_id: project.team_assignments?.in_charge_id || '',
+        staff_id: project.team_assignments?.staff_id || '',
+      },
       assigned_to: project.assigned_to,
       status: project.status,
       period_start: project.period_start.toISOString().split('T')[0],
@@ -423,21 +444,22 @@ const Projects = () => {
                   </div>
 
                   <div>
-                    <Label>Assigned Team Members</Label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      {users.map((user) => (
-                        <div key={user.id} className="flex items-center space-x-2">
-                          <Checkbox
-                            id={user.id}
-                            checked={formData.assigned_to.includes(user.id)}
-                            onCheckedChange={(checked) => handleAssignmentChange(user.id, checked as boolean)}
-                          />
-                          <Label htmlFor={user.id} className="text-sm">
-                            {user.first_name} {user.last_name} ({user.role})
-                          </Label>
-                        </div>
-                      ))}
-                    </div>
+                    <Label htmlFor="lead_developer_id">Lead Developer</Label>
+                    <Select
+                      value={formData.lead_developer_id}
+                      onValueChange={(value) => setFormData({ ...formData, lead_developer_id: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select lead developer" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.filter(user => user.role === 'dev').map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.first_name} {user.last_name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="flex items-center space-x-2">

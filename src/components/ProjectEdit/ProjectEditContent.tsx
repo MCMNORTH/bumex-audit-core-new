@@ -17,6 +17,7 @@ import DISection from './DISection';
 import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
 import FinancialReportingProcessSection from './FinancialReportingProcessSection';
+import TeamSection from './TeamSection';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -24,6 +25,7 @@ interface ProjectEditContentProps {
   formData: ProjectFormData;
   activeSection: string;
   saving: boolean;
+  currentUserId?: string;
   uploadedFile: File | null;
   uploadStatus: 'idle' | 'uploading' | 'success' | 'error';
   fileInputRef: React.RefObject<HTMLInputElement>;
@@ -52,6 +54,7 @@ const ProjectEditContent = ({
   formData,
   activeSection,
   saving,
+  currentUserId,
   uploadedFile,
   uploadStatus,
   fileInputRef,
@@ -426,6 +429,22 @@ const ProjectEditContent = ({
 
         {/* ENTITY WIDE PROCEDURES LOGIC (section 2 and its entire tree) */}
         {renderedEntityContent}
+
+        {/* TEAM SECTION */}
+        {activeSection === 'team-section' && (
+          <div className="space-y-4">
+            {renderSectionHeader('Team Management')}
+            <TeamSection
+              formData={formData}
+              users={users}
+              currentUserId={currentUserId || ''}
+              isLeadDeveloper={currentUserId === formData.lead_developer_id}
+              onFormDataChange={onFormDataChange}
+              onSave={onSave}
+              saving={saving}
+            />
+          </div>
+        )}
       </div>
     </div>
   </div>;

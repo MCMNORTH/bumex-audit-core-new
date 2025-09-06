@@ -71,7 +71,14 @@ export interface ProjectFormData {
   engagement_name: string;
   engagement_id: string;
   project_id: string;
-  assigned_to: string[];
+  lead_developer_id: string;
+  team_assignments: {
+    lead_partner_id: string;
+    partner_id: string;
+    in_charge_id: string;
+    staff_id: string;
+  };
+  assigned_to: string[]; // Deprecated but kept for backward compatibility
   status: 'new' | 'inprogress' | 'closed' | 'archived';
   period_start: string;
   period_end: string;
@@ -523,6 +530,13 @@ export const getInitialFormData = (): ProjectFormData => ({
   engagement_name: '',
   engagement_id: '',
   project_id: '',
+  lead_developer_id: '',
+  team_assignments: {
+    lead_partner_id: '',
+    partner_id: '',
+    in_charge_id: '',
+    staff_id: '',
+  },
   assigned_to: [],
   status: 'new',
   period_start: '',

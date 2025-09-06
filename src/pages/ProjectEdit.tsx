@@ -249,32 +249,31 @@ const ProjectEdit = () => {
       active: false,
       number: '4.',
     },
+    {
+      id: 'team-section',
+      title: 'Team Management',
+      isParent: false,
+      active: false,
+    },
   ];
 
-  // Team management state (local, to control dialog changes before Save)
-  const [pendingLeadId, setPendingLeadId] = useState(formData.assigned_to[0] || '');
-  const [pendingAssigned, setPendingAssigned] = useState([...formData.assigned_to]);
-  const [teamDialogOpen, setTeamDialogOpen] = useState(false);
-  const [teamSaving, setTeamSaving] = useState(false);
+  // Initialize existing files
 
   useEffect(() => {
     if (formData.engagement_structure_file) {
       initializeExistingFile(formData.engagement_structure_file);
     }
+  }, [formData.engagement_structure_file]);
+
+  useEffect(() => {
     if (formData.mrr_file) {
       initializeMRRFile(formData.mrr_file);
     }
-  }, [formData.engagement_structure_file, formData.mrr_file]);
-
-  useEffect(() => {
-    if (teamDialogOpen) {
-      setPendingAssigned([...formData.assigned_to]);
-      setPendingLeadId(formData.assigned_to[0] || '');
-    }
-  }, [teamDialogOpen, formData.assigned_to]);
+  }, [formData.mrr_file]);
 
   const handleRemoveFileWrapper = () => {
     handleRemoveFile(formData.engagement_structure_file);
+    handleFormDataChange({ engagement_structure_file: '' });
   };
 
   const handleDownloadFileWrapper = () => {
@@ -283,6 +282,7 @@ const ProjectEdit = () => {
 
   const handleRemoveMRRFileWrapper = () => {
     handleRemoveMRRFile(formData.mrr_file);
+    handleFormDataChange({ mrr_file: '' });
   };
 
   const handleDownloadMRRFileWrapper = () => {
@@ -290,33 +290,6 @@ const ProjectEdit = () => {
   };
 
   const selectedClient = clients.find(c => c.id === formData.client_id);
-
-  // Save assignments: project lead is always first member of assigned_to
-  const handleSaveTeam = async () => {
-    setTeamSaving(true);
-    // Always place the lead at the front
-    const distinctAssigned = pendingAssigned
-      .filter(uid => uid !== pendingLeadId);
-    const newAssigned = [pendingLeadId, ...distinctAssigned];
-    // FIX: Pass newAssigned as value (string[]) for assigned_to
-    await handleAssignmentChange('assigned_to', newAssigned as any); // Suppress type error here; ideally typing should support string[], but for now cast as any
-    setTeamSaving(false);
-    setTeamDialogOpen(false);
-  };
-
-  // TOGGLE member (multi-select)
-  const handleToggleMember = (userId: string) => {
-    setPendingAssigned(prev =>
-      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
-    );
-  };
-
-  // CHANGE lead
-  const handleChangeLead = (userId: string) => {
-    setPendingLeadId(userId);
-    // Make sure lead is included in assigned
-    setPendingAssigned(prev => (prev.includes(userId) ? prev : [userId, ...prev]));
-  };
 
   if (loading) {
     return <LoadingScreen />;
@@ -331,14 +304,6 @@ const ProjectEdit = () => {
         activeSection={activeSection}
         onBack={() => navigate('/projects')}
         onSectionChange={setActiveSection}
-        // Pass team dialog props
-        users={users}
-        leadId={pendingLeadId}
-        assignedIds={pendingAssigned}
-        onChangeLead={handleChangeLead}
-        onToggleMember={handleToggleMember}
-        onSaveTeam={handleSaveTeam}
-        teamSaving={teamSaving}
       />
 
       <ProjectEditContent
@@ -348,6 +313,7 @@ const ProjectEdit = () => {
         formData={formData}
         activeSection={activeSection}
         saving={saving}
+        currentUserId={user?.id}
         uploadedFile={uploadedFile}
         uploadStatus={uploadStatus}
         fileInputRef={fileInputRef}

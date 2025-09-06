@@ -18,6 +18,13 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       engagement_name: projectData.engagement_name,
       engagement_id: projectData.engagement_id,
       project_id: projectData.project_id || '',
+      lead_developer_id: projectData.lead_developer_id || '',
+      team_assignments: {
+        lead_partner_id: projectData.team_assignments?.lead_partner_id || '',
+        partner_id: projectData.team_assignments?.partner_id || '',
+        in_charge_id: projectData.team_assignments?.in_charge_id || '',
+        staff_id: projectData.team_assignments?.staff_id || '',
+      },
       assigned_to: projectData.assigned_to,
       status: projectData.status,
       period_start: projectData.period_start.toISOString().split('T')[0],
