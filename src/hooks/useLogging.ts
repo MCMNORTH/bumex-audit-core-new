@@ -22,8 +22,8 @@ export const useLogging = () => {
     try {
       console.log('Fetching IP address and geolocation...');
       
-      // Get user's public IP address with geolocation data
-      const geoResponse = await fetch('http://ip-api.com/json/');
+      // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
+      const geoResponse = await fetch('https://ipapi.co/json/');
       const geoData = await geoResponse.json();
       
       console.log('Fetched geolocation data:', geoData);
@@ -33,13 +33,13 @@ export const useLogging = () => {
       console.log('User agent:', userAgent);
       
       cachedIpData = { 
-        ip: geoData.query || 'unknown',
+        ip: geoData.ip || 'unknown',
         userAgent,
-        country: geoData.country,
+        country: geoData.country_name,
         city: geoData.city,
-        region: geoData.regionName,
+        region: geoData.region,
         timezone: geoData.timezone,
-        isp: geoData.isp
+        isp: geoData.org
       };
       
       return cachedIpData;

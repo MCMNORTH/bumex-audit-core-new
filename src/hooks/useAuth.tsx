@@ -37,21 +37,21 @@ const getClientInfo = async () => {
   if (cachedIpData) return cachedIpData;
 
   try {
-    // Get user's public IP address with geolocation data
-    const geoResponse = await fetch('http://ip-api.com/json/');
+    // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
+    const geoResponse = await fetch('https://ipapi.co/json/');
     const geoData = await geoResponse.json();
     
     // Get user agent
     const userAgent = navigator.userAgent;
     
     cachedIpData = { 
-      ip: geoData.query || 'unknown',
+      ip: geoData.ip || 'unknown',
       userAgent,
-      country: geoData.country,
+      country: geoData.country_name,
       city: geoData.city,
-      region: geoData.regionName,
+      region: geoData.region,
       timezone: geoData.timezone,
-      isp: geoData.isp
+      isp: geoData.org
     };
     
     return cachedIpData;
