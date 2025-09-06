@@ -1,9 +1,11 @@
-
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
+
+// Cache for IP address to avoid multiple API calls
+let cachedIpData: { ip: string; userAgent: string } | null = null;
 
 interface AuthContextType {
   user: User | null;
@@ -21,6 +23,47 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+const getClientInfo = async () => {
+  if (cachedIpData) return cachedIpData;
+
+  try {
+    // Get user's public IP address
+    const ipResponse = await fetch('https://api.ipify.org?format=json');
+    const { ip } = await ipResponse.json();
+    
+    // Get user agent
+    const userAgent = navigator.userAgent;
+    
+    cachedIpData = { ip, userAgent };
+    return cachedIpData;
+  } catch (error) {
+    console.warn('Failed to fetch IP address:', error);
+    // Return fallback data
+    return { 
+      ip: 'unknown', 
+      userAgent: navigator.userAgent || 'unknown' 
+    };
+  }
+};
+
+const createLogWithClientInfo = async (action: string, targetId: string, details?: string, userId?: string) => {
+  try {
+    const clientInfo = await getClientInfo();
+    
+    await addDoc(collection(db, 'logs'), {
+      user_id: userId || 'unknown',
+      action,
+      target_id: targetId,
+      timestamp: new Date(),
+      details: details || null,
+      ip_address: clientInfo.ip,
+      user_agent: clientInfo.userAgent
+    });
+  } catch (error) {
+    console.error('Error creating log:', error);
+  }
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -42,14 +85,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             if (userData.approved !== false && !userData.blocked) {
               setUser(userData);
               
-              // Log successful login
-              await addDoc(collection(db, 'logs'), {
-                user_id: userData.id,
-                action: 'login',
-                target_id: userData.id,
-                timestamp: new Date(),
-                details: 'User logged in'
-              });
+              // Log successful login with IP tracking
+              await createLogWithClientInfo('login', userData.id, 'User logged in', userData.id);
             } else {
               setUser(null);
               // Account pending approval or blocked - should show appropriate message
@@ -86,13 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Log logout before signing out
       if (user) {
-        await addDoc(collection(db, 'logs'), {
-          user_id: user.id,
-          action: 'logout',
-          target_id: user.id,
-          timestamp: new Date(),
-          details: 'User logged out'
-        });
+        await createLogWithClientInfo('logout', user.id, 'User logged out', user.id);
       }
       
       await signOut(auth);
