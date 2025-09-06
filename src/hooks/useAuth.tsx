@@ -108,31 +108,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // SECURITY: Reduced logging for production security
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('Auth state changed:', firebaseUser?.uid);
       if (firebaseUser) {
         setFirebaseUser(firebaseUser);
         try {
           // Fetch user data from Firestore
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          console.log('User document exists:', userDoc.exists());
           if (userDoc.exists()) {
             const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
+            console.log('User data:', userData);
+            console.log('User approved:', userData.approved, 'User blocked:', userData.blocked);
             // SECURITY: Only set user if account is approved and not blocked
             if (userData.approved !== false && !userData.blocked) {
+              console.log('Setting user in context');
               setUser(userData);
               
               // Log successful login with IP tracking
               await createLogWithClientInfo('login', userData.id, 'User logged in', userData.id);
             } else {
+              console.log('User not approved or blocked');
               setUser(null);
               // Account pending approval or blocked - should show appropriate message
             }
           } else {
+            console.log('User document does not exist');
             setUser(null);
           }
         } catch (error) {
-          console.error('Auth error'); // SECURITY: Generic error message
+          console.error('Auth error:', error); // SECURITY: Generic error message
           setUser(null);
         }
       } else {
+        console.log('No firebase user');
         setUser(null);
         setFirebaseUser(null);
       }
