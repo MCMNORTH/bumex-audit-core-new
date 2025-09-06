@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Projects from "./pages/Projects";
+import MyProjects from "./pages/MyProjects";
 import ProjectEdit from "./pages/ProjectEdit";
 import Users from "./pages/Users";
 import Logs from "./pages/Logs";
@@ -50,9 +51,17 @@ const App = () => (
                 }
               />
               <Route
-                path="/projects"
+                path="/my-projects"
                 element={
                   <ProtectedRoute>
+                    <MyProjects />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/projects"
+                element={
+                  <ProtectedRoute requiredRoles={['dev', 'admin', 'semi-admin']}>
                     <Projects />
                   </ProtectedRoute>
                 }

@@ -17,10 +17,15 @@ const getNavigationItems = (t: (key: string) => string) => [{
   icon: Users,
   roles: ['dev', 'admin', 'semi-admin', 'users']
 }, {
+  name: 'My Projects',
+  href: '/my-projects',
+  icon: FolderOpen,
+  roles: ['dev', 'admin', 'semi-admin', 'users']
+}, {
   name: t('nav.projects'),
   href: '/projects',
   icon: FolderOpen,
-  roles: ['dev', 'admin', 'semi-admin', 'users']
+  roles: ['dev', 'admin', 'semi-admin']
 }, {
   name: 'IT Section',
   icon: Monitor,

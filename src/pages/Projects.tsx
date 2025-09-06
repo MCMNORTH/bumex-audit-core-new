@@ -251,6 +251,37 @@ const Projects = () => {
   const canCreateProject = user?.role === 'dev' || user?.role === 'admin';
   const canEditProject = user?.role === 'dev' || user?.role === 'admin' || user?.role === 'semi-admin';
 
+  // Restrict access to semi-admin and above
+  if (!user || !['dev', 'admin', 'semi-admin'].includes(user.role)) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <FolderOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
+            <p className="text-gray-600">You don't have permission to view all projects. Check "My Projects" for projects you're assigned to.</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
+  
+  // Restrict access to semi-admin and above
+  if (!user || !['dev', 'admin', 'semi-admin'].includes(user.role)) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <FolderOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
+            <p className="text-gray-600">You don't have permission to view all projects. Check "My Projects" for projects you're assigned to.</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
+  }
+
   if (loading) {
     return (
       <MainLayout>
