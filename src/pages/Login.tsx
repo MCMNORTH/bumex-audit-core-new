@@ -8,7 +8,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { isCountryAllowed, getClientInfo } from '@/lib/clientInfo';
 import { GeoRestricted } from '@/components/GeoRestricted';
-import { LocationPermissionPrompt } from '@/components/LocationPermissionPrompt';
 import { Skeleton } from '@/components/ui/skeleton';
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -92,13 +91,9 @@ const Login = () => {
   }
 
   // Show geo restriction if not allowed
-    if (!isGeoAllowed) {
-      return <GeoRestricted 
-        country={clientInfo?.country} 
-        countryCode={clientInfo?.country_code}
-        isLocationPermissionDenied={clientInfo?.country_code !== 'Unknown'}
-      />;
-    }
+  if (!isGeoAllowed) {
+    return <GeoRestricted country={clientInfo?.country} countryCode={clientInfo?.country_code} />;
+  }
   return <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
@@ -115,7 +110,6 @@ const Login = () => {
             <CardDescription>Enter your email and password to access the system</CardDescription>
           </CardHeader>
           <CardContent>
-            <LocationPermissionPrompt />
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="email">Email</Label>

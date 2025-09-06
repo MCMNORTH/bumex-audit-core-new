@@ -2,7 +2,7 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './useAuth';
 
-// Clear cache periodically to get fresh location data
+// Cache for IP address and geolocation data to avoid multiple API calls
 let cachedIpData: { 
   ip: string; 
   userAgent: string;
@@ -11,69 +11,16 @@ let cachedIpData: {
   region?: string;
   timezone?: string;
   isp?: string;
-  latitude?: number;
-  longitude?: number;
-  precise_location?: boolean;
-  timestamp?: number;
 } | null = null;
 
 export const useLogging = () => {
   const { user } = useAuth();
 
-  const getPreciseLocation = async () => {
-    try {
-      // Check if geolocation is supported
-      if (!navigator.geolocation) {
-        console.warn('Geolocation is not supported by this browser');
-        return null;
-      }
-
-      return new Promise<{ latitude: number; longitude: number } | null>((resolve) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            console.log('Precise location obtained:', {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy
-            });
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            });
-          },
-          (error) => {
-            console.warn('Precise location failed:', error.message);
-            resolve(null);
-          },
-          { 
-            enableHighAccuracy: true, 
-            timeout: 15000, 
-            maximumAge: 60000 // Use cached location if less than 1 minute old
-          }
-        );
-      });
-    } catch (error) {
-      console.warn('Error getting precise location:', error);
-      return null;
-    }
-  };
-
   const getClientInfo = async () => {
-    // Check if cached data is too old (more than 5 minutes)
-    if (cachedIpData && cachedIpData.timestamp && 
-        Date.now() - cachedIpData.timestamp > 5 * 60 * 1000) {
-      console.log('Cached location data is stale, refreshing...');
-      cachedIpData = null;
-    }
-    
     if (cachedIpData) return cachedIpData;
 
     try {
       console.log('Fetching IP address and geolocation...');
-      
-      // Get precise location first
-      const preciseLocation = await getPreciseLocation();
-      console.log('Precise location result:', preciseLocation);
       
       // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
       const geoResponse = await fetch('https://ipapi.co/json/');
@@ -85,13 +32,6 @@ export const useLogging = () => {
       const userAgent = navigator.userAgent;
       console.log('User agent:', userAgent);
       
-      // Determine if we have precise location
-      const hasPreciseLocation = preciseLocation !== null && 
-                                preciseLocation.latitude !== undefined && 
-                                preciseLocation.longitude !== undefined;
-      
-      console.log('Has precise location:', hasPreciseLocation);
-      
       cachedIpData = { 
         ip: geoData.ip || 'unknown',
         userAgent,
@@ -99,14 +39,8 @@ export const useLogging = () => {
         city: geoData.city,
         region: geoData.region,
         timezone: geoData.timezone,
-        isp: geoData.org,
-        latitude: hasPreciseLocation ? preciseLocation.latitude : geoData.latitude,
-        longitude: hasPreciseLocation ? preciseLocation.longitude : geoData.longitude,
-        precise_location: hasPreciseLocation,
-        timestamp: Date.now()
+        isp: geoData.org
       };
-      
-      console.log('Final client info with precise location flag:', cachedIpData);
       
       return cachedIpData;
     } catch (error) {
@@ -138,7 +72,7 @@ export const useLogging = () => {
       const clientInfo = await getClientInfo();
       console.log('Creating log with client info:', clientInfo);
       
-      const logData = {
+      await addDoc(collection(db, 'logs'), {
         user_id: user.id,
         action,
         target_id: targetId,
@@ -150,33 +84,12 @@ export const useLogging = () => {
         city: clientInfo.city,
         region: clientInfo.region,
         timezone: clientInfo.timezone,
-        isp: clientInfo.isp,
-        latitude: clientInfo.latitude || null,
-        longitude: clientInfo.longitude || null,
-        precise_location: clientInfo.precise_location || false
-      };
-      
-      console.log('About to save log data to Firebase:', logData);
-      console.log('Precise location data being saved:', {
-        latitude: logData.latitude,
-        longitude: logData.longitude,
-        precise_location: logData.precise_location,
-        hasValidCoords: !!(logData.latitude && logData.longitude)
+        isp: clientInfo.isp
       });
       
-      const docRef = await addDoc(collection(db, 'logs'), logData);
-      
-      console.log('Log created successfully with document ID:', docRef.id);
-      console.log('Saved location data:', {
-        latitude: clientInfo.latitude,
-        longitude: clientInfo.longitude,
-        precise_location: clientInfo.precise_location,
-        city: clientInfo.city,
-        country: clientInfo.country
-      });
+      console.log('Log created successfully');
     } catch (error) {
       console.error('Error creating log:', error);
-      console.error('Error details:', error);
     }
   };
 

@@ -5,10 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 interface GeoRestrictedProps {
   country?: string;
   countryCode?: string;
-  isLocationPermissionDenied?: boolean;
 }
 
-export const GeoRestricted = ({ country, countryCode, isLocationPermissionDenied }: GeoRestrictedProps) => {
+export const GeoRestricted = ({ country, countryCode }: GeoRestrictedProps) => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
@@ -26,10 +25,7 @@ export const GeoRestricted = ({ country, countryCode, isLocationPermissionDenied
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              {isLocationPermissionDenied 
-                ? "Location permission is required to use this application."
-                : "This application is not available in your region."
-              }
+              This application is not available in your region.
             </AlertDescription>
           </Alert>
           
@@ -43,17 +39,8 @@ export const GeoRestricted = ({ country, countryCode, isLocationPermissionDenied
           )}
           
           <div className="text-center text-sm text-gray-500 space-y-2">
-            {isLocationPermissionDenied ? (
-              <>
-                <p>Please allow location access and refresh the page to continue.</p>
-                <p>Location permission is required for security and compliance purposes.</p>
-              </>
-            ) : (
-              <>
-                <p>If you believe this is an error, please contact support.</p>
-                <p>If you're using a VPN, please disconnect and try again.</p>
-              </>
-            )}
+            <p>If you believe this is an error, please contact support.</p>
+            <p>If you're using a VPN, please disconnect and try again.</p>
           </div>
         </CardContent>
       </Card>
