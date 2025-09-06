@@ -15,7 +15,7 @@ const getNavigationItems = (t: (key: string) => string) => [{
   name: t('nav.clients'),
   href: '/clients',
   icon: Users,
-  roles: ['dev', 'admin', 'semi-admin']
+  roles: ['dev', 'admin', 'semi-admin', 'users']
 }, {
   name: t('nav.projects'),
   href: '/projects',
@@ -24,26 +24,26 @@ const getNavigationItems = (t: (key: string) => string) => [{
 }, {
   name: 'IT Section',
   icon: Monitor,
-  roles: ['dev', 'admin'],
+  roles: ['dev'],
   isParent: true,
   children: [
     {
       name: 'Users',
       href: '/users',
       icon: Users,
-      roles: ['dev', 'admin']
+      roles: ['dev']
     },
     {
       name: t('nav.logs'),
       href: '/logs',
       icon: FileText,
-      roles: ['dev', 'admin']
+      roles: ['dev']
     },
     {
       name: 'Cycles',
       href: '/cycles',
       icon: Target,
-      roles: ['dev', 'admin', 'semi-admin']
+      roles: ['dev']
     },
     {
       name: t('nav.appControl'),
