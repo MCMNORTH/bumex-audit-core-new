@@ -25,7 +25,7 @@ export const GeoRestricted = ({ country, countryCode }: GeoRestrictedProps) => {
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              This application is only available for users in Mauritania.
+              This application is not available in your region.
             </AlertDescription>
           </Alert>
           
