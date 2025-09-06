@@ -38,10 +38,29 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
   useEffect(() => {
     if (!mapRef.current || !window.google) return;
 
+    // Determine initial center and zoom based on log data
+    const firstLogWithLocation = logs.find(log => 
+      (log.latitude && log.longitude) || (log.city && log.country)
+    );
+    
+    let initialCenter = { lat: 20, lng: 0 };
+    let initialZoom = 2;
+    
+    if (firstLogWithLocation) {
+      if (firstLogWithLocation.latitude && firstLogWithLocation.longitude) {
+        // Use precise GPS coordinates
+        initialCenter = { lat: firstLogWithLocation.latitude, lng: firstLogWithLocation.longitude };
+        initialZoom = 12; // Higher zoom for precise location
+      } else if (firstLogWithLocation.city && firstLogWithLocation.country) {
+        // Will be geocoded and centered later
+        initialZoom = 8; // Medium zoom for city-level location
+      }
+    }
+
     // Initialize map
     const map = new google.maps.Map(mapRef.current, {
-      zoom: 10,
-      center: { lat: 20, lng: 0 }, // Will be updated based on actual log locations
+      zoom: initialZoom,
+      center: initialCenter,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     });
 
@@ -118,31 +137,32 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
           if (status === 'OK' && results && results[0]) {
             position = results[0].geometry.location;
             createMarker(position, log, map, bounds);
+            
+            // If this is the first location and we don't have precise GPS, center on it
+            if (logsWithLocation.length === 1 && !log.latitude && !log.longitude) {
+              map.setCenter(position);
+              map.setZoom(10);
+            }
           }
         });
       }
     }
 
-    // Fit map to show all markers or center on single location
-    if (logsWithLocation.length > 0) {
-      if (logsWithLocation.length === 1) {
-        // For single location, center the map on it
-        const log = logsWithLocation[0];
-        if (log.latitude && log.longitude) {
-          map.setCenter({ lat: log.latitude, lng: log.longitude });
-          map.setZoom(15);
+    // Fit map to show all markers or maintain single location center
+    if (logsWithLocation.length > 1) {
+      // For multiple locations, fit bounds after a delay to allow geocoding
+      setTimeout(() => {
+        if (bounds && !bounds.isEmpty()) {
+          map.fitBounds(bounds);
+          
+          // Ensure minimum zoom level
+          google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
+            if (map.getZoom()! > 15) {
+              map.setZoom(15);
+            }
+          });
         }
-      } else {
-        // For multiple locations, fit bounds
-        map.fitBounds(bounds);
-        
-        // Ensure minimum zoom level
-        google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
-          if (map.getZoom()! > 15) {
-            map.setZoom(15);
-          }
-        });
-      }
+      }, 1000);
     }
 
     // Cleanup function
