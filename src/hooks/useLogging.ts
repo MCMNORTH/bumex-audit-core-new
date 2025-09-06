@@ -135,6 +135,9 @@ export const useLogging = () => {
     if (!user) return;
 
     try {
+      // Clear cache to force fresh location data (same as test button)
+      cachedIpData = null;
+      
       const clientInfo = await getClientInfo();
       console.log('Creating log with client info:', clientInfo);
       
