@@ -47,8 +47,8 @@ export const useLogging = () => {
           },
           { 
             enableHighAccuracy: true, 
-            timeout: 15000, 
-            maximumAge: 60000 // Use cached location if less than 1 minute old
+            timeout: 10000, 
+            maximumAge: 0 // Always get fresh location
           }
         );
       });
