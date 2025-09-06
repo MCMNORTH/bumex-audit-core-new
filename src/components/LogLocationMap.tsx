@@ -124,18 +124,33 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
     };
 
     for (const log of logsWithLocation) {
+      console.log('Processing log for map:', {
+        id: log.id,
+        latitude: log.latitude,
+        longitude: log.longitude,
+        city: log.city,
+        country: log.country,
+        precise_location: log.precise_location
+      });
+
       let position: google.maps.LatLng | google.maps.LatLngLiteral;
 
       // If we have precise coordinates, use them
-      if (log.latitude && log.longitude) {
-        position = { lat: log.latitude, lng: log.longitude };
+      if (log.latitude && log.longitude && !isNaN(log.latitude) && !isNaN(log.longitude)) {
+        position = { 
+          lat: parseFloat(log.latitude.toString()), 
+          lng: parseFloat(log.longitude.toString()) 
+        };
+        console.log('Using precise coordinates:', position);
         createMarker(position, log, map, bounds);
       } else if (log.city && log.country) {
         // Geocode the city/country to get approximate coordinates
         const address = `${log.city}, ${log.country}`;
+        console.log('Geocoding address:', address);
         geocoder.geocode({ address }, (results, status) => {
           if (status === 'OK' && results && results[0]) {
             position = results[0].geometry.location;
+            console.log('Geocoded position:', position);
             createMarker(position, log, map, bounds);
             
             // If this is the first location and we don't have precise GPS, center on it
@@ -143,8 +158,12 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
               map.setCenter(position);
               map.setZoom(10);
             }
+          } else {
+            console.warn('Geocoding failed:', status);
           }
         });
+      } else {
+        console.warn('No valid location data for log:', log.id);
       }
     }
 
