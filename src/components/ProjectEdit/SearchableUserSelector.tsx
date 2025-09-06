@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { User } from "@/types";
 
 interface SearchableUserSelectorProps {
-  users: User[];
+  users?: User[]; // Make users optional to handle undefined cases
   value: string;
   onValueChange: (value: string) => void;
   placeholder: string;
@@ -35,7 +35,10 @@ export function SearchableUserSelector({
   disabled = false,
 }: SearchableUserSelectorProps) {
   const [open, setOpen] = React.useState(false);
-  const selectedUser = users.find((user) => user.id === value);
+  
+  // Safety check: ensure users is always an array
+  const safeUsers = users || [];
+  const selectedUser = safeUsers.find((user) => user.id === value);
 
   const handleSelect = (userId: string) => {
     onValueChange(userId === value ? "" : userId);
@@ -80,12 +83,12 @@ export function SearchableUserSelector({
           </div>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0">
+      <PopoverContent className="w-80 p-0 bg-background border shadow-md z-50">
         <Command>
           <CommandInput placeholder={`Search ${emptyText.toLowerCase()}...`} />
           <CommandEmpty>No users found.</CommandEmpty>
           <CommandGroup className="max-h-64 overflow-auto">
-            {users.map((user) => (
+            {safeUsers.map((user) => (
               <CommandItem
                 key={user.id}
                 value={`${user.first_name} ${user.last_name} ${user.email} ${user.role}`}

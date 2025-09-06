@@ -41,7 +41,8 @@ const TeamSection = ({
   };
 
   const getSelectableUsers = () => {
-    return users.filter(user => user.approved && !user.blocked);
+    // Safety check: ensure users is always an array
+    return (users || []).filter(user => user.approved && !user.blocked);
   };
 
   if (!isLeadDeveloper) {
