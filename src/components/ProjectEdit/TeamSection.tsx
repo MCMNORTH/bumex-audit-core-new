@@ -6,6 +6,8 @@ import { ProjectFormData } from '@/types/formData';
 import { Users, UserCheck, Save } from 'lucide-react';
 import { SearchableUserSelector } from './SearchableUserSelector';
 import { MultiSelectUserSelector } from './MultiSelectUserSelector';
+import { useLogging } from '@/hooks/useLogging';
+import { useToast } from '@/hooks/use-toast';
 
 interface TeamSectionProps {
   formData: ProjectFormData;
@@ -15,6 +17,7 @@ interface TeamSectionProps {
   onFormDataChange: (updates: Partial<ProjectFormData>) => void;
   onSave: () => void;
   saving: boolean;
+  projectId?: string;
 }
 
 const TeamSection = ({
@@ -24,8 +27,11 @@ const TeamSection = ({
   isLeadDeveloper,
   onFormDataChange,
   onSave,
-  saving
+  saving,
+  projectId
 }: TeamSectionProps) => {
+  const { logProjectAction } = useLogging();
+  const { toast } = useToast();
   const leadDeveloper = users.find(u => u.id === formData.lead_developer_id);
   const leadPartner = users.find(u => u.id === formData.team_assignments.lead_partner_id);
   const partners = users.filter(u => formData.team_assignments.partner_ids.includes(u.id));
@@ -33,13 +39,32 @@ const TeamSection = ({
   const inCharges = users.filter(u => formData.team_assignments.in_charge_ids.includes(u.id));
   const staffMembers = users.filter(u => formData.team_assignments.staff_ids.includes(u.id));
 
-  const handleTeamAssignmentChange = (role: keyof ProjectFormData['team_assignments'], value: string | string[]) => {
+  const handleTeamAssignmentChange = async (role: keyof ProjectFormData['team_assignments'], value: string | string[]) => {
+    const oldValue = formData.team_assignments[role];
+    
     onFormDataChange({
       team_assignments: {
         ...formData.team_assignments,
         [role]: value
       }
     });
+
+    // Log team assignment changes immediately
+    if (projectId) {
+      const oldUsers = Array.isArray(oldValue) ? oldValue : [oldValue].filter(Boolean);
+      const newUsers = Array.isArray(value) ? value : [value].filter(Boolean);
+      
+      const added = newUsers.filter(id => !oldUsers.includes(id));
+      const removed = oldUsers.filter(id => !newUsers.includes(id));
+      
+      if (added.length > 0 || removed.length > 0) {
+        const details = [];
+        if (added.length > 0) details.push(`Added to ${role}: ${added.join(', ')}`);
+        if (removed.length > 0) details.push(`Removed from ${role}: ${removed.join(', ')}`);
+        
+        await logProjectAction.update(projectId, `Team assignment changed - ${details.join('; ')}`);
+      }
+    }
   };
 
   const getSelectableUsers = () => {

@@ -5,9 +5,13 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { ProjectFormData, getInitialFormData } from '@/types/formData';
+import { useLogging } from '@/hooks/useLogging';
+import { useAuth } from '@/hooks/useAuth';
 
 export const useProjectForm = (project: Project | null, projectId?: string) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { logProjectAction } = useLogging();
   const [formData, setFormData] = useState<ProjectFormData>({
     ...getInitialFormData(),
     signoffs: {}
@@ -350,6 +354,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
 
       await updateDoc(doc(db, 'projects', projectId), updateData);
       
+      // Log the project update
+      await logProjectAction.update(projectId, `Project ${formData.engagement_name} updated`);
+      
       toast({
         title: 'Success',
         description: 'Project updated successfully',
@@ -401,6 +408,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
         [`signoffs.${sectionId}`]: signOffData
       });
       
+      // Log the sign off action
+      await logProjectAction.update(projectId, `Section ${sectionId} signed off`);
+      
       toast({
         title: 'Success',
         description: 'Section signed off successfully',
@@ -432,6 +442,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       await updateDoc(doc(db, 'projects', projectId), {
         [`signoffs.${sectionId}`]: { signed: false }
       });
+      
+      // Log the unsign action
+      await logProjectAction.update(projectId, `Section ${sectionId} unsigned`);
       
       toast({
         title: 'Success',

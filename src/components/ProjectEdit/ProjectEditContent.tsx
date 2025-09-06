@@ -469,6 +469,7 @@ const ProjectEditContent = ({
               onFormDataChange={onFormDataChange}
               onSave={onSave}
               saving={saving}
+              projectId={project?.id}
             />
           </div>
         )}

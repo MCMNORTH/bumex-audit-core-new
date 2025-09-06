@@ -12,10 +12,12 @@ import { collection, addDoc, getDocs, query, orderBy, doc, updateDoc } from 'fir
 import { db } from '@/lib/firebase';
 import { Client } from '@/types';
 import { Plus, Search, Building, Mail, Globe } from 'lucide-react';
+import { useLogging } from '@/hooks/useLogging';
 
 const Clients = () => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { logClientAction } = useLogging();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -84,15 +86,23 @@ const Clients = () => {
         await updateDoc(doc(db, 'clients', editingClient.id), {
           ...formData,
         });
+        
+        // Log client update
+        await logClientAction.update(editingClient.id, `Client ${formData.name} updated`);
+        
         toast({
           title: 'Success',
           description: 'Client updated successfully',
         });
       } else {
-        await addDoc(collection(db, 'clients'), {
+        const docRef = await addDoc(collection(db, 'clients'), {
           ...formData,
           created_at: new Date(),
         });
+        
+        // Log client creation
+        await logClientAction.create(docRef.id, `Client ${formData.name} created`);
+        
         toast({
           title: 'Success',
           description: 'Client created successfully',

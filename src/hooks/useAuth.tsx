@@ -3,6 +3,7 @@ import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
+import { useLogging } from '@/hooks/useLogging';
 
 // Cache for IP address to avoid multiple API calls
 let cachedIpData: { 

@@ -16,11 +16,13 @@ import { collection, addDoc, getDocs, query, orderBy, doc, updateDoc } from 'fir
 import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { Plus, Search, FolderOpen, Calendar, Users, Building } from 'lucide-react';
+import { useLogging } from '@/hooks/useLogging';
 
 const Projects = () => {
   const { user } = useAuth();
   const { clients, users, loading: refLoading } = useReferenceData();
   const { toast } = useToast();
+  const { logProjectAction } = useLogging();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<(Project & { client_name?: string })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,12 +124,20 @@ const Projects = () => {
 
       if (editingProject) {
         await updateDoc(doc(db, 'projects', editingProject.id), projectData);
+        
+        // Log project update
+        await logProjectAction.update(editingProject.id, `Project ${projectData.engagement_name} updated`);
+        
         toast({
           title: 'Success',
           description: 'Project updated successfully',
         });
       } else {
-        await addDoc(collection(db, 'projects'), projectData);
+        const docRef = await addDoc(collection(db, 'projects'), projectData);
+        
+        // Log project creation
+        await logProjectAction.create(docRef.id, `Project ${projectData.engagement_name} created`);
+        
         toast({
           title: 'Success',
           description: 'Project created successfully',
