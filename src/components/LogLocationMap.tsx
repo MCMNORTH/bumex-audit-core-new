@@ -52,14 +52,18 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
     markersRef.current = [];
 
     // Add markers for each log with location
-    const logsWithLocation = logs.filter(log => log.latitude && log.longitude);
+    const logsWithLocation = logs.filter(log => 
+      (log.latitude && log.longitude) || (log.city && log.country)
+    );
     const bounds = new google.maps.LatLngBounds();
+    const geocoder = new google.maps.Geocoder();
 
-    logsWithLocation.forEach((log) => {
-      if (!log.latitude || !log.longitude) return;
-
-      const position = { lat: log.latitude, lng: log.longitude };
-
+    const createMarker = (
+      position: google.maps.LatLng | google.maps.LatLngLiteral, 
+      log: any, 
+      map: google.maps.Map, 
+      bounds: google.maps.LatLngBounds
+    ) => {
       // Create marker
       const marker = new google.maps.Marker({
         position,
@@ -98,7 +102,26 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
 
       markersRef.current.push(marker);
       bounds.extend(position);
-    });
+    };
+
+    for (const log of logsWithLocation) {
+      let position: google.maps.LatLng | google.maps.LatLngLiteral;
+
+      // If we have precise coordinates, use them
+      if (log.latitude && log.longitude) {
+        position = { lat: log.latitude, lng: log.longitude };
+        createMarker(position, log, map, bounds);
+      } else if (log.city && log.country) {
+        // Geocode the city/country to get approximate coordinates
+        const address = `${log.city}, ${log.country}`;
+        geocoder.geocode({ address }, (results, status) => {
+          if (status === 'OK' && results && results[0]) {
+            position = results[0].geometry.location;
+            createMarker(position, log, map, bounds);
+          }
+        });
+      }
+    }
 
     // Fit map to show all markers
     if (logsWithLocation.length > 0) {
@@ -156,7 +179,9 @@ export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
     }
   }, [logs]);
 
-  const logsWithLocation = logs.filter(log => log.latitude && log.longitude);
+  const logsWithLocation = logs.filter(log => 
+    (log.latitude && log.longitude) || (log.city && log.country)
+  );
 
   if (logsWithLocation.length === 0) {
     return (

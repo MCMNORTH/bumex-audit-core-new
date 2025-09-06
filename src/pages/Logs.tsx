@@ -269,7 +269,8 @@ const Logs = () => {
                                          Timezone: {(log as any).timezone}
                                        </div>
                                      )}
-                                     {(log as any).latitude && (log as any).longitude && (
+                                     {/* Show button if we have any location data - either precise GPS or IP-based */}
+                                     {(((log as any).latitude && (log as any).longitude) || ((log as any).city && (log as any).country)) && (
                                        <Dialog>
                                          <DialogTrigger asChild>
                                            <Button variant="outline" size="sm" className="mt-2">
