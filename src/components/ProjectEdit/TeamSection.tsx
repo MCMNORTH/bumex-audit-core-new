@@ -5,6 +5,7 @@ import { User } from '@/types';
 import { ProjectFormData } from '@/types/formData';
 import { Users, UserCheck, Save } from 'lucide-react';
 import { SearchableUserSelector } from './SearchableUserSelector';
+import { MultiSelectUserSelector } from './MultiSelectUserSelector';
 
 interface TeamSectionProps {
   formData: ProjectFormData;
@@ -27,16 +28,16 @@ const TeamSection = ({
 }: TeamSectionProps) => {
   const leadDeveloper = users.find(u => u.id === formData.lead_developer_id);
   const leadPartner = users.find(u => u.id === formData.team_assignments.lead_partner_id);
-  const partner = users.find(u => u.id === formData.team_assignments.partner_id);
-  const manager = users.find(u => u.id === formData.team_assignments.manager_id);
-  const inCharge = users.find(u => u.id === formData.team_assignments.in_charge_id);
-  const staff = users.find(u => u.id === formData.team_assignments.staff_id);
+  const partners = users.filter(u => formData.team_assignments.partner_ids.includes(u.id));
+  const managers = users.filter(u => formData.team_assignments.manager_ids.includes(u.id));
+  const inCharges = users.filter(u => formData.team_assignments.in_charge_ids.includes(u.id));
+  const staffMembers = users.filter(u => formData.team_assignments.staff_ids.includes(u.id));
 
-  const handleTeamAssignmentChange = (role: keyof ProjectFormData['team_assignments'], userId: string) => {
+  const handleTeamAssignmentChange = (role: keyof ProjectFormData['team_assignments'], value: string | string[]) => {
     onFormDataChange({
       team_assignments: {
         ...formData.team_assignments,
-        [role]: userId
+        [role]: value
       }
     });
   };
@@ -75,30 +76,30 @@ const TeamSection = ({
             </div>
             
             <div className="space-y-2">
-              <Label className="font-medium">Partner</Label>
+              <Label className="font-medium">Partners</Label>
               <div className="p-3 bg-muted rounded-md">
-                {partner ? `${partner.first_name} ${partner.last_name}` : 'Not assigned'}
+                {partners.length > 0 ? partners.map(p => `${p.first_name} ${p.last_name}`).join(', ') : 'None assigned'}
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label className="font-medium">Manager</Label>
+              <Label className="font-medium">Managers</Label>
               <div className="p-3 bg-muted rounded-md">
-                {manager ? `${manager.first_name} ${manager.last_name}` : 'Not assigned'}
+                {managers.length > 0 ? managers.map(m => `${m.first_name} ${m.last_name}`).join(', ') : 'None assigned'}
               </div>
             </div>
             
             <div className="space-y-2">
               <Label className="font-medium">In Charge</Label>
               <div className="p-3 bg-muted rounded-md">
-                {inCharge ? `${inCharge.first_name} ${inCharge.last_name}` : 'Not assigned'}
+                {inCharges.length > 0 ? inCharges.map(ic => `${ic.first_name} ${ic.last_name}`).join(', ') : 'None assigned'}
               </div>
             </div>
             
             <div className="space-y-2">
               <Label className="font-medium">Staff</Label>
               <div className="p-3 bg-muted rounded-md">
-                {staff ? `${staff.first_name} ${staff.last_name}` : 'Not assigned'}
+                {staffMembers.length > 0 ? staffMembers.map(s => `${s.first_name} ${s.last_name}`).join(', ') : 'None assigned'}
               </div>
             </div>
           </div>
@@ -143,24 +144,24 @@ const TeamSection = ({
           </div>
           
           <div className="space-y-2">
-            <Label className="font-medium">Partner</Label>
-            <SearchableUserSelector
+            <Label className="font-medium">Partners</Label>
+            <MultiSelectUserSelector
               users={getSelectableUsers()}
-              value={formData.team_assignments.partner_id}
-              onValueChange={(value) => handleTeamAssignmentChange('partner_id', value)}
-              placeholder="Select partner"
+              values={formData.team_assignments.partner_ids}
+              onValuesChange={(values) => handleTeamAssignmentChange('partner_ids', values)}
+              placeholder="Select partners"
               emptyText="users"
               disabled={!isLeadDeveloper}
             />
           </div>
           
           <div className="space-y-2">
-            <Label className="font-medium">Manager</Label>
-            <SearchableUserSelector
+            <Label className="font-medium">Managers</Label>
+            <MultiSelectUserSelector
               users={getSelectableUsers()}
-              value={formData.team_assignments.manager_id}
-              onValueChange={(value) => handleTeamAssignmentChange('manager_id', value)}
-              placeholder="Select manager"
+              values={formData.team_assignments.manager_ids}
+              onValuesChange={(values) => handleTeamAssignmentChange('manager_ids', values)}
+              placeholder="Select managers"
               emptyText="users"
               disabled={!isLeadDeveloper}
             />
@@ -168,11 +169,11 @@ const TeamSection = ({
           
           <div className="space-y-2">
             <Label className="font-medium">In Charge</Label>
-            <SearchableUserSelector
+            <MultiSelectUserSelector
               users={getSelectableUsers()}
-              value={formData.team_assignments.in_charge_id}
-              onValueChange={(value) => handleTeamAssignmentChange('in_charge_id', value)}
-              placeholder="Select in charge"
+              values={formData.team_assignments.in_charge_ids}
+              onValuesChange={(values) => handleTeamAssignmentChange('in_charge_ids', values)}
+              placeholder="Select in charge members"
               emptyText="users"
               disabled={!isLeadDeveloper}
             />
@@ -180,11 +181,11 @@ const TeamSection = ({
           
           <div className="space-y-2">
             <Label className="font-medium">Staff</Label>
-            <SearchableUserSelector
+            <MultiSelectUserSelector
               users={getSelectableUsers()}
-              value={formData.team_assignments.staff_id}
-              onValueChange={(value) => handleTeamAssignmentChange('staff_id', value)}
-              placeholder="Select staff member"
+              values={formData.team_assignments.staff_ids}
+              onValuesChange={(values) => handleTeamAssignmentChange('staff_ids', values)}
+              placeholder="Select staff members"
               emptyText="users"
               disabled={!isLeadDeveloper}
             />

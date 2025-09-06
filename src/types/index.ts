@@ -28,10 +28,10 @@ export interface Project {
   lead_developer_id: string;
   team_assignments?: {
     lead_partner_id?: string;
-    partner_id?: string;
-    manager_id?: string;
-    in_charge_id?: string;
-    staff_id?: string;
+    partner_ids?: string[];
+    manager_ids?: string[];
+    in_charge_ids?: string[];
+    staff_ids?: string[];
   };
   assigned_to: string[]; // Deprecated but kept for backward compatibility
   status: 'new' | 'inprogress' | 'closed' | 'archived';
