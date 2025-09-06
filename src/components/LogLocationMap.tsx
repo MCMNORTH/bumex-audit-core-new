@@ -141,15 +141,7 @@ const MapErrorComponent = ({ status }: { status: Status }) => (
 );
 
 export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
-  const [googleMapsApiKey, setGoogleMapsApiKey] = useState('');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(true);
-
-  const handleApiKeySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (googleMapsApiKey.trim()) {
-      setShowApiKeyInput(false);
-    }
-  };
+  const googleMapsApiKey = 'AIzaSyAHLc2W-ferlanM60hNseLhTVnPftSkseo';
 
   const renderMap = useCallback((status: Status) => {
     switch (status) {
@@ -165,47 +157,6 @@ export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
   }, [logs]);
 
   const logsWithLocation = logs.filter(log => log.latitude && log.longitude);
-
-  if (showApiKeyInput) {
-    return (
-      <div className="space-y-4">
-        <Alert>
-          <MapPin className="h-4 w-4" />
-          <AlertDescription>
-            To view log locations on the map, please enter your Google Maps API key.
-            You can get one from the{' '}
-            <a 
-              href="https://console.cloud.google.com/google/maps-apis" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-blue-600 hover:underline"
-            >
-              Google Cloud Console
-            </a>
-          </AlertDescription>
-        </Alert>
-        <form onSubmit={handleApiKeySubmit} className="space-y-2">
-          <Label htmlFor="google-maps-api-key">Google Maps API Key</Label>
-          <div className="flex space-x-2">
-            <Input
-              id="google-maps-api-key"
-              type="text"
-              placeholder="AIzaSyC..."
-              value={googleMapsApiKey}
-              onChange={(e) => setGoogleMapsApiKey(e.target.value)}
-              className="flex-1"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              Load Map
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  }
 
   if (logsWithLocation.length === 0) {
     return (
@@ -235,13 +186,6 @@ export const LogLocationMap = ({ logs }: LogLocationMapProps) => {
       </div>
       
       <Wrapper apiKey={googleMapsApiKey} render={renderMap} />
-      
-      <button
-        onClick={() => setShowApiKeyInput(true)}
-        className="text-sm text-blue-600 hover:underline"
-      >
-        Change Google Maps API Key
-      </button>
     </div>
   );
 };

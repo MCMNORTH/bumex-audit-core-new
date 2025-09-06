@@ -7,10 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Log } from '@/types';
-import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi, Map } from 'lucide-react';
+import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { LogLocationMap } from '@/components/LogLocationMap';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const Logs = () => {
   const { users, loading: refLoading } = useReferenceData();
@@ -160,25 +161,12 @@ const Logs = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="list" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="list" className="flex items-center space-x-2">
-              <Activity className="h-4 w-4" />
-              <span>Activity List</span>
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center space-x-2">
-              <Map className="h-4 w-4" />
-              <span>Location Map</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="list">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest 100 system activities</CardDescription>
-              </CardHeader>
-              <CardContent>
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Latest 100 system activities</CardDescription>
+          </CardHeader>
+          <CardContent>
             {filteredLogs.length > 0 ? (
               <Accordion type="multiple" className="space-y-2">
                 {filteredLogs.map((log) => (
@@ -266,24 +254,52 @@ const Logs = () => {
                                 </div>
                               </div>
                               
-                              {((log as any).country || (log as any).city) && (
-                                <div className="flex items-start space-x-2">
-                                  <MapPin className="h-3 w-3 text-gray-400 mt-0.5" />
-                                  <div className="flex-1">
-                                    <span className="text-gray-500">Location:</span>
-                                    <div className="text-gray-900 text-xs mt-1">
-                                      {[(log as any).city, (log as any).region, (log as any).country]
-                                        .filter(Boolean)
-                                        .join(', ') || 'N/A'}
-                                    </div>
-                                    {(log as any).timezone && (
-                                      <div className="text-gray-600 text-xs">
-                                        Timezone: {(log as any).timezone}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
+                               {((log as any).country || (log as any).city) && (
+                                 <div className="flex items-start space-x-2">
+                                   <MapPin className="h-3 w-3 text-gray-400 mt-0.5" />
+                                   <div className="flex-1">
+                                     <span className="text-gray-500">Location:</span>
+                                     <div className="text-gray-900 text-xs mt-1">
+                                       {[(log as any).city, (log as any).region, (log as any).country]
+                                         .filter(Boolean)
+                                         .join(', ') || 'N/A'}
+                                     </div>
+                                     {(log as any).timezone && (
+                                       <div className="text-gray-600 text-xs">
+                                         Timezone: {(log as any).timezone}
+                                       </div>
+                                     )}
+                                     {(log as any).latitude && (log as any).longitude && (
+                                       <Dialog>
+                                         <DialogTrigger asChild>
+                                           <Button variant="outline" size="sm" className="mt-2">
+                                             <MapPin className="h-3 w-3 mr-1" />
+                                             View Location
+                                           </Button>
+                                         </DialogTrigger>
+                                         <DialogContent className="max-w-4xl">
+                                           <DialogHeader>
+                                             <DialogTitle>Log Location - {log.user_name}</DialogTitle>
+                                           </DialogHeader>
+                                           <LogLocationMap 
+                                             logs={[{
+                                               id: log.id,
+                                               latitude: (log as any).latitude,
+                                               longitude: (log as any).longitude,
+                                               precise_location: (log as any).precise_location,
+                                               user_name: log.user_name,
+                                               action: log.action,
+                                               timestamp: log.timestamp,
+                                               city: (log as any).city,
+                                               country: (log as any).country
+                                             }]}
+                                           />
+                                         </DialogContent>
+                                       </Dialog>
+                                     )}
+                                   </div>
+                                 </div>
+                               )}
                               
                               {(log as any).isp && (
                                 <div className="flex items-start space-x-2">
@@ -348,34 +364,8 @@ const Logs = () => {
                 </p>
               </div>
               )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="map">
-            <Card>
-              <CardHeader>
-                <CardTitle>Activity Locations</CardTitle>
-                <CardDescription>Geographic visualization of user activities</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <LogLocationMap 
-                  logs={filteredLogs.map(log => ({
-                    id: log.id,
-                    latitude: (log as any).latitude,
-                    longitude: (log as any).longitude,
-                    precise_location: (log as any).precise_location,
-                    user_name: log.user_name,
-                    action: log.action,
-                    timestamp: log.timestamp,
-                    city: (log as any).city,
-                    country: (log as any).country
-                  }))}
-                />
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
       </div>
     </MainLayout>
   );
