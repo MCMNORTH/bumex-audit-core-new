@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, doc, updateDoc, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { User } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
@@ -160,7 +160,7 @@ const Users = () => {
 
       const authResult = await response.json();
 
-      // Create user document in Firestore
+      // Create user document in Firestore using the Firebase Auth UID
       const userDoc = {
         email: data.email,
         first_name: data.first_name,
@@ -171,10 +171,11 @@ const Users = () => {
         blocked: false
       };
 
-      const docRef = await addDoc(collection(db, 'users'), userDoc);
+      // Use the Firebase Auth UID as the Firestore document ID
+      await setDoc(doc(db, 'users', authResult.localId), userDoc);
 
       // Log the user creation
-      await logUserAction.create(docRef.id, `Created user: ${data.first_name} ${data.last_name} (${data.email})`);
+      await logUserAction.create(authResult.localId, `Created user: ${data.first_name} ${data.last_name} (${data.email})`);
 
       // Refresh users list
       await fetchUsers();
