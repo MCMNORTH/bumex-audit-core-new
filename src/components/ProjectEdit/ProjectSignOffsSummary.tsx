@@ -22,7 +22,34 @@ interface TreeNodeProps {
   currentUser: User | null;
   level: number;
   onUnsign?: (sectionId: string) => void;
+  sidebarSections: any[];
 }
+
+// Utility function to check if all descendants of a section are signed off
+const areAllDescendantsSignedOff = (sectionId: string, sidebarSections: any[], formData: ProjectFormData): boolean => {
+  const findSectionInHierarchy = (sections: any[], targetId: string): any => {
+    for (const section of sections) {
+      if (section.id === targetId) return section;
+      if (section.children) {
+        const found = findSectionInHierarchy(section.children, targetId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const section = findSectionInHierarchy(sidebarSections, sectionId);
+  if (!section || !section.children || section.children.length === 0) {
+    return true; // Leaf sections are always "ready" for sign-off
+  }
+
+  // Check if all immediate children are signed off AND all their descendants
+  return section.children.every((child: any) => {
+    const isChildSignedOff = child.signOffLevel ? formData.signoffs?.[child.id]?.signed || false : true;
+    const areChildDescendantsSignedOff = areAllDescendantsSignedOff(child.id, sidebarSections, formData);
+    return isChildSignedOff && areChildDescendantsSignedOff;
+  });
+};
 
 const TreeNode: React.FC<TreeNodeProps> = ({ 
   section, 
@@ -30,7 +57,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   users, 
   currentUser, 
   level, 
-  onUnsign 
+  onUnsign,
+  sidebarSections
 }) => {
   const [isExpanded, setIsExpanded] = React.useState(true);
   const signOffData = formData.signoffs?.[section.id] || { signed: false };
@@ -41,6 +69,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   
   // Check if user can unsign this section
   const canUnsign = hasSignOff && currentUser && canSignOffSection(currentUser, formData, section.signOffLevel);
+  
+  // Check if all descendants are signed off (for hierarchical sign-off)
+  const areDescendantsSignedOff = areAllDescendantsSignedOff(section.id, sidebarSections, formData);
+  const isBlocked = hasSignOff && !areDescendantsSignedOff && !signOffData.signed;
   
   const formatDate = (dateString?: string) => {
     return dateString ? new Date(dateString).toLocaleDateString('en-US', {
@@ -87,6 +119,8 @@ const TreeNode: React.FC<TreeNodeProps> = ({
             <>
               {signOffData.signed ? (
                 <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+              ) : isBlocked ? (
+                <X className="h-4 w-4 text-red-400 flex-shrink-0" />
               ) : (
                 <X className="h-4 w-4 text-gray-400 flex-shrink-0" />
               )}
@@ -96,15 +130,23 @@ const TreeNode: React.FC<TreeNodeProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-500">{section.number}</span>
-              <span className="font-medium text-gray-900 truncate">{section.title}</span>
+              <span className={`font-medium truncate ${isBlocked ? 'text-red-600' : 'text-gray-900'}`}>
+                {section.title}
+              </span>
               
               {hasSignOff && (
                 <Badge 
-                  variant={signOffData.signed ? "default" : "secondary"}
+                  variant={signOffData.signed ? "default" : isBlocked ? "destructive" : "secondary"}
                   className="text-xs"
                 >
-                  {section.signOffLevel === 'manager' ? 'Manager+' : 'In Charge+'}
+                  {isBlocked ? 'Blocked' : section.signOffLevel === 'manager' ? 'Manager+' : 'In Charge+'}
                 </Badge>
+              )}
+              
+              {isBlocked && (
+                <span className="text-xs text-red-600 italic">
+                  (Complete children first)
+                </span>
               )}
             </div>
             
@@ -145,6 +187,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               currentUser={currentUser}
               level={level + 1}
               onUnsign={onUnsign}
+              sidebarSections={sidebarSections}
             />
           ))}
         </div>
@@ -252,6 +295,7 @@ const ProjectSignOffsSummary: React.FC<ProjectSignOffsSummaryProps> = ({
                   currentUser={currentUser}
                   level={0}
                   onUnsign={onUnsign}
+                  sidebarSections={sidebarSections}
                 />
               ))}
           </div>

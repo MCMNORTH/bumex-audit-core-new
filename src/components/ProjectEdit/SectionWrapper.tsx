@@ -13,8 +13,34 @@ interface SectionWrapperProps {
   signOffLevel: 'incharge' | 'manager';
   onSignOff: (sectionId: string) => void;
   onUnsign: (sectionId: string) => void;
-  childSections?: string[]; // Optional array of child section IDs for parent sections
+  sidebarSections?: any[]; // For hierarchical checking
 }
+
+// Utility function to check if all descendants of a section are signed off
+const areAllDescendantsSignedOff = (sectionId: string, sidebarSections: any[], formData: ProjectFormData): boolean => {
+  const findSectionInHierarchy = (sections: any[], targetId: string): any => {
+    for (const section of sections) {
+      if (section.id === targetId) return section;
+      if (section.children) {
+        const found = findSectionInHierarchy(section.children, targetId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const section = findSectionInHierarchy(sidebarSections || [], sectionId);
+  if (!section || !section.children || section.children.length === 0) {
+    return true; // Leaf sections are always "ready" for sign-off
+  }
+
+  // Check if all immediate children are signed off AND all their descendants
+  return section.children.every((child: any) => {
+    const isChildSignedOff = child.signOffLevel ? formData.signoffs?.[child.id]?.signed || false : true;
+    const areChildDescendantsSignedOff = areAllDescendantsSignedOff(child.id, sidebarSections || [], formData);
+    return isChildSignedOff && areChildDescendantsSignedOff;
+  });
+};
 
 const SectionWrapper: React.FC<SectionWrapperProps> = ({
   sectionId,
@@ -25,18 +51,17 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
   signOffLevel,
   onSignOff,
   onUnsign,
-  childSections = []
+  sidebarSections = []
 }) => {
   const signOffData = formData.signoffs?.[sectionId] || { signed: false };
   const canSignOff = canSignOffSection(currentUser, formData, signOffLevel);
   const canUnsign = canSignOff; // Same permission for unsigning
   
-  // Check if all child sections are signed off (for parent sections)
-  const areAllChildrenSignedOff = childSections.length === 0 || 
-    childSections.every(childId => formData.signoffs?.[childId]?.signed);
+  // Check if all descendants are signed off (for hierarchical sign-off)
+  const areDescendantsSignedOff = areAllDescendantsSignedOff(sectionId, sidebarSections, formData);
   
-  // For parent sections, only show sign-off if all children are signed
-  const showSignOff = childSections.length === 0 || areAllChildrenSignedOff;
+  // Only show sign-off if all descendants are signed off
+  const showSignOff = areDescendantsSignedOff;
   
   return (
     <div>

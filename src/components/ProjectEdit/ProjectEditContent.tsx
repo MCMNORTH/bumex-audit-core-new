@@ -239,6 +239,7 @@ const ProjectEditContent = ({
               signOffLevel="incharge"
               onSignOff={handleSignOffWrapper}
               onUnsign={onUnsign}
+              sidebarSections={sidebarSections}
             >
               <div className="space-y-4">
                 {renderSectionHeader('Materiality', '2.')}
@@ -256,6 +257,7 @@ const ProjectEditContent = ({
               signOffLevel="incharge"
               onSignOff={handleSignOffWrapper}
               onUnsign={onUnsign}
+              sidebarSections={sidebarSections}
             >
               <div className="space-y-4">
                 {renderSectionHeader('Re-evaluate', '3.')}
@@ -273,6 +275,7 @@ const ProjectEditContent = ({
               signOffLevel="incharge"
               onSignOff={handleSignOffWrapper}
               onUnsign={onUnsign}
+              sidebarSections={sidebarSections}
             >
               <div className="space-y-4">
                 {renderSectionHeader('Entity and its environment', '1.')}
@@ -290,6 +293,7 @@ const ProjectEditContent = ({
               signOffLevel="incharge"
               onSignOff={handleSignOffWrapper}
               onUnsign={onUnsign}
+              sidebarSections={sidebarSections}
             >
               <div className="space-y-4">
                 {renderSectionHeader('RAPD', '4.')}
@@ -307,6 +311,7 @@ const ProjectEditContent = ({
               signOffLevel="incharge"
               onSignOff={handleSignOffWrapper}
               onUnsign={onUnsign}
+              sidebarSections={sidebarSections}
             >
               <div className="space-y-4">
                 {renderSectionHeader('CERAMIC', '1.')}
@@ -438,7 +443,7 @@ const ProjectEditContent = ({
             signOffLevel="manager"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
-            childSections={['engagement-profile-section', 'sp-specialists-section', 'independence-section', 'communications-section']}
+            sidebarSections={sidebarSections}
           >
             <div className="space-y-8">
               {renderOverviewInfo()}
@@ -457,6 +462,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             {renderEngagementProfileContent()}
           </SectionWrapper>
@@ -471,6 +477,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             {renderSPSpecialistsContent()}
           </SectionWrapper>
@@ -485,6 +492,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             {renderIndependenceContent()}
           </SectionWrapper>
@@ -499,6 +507,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             {renderCommunicationsContent()}
           </SectionWrapper>
@@ -515,6 +524,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
               {renderSectionHeader('Tech Risk Corp - IT Audit')}
@@ -532,6 +542,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
               {renderSectionHeader('Initial independence and conclusion', '1.')}
@@ -549,6 +560,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
               {renderSectionHeader('Fraud risk assessment and response', '1.')}
@@ -570,6 +582,7 @@ const ProjectEditContent = ({
             signOffLevel="incharge"
             onSignOff={handleSignOffWrapper}
             onUnsign={onUnsign}
+            sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
               <FinancialReportingProcessSection formData={formData} onFormDataChange={onFormDataChange} />
