@@ -1,6 +1,7 @@
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './useAuth';
+import { getBestEffortLocation, isPreciseLocation } from '@/lib/location';
 
 // Clear cache periodically to get fresh location data
 let cachedIpData: { 
@@ -13,6 +14,8 @@ let cachedIpData: {
   isp?: string;
   latitude?: number;
   longitude?: number;
+  location_accuracy?: number;
+  location_method?: string;
   precise_location?: boolean;
   timestamp?: number;
 } | null = null;
@@ -22,36 +25,33 @@ export const useLogging = () => {
 
   const getPreciseLocation = async () => {
     try {
-      // Check if geolocation is supported
-      if (!navigator.geolocation) {
-        console.warn('Geolocation is not supported by this browser');
-        return null;
+      console.log('Attempting to get best effort location...');
+      const locationResult = await getBestEffortLocation({
+        timeout: 15000,
+        accuracyThreshold: 100,
+        maxAttempts: 3
+      });
+
+      if (locationResult) {
+        console.log('Best effort location obtained:', {
+          latitude: locationResult.latitude,
+          longitude: locationResult.longitude,
+          accuracy: locationResult.accuracy,
+          method: locationResult.method,
+          isPrecise: isPreciseLocation(locationResult.accuracy)
+        });
+
+        return {
+          latitude: locationResult.latitude,
+          longitude: locationResult.longitude,
+          accuracy: locationResult.accuracy,
+          method: locationResult.method,
+          isPrecise: isPreciseLocation(locationResult.accuracy)
+        };
       }
 
-      return new Promise<{ latitude: number; longitude: number } | null>((resolve) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            console.log('Precise location obtained:', {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              accuracy: position.coords.accuracy
-            });
-            resolve({
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude
-            });
-          },
-          (error) => {
-            console.warn('Precise location failed:', error.message);
-            resolve(null);
-          },
-          { 
-            enableHighAccuracy: true, 
-            timeout: 10000, 
-            maximumAge: 0 // Always get fresh location
-          }
-        );
-      });
+      console.warn('No location could be obtained');
+      return null;
     } catch (error) {
       console.warn('Error getting precise location:', error);
       return null;
@@ -85,12 +85,22 @@ export const useLogging = () => {
       const userAgent = navigator.userAgent;
       console.log('User agent:', userAgent);
       
-      // Determine if we have precise location
-      const hasPreciseLocation = preciseLocation !== null && 
-                                preciseLocation.latitude !== undefined && 
-                                preciseLocation.longitude !== undefined;
+      // Determine location data to use
+      const hasGPSLocation = preciseLocation !== null;
+      const latitude = hasGPSLocation ? preciseLocation.latitude : geoData.latitude;
+      const longitude = hasGPSLocation ? preciseLocation.longitude : geoData.longitude;
+      const locationAccuracy = hasGPSLocation ? preciseLocation.accuracy : null;
+      const locationMethod = hasGPSLocation ? preciseLocation.method : 'ip';
+      const isPrecise = hasGPSLocation ? preciseLocation.isPrecise : false;
       
-      console.log('Has precise location:', hasPreciseLocation);
+      console.log('Location determination:', {
+        hasGPSLocation,
+        latitude,
+        longitude,
+        accuracy: locationAccuracy,
+        method: locationMethod,
+        isPrecise
+      });
       
       cachedIpData = { 
         ip: geoData.ip || 'unknown',
@@ -100,9 +110,11 @@ export const useLogging = () => {
         region: geoData.region,
         timezone: geoData.timezone,
         isp: geoData.org,
-        latitude: hasPreciseLocation ? preciseLocation.latitude : geoData.latitude,
-        longitude: hasPreciseLocation ? preciseLocation.longitude : geoData.longitude,
-        precise_location: hasPreciseLocation,
+        latitude,
+        longitude,
+        location_accuracy: locationAccuracy,
+        location_method: locationMethod,
+        precise_location: isPrecise,
         timestamp: Date.now()
       };
       
@@ -153,13 +165,17 @@ export const useLogging = () => {
         isp: clientInfo.isp,
         latitude: clientInfo.latitude || null,
         longitude: clientInfo.longitude || null,
+        location_accuracy: clientInfo.location_accuracy || null,
+        location_method: clientInfo.location_method || 'unknown',
         precise_location: clientInfo.precise_location || false
       };
       
       console.log('About to save log data to Firebase:', logData);
-      console.log('Precise location data being saved:', {
+      console.log('Location data being saved:', {
         latitude: logData.latitude,
         longitude: logData.longitude,
+        accuracy: logData.location_accuracy,
+        method: logData.location_method,
         precise_location: logData.precise_location,
         hasValidCoords: !!(logData.latitude && logData.longitude)
       });
@@ -170,6 +186,8 @@ export const useLogging = () => {
       console.log('Saved location data:', {
         latitude: clientInfo.latitude,
         longitude: clientInfo.longitude,
+        accuracy: clientInfo.location_accuracy,
+        method: clientInfo.location_method,
         precise_location: clientInfo.precise_location,
         city: clientInfo.city,
         country: clientInfo.country

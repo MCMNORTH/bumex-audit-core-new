@@ -3,6 +3,7 @@ import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
+import { getBestEffortLocation, isPreciseLocation } from '@/lib/location';
 
 // Cache for IP address and geolocation data to avoid multiple API calls
 let cachedIpData: { 
@@ -15,6 +16,8 @@ let cachedIpData: {
   isp?: string;
   latitude?: number;
   longitude?: number;
+  location_accuracy?: number;
+  location_method?: string;
   precise_location?: boolean;
   timestamp?: number;
 } | null = null;
@@ -39,33 +42,35 @@ export const useAuth = () => {
 
 const getPreciseLocation = async () => {
   try {
-    // Check if geolocation is supported
-    if (!navigator.geolocation) {
-      console.warn('Geolocation is not supported by this browser');
-      return null;
+    console.log('Getting best effort location for auth...');
+    const locationResult = await getBestEffortLocation({
+      timeout: 15000,
+      accuracyThreshold: 100,
+      maxAttempts: 3
+    });
+
+    if (locationResult) {
+      console.log('Auth location obtained:', {
+        latitude: locationResult.latitude,
+        longitude: locationResult.longitude,
+        accuracy: locationResult.accuracy,
+        method: locationResult.method,
+        isPrecise: isPreciseLocation(locationResult.accuracy)
+      });
+
+      return {
+        latitude: locationResult.latitude,
+        longitude: locationResult.longitude,
+        accuracy: locationResult.accuracy,
+        method: locationResult.method,
+        isPrecise: isPreciseLocation(locationResult.accuracy)
+      };
     }
 
-    return new Promise<{ latitude: number; longitude: number } | null>((resolve) => {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.warn('Precise location failed:', error.message);
-          resolve(null);
-        },
-        { 
-          enableHighAccuracy: true, 
-          timeout: 10000, 
-          maximumAge: 0 // Always get fresh location
-        }
-      );
-    });
+    console.warn('No location could be obtained for auth');
+    return null;
   } catch (error) {
-    console.warn('Error getting precise location:', error);
+    console.warn('Error getting precise location for auth:', error);
     return null;
   }
 };
@@ -90,10 +95,22 @@ const getClientInfo = async () => {
     // Get user agent
     const userAgent = navigator.userAgent;
     
-    // Determine if we have precise location
-    const hasPreciseLocation = preciseLocation !== null && 
-                              preciseLocation.latitude !== undefined && 
-                              preciseLocation.longitude !== undefined;
+    // Determine location data to use
+    const hasGPSLocation = preciseLocation !== null;
+    const latitude = hasGPSLocation ? preciseLocation.latitude : geoData.latitude;
+    const longitude = hasGPSLocation ? preciseLocation.longitude : geoData.longitude;
+    const locationAccuracy = hasGPSLocation ? preciseLocation.accuracy : null;
+    const locationMethod = hasGPSLocation ? preciseLocation.method : 'ip';
+    const isPrecise = hasGPSLocation ? preciseLocation.isPrecise : false;
+    
+    console.log('Auth location determination:', {
+      hasGPSLocation,
+      latitude,
+      longitude,
+      accuracy: locationAccuracy,
+      method: locationMethod,
+      isPrecise
+    });
     
     cachedIpData = { 
       ip: geoData.ip || 'unknown',
@@ -103,9 +120,11 @@ const getClientInfo = async () => {
       region: geoData.region,
       timezone: geoData.timezone,
       isp: geoData.org,
-      latitude: hasPreciseLocation ? preciseLocation.latitude : geoData.latitude,
-      longitude: hasPreciseLocation ? preciseLocation.longitude : geoData.longitude,
-      precise_location: hasPreciseLocation,
+      latitude,
+      longitude,
+      location_accuracy: locationAccuracy,
+      location_method: locationMethod,
+      precise_location: isPrecise,
       timestamp: Date.now()
     };
     
@@ -148,9 +167,11 @@ const createLogWithClientInfo = async (action: string, targetId: string, details
       region: clientInfo.region,
       timezone: clientInfo.timezone,
       isp: clientInfo.isp,
-      latitude: clientInfo.latitude || null,
-      longitude: clientInfo.longitude || null,
-      precise_location: clientInfo.precise_location || false
+        latitude: clientInfo.latitude || null,
+        longitude: clientInfo.longitude || null,
+        location_accuracy: clientInfo.location_accuracy || null,
+        location_method: clientInfo.location_method || 'unknown',
+        precise_location: clientInfo.precise_location || false
     });
   } catch (error) {
     console.error('Error creating log:', error);

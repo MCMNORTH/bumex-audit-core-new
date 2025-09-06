@@ -266,11 +266,16 @@ const Logs = () => {
                                          .filter(Boolean)
                                          .join(', ') || 'N/A'}
                                      </div>
-                                     {(log as any).timezone && (
-                                       <div className="text-gray-600 text-xs">
-                                         Timezone: {(log as any).timezone}
-                                       </div>
-                                     )}
+                                       {(log as any).timezone && (
+                                        <div className="text-gray-600 text-xs">
+                                          Timezone: {(log as any).timezone}
+                                        </div>
+                                      )}
+                                      {(log as any).location_accuracy && (
+                                        <div className="text-gray-600 text-xs">
+                                          Accuracy: {Math.round((log as any).location_accuracy)}m ({(log as any).location_method})
+                                        </div>
+                                      )}
                                      {/* Show button if we have any location data - either precise GPS or IP-based */}
                                      {(((log as any).latitude && (log as any).longitude) || ((log as any).city && (log as any).country)) && (
                                        <Dialog>
@@ -287,22 +292,24 @@ const Logs = () => {
                                                 Showing location data for this log entry
                                               </DialogDescription>
                                             </DialogHeader>
-                                            <LogLocationMap 
-                                              logs={[{
-                                                id: log.id,
-                                                latitude: (log as any).latitude,
-                                                longitude: (log as any).longitude,
-                                                precise_location: (log as any).precise_location,
-                                                user_name: log.user_name,
-                                                action: log.action,
-                                                timestamp: log.timestamp,
-                                                city: (log as any).city,
-                                                country: (log as any).country
-                                              }].map(logItem => {
-                                                console.log('Passing log to map:', logItem);
-                                                return logItem;
-                                              })}
-                                            />
+                             <LogLocationMap 
+                               logs={[{
+                                 id: log.id,
+                                 latitude: (log as any).latitude,
+                                 longitude: (log as any).longitude,
+                                 precise_location: (log as any).precise_location,
+                                 user_name: log.user_name,
+                                 action: log.action,
+                                 timestamp: log.timestamp,
+                                 city: (log as any).city,
+                                 country: (log as any).country,
+                                 location_accuracy: (log as any).location_accuracy,
+                                 location_method: (log as any).location_method
+                               }].map(logItem => {
+                                 console.log('Passing log to map:', logItem);
+                                 return logItem;
+                               })}
+                             />
                                          </DialogContent>
                                        </Dialog>
                                      )}
