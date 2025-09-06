@@ -5,7 +5,6 @@ export interface GeolocationData {
   longitude: number;
   accuracy: number;
   timestamp: number;
-  method: 'gps' | 'network' | 'passive';
 }
 
 export interface GeolocationState {
@@ -13,8 +12,6 @@ export interface GeolocationState {
   loading: boolean;
   error: string | null;
   permissionState: PermissionState | null;
-  method: string | null;
-  accuracy: number | null;
 }
 
 export const useGeolocation = (requestOnMount = false) => {
@@ -23,8 +20,6 @@ export const useGeolocation = (requestOnMount = false) => {
     loading: false,
     error: null,
     permissionState: null,
-    method: null,
-    accuracy: null,
   });
 
   const checkPermission = async () => {
@@ -59,72 +54,71 @@ export const useGeolocation = (requestOnMount = false) => {
       if (permission === 'denied') {
         setState(prev => ({ 
           ...prev, 
-          error: 'Location permission denied. To enable precise location, please allow location access in your browser settings and refresh the page.',
+          error: 'Location permission denied. Please enable location access in your browser settings.',
           loading: false 
         }));
         return null;
       }
 
-      // Use the enhanced location system
-      const { getBestEffortLocation } = await import('@/lib/location');
-      const locationResult = await getBestEffortLocation({
-        timeout: 20000,
-        maxAttempts: 3,
-        useWatchPosition: true,
-        watchDuration: 8000
+      return new Promise<GeolocationData | null>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const locationData: GeolocationData = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              timestamp: position.timestamp,
+            };
+            
+            setState(prev => ({ 
+              ...prev, 
+              location: locationData, 
+              loading: false, 
+              error: null 
+            }));
+            
+            console.log('Location obtained successfully:', locationData);
+            resolve(locationData);
+          },
+          (error) => {
+            let errorMessage = 'Failed to get location';
+            
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage = 'Location access denied by user';
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage = 'Location information unavailable';
+                break;
+              case error.TIMEOUT:
+                errorMessage = 'Location request timed out';
+                break;
+            }
+            
+            setState(prev => ({ 
+              ...prev, 
+              error: errorMessage, 
+              loading: false 
+            }));
+            
+            console.warn('Geolocation error:', errorMessage);
+            resolve(null);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 60000, // 1 minute
+          }
+        );
       });
-
-      if (locationResult) {
-        const locationData: GeolocationData = {
-          latitude: locationResult.latitude,
-          longitude: locationResult.longitude,
-          accuracy: locationResult.accuracy,
-          timestamp: locationResult.timestamp,
-          method: locationResult.method,
-        };
-        
-        setState(prev => ({ 
-          ...prev, 
-          location: locationData, 
-          loading: false, 
-          error: null,
-          method: locationResult.method,
-          accuracy: locationResult.accuracy
-        }));
-        
-        console.log('Enhanced location obtained successfully:', locationData);
-        return locationData;
-      } else {
-        setState(prev => ({ 
-          ...prev, 
-          error: 'Unable to determine your location. This may be due to weak GPS signal or browser restrictions.',
-          loading: false 
-        }));
-        return null;
-      }
     } catch (error) {
-      let errorMessage = 'Failed to get location';
-      
-      if (error && typeof error === 'object' && 'code' in error) {
-        switch ((error as GeolocationPositionError).code) {
-          case 1: // PERMISSION_DENIED
-            errorMessage = 'Location access denied. For iOS Safari: Settings > Privacy & Security > Location Services > Safari Websites > Ask. For Chrome: Click the location icon in the address bar.';
-            break;
-          case 2: // POSITION_UNAVAILABLE
-            errorMessage = 'Location unavailable. Try moving to an area with better GPS reception or enable high-accuracy mode.';
-            break;
-          case 3: // TIMEOUT
-            errorMessage = 'Location request timed out. Check your internet connection and GPS signal.';
-            break;
-        }
-      }
-      
+      const errorMessage = 'Unexpected error getting location';
       setState(prev => ({ 
         ...prev, 
         error: errorMessage, 
         loading: false 
       }));
-      console.error('Enhanced geolocation error:', error);
+      console.error('Geolocation error:', error);
       return null;
     }
   };

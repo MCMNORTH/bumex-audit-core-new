@@ -10,7 +10,7 @@ import { Log } from '@/types';
 import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { LogLocationMap } from '@/components/LogLocationMap';
-
+import { TestLocationButton } from '@/components/TestLocationButton';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
@@ -168,7 +168,7 @@ const Logs = () => {
             <CardDescription>Latest 100 system activities</CardDescription>
           </CardHeader>
           <CardContent>
-            
+            <TestLocationButton />
             {filteredLogs.length > 0 ? (
               <Accordion type="multiple" className="space-y-2">
                 {filteredLogs.map((log) => (
@@ -266,16 +266,11 @@ const Logs = () => {
                                          .filter(Boolean)
                                          .join(', ') || 'N/A'}
                                      </div>
-                                       {(log as any).timezone && (
-                                        <div className="text-gray-600 text-xs">
-                                          Timezone: {(log as any).timezone}
-                                        </div>
-                                      )}
-                                      {(log as any).location_accuracy && (
-                                        <div className="text-gray-600 text-xs">
-                                          Accuracy: {Math.round((log as any).location_accuracy)}m ({(log as any).location_method})
-                                        </div>
-                                      )}
+                                     {(log as any).timezone && (
+                                       <div className="text-gray-600 text-xs">
+                                         Timezone: {(log as any).timezone}
+                                       </div>
+                                     )}
                                      {/* Show button if we have any location data - either precise GPS or IP-based */}
                                      {(((log as any).latitude && (log as any).longitude) || ((log as any).city && (log as any).country)) && (
                                        <Dialog>
@@ -292,24 +287,19 @@ const Logs = () => {
                                                 Showing location data for this log entry
                                               </DialogDescription>
                                             </DialogHeader>
-                             <LogLocationMap 
-                               logs={[{
-                                 id: log.id,
-                                 latitude: (log as any).latitude,
-                                 longitude: (log as any).longitude,
-                                 precise_location: (log as any).precise_location,
-                                 user_name: log.user_name,
-                                 action: log.action,
-                                 timestamp: log.timestamp,
-                                 city: (log as any).city,
-                                 country: (log as any).country,
-                                 location_accuracy: (log as any).location_accuracy,
-                                 location_method: (log as any).location_method
-                               }].map(logItem => {
-                                 console.log('Passing log to map:', logItem);
-                                 return logItem;
-                               })}
-                             />
+                                           <LogLocationMap 
+                                             logs={[{
+                                               id: log.id,
+                                               latitude: (log as any).latitude,
+                                               longitude: (log as any).longitude,
+                                               precise_location: (log as any).precise_location,
+                                               user_name: log.user_name,
+                                               action: log.action,
+                                               timestamp: log.timestamp,
+                                               city: (log as any).city,
+                                               country: (log as any).country
+                                             }]}
+                                           />
                                          </DialogContent>
                                        </Dialog>
                                      )}
