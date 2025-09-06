@@ -24,7 +24,7 @@ interface GoogleMapComponentProps {
 const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
+  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
   const circlesRef = useRef<google.maps.Circle[]>([]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
 
     // Clear previous markers and circles
     markersRef.current.forEach(marker => {
-      marker.setMap(null);
+      marker.map = null;
     });
     markersRef.current = [];
     
@@ -83,18 +83,20 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
     const addMarker = async (log: typeof logs[0], position: google.maps.LatLng | google.maps.LatLngLiteral) => {
       console.log('Adding marker for log:', log.id, 'at position:', position);
       
-      const marker = new google.maps.Marker({
+      // Create marker element
+      const markerElement = document.createElement('div');
+      markerElement.style.width = '16px';
+      markerElement.style.height = '16px';
+      markerElement.style.borderRadius = '50%';
+      markerElement.style.backgroundColor = log.precise_location ? '#10b981' : '#f59e0b';
+      markerElement.style.border = '2px solid #ffffff';
+      markerElement.style.cursor = 'pointer';
+      
+      const marker = new google.maps.marker.AdvancedMarkerElement({
         position: position,
         map: map,
         title: `${log.user_name} - ${log.action}`,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 8,
-          fillColor: log.precise_location ? '#10b981' : '#f59e0b',
-          fillOpacity: 1,
-          strokeColor: '#ffffff',
-          strokeWeight: 2,
-        },
+        content: markerElement,
       });
 
       console.log('Created marker at position:', position, 'for log:', log.id);
@@ -120,7 +122,10 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
       });
 
       marker.addListener('click', () => {
-        infoWindow.open(map, marker);
+        infoWindow.open({
+          anchor: marker,
+          map: map,
+        });
       });
 
       markersRef.current.push(marker);
@@ -262,9 +267,9 @@ export const LogLocationMap: React.FC<LogLocationMapProps> = ({ logs }) => {
   return (
     <div className="space-y-4">
       <Wrapper
-        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'your-api-key-here'}
+        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA'}
         render={render}
-        libraries={['geometry', 'places']}
+        libraries={['marker', 'geometry', 'places']}
       />
       <div className="flex items-center space-x-4 text-sm text-gray-600">
         <div className="flex items-center space-x-2">
