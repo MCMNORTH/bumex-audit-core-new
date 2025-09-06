@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, addDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { User } from '@/types';
 import { useLogging } from '@/hooks/useLogging';
 
@@ -112,13 +112,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (firebaseUser) {
         setFirebaseUser(firebaseUser);
         try {
-          // Fetch user data from Firestore
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          console.log('User document exists:', userDoc.exists());
-          if (userDoc.exists()) {
-            const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
+          // Query user data from Firestore by email since document ID may not match Firebase Auth UID
+          const usersQuery = query(
+            collection(db, 'users'), 
+            where('email', '==', firebaseUser.email)
+          );
+          const querySnapshot = await getDocs(usersQuery);
+          
+          console.log('User query results:', querySnapshot.docs.length);
+          
+          if (!querySnapshot.empty) {
+            const userDoc = querySnapshot.docs[0];
+            const userData = { id: userDoc.id, ...userDoc.data() } as User;
             console.log('User data:', userData);
             console.log('User approved:', userData.approved, 'User blocked:', userData.blocked);
+            
             // SECURITY: Only set user if account is approved and not blocked
             if (userData.approved !== false && !userData.blocked) {
               console.log('Setting user in context');
@@ -132,7 +140,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               // Account pending approval or blocked - should show appropriate message
             }
           } else {
-            console.log('User document does not exist');
+            console.log('No user document found with email:', firebaseUser.email);
             setUser(null);
           }
         } catch (error) {
