@@ -151,16 +151,23 @@ export const useLogging = () => {
         region: clientInfo.region,
         timezone: clientInfo.timezone,
         isp: clientInfo.isp,
-        latitude: clientInfo.latitude,
-        longitude: clientInfo.longitude,
-        precise_location: clientInfo.precise_location
+        latitude: clientInfo.latitude || null,
+        longitude: clientInfo.longitude || null,
+        precise_location: clientInfo.precise_location || false
       };
       
-      console.log('About to save log data:', logData);
+      console.log('About to save log data to Firebase:', logData);
+      console.log('Precise location data being saved:', {
+        latitude: logData.latitude,
+        longitude: logData.longitude,
+        precise_location: logData.precise_location,
+        hasValidCoords: !!(logData.latitude && logData.longitude)
+      });
       
-      await addDoc(collection(db, 'logs'), logData);
+      const docRef = await addDoc(collection(db, 'logs'), logData);
       
-      console.log('Log created successfully with location data:', {
+      console.log('Log created successfully with document ID:', docRef.id);
+      console.log('Saved location data:', {
         latitude: clientInfo.latitude,
         longitude: clientInfo.longitude,
         precise_location: clientInfo.precise_location,
@@ -169,6 +176,7 @@ export const useLogging = () => {
       });
     } catch (error) {
       console.error('Error creating log:', error);
+      console.error('Error details:', error);
     }
   };
 
