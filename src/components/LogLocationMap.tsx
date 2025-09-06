@@ -90,13 +90,15 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
         title: `${log.user_name} - ${log.action}`,
         icon: {
           path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
+          scale: 8,
           fillColor: log.precise_location ? '#10b981' : '#f59e0b',
           fillOpacity: 1,
           strokeColor: '#ffffff',
           strokeWeight: 2,
         },
       });
+
+      console.log('Created marker at position:', position, 'for log:', log.id);
 
       // Create info window content
       const infoWindowContent = `
@@ -105,8 +107,9 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
           <div style="font-size: 12px; line-height: 1.4;">
             <div><strong>Action:</strong> ${log.action}</div>
             <div><strong>Time:</strong> ${log.timestamp.toLocaleString()}</div>
-            <div><strong>Location:</strong> ${log.city}, ${log.country}</div>
-            <div><strong>Type:</strong> ${log.precise_location ? 'Precise GPS' : 'IP-based'}</div>
+            <div><strong>Location:</strong> ${log.city || 'Unknown'}, ${log.country || 'Unknown'}</div>
+            <div><strong>Coordinates:</strong> ${typeof position === 'object' && 'lat' in position ? position.lat : (position as google.maps.LatLng).lat()}, ${typeof position === 'object' && 'lng' in position ? position.lng : (position as google.maps.LatLng).lng()}</div>
+            <div><strong>Type:</strong> <span style="color: ${log.precise_location ? '#10b981' : '#f59e0b'};">${log.precise_location ? 'Precise GPS' : 'IP-based'}</span></div>
           </div>
         </div>
       `;
@@ -120,7 +123,11 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
       });
 
       markersRef.current.push(marker);
-      bounds.extend(position);
+      
+      // Add to bounds if it's a valid position
+      if (position) {
+        bounds.extend(position);
+      }
     };
 
     for (const log of logsWithLocation) {
@@ -167,8 +174,16 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
       }
     }
 
-    // Fit map to show all markers or maintain single location center
-    if (logsWithLocation.length > 1) {
+    // Fit map to show all markers or center on single location
+    if (logsWithLocation.length === 1 && logsWithLocation[0].latitude && logsWithLocation[0].longitude) {
+      // For single precise location, center and zoom
+      const singlePos = { 
+        lat: parseFloat(logsWithLocation[0].latitude.toString()), 
+        lng: parseFloat(logsWithLocation[0].longitude.toString()) 
+      };
+      map.setCenter(singlePos);
+      map.setZoom(12);
+    } else if (logsWithLocation.length > 1) {
       // For multiple locations, fit bounds after a delay to allow geocoding
       setTimeout(() => {
         if (bounds && !bounds.isEmpty()) {
