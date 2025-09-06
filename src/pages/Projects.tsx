@@ -522,52 +522,104 @@ const Projects = () => {
           </Select>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredProjects.map((project) => (
-            <Card key={project.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6" onClick={() => handleProjectClick(project.id)}>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <FolderOpen className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{project.engagement_name}</h3>
-                      <p className="text-sm text-gray-500">{project.engagement_id}</p>
-                    </div>
-                  </div>
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                  </Badge>
-                </div>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Building className="h-4 w-4" />
-                    <span>{project.client_name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      {project.period_start.toLocaleDateString()} - {project.period_end.toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Users className="h-4 w-4" />
-                    <span>{project.assigned_to.length} team members</span>
-                  </div>
+        <div className="space-y-4">
+          {filteredProjects.map((project) => {
+            // Get team member counts
+            const teamCounts = {
+              leadPartner: project.team_assignments?.lead_partner_id ? 1 : 0,
+              partners: project.team_assignments?.partner_ids?.length || 0,
+              managers: project.team_assignments?.manager_ids?.length || 0,
+              inCharge: project.team_assignments?.in_charge_ids?.length || 0,
+              staff: project.team_assignments?.staff_ids?.length || 0,
+              leadDeveloper: project.lead_developer_id ? 1 : 0,
+            };
+            
+            const totalTeamMembers = Object.values(teamCounts).reduce((sum, count) => sum + count, 0);
+            
+            // Get lead partner name
+            const leadPartner = users.find(u => u.id === project.team_assignments?.lead_partner_id);
+            const leadDeveloper = users.find(u => u.id === project.lead_developer_id);
+            
+            return (
+              <Card key={project.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                <CardContent className="p-4" onClick={() => handleProjectClick(project.id)}>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">{project.audit_type}</span>
-                    {project.is_first_audit && (
-                      <Badge variant="secondary" className="text-xs">
-                        First Audit
-                      </Badge>
-                    )}
+                    <div className="flex items-center space-x-3 flex-1">
+                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <FolderOpen className="h-4 w-4 text-blue-600" />
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2">
+                          <h3 className="font-semibold text-gray-900 truncate">{project.engagement_name}</h3>
+                          <Badge className={`${getStatusColor(project.status)} text-xs`}>
+                            {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                          </Badge>
+                          {project.is_first_audit && (
+                            <Badge variant="secondary" className="text-xs">
+                              First Audit
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-500">{project.engagement_id}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-6 text-sm text-gray-600">
+                      <div className="flex items-center space-x-1">
+                        <Building className="h-4 w-4" />
+                        <span className="truncate max-w-[120px]">{project.client_name}</span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-1">
+                        <Calendar className="h-4 w-4" />
+                        <span className="whitespace-nowrap">
+                          {project.period_start.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })} - {project.period_end.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-1">
+                        <Users className="h-4 w-4" />
+                        <span>{totalTeamMembers} members</span>
+                      </div>
+                      
+                      <div className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
+                        {project.audit_type}
+                      </div>
+                      
+                      {canEditProject && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(project);
+                          }}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          Edit
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  
+                  {/* Team details row */}
+                  <div className="mt-3 ml-11 flex items-center space-x-4 text-xs text-gray-500">
+                    {leadPartner && (
+                      <span>Lead Partner: {leadPartner.first_name} {leadPartner.last_name}</span>
+                    )}
+                    {leadDeveloper && (
+                      <span>Lead Dev: {leadDeveloper.first_name} {leadDeveloper.last_name}</span>
+                    )}
+                    {teamCounts.partners > 0 && <span>{teamCounts.partners} Partners</span>}
+                    {teamCounts.managers > 0 && <span>{teamCounts.managers} Managers</span>}
+                    {teamCounts.inCharge > 0 && <span>{teamCounts.inCharge} In Charge</span>}
+                    {teamCounts.staff > 0 && <span>{teamCounts.staff} Staff</span>}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {filteredProjects.length === 0 && (
