@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import { isCountryAllowed, getClientInfo } from '@/lib/clientInfo';
 import { GeoRestricted } from '@/components/GeoRestricted';
+import { LocationPermissionPrompt } from '@/components/LocationPermissionPrompt';
 import { Skeleton } from '@/components/ui/skeleton';
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -114,6 +115,7 @@ const Login = () => {
             <CardDescription>Enter your email and password to access the system</CardDescription>
           </CardHeader>
           <CardContent>
+            <LocationPermissionPrompt />
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="email">Email</Label>

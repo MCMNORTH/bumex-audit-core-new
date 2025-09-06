@@ -21,19 +21,38 @@ export const useLogging = () => {
 
   const getPreciseLocation = async () => {
     try {
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        console.warn('Geolocation is not supported by this browser');
+        return null;
+      }
+
       return new Promise<{ latitude: number; longitude: number } | null>((resolve) => {
         navigator.geolocation.getCurrentPosition(
           (position) => {
+            console.log('Precise location obtained:', {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy
+            });
             resolve({
               latitude: position.coords.latitude,
               longitude: position.coords.longitude
             });
           },
-          () => resolve(null),
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+          (error) => {
+            console.warn('Precise location failed:', error.message);
+            resolve(null);
+          },
+          { 
+            enableHighAccuracy: true, 
+            timeout: 15000, 
+            maximumAge: 60000 // Use cached location if less than 1 minute old
+          }
         );
       });
     } catch (error) {
+      console.warn('Error getting precise location:', error);
       return null;
     }
   };
