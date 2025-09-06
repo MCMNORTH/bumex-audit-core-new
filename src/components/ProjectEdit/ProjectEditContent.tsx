@@ -369,10 +369,22 @@ const ProjectEditContent = ({
         <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
 
         {/* Main parent section - shows all nested content for 1. Engagement management */}
-        {activeSection === 'engagement-management' && <div className="space-y-8">
-            {renderOverviewInfo()}
-            {renderCardsForSection(engagementManagementSection)}
-          </div>}
+        {activeSection === 'engagement-management' && (
+          <SectionWrapper
+            sectionId="engagement-management"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="manager"
+            onSignOff={handleSignOffWrapper}
+            onUnsign={onUnsign}
+          >
+            <div className="space-y-8">
+              {renderOverviewInfo()}
+              {renderCardsForSection(engagementManagementSection)}
+            </div>
+          </SectionWrapper>
+        )}
 
         {/* Section 1, Engagement management children keep as before */}
         {activeSection === 'engagement-profile-section' && <div className="space-y-8">
