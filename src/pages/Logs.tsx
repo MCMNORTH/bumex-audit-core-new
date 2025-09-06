@@ -10,7 +10,7 @@ import { Log } from '@/types';
 import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { LogLocationMap } from '@/components/LogLocationMap';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
 const Logs = () => {
@@ -278,10 +278,13 @@ const Logs = () => {
                                              View Location
                                            </Button>
                                          </DialogTrigger>
-                                         <DialogContent className="max-w-4xl">
-                                           <DialogHeader>
-                                             <DialogTitle>Log Location - {log.user_name}</DialogTitle>
-                                           </DialogHeader>
+                                          <DialogContent className="max-w-4xl">
+                                            <DialogHeader>
+                                              <DialogTitle>Log Location - {log.user_name}</DialogTitle>
+                                              <DialogDescription>
+                                                Showing location data for this log entry
+                                              </DialogDescription>
+                                            </DialogHeader>
                                            <LogLocationMap 
                                              logs={[{
                                                id: log.id,

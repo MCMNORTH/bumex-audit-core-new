@@ -40,8 +40,8 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
 
     // Initialize map
     const map = new google.maps.Map(mapRef.current, {
-      zoom: 2,
-      center: { lat: 20, lng: 0 },
+      zoom: 10,
+      center: { lat: 20, lng: 0 }, // Will be updated based on actual log locations
       mapTypeId: google.maps.MapTypeId.ROADMAP,
     });
 
@@ -123,16 +123,26 @@ const GoogleMapComponent = ({ logs }: GoogleMapComponentProps) => {
       }
     }
 
-    // Fit map to show all markers
+    // Fit map to show all markers or center on single location
     if (logsWithLocation.length > 0) {
-      map.fitBounds(bounds);
-      
-      // Ensure minimum zoom level
-      google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
-        if (map.getZoom()! > 15) {
+      if (logsWithLocation.length === 1) {
+        // For single location, center the map on it
+        const log = logsWithLocation[0];
+        if (log.latitude && log.longitude) {
+          map.setCenter({ lat: log.latitude, lng: log.longitude });
           map.setZoom(15);
         }
-      });
+      } else {
+        // For multiple locations, fit bounds
+        map.fitBounds(bounds);
+        
+        // Ensure minimum zoom level
+        google.maps.event.addListenerOnce(map, 'bounds_changed', () => {
+          if (map.getZoom()! > 15) {
+            map.setZoom(15);
+          }
+        });
+      }
     }
 
     // Cleanup function
