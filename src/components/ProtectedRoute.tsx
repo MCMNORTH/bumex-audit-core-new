@@ -55,7 +55,11 @@ export const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps)
   }
 
   if (!isGeoAllowed) {
-    return <GeoRestricted country={clientInfo?.country} countryCode={clientInfo?.country_code} />;
+    return <GeoRestricted 
+      country={clientInfo?.country} 
+      countryCode={clientInfo?.country_code} 
+      isLocationPermissionDenied={clientInfo?.country_code !== 'Unknown'}
+    />;
   }
 
   if (!user) {

@@ -7,8 +7,10 @@ import { Badge } from '@/components/ui/badge';
 import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Log } from '@/types';
-import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi } from 'lucide-react';
+import { Search, Activity, Clock, User as UserIcon, ChevronDown, Globe, Monitor, MapPin, Wifi, Map } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { LogLocationMap } from '@/components/LogLocationMap';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Logs = () => {
   const { users, loading: refLoading } = useReferenceData();
@@ -158,12 +160,25 @@ const Logs = () => {
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Latest 100 system activities</CardDescription>
-          </CardHeader>
-          <CardContent>
+        <Tabs defaultValue="list" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="list" className="flex items-center space-x-2">
+              <Activity className="h-4 w-4" />
+              <span>Activity List</span>
+            </TabsTrigger>
+            <TabsTrigger value="map" className="flex items-center space-x-2">
+              <Map className="h-4 w-4" />
+              <span>Location Map</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="list">
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>Latest 100 system activities</CardDescription>
+              </CardHeader>
+              <CardContent>
             {filteredLogs.length > 0 ? (
               <Accordion type="multiple" className="space-y-2">
                 {filteredLogs.map((log) => (
@@ -332,9 +347,35 @@ const Logs = () => {
                   {searchTerm ? 'Try adjusting your search terms' : 'No activity logs available'}
                 </p>
               </div>
-            )}
-          </CardContent>
-        </Card>
+              )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="map">
+            <Card>
+              <CardHeader>
+                <CardTitle>Activity Locations</CardTitle>
+                <CardDescription>Geographic visualization of user activities</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <LogLocationMap 
+                  logs={filteredLogs.map(log => ({
+                    id: log.id,
+                    latitude: (log as any).latitude,
+                    longitude: (log as any).longitude,
+                    precise_location: (log as any).precise_location,
+                    user_name: log.user_name,
+                    action: log.action,
+                    timestamp: log.timestamp,
+                    city: (log as any).city,
+                    country: (log as any).country
+                  }))}
+                />
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );

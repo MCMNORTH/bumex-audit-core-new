@@ -11,16 +11,41 @@ let cachedIpData: {
   region?: string;
   timezone?: string;
   isp?: string;
+  latitude?: number;
+  longitude?: number;
+  precise_location?: boolean;
 } | null = null;
 
 export const useLogging = () => {
   const { user } = useAuth();
+
+  const getPreciseLocation = async () => {
+    try {
+      return new Promise<{ latitude: number; longitude: number } | null>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude
+            });
+          },
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+        );
+      });
+    } catch (error) {
+      return null;
+    }
+  };
 
   const getClientInfo = async () => {
     if (cachedIpData) return cachedIpData;
 
     try {
       console.log('Fetching IP address and geolocation...');
+      
+      // Get precise location first
+      const preciseLocation = await getPreciseLocation();
       
       // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
       const geoResponse = await fetch('https://ipapi.co/json/');
@@ -39,7 +64,10 @@ export const useLogging = () => {
         city: geoData.city,
         region: geoData.region,
         timezone: geoData.timezone,
-        isp: geoData.org
+        isp: geoData.org,
+        latitude: preciseLocation?.latitude || geoData.latitude,
+        longitude: preciseLocation?.longitude || geoData.longitude,
+        precise_location: !!preciseLocation
       };
       
       return cachedIpData;
@@ -84,7 +112,10 @@ export const useLogging = () => {
         city: clientInfo.city,
         region: clientInfo.region,
         timezone: clientInfo.timezone,
-        isp: clientInfo.isp
+        isp: clientInfo.isp,
+        latitude: clientInfo.latitude,
+        longitude: clientInfo.longitude,
+        precise_location: clientInfo.precise_location
       });
       
       console.log('Log created successfully');
