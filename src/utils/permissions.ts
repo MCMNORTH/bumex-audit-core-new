@@ -17,14 +17,20 @@ export function getProjectRole(user: User | null, formData: ProjectFormData): st
   if (!user) return null;
   
   const userId = user.id;
-  const teamAssignments = formData.team_assignments;
+  const teamAssignments = formData.team_assignments || {
+    lead_partner_id: '',
+    partner_ids: [],
+    manager_ids: [],
+    in_charge_ids: [],
+    staff_ids: [],
+  };
   
   if (formData.lead_developer_id === userId) return 'lead_developer';
   if (teamAssignments.lead_partner_id === userId) return 'lead_partner';
-  if (teamAssignments.partner_ids.includes(userId)) return 'partner';
-  if (teamAssignments.manager_ids.includes(userId)) return 'manager';
-  if (teamAssignments.in_charge_ids.includes(userId)) return 'in_charge';
-  if (teamAssignments.staff_ids.includes(userId)) return 'staff';
+  if (teamAssignments.partner_ids && teamAssignments.partner_ids.includes(userId)) return 'partner';
+  if (teamAssignments.manager_ids && teamAssignments.manager_ids.includes(userId)) return 'manager';
+  if (teamAssignments.in_charge_ids && teamAssignments.in_charge_ids.includes(userId)) return 'in_charge';
+  if (teamAssignments.staff_ids && teamAssignments.staff_ids.includes(userId)) return 'staff';
   
   return null;
 }

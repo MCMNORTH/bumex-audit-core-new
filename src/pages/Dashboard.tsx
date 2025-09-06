@@ -112,13 +112,19 @@ const Dashboard = () => {
             };
 
             const userRole = getProjectRole(user, projectFormData as any);
-            if (!userRole && project.lead_developer_id !== user.id) return null;
+            const isLeadDeveloper = project.lead_developer_id === user.id;
+            
+            if (!userRole && !isLeadDeveloper) {
+              return null;
+            }
 
             const client = clients.find(c => c.id === project.client_id);
+            const finalUserRole = userRole || (isLeadDeveloper ? 'lead_developer' : null);
+            
             return {
               ...project,
               client_name: client?.name || 'Unknown Client',
-              user_role: userRole || (project.lead_developer_id === user.id ? 'lead_developer' : null),
+              user_role: finalUserRole,
             } as ProjectWithRole;
           })
           .filter((project): project is ProjectWithRole => project !== null);
