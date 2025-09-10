@@ -19,4 +19,16 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    // Security: Remove console and debugger statements in production
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: mode === 'production',
+        drop_debugger: mode === 'production',
+      },
+    },
+    // Security: Disable source maps in production
+    sourcemap: mode === 'development',
+  },
 }));

@@ -1,9 +1,10 @@
 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA",
@@ -16,6 +17,27 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Security: Quiet Firebase SDK logs in production
+if (import.meta.env.PROD) {
+  // Set Firestore log level to silent in production
+  import('firebase/firestore').then(({ setLogLevel }) => {
+    setLogLevel('silent');
+  });
+}
+
+// Security: Initialize App Check for production
+if (import.meta.env.PROD && typeof window !== 'undefined') {
+  try {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider('6LfYourSiteKeyHere'), // Replace with your actual reCAPTCHA site key
+      isTokenAutoRefreshEnabled: true
+    });
+  } catch (error) {
+    console.warn('App Check initialization failed:', error);
+  }
+}
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
