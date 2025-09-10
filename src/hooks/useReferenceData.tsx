@@ -3,6 +3,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Client, User } from "@/types";
+import { useAuth } from "@/hooks/useAuth";
+import { canManageUsers, canManageClients } from "@/utils/permissions";
 
 type ReferenceDataContextType = {
   clients: Client[];
@@ -19,21 +21,41 @@ const ReferenceDataContext = createContext<ReferenceDataContextType>({
 });
 
 export const ReferenceDataProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
   const [clients, setClients] = useState<Client[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     try {
-      const [clientsSnapshot, usersSnapshot] = await Promise.all([
-        getDocs(query(collection(db, "clients"))),
-        getDocs(query(collection(db, "users"))),
-      ]);
+      const promises = [];
+      
+      // Only fetch clients if user can manage them
+      if (canManageClients(user)) {
+        promises.push(getDocs(query(collection(db, "clients"))));
+      } else {
+        promises.push(Promise.resolve({ docs: [] }));
+      }
+      
+      // Only fetch users if user can manage them
+      if (canManageUsers(user)) {
+        promises.push(getDocs(query(collection(db, "users"))));
+      } else {
+        promises.push(Promise.resolve({ docs: [] }));
+      }
+
+      const [clientsSnapshot, usersSnapshot] = await Promise.all(promises);
+      
       setClients(clientsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as Client));
       setUsers(usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }) as User));
     } catch (err) {
-      // Optionally handle error, e.g. toast
+      console.error('Error fetching reference data:', err);
     } finally {
       setLoading(false);
     }
@@ -41,7 +63,7 @@ export const ReferenceDataProvider = ({ children }: { children: ReactNode }) => 
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [user]);
 
   return (
     <ReferenceDataContext.Provider value={{ clients, users, loading, reload: fetchData }}>

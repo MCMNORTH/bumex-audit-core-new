@@ -147,7 +147,7 @@ const Clients = () => {
     client.sector.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const canCreateClient = user?.role === 'dev' || user?.role === 'admin';
+  const canCreateClient = user?.role === 'dev' || user?.role === 'admin' || user?.role === 'semi-admin';
 
   if (loading) {
     return (

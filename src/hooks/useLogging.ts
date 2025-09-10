@@ -78,13 +78,11 @@ export const useLogging = () => {
         target_id: targetId,
         timestamp: new Date(),
         details: details || null,
-        ip_address: clientInfo.ip,
-        user_agent: clientInfo.userAgent,
+        // Remove sensitive client information from logs
+        client_ip_hash: clientInfo.ip ? btoa(clientInfo.ip).slice(0, 10) : 'unknown',
         country: clientInfo.country,
         city: clientInfo.city,
-        region: clientInfo.region,
-        timezone: clientInfo.timezone,
-        isp: clientInfo.isp
+        region: clientInfo.region
       });
       
       console.log('Log created successfully');

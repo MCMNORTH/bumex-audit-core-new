@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // App control - read only for authenticated users
+    match /app_control/{docId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null 
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "dev";
+    }
+    
+    // Users collection - enhanced security
+    match /users/{userId} {
+      // Users can read their own document if approved and not blocked
+      allow read: if request.auth != null 
+        && request.auth.uid == userId
+        && resource.data.approved == true
+        && resource.data.blocked != true;
+      
+      // Users can update their own profile (excluding sensitive fields)
+      allow update: if request.auth != null 
+        && request.auth.uid == userId
+        && resource.data.approved == true
+        && resource.data.blocked != true
+        && !("role" in request.resource.data)
+        && !("approved" in request.resource.data)
+        && !("blocked" in request.resource.data);
+      
+      // Dev and admin can read all users
+      allow read: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin"];
+      
+      // Dev and admin can manage user approval, blocking, and roles
+      allow update: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin"];
+      
+      // Only dev can create and delete users
+      allow create, delete: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "dev";
+    }
+    
+    // Clients collection - semi-admin and above only
+    match /clients/{clientId} {
+      allow read, write: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin", "semi-admin"];
+    }
+    
+    // Projects collection - role-based and team membership access
+    match /projects/{projectId} {
+      // Dev, admin, semi-admin can read all projects
+      allow read: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin", "semi-admin"];
+      
+      // Team members can read projects they're assigned to
+      allow read: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true
+        && request.auth.uid in resource.data.member_ids;
+      
+      // Only dev, admin, semi-admin can write projects
+      allow write: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin", "semi-admin"];
+    }
+    
+    // Cycles collection
+    match /cycles/{cycleId} {
+      allow read: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true;
+      
+      allow write: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin"];
+    }
+    
+    // Reference data collections (responses, risks, substantives)
+    match /{collection}/{docId} {
+      allow read: if collection in ["responses", "risks", "substantives"]
+        && request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true;
+      
+      allow write: if collection in ["responses", "risks", "substantives"]
+        && request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.blocked != true
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin"];
+    }
+    
+    // Logs collection - create for all, read only for dev/admin
+    match /logs/{logId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null 
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ["dev", "admin"];
+    }
+  }
+}

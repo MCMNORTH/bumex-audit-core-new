@@ -9,8 +9,25 @@ export function isAdmin(user: User | null): boolean {
   return user?.role === 'admin';
 }
 
+export function isSemiAdmin(user: User | null): boolean {
+  return user?.role === 'semi-admin';
+}
+
 export function isDevOrAdmin(user: User | null): boolean {
   return isDev(user) || isAdmin(user);
+}
+
+export function isPrivilegedUser(user: User | null): boolean {
+  return isDev(user) || isAdmin(user) || isSemiAdmin(user);
+}
+
+export function isProjectMember(user: User | null, formData: ProjectFormData): boolean {
+  if (!user) return false;
+  
+  const userId = user.id;
+  const memberIds = formData.member_ids || [];
+  
+  return memberIds.includes(userId) || formData.lead_developer_id === userId;
 }
 
 export function getProjectRole(user: User | null, formData: ProjectFormData): string | null {
@@ -51,12 +68,20 @@ export function isManagerUp(projectRole: string | null): boolean {
 }
 
 export function canEditProject(user: User | null, formData: ProjectFormData): boolean {
-  // Developers and admins can always edit
-  if (isDevOrAdmin(user)) return true;
+  // Privileged users can always edit
+  if (isPrivilegedUser(user)) return true;
   
   // Project team members with staff role and up can edit
   const projectRole = getProjectRole(user, formData);
   return isStaffUp(projectRole);
+}
+
+export function canViewProject(user: User | null, formData: ProjectFormData): boolean {
+  // Privileged users can view all projects
+  if (isPrivilegedUser(user)) return true;
+  
+  // Project members can view their projects
+  return isProjectMember(user, formData);
 }
 
 export function canSignOffSection(user: User | null, formData: ProjectFormData, signOffLevel: 'incharge' | 'manager'): boolean {
@@ -72,6 +97,14 @@ export function canSignOffSection(user: User | null, formData: ProjectFormData, 
   }
   
   return false;
+}
+
+export function canManageUsers(user: User | null): boolean {
+  return isDevOrAdmin(user);
+}
+
+export function canManageClients(user: User | null): boolean {
+  return isPrivilegedUser(user);
 }
 
 export function canViewTeamManagement(user: User | null): boolean {

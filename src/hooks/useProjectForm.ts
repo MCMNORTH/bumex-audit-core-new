@@ -26,6 +26,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       engagement_id: projectData.engagement_id,
       project_id: projectData.project_id || '',
       lead_developer_id: projectData.lead_developer_id || '',
+      member_ids: (projectData as any).member_ids || [],
       team_assignments: {
         lead_partner_id: projectData.team_assignments?.lead_partner_id || '',
         partner_ids: projectData.team_assignments?.partner_ids || [],
