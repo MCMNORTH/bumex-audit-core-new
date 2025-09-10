@@ -26,15 +26,28 @@ if (import.meta.env.PROD) {
   });
 }
 
-// Security: Initialize App Check for production
-if (import.meta.env.PROD && typeof window !== 'undefined') {
+// Security: Initialize App Check
+if (typeof window !== 'undefined') {
   try {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider('6LfYourSiteKeyHere'), // Replace with your actual reCAPTCHA site key
-      isTokenAutoRefreshEnabled: true
-    });
+    if (import.meta.env.PROD) {
+      // Production: Use reCAPTCHA v3
+      initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LdhIMUrAAAAAG8wF45cj3IVDd8ZMUFCpbdMc68I'),
+        isTokenAutoRefreshEnabled: true
+      });
+    } else {
+      // Development: Use debug token (will be auto-generated)
+      const { ReCaptchaEnterpriseProvider } = await import('firebase/app-check');
+      initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider('6LdhIMUrAAAAAG8wF45cj3IVDd8ZMUFCpbdMc68I'),
+        isTokenAutoRefreshEnabled: true
+      });
+    }
   } catch (error) {
-    console.warn('App Check initialization failed:', error);
+    // Silently fail in production, warn in development
+    if (import.meta.env.DEV) {
+      console.warn('App Check initialization failed:', error);
+    }
   }
 }
 
