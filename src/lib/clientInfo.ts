@@ -36,8 +36,8 @@ export const getClientInfo = async (): Promise<ClientInfo> => {
     };
     
     return cachedClientInfo;
-    } catch (error) {
-    // Security: Don't log detailed error information
+  } catch (error) {
+    console.error('Error fetching client info:', error);
     
     // Fallback client info for when geolocation fails
     const fallbackInfo: ClientInfo = {
@@ -67,7 +67,7 @@ export const isCountryAllowed = async (): Promise<boolean> => {
     
     return clientInfo.country_code === allowedCountryCode;
   } catch (error) {
-    // Security: Don't log detailed geo-restriction errors
+    console.error('Error checking country restriction:', error);
     // Fail-open: allow access if there's an error
     return true;
   }

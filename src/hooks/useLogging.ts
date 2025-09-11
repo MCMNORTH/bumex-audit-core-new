@@ -1,7 +1,6 @@
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './useAuth';
-import { logger } from '@/utils/logger';
 
 // Cache for IP address and geolocation data to avoid multiple API calls
 let cachedIpData: { 
@@ -21,17 +20,17 @@ export const useLogging = () => {
     if (cachedIpData) return cachedIpData;
 
     try {
-      logger.debug('Fetching IP address and geolocation...');
+      console.log('Fetching IP address and geolocation...');
       
       // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
       const geoResponse = await fetch('https://ipapi.co/json/');
       const geoData = await geoResponse.json();
       
-      logger.debug('Fetched geolocation data (sanitized)');
+      console.log('Fetched geolocation data:', geoData);
       
       // Get user agent
       const userAgent = navigator.userAgent;
-      logger.debug('User agent obtained');
+      console.log('User agent:', userAgent);
       
       cachedIpData = { 
         ip: geoData.ip || 'unknown',
@@ -45,7 +44,7 @@ export const useLogging = () => {
       
       return cachedIpData;
     } catch (error) {
-      logger.warn('Failed to fetch IP/geolocation data');
+      console.warn('Failed to fetch IP/geolocation data:', error);
       // Fallback to basic IP service
       try {
         const ipResponse = await fetch('https://api.ipify.org?format=json');
@@ -57,7 +56,7 @@ export const useLogging = () => {
         };
         return cachedIpData;
       } catch (fallbackError) {
-        logger.warn('Fallback IP fetch also failed');
+        console.warn('Fallback IP fetch also failed:', fallbackError);
         return { 
           ip: 'unknown', 
           userAgent: navigator.userAgent || 'unknown' 
@@ -71,7 +70,7 @@ export const useLogging = () => {
 
     try {
       const clientInfo = await getClientInfo();
-      logger.debug('Creating log entry');
+      console.log('Creating log with client info:', clientInfo);
       
       await addDoc(collection(db, 'logs'), {
         user_id: user.id,
@@ -79,16 +78,16 @@ export const useLogging = () => {
         target_id: targetId,
         timestamp: new Date(),
         details: details || null,
-        // Security: Hash IP and remove sensitive client information
+        // Remove sensitive client information from logs
         client_ip_hash: clientInfo.ip ? btoa(clientInfo.ip).slice(0, 10) : 'unknown',
         country: clientInfo.country,
         city: clientInfo.city,
         region: clientInfo.region
       });
       
-      logger.debug('Log created successfully');
+      console.log('Log created successfully');
     } catch (error) {
-      logger.error('Error creating log:', error);
+      console.error('Error creating log:', error);
     }
   };
 
