@@ -26,9 +26,7 @@ if (import.meta.env.PROD) {
   });
 }
 
-// Security: Initialize App Check (temporarily disabled)
-// TODO: Enable Firebase App Check API in Google Cloud Console first
-/*
+// Security: Initialize App Check
 if (typeof window !== 'undefined') {
   try {
     if (import.meta.env.PROD) {
@@ -52,7 +50,6 @@ if (typeof window !== 'undefined') {
     }
   }
 }
-*/
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
