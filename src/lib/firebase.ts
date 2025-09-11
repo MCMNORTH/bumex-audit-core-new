@@ -29,20 +29,11 @@ if (import.meta.env.PROD) {
 // Security: Initialize App Check
 if (typeof window !== 'undefined') {
   try {
-    if (import.meta.env.PROD) {
-      // Production: Use reCAPTCHA v3
-      initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6LdhIMUrAAAAAG8wF45cj3IVDd8ZMUFCpbdMc68I'),
-        isTokenAutoRefreshEnabled: true
-      });
-    } else {
-      // Development: Use debug token (will be auto-generated)
-      const { ReCaptchaEnterpriseProvider } = await import('firebase/app-check');
-      initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider('6LdhIMUrAAAAAG8wF45cj3IVDd8ZMUFCpbdMc68I'),
-        isTokenAutoRefreshEnabled: true
-      });
-    }
+    // Use reCAPTCHA v3 for both development and production
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider('6LdhIMUrAAAAAG8wF45cj3IVDd8ZMUFCpbdMc68I'),
+      isTokenAutoRefreshEnabled: true
+    });
   } catch (error) {
     // Silently fail in production, warn in development
     if (import.meta.env.DEV) {
