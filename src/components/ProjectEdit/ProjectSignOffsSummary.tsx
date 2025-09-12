@@ -2,10 +2,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, X, Clock, ChevronRight, ChevronDown, User as UserIcon } from 'lucide-react';
+import { Check, X, Clock, ChevronRight, ChevronDown, User as UserIcon, Eye, AlertCircle } from 'lucide-react';
 import { User } from '@/types';
 import { ProjectFormData } from '@/types/formData';
-import { canSignOffSection } from '@/utils/permissions';
+import { canSignOffSection, getSectionReviewIndicator, getSectionReviewStatus, getCompletedReviewRoles, getPendingReviewRoles } from '@/utils/permissions';
 
 interface ProjectSignOffsSummaryProps {
   formData: ProjectFormData;
@@ -74,6 +74,14 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const areDescendantsSignedOff = areAllDescendantsSignedOff(section.id, sidebarSections, formData);
   const isBlocked = hasSignOff && !areDescendantsSignedOff && !signOffData.signed;
   
+  // Get review status for non-excluded sections
+  const excludedSections = ['team-management', 'project-signoffs-summary'];
+  const shouldShowReview = !excludedSections.includes(section.id) && currentUser;
+  const reviewIndicator = shouldShowReview ? getSectionReviewIndicator(section.id, formData, currentUser) : null;
+  const reviewStatus = shouldShowReview ? getSectionReviewStatus(section.id, formData) : 'not_reviewed';
+  const completedReviewRoles = shouldShowReview ? getCompletedReviewRoles(section.id, formData) : [];
+  const pendingReviewRoles = shouldShowReview ? getPendingReviewRoles(section.id, formData) : [];
+  
   const formatDate = (dateString?: string) => {
     return dateString ? new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -87,6 +95,26 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const handleUnsign = () => {
     if (onUnsign && section.id) {
       onUnsign(section.id);
+    }
+  };
+
+  const getIndicatorColor = (color: string) => {
+    switch (color) {
+      case 'orange': return 'bg-orange-500';
+      case 'blue': return 'bg-blue-500';
+      case 'green': return 'bg-green-500';
+      case 'grey':
+      default: return 'bg-gray-400';
+    }
+  };
+
+  const getReviewStatusText = (indicator: string) => {
+    switch (indicator) {
+      case 'orange': return 'Ready for your review';
+      case 'blue': return 'Reviewed by your role';
+      case 'green': return 'Reviewed by lead partner';
+      case 'grey':
+      default: return 'Not reviewed';
     }
   };
 
@@ -134,6 +162,19 @@ const TreeNode: React.FC<TreeNodeProps> = ({
                 {section.title}
               </span>
               
+              {/* Review status indicator */}
+              {reviewIndicator && (
+                <div className="flex items-center space-x-1">
+                  <div 
+                    className={`w-2 h-2 rounded-full ${getIndicatorColor(reviewIndicator)}`}
+                    title={getReviewStatusText(reviewIndicator)}
+                  />
+                  <span className="text-xs text-gray-500">
+                    {getReviewStatusText(reviewIndicator)}
+                  </span>
+                </div>
+              )}
+              
               {hasSignOff && (
                 <Badge 
                   variant={signOffData.signed ? "default" : isBlocked ? "destructive" : "secondary"}
@@ -150,11 +191,29 @@ const TreeNode: React.FC<TreeNodeProps> = ({
               )}
             </div>
             
+            {/* Review progress details */}
+            {shouldShowReview && (completedReviewRoles.length > 0 || pendingReviewRoles.length > 0) && (
+              <div className="mt-1 space-y-1">
+                {completedReviewRoles.length > 0 && (
+                  <div className="flex items-center space-x-1 text-xs text-green-600">
+                    <Eye className="h-3 w-3" />
+                    <span>Reviewed by: {completedReviewRoles.join(', ')}</span>
+                  </div>
+                )}
+                {pendingReviewRoles.length > 0 && (
+                  <div className="flex items-center space-x-1 text-xs text-orange-600">
+                    <AlertCircle className="h-3 w-3" />
+                    <span>Pending review: {pendingReviewRoles.join(', ')}</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
             {hasSignOff && signOffData.signed && signedByUser && signOffData.signedAt && (
-              <div className="flex items-center space-x-4 mt-1">
+              <div className="flex items-center space-x-4 mt-2 pt-2 border-t border-gray-100">
                 <div className="flex items-center space-x-1 text-xs text-gray-600">
                   <UserIcon className="h-3 w-3" />
-                  <span>{signedByUser.first_name} {signedByUser.last_name}</span>
+                  <span>Signed by: {signedByUser.first_name} {signedByUser.last_name}</span>
                 </div>
                 <div className="flex items-center space-x-1 text-xs text-gray-600">
                   <Clock className="h-3 w-3" />
@@ -277,10 +336,40 @@ const ProjectSignOffsSummary: React.FC<ProjectSignOffsSummaryProps> = ({
         </CardContent>
       </Card>
 
+      {/* Review Status Legend */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center space-x-2">
+            <Eye className="h-5 w-5" />
+            <span>Review Status Legend</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-orange-500" />
+              <span className="text-sm">Ready for your review</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <span className="text-sm">Reviewed by your role</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-green-500" />
+              <span className="text-sm">Reviewed by lead partner</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="w-3 h-3 rounded-full bg-gray-400" />
+              <span className="text-sm">Not reviewed</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Project Tree View */}
       <Card>
         <CardHeader>
-          <CardTitle>Project Structure & Sign-offs</CardTitle>
+          <CardTitle>Project Structure & Reviews</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
