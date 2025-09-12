@@ -229,7 +229,13 @@ const EngagementProfileSection = ({
             <div>
               <Label htmlFor="client_id">{t('engagement.client')}</Label>
               <div className="px-3 py-2 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md">
-                {clients.find(c => c.id === formData.client_id)?.name || 'No client selected'}
+                {(() => {
+                  console.log('Form data client_id:', formData.client_id);
+                  console.log('Available clients:', clients);
+                  const client = clients.find(c => c.id === formData.client_id);
+                  console.log('Found client:', client);
+                  return client?.name || 'No client selected';
+                })()}
               </div>
             </div>
             <div>

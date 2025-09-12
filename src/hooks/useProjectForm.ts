@@ -21,6 +21,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
 
   // Initialize form data from project
   const initializeFormData = (projectData: Project) => {
+    console.log('Initializing form data with project:', projectData);
+    console.log('Project client_id:', projectData.client_id);
     setFormData({
       client_id: projectData.client_id,
       engagement_name: projectData.engagement_name,
