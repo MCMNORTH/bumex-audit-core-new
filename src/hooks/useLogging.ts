@@ -2,67 +2,17 @@ import { collection, addDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useAuth } from './useAuth';
 
-// Cache for IP address and geolocation data to avoid multiple API calls
-let cachedIpData: { 
-  ip: string; 
-  userAgent: string;
-  country?: string;
-  city?: string;
-  region?: string;
-  timezone?: string;
-  isp?: string;
-} | null = null;
+import { getGeolocationData } from '@/lib/geolocation';
 
 export const useLogging = () => {
   const { user } = useAuth();
 
-  const getClientInfo = async () => {
-    if (cachedIpData) return cachedIpData;
-
-    try {
-      // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
-      const geoResponse = await fetch('https://ipapi.co/json/');
-      const geoData = await geoResponse.json();
-      
-      // Get user agent
-      const userAgent = navigator.userAgent;
-      
-      cachedIpData = { 
-        ip: geoData.ip || 'unknown',
-        userAgent,
-        country: geoData.country_name,
-        city: geoData.city,
-        region: geoData.region,
-        timezone: geoData.timezone,
-        isp: geoData.org
-      };
-      
-      return cachedIpData;
-    } catch (error) {
-      // Fallback to basic IP service
-      try {
-        const ipResponse = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await ipResponse.json();
-        
-        cachedIpData = { 
-          ip, 
-          userAgent: navigator.userAgent || 'unknown'
-        };
-        return cachedIpData;
-      } catch (fallbackError) {
-        return { 
-          ip: 'unknown', 
-          userAgent: navigator.userAgent || 'unknown' 
-        };
-      }
-    }
-  };
 
   const createLog = async (action: string, targetId: string, details?: string) => {
     if (!user) return;
 
     try {
-      const clientInfo = await getClientInfo();
+      const clientInfo = await getGeolocationData();
       
       await addDoc(collection(db, 'logs'), {
         user_id: user.id,
@@ -71,7 +21,7 @@ export const useLogging = () => {
         timestamp: new Date(),
         details: details || null,
         // Remove sensitive client information from logs
-        client_ip_hash: clientInfo.ip ? btoa(clientInfo.ip).slice(0, 10) : 'unknown',
+        client_ip_hash: clientInfo.ip !== 'Unknown' ? btoa(clientInfo.ip).slice(0, 10) : 'unknown',
         country: clientInfo.country,
         city: clientInfo.city,
         region: clientInfo.region

@@ -5,16 +5,7 @@ import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 import { User } from '@/types';
 import { useLogging } from '@/hooks/useLogging';
 
-// Cache for IP address to avoid multiple API calls
-let cachedIpData: { 
-  ip: string; 
-  userAgent: string;
-  country?: string;
-  city?: string;
-  region?: string;
-  timezone?: string;
-  isp?: string;
-} | null = null;
+import { getGeolocationData } from '@/lib/geolocation';
 
 interface AuthContextType {
   user: User | null;
@@ -35,51 +26,10 @@ export const useAuth = () => {
   return context;
 };
 
-const getClientInfo = async () => {
-  if (cachedIpData) return cachedIpData;
-
-  try {
-    // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
-    const geoResponse = await fetch('https://ipapi.co/json/');
-    const geoData = await geoResponse.json();
-    
-    // Get user agent
-    const userAgent = navigator.userAgent;
-    
-    cachedIpData = { 
-      ip: geoData.ip || 'unknown',
-      userAgent,
-      country: geoData.country_name,
-      city: geoData.city,
-      region: geoData.region,
-      timezone: geoData.timezone,
-      isp: geoData.org
-    };
-    
-    return cachedIpData;
-    } catch (error) {
-      // Fallback to basic IP service
-      try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
-      const { ip } = await ipResponse.json();
-      
-      cachedIpData = { 
-        ip, 
-        userAgent: navigator.userAgent || 'unknown'
-      };
-      return cachedIpData;
-    } catch (fallbackError) {
-      return { 
-        ip: 'unknown', 
-        userAgent: navigator.userAgent || 'unknown' 
-      };
-    }
-  }
-};
 
 const createLogWithClientInfo = async (action: string, targetId: string, details?: string, userId?: string) => {
   try {
-    const clientInfo = await getClientInfo();
+    const clientInfo = await getGeolocationData();
     
     await addDoc(collection(db, 'logs'), {
       user_id: userId || 'unknown',
@@ -87,8 +37,9 @@ const createLogWithClientInfo = async (action: string, targetId: string, details
       target_id: targetId,
       timestamp: new Date(),
       details: details || null,
-      ip_address: clientInfo.ip,
-      user_agent: clientInfo.userAgent,
+      // Hash IP for privacy
+      client_ip_hash: clientInfo.ip !== 'Unknown' ? btoa(clientInfo.ip).slice(0, 10) : 'unknown',
+      user_agent: clientInfo.user_agent,
       country: clientInfo.country,
       city: clientInfo.city,
       region: clientInfo.region,

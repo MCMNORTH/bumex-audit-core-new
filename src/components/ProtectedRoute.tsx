@@ -3,7 +3,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Skeleton } from '@/components/ui/skeleton';
-import { isCountryAllowed, getClientInfo } from '@/lib/clientInfo';
+import { isCountryAllowed, getGeolocationData } from '@/lib/geolocation';
 import { GeoRestricted } from '@/components/GeoRestricted';
 
 interface ProtectedRouteProps {
@@ -24,7 +24,7 @@ export const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps)
         setIsGeoAllowed(allowed);
         
         if (!allowed) {
-          const info = await getClientInfo();
+          const info = await getGeolocationData();
           setClientInfo({
             country: info.country,
             country_code: info.country_code

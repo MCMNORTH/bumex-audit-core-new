@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useNavigate } from 'react-router-dom';
-import { isCountryAllowed, getClientInfo } from '@/lib/clientInfo';
+import { isCountryAllowed, getGeolocationData } from '@/lib/geolocation';
 import { GeoRestricted } from '@/components/GeoRestricted';
 import { Skeleton } from '@/components/ui/skeleton';
 const Login = () => {
@@ -35,7 +35,7 @@ const Login = () => {
         setIsGeoAllowed(allowed);
         
         if (!allowed) {
-          const info = await getClientInfo();
+          const info = await getGeolocationData();
           setClientInfo({
             country: info.country,
             country_code: info.country_code
