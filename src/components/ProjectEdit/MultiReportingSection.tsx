@@ -103,7 +103,7 @@ const MultiReportingSection = ({
             <div className="border rounded-lg overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-blue-600">
+                  <TableRow className="bg-blue-600 hover:bg-blue-600">
                     <TableHead className="text-white font-medium">Report ID</TableHead>
                     <TableHead className="text-white font-medium">Report name</TableHead>
                     <TableHead className="text-white font-medium">Legal entity</TableHead>
