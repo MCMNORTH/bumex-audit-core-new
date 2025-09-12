@@ -194,3 +194,40 @@ export function canManageClients(user: User | null): boolean {
 export function canViewTeamManagement(user: User | null): boolean {
   return isDev(user);
 }
+
+export function getSectionReviewIndicator(
+  sectionId: string, 
+  formData: ProjectFormData, 
+  user: User | null
+): 'grey' | 'orange' | 'blue' | 'green' {
+  if (!user) return 'grey';
+  
+  const userRole = getProjectRole(user, formData);
+  const sectionReviews = formData.reviews?.[sectionId];
+  
+  if (!sectionReviews) return 'grey';
+  
+  // Green dot: Reviewed by lead partner (highest role)
+  if (sectionReviews.lead_partner_reviews.length > 0) return 'green';
+  
+  // Check if user's role has reviewed
+  const userHasReviewed = (() => {
+    switch (userRole) {
+      case 'staff': return sectionReviews.staff_reviews.length > 0;
+      case 'incharge': return sectionReviews.incharge_reviews.length > 0;
+      case 'manager': return sectionReviews.manager_reviews.length > 0;
+      case 'partner': return sectionReviews.partner_reviews.length > 0;
+      case 'lead_partner': return sectionReviews.lead_partner_reviews.length > 0;
+      default: return false;
+    }
+  })();
+  
+  // Blue dot: Reviewed by user's role
+  if (userHasReviewed) return 'blue';
+  
+  // Orange dot: Ready for review (user's turn)
+  if (canUserReviewSection(user, formData, sectionId)) return 'orange';
+  
+  // Grey dot: Not reviewed or not user's turn
+  return 'grey';
+}

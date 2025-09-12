@@ -1,6 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
+import { getSectionReviewIndicator } from '@/utils/permissions';
+import { User } from '@/types';
+import { ProjectFormData } from '@/types/formData';
 
 interface SidebarSection {
   id: string;
@@ -19,6 +22,8 @@ interface ProjectSidebarProps {
   sections: SidebarSection[];
   activeSection: string;
   currentUserRole?: string;
+  formData?: ProjectFormData;
+  currentUser?: User | null;
   onBack: () => void;
   onSectionChange: (sectionId: string) => void;
 }
@@ -29,6 +34,8 @@ const ProjectSidebar = ({
   sections,
   activeSection,
   currentUserRole,
+  formData,
+  currentUser,
   onBack,
   onSectionChange
 }: ProjectSidebarProps) => {
@@ -62,6 +69,16 @@ const ProjectSidebar = ({
     toggleSection(sectionId);
   };
 
+  const getIndicatorColor = (color: string) => {
+    switch (color) {
+      case 'orange': return 'bg-orange-500';
+      case 'blue': return 'bg-blue-500';
+      case 'green': return 'bg-green-500';
+      case 'grey':
+      default: return 'bg-gray-400';
+    }
+  };
+
   const renderSection = (section: SidebarSection, level: number = 0) => {
     const isExpanded = expandedSections.has(section.id);
     const isActive = activeSection === section.id;
@@ -70,6 +87,11 @@ const ProjectSidebar = ({
     if (section.devOnly && currentUserRole !== 'dev') {
       return null;
     }
+
+    // Get review status indicator - only for leaf sections (not parents)
+    const reviewIndicator = !section.isParent && formData && currentUser 
+      ? getSectionReviewIndicator(section.id, formData, currentUser)
+      : null;
 
     return (
       <div key={section.id}>
@@ -96,6 +118,17 @@ const ProjectSidebar = ({
           <span className={`${section.isParent ? 'font-medium' : ''} flex-1`}>
             {section.number && `${section.number} `}{section.title}
           </span>
+          {reviewIndicator && (
+            <div 
+              className={`w-2 h-2 rounded-full ml-2 ${getIndicatorColor(reviewIndicator)}`}
+              title={
+                reviewIndicator === 'orange' ? 'Ready for your review' :
+                reviewIndicator === 'blue' ? 'Reviewed by your role' :
+                reviewIndicator === 'green' ? 'Reviewed by lead partner' :
+                'Not reviewed'
+              }
+            />
+          )}
         </div>
 
         {section.isParent && isExpanded && section.children && (

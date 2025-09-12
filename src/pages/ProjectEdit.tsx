@@ -342,6 +342,8 @@ const ProjectEdit = () => {
         sections={sidebarSections}
         activeSection={activeSection}
         currentUserRole={user?.role}
+        formData={formData}
+        currentUser={user}
         onBack={() => navigate('/projects')}
         onSectionChange={setActiveSection}
       />
