@@ -9,6 +9,7 @@ import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
 import { canViewTeamManagement } from '@/utils/permissions';
 
 const ProjectEdit = () => {
+  console.log('ProjectEdit component loaded - no teamDialogOpen references');
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState('engagement-management');

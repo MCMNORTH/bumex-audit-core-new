@@ -20,12 +20,17 @@ export const useLogging = () => {
     if (cachedIpData) return cachedIpData;
 
     try {
+      console.log('Fetching IP address and geolocation...');
+      
       // Get user's public IP address with geolocation data using ipapi.co (HTTPS)
       const geoResponse = await fetch('https://ipapi.co/json/');
       const geoData = await geoResponse.json();
       
+      console.log('Fetched geolocation data:', geoData);
+      
       // Get user agent
       const userAgent = navigator.userAgent;
+      console.log('User agent:', userAgent);
       
       cachedIpData = { 
         ip: geoData.ip || 'unknown',
@@ -65,6 +70,7 @@ export const useLogging = () => {
 
     try {
       const clientInfo = await getClientInfo();
+      console.log('Creating log with client info:', clientInfo);
       
       await addDoc(collection(db, 'logs'), {
         user_id: user.id,
@@ -78,6 +84,8 @@ export const useLogging = () => {
         city: clientInfo.city,
         region: clientInfo.region
       });
+      
+      console.log('Log created successfully');
     } catch (error) {
       console.error('Error creating log:', error);
     }
