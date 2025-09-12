@@ -75,9 +75,9 @@ const TeamSection = ({
     return (users || []).filter(user => user.approved && !user.blocked);
   };
 
-  const canManageTeam = isDev(currentUser);
+  const canManageTeam = isLeadDeveloper;
 
-  // Show team list view for non-dev users or if not lead developer
+  // Show team list view for non-lead developers
   if (!canManageTeam) {
     return (
       <Card>
