@@ -119,24 +119,6 @@ const AuditStrategySection = ({
         </div>
       </div>
 
-      <div className="space-y-4">
-        <div>
-          <Label className="text-sm font-medium mb-2 block">Minimum Review Requirement</Label>
-          <Select value={formData.minimum_review_requirement || ''} onValueChange={value => onFormDataChange({
-          minimum_review_requirement: value
-        })}>
-            <SelectTrigger className="max-w-sm">
-              <SelectValue placeholder="Global - No EQCR" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="global-no-eqcr">Global - No EQCR</SelectItem>
-              <SelectItem value="global-eqcr">Global - EQCR</SelectItem>
-              <SelectItem value="local-no-eqcr">Local - No EQCR</SelectItem>
-              <SelectItem value="local-eqcr">Local - EQCR</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
 
       <div className="space-y-4">
         
