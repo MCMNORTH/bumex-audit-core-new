@@ -228,29 +228,9 @@ const EngagementProfileSection = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="client_id">{t('engagement.client')}</Label>
-              {canEdit ? (
-                <Select
-                  value={formData.client_id}
-                  onValueChange={(value) => onFormDataChange({ client_id: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder={t('engagement.placeholders.selectClient')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clients.map((client) => (
-                      <SelectItem key={client.id} value={client.id}>
-                        {client.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ) : (
-                <Input
-                  value={clients.find(c => c.id === formData.client_id)?.name || ''}
-                  readOnly
-                  className="bg-gray-50 cursor-not-allowed"
-                />
-              )}
+              <div className="px-3 py-2 text-sm text-gray-900 bg-gray-50 border border-gray-200 rounded-md">
+                {clients.find(c => c.id === formData.client_id)?.name || 'No client selected'}
+              </div>
             </div>
             <div>
               <Label htmlFor="status">{t('engagement.status')}</Label>
