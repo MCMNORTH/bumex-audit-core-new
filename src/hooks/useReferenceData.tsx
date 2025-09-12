@@ -4,7 +4,7 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Client, User } from "@/types";
 import { useAuth } from "@/hooks/useAuth";
-import { canManageUsers, canManageClients } from "@/utils/permissions";
+import { canManageUsers } from "@/utils/permissions";
 
 type ReferenceDataContextType = {
   clients: Client[];
@@ -36,12 +36,8 @@ export const ReferenceDataProvider = ({ children }: { children: ReactNode }) => 
     try {
       const promises = [];
       
-      // Only fetch clients if user can manage them
-      if (canManageClients(user)) {
-        promises.push(getDocs(query(collection(db, "clients"))));
-      } else {
-        promises.push(Promise.resolve({ docs: [] }));
-      }
+      // Fetch clients for all authenticated users (read-only visibility)
+      promises.push(getDocs(query(collection(db, "clients"))));
       
       // Only fetch users if user can manage them
       if (canManageUsers(user)) {
