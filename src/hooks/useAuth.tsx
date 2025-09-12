@@ -165,7 +165,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const isValidDomain = allowedDomains.some(domain => email.toLowerCase().endsWith(domain));
       
       if (!isValidDomain) {
-        throw new Error('Access restricted: Only @bumex.mr and @overcode.dev email addresses are allowed.');
+        throw new Error('Access denied: Invalid email address.');
       }
       
       // SECURITY: Reduced logging for sensitive operations
