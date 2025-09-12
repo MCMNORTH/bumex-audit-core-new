@@ -103,7 +103,7 @@ const fetchGeolocationData = async (retryCount = 0): Promise<GeolocationData> =>
       timestamp: Date.now()
     };
   } catch (error) {
-    console.warn(`Geolocation fetch attempt ${retryCount + 1} failed:`, error);
+    // Geolocation fetch failed, retrying if attempts remaining
     
     if (retryCount < MAX_RETRIES) {
       // Exponential backoff: wait 1s, then 2s
@@ -128,7 +128,7 @@ const fetchGeolocationData = async (retryCount = 0): Promise<GeolocationData> =>
         timestamp: Date.now()
       };
     } catch (fallbackError) {
-      console.warn('Fallback geolocation service also failed:', fallbackError);
+      // Fallback geolocation service also failed
       
       // Return minimal data as last resort
       return {
@@ -167,7 +167,7 @@ export const getGeolocationData = async (forceRefresh = false): Promise<Geolocat
     setCachedData(data);
     return data;
   } catch (error) {
-    console.error('Critical geolocation error:', error);
+    // Critical geolocation error occurred
     
     // Return cached data even if expired as last resort
     const staleCache = getCachedData();
@@ -202,7 +202,7 @@ export const isCountryAllowed = async (forceRefresh = false): Promise<boolean> =
     
     return geoData.country_code === allowedCountryCode;
   } catch (error) {
-    console.warn('Country check failed, allowing access:', error);
+    // Country check failed, allowing access
     // Fail-open: allow access if there's an error
     return true;
   }

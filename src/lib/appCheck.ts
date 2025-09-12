@@ -24,10 +24,7 @@ export const initAppCheck = (app: FirebaseApp) => {
     
     // Set debug token ONLY for development environments (lovable.dev, localhost)
     if (isDevelopment()) {
-      console.log('App Check: Using debug token for development environment:', hostname);
       (self as any).FIREBASE_APPCHECK_DEBUG_TOKEN = DEBUG_TOKEN;
-    } else {
-      console.log('App Check: Using reCAPTCHA Enterprise for production environment:', hostname);
     }
 
     appCheckInstance = initializeAppCheck(app, {
@@ -35,10 +32,8 @@ export const initAppCheck = (app: FirebaseApp) => {
       isTokenAutoRefreshEnabled: true
     });
     
-    console.log('App Check initialized successfully');
     return appCheckInstance;
   } catch (error) {
-    console.error('App Check initialization failed:', error);
     // App Check initialization failed - app will continue to work
     // but without App Check protection
     appCheckInstance = null;
@@ -50,13 +45,11 @@ export const initAppCheck = (app: FirebaseApp) => {
 export const getAppCheckToken = async (forceRefresh = false): Promise<string | null> => {
   try {
     if (!appCheckInstance) {
-      console.warn('App Check token requested before initialization');
       return null;
     }
     const { token } = await getToken(appCheckInstance, forceRefresh);
     return token ?? null;
   } catch (error) {
-    console.error('Failed to retrieve App Check token:', error);
     return null;
   }
 };
