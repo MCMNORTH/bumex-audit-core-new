@@ -122,7 +122,6 @@ const EngagementScopeSection = ({
   mrrFileInputRef
 }: EngagementScopeSectionProps) => {
   const { t } = useTranslation();
-  console.log('EngagementScopeSection - mrrFileInputRef:', mrrFileInputRef);
   
   return (
     <Card>
