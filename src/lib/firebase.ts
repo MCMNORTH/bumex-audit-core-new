@@ -4,6 +4,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAnalytics } from 'firebase/analytics';
+import { initAppCheck } from './appCheck';
 
 const firebaseConfig = {
   apiKey: "AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA",
@@ -16,6 +17,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Initialize App Check for enhanced security
+initAppCheck(app);
+
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
