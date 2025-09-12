@@ -140,29 +140,19 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  id="independence_rules_iesba"
-                  checked={formData.independence_rules_iesba}
-                  onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba: checked as boolean })}
+                  id="independence_rules_iesba_pie"
+                  checked={formData.independence_rules_iesba_pie}
+                  onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba_pie: checked as boolean })}
                 />
-                <Label htmlFor="independence_rules_iesba">IESBA</Label>
+                <Label htmlFor="independence_rules_iesba_pie">IESBA PIE</Label>
               </div>
-              <div className="ml-6 space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="independence_rules_iesba_non_pie"
-                    checked={formData.independence_rules_iesba_non_pie}
-                    onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba_non_pie: checked as boolean })}
-                  />
-                  <Label htmlFor="independence_rules_iesba_non_pie">non-PIE</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="independence_rules_iesba_pie"
-                    checked={formData.independence_rules_iesba_pie}
-                    onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba_pie: checked as boolean })}
-                  />
-                  <Label htmlFor="independence_rules_iesba_pie">PIE</Label>
-                </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="independence_rules_iesba_non_pie"
+                  checked={formData.independence_rules_iesba_non_pie}
+                  onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba_non_pie: checked as boolean })}
+                />
+                <Label htmlFor="independence_rules_iesba_non_pie">IESBA non-PIE</Label>
               </div>
             </div>
           </div>
