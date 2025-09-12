@@ -132,6 +132,20 @@ export interface ProjectFormData {
   component_reporting: boolean;
   component_reporting_details: string;
   group_auditor: boolean;
+  // Component reporting new fields
+  component_reporting_applicable_auditing_standards: string;
+  component_reporting_applicable_auditing_standards_other: string;
+  component_reporting_applicable_financial_framework: string;
+  component_reporting_applicable_financial_framework_other: string;
+  component_reporting_date: string;
+  group_audit_report_date: string;
+  required_component_closeout_date: string;
+  independence_rules_iesba: boolean;
+  independence_rules_iesba_non_pie: boolean;
+  independence_rules_iesba_pie: boolean;
+  reporting_to_kpmg_office: boolean;
+  reporting_to_non_kpmg_entity: boolean;
+  auditing_financial_statements_type: string;
   engagement_quality_control_reviewer: boolean;
   limited_scope_quality_control_reviewer: boolean;
   other_reviewer: boolean;
@@ -595,6 +609,20 @@ export const getInitialFormData = (): ProjectFormData => ({
   component_reporting: false,
   component_reporting_details: '',
   group_auditor: false,
+  // Component reporting new fields defaults
+  component_reporting_applicable_auditing_standards: '',
+  component_reporting_applicable_auditing_standards_other: '',
+  component_reporting_applicable_financial_framework: '',
+  component_reporting_applicable_financial_framework_other: '',
+  component_reporting_date: '',
+  group_audit_report_date: '',
+  required_component_closeout_date: '',
+  independence_rules_iesba: false,
+  independence_rules_iesba_non_pie: false,
+  independence_rules_iesba_pie: false,
+  reporting_to_kpmg_office: false,
+  reporting_to_non_kpmg_entity: false,
+  auditing_financial_statements_type: 'Not selected',
   engagement_quality_control_reviewer: false,
   limited_scope_quality_control_reviewer: false,
   other_reviewer: false,
