@@ -12,6 +12,7 @@ import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { Search, FolderOpen, Calendar, Users, Building, Briefcase } from 'lucide-react';
+import { isPrivilegedUser } from '@/utils/permissions';
 
 const MyProjects = () => {
   const { user } = useAuth();
@@ -31,16 +32,18 @@ const MyProjects = () => {
     if (!user) return;
     
     try {
-      const projectsQuery = query(collection(db, 'projects'), orderBy('created_at', 'desc'));
+      const projectsQuery = isPrivilegedUser(user)
+        ? query(collection(db, 'projects'))
+        : query(collection(db, 'projects'), where('member_ids', 'array-contains', user.id));
       const projectsSnapshot = await getDocs(projectsQuery);
 
-      const allProjects = projectsSnapshot.docs.map(doc => ({
+      const allProjects = (projectsSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         created_at: doc.data().created_at?.toDate() || new Date(),
         period_start: doc.data().period_start?.toDate() || new Date(),
         period_end: doc.data().period_end?.toDate() || new Date(),
-      })) as Project[];
+      })) as Project[]).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
 
       // Filter projects where current user is part of the team
       const userProjects = allProjects.filter(project => {
@@ -69,7 +72,7 @@ const MyProjects = () => {
 
       setProjects(projectsWithClientNames);
     } catch (error) {
-      console.error('Error fetching my projects:', error);
+      console.error('Failed to fetch projects');
       toast({
         title: 'Error',
         description: 'Failed to fetch your projects',
