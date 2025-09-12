@@ -160,6 +160,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
+      // Validate email domain
+      const allowedDomains = ['@bumex.mr', '@overcode.dev'];
+      const isValidDomain = allowedDomains.some(domain => email.toLowerCase().endsWith(domain));
+      
+      if (!isValidDomain) {
+        throw new Error('Access restricted: Only @bumex.mr and @overcode.dev email addresses are allowed.');
+      }
+      
       // SECURITY: Reduced logging for sensitive operations
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
