@@ -11,7 +11,7 @@ import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
 import EntityProfileSection from './EngagementScope/EntityProfileSection';
 import MultiReportingSection from './MultiReportingSection';
-import DataConsiderationsSection from './DataConsiderationsSection';
+
 import { useTranslation } from '@/contexts/TranslationContext';
 
 interface DocumentFile {
@@ -643,14 +643,6 @@ const EngagementProfileSection = ({
         onFormDataChange={onFormDataChange}
       />
 
-      <DataConsiderationsSection
-        formData={{
-          trial_balances_electronic_format: formData.trial_balances_electronic_format || '',
-          large_batch_journal_entries: formData.large_batch_journal_entries || '',
-          significant_circumstances_impair_da: formData.significant_circumstances_impair_da || ''
-        }}
-        onFormDataChange={onFormDataChange}
-      />
 
     </div>
   );
