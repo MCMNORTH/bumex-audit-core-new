@@ -39,7 +39,6 @@ export const useLogging = () => {
       
       return cachedIpData;
     } catch (error) {
-      console.warn('Failed to fetch IP/geolocation data:', error);
       // Fallback to basic IP service
       try {
         const ipResponse = await fetch('https://api.ipify.org?format=json');
@@ -51,7 +50,6 @@ export const useLogging = () => {
         };
         return cachedIpData;
       } catch (fallbackError) {
-        console.warn('Fallback IP fetch also failed:', fallbackError);
         return { 
           ip: 'unknown', 
           userAgent: navigator.userAgent || 'unknown' 
@@ -79,7 +77,7 @@ export const useLogging = () => {
         region: clientInfo.region
       });
     } catch (error) {
-      console.error('Error creating log:', error);
+      // Silent error for logging
     }
   };
 

@@ -82,9 +82,9 @@ export const Sidebar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+      } catch (error) {
+        // Silent error for logout
+      }
   };
   return <>
       <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 lg:hidden" onClick={() => setIsOpen(!isOpen)}>

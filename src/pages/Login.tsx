@@ -42,7 +42,7 @@ const Login = () => {
           });
         }
       } catch (error) {
-        console.error('Error checking geolocation:', error);
+        // Silent error for geolocation check
         // Fail-open: allow access on error
         setIsGeoAllowed(true);
       } finally {

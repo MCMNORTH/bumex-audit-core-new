@@ -57,10 +57,9 @@ const getClientInfo = async () => {
     };
     
     return cachedIpData;
-  } catch (error) {
-    console.warn('Failed to fetch IP/geolocation data:', error);
-    // Fallback to basic IP service
-    try {
+    } catch (error) {
+      // Fallback to basic IP service
+      try {
       const ipResponse = await fetch('https://api.ipify.org?format=json');
       const { ip } = await ipResponse.json();
       
@@ -96,9 +95,9 @@ const createLogWithClientInfo = async (action: string, targetId: string, details
       timezone: clientInfo.timezone,
       isp: clientInfo.isp
     });
-  } catch (error) {
-    console.error('Error creating log:', error);
-  }
+    } catch (error) {
+      // Silent error for logging
+    }
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -146,7 +145,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             await signOut(auth);
           }
         } catch (error) {
-          console.error('Authentication error occurred');
           setAuthError('An error occurred while accessing your account. Please try again.');
           setUser(null);
         }
@@ -165,8 +163,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // SECURITY: Reduced logging for sensitive operations
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      // SECURITY: Generic error logging
-      console.error('Authentication failed');
       throw error;
     }
   };
@@ -180,8 +176,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       await signOut(auth);
     } catch (error) {
-      // SECURITY: Generic error logging
-      console.error('Logout failed');
       throw error;
     }
   };
