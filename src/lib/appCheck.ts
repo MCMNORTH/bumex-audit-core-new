@@ -1,6 +1,6 @@
-import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider, getToken } from 'firebase/app-check';
 import type { FirebaseApp } from 'firebase/app';
-
+import type { AppCheck } from 'firebase/app-check';
 // reCAPTCHA Enterprise site key
 const RECAPTCHA_SITE_KEY = '6LcdD8crAAAAAFQIAF1-fmksvvEFqymce3YWJ1OK';
 
@@ -16,6 +16,7 @@ const isDevelopment = () => {
          hostname.includes('localhost') || 
          hostname === '127.0.0.1';
 };
+let appCheckInstance: AppCheck | null = null;
 
 export const initAppCheck = (app: FirebaseApp) => {
   try {
@@ -29,17 +30,33 @@ export const initAppCheck = (app: FirebaseApp) => {
       console.log('App Check: Using reCAPTCHA Enterprise for production environment:', hostname);
     }
 
-    const appCheck = initializeAppCheck(app, {
+    appCheckInstance = initializeAppCheck(app, {
       provider: new ReCaptchaEnterpriseProvider(RECAPTCHA_SITE_KEY),
       isTokenAutoRefreshEnabled: true
     });
     
     console.log('App Check initialized successfully');
-    return appCheck;
+    return appCheckInstance;
   } catch (error) {
     console.error('App Check initialization failed:', error);
     // App Check initialization failed - app will continue to work
     // but without App Check protection
+    appCheckInstance = null;
+    return null;
+  }
+};
+
+// Helper to get current App Check token for REST calls
+export const getAppCheckToken = async (forceRefresh = false): Promise<string | null> => {
+  try {
+    if (!appCheckInstance) {
+      console.warn('App Check token requested before initialization');
+      return null;
+    }
+    const { token } = await getToken(appCheckInstance, forceRefresh);
+    return token ?? null;
+  } catch (error) {
+    console.error('Failed to retrieve App Check token:', error);
     return null;
   }
 };

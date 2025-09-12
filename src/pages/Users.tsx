@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, updateDoc, addDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
+import { getAppCheckToken } from '@/lib/appCheck';
 import { User } from '@/types';
 import { useAuth } from '@/hooks/useAuth';
 import { useLogging } from '@/hooks/useLogging';
@@ -140,11 +141,15 @@ const Users = () => {
     setIsCreatingUser(true);
     
     try {
+      // Get App Check token for enforced endpoints
+      const appCheckToken = await getAppCheckToken();
+
       // Create user in Firebase Auth using REST API
       const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA'}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(appCheckToken ? { 'X-Firebase-AppCheck': appCheckToken } as Record<string, string> : {})
         },
         body: JSON.stringify({
           email: data.email,
@@ -239,10 +244,14 @@ const Users = () => {
     }
 
     try {
+      // Get App Check token for enforced endpoints
+      const appCheckToken = await getAppCheckToken();
+
       const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA'}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(appCheckToken ? { 'X-Firebase-AppCheck': appCheckToken } as Record<string, string> : {})
         },
         body: JSON.stringify({
           requestType: 'PASSWORD_RESET',
