@@ -15,7 +15,7 @@ const getNavigationItems = (t: (key: string) => string) => [{
   name: t('nav.clients'),
   href: '/clients',
   icon: Users,
-  roles: ['dev', 'admin', 'semi-admin', 'users']
+  roles: ['dev', 'admin', 'semi-admin']
 }, {
   name: 'My Projects',
   href: '/my-projects',
