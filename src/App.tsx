@@ -19,6 +19,8 @@ import AppControlPage from "./pages/AppControl";
 import NotFound from "./pages/NotFound";
 import { ReferenceDataProvider } from "./hooks/useReferenceData";
 import { TranslationProvider } from "./contexts/TranslationContext";
+// Initialize Firebase with App Check after React is ready
+import "./lib/firebase";
 
 const queryClient = new QueryClient();
 

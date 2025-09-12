@@ -2,7 +2,5 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-// Initialize Firebase (including App Check) before rendering
-import './lib/firebase'
 
 createRoot(document.getElementById("root")!).render(<App />);
