@@ -458,12 +458,14 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
           </div>
           
           {formData.it_attach_documentation && (
-            <Textarea
-              value={formData.it_documentation_details || ''}
-              onChange={(e) => onFormDataChange({ it_documentation_details: e.target.value })}
-              placeholder="Enter documentation details..."
-              rows={3}
-            />
+            <div className="p-4 border rounded-lg bg-gray-50">
+              <Textarea
+                value={formData.it_documentation_details || ''}
+                onChange={(e) => onFormDataChange({ it_documentation_details: e.target.value })}
+                placeholder="Enter documentation details..."
+                rows={3}
+              />
+            </div>
           )}
         </div>
 
@@ -481,7 +483,7 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
           </div>
           
           {formData.it_service_organizations_used && (
-            <div>
+            <div className="p-4 border rounded-lg bg-gray-50">
               <div className="flex justify-between items-center mb-3">
                 <Label className="text-sm font-medium">Service Organizations</Label>
                 <Button onClick={addServiceOrganization} size="sm" className="flex items-center gap-2">
@@ -774,12 +776,14 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
           </div>
           
           {formData.cybersecurity_additional_inquiries && (
-            <Textarea
-              value={formData.cybersecurity_additional_inquiries_details || ''}
-              onChange={(e) => onFormDataChange({ cybersecurity_additional_inquiries_details: e.target.value })}
-              placeholder="Enter additional inquiries details..."
-              rows={3}
-            />
+            <div className="p-4 border rounded-lg bg-gray-50">
+              <Textarea
+                value={formData.cybersecurity_additional_inquiries_details || ''}
+                onChange={(e) => onFormDataChange({ cybersecurity_additional_inquiries_details: e.target.value })}
+                placeholder="Enter additional inquiries details..."
+                rows={3}
+              />
+            </div>
           )}
         </div>
 

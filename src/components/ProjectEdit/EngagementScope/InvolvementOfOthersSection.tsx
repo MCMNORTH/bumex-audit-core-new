@@ -71,7 +71,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
       </div>
 
       {formData.plan_to_involve_specialists && (
-        <div className="space-y-4">
+        <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
           <div className="flex items-center justify-between">
             <Label className="font-medium text-gray-900">Specialist Teams</Label>
             <Button
