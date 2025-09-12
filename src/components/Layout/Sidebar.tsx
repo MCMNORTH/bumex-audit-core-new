@@ -95,7 +95,7 @@ export const Sidebar = () => {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-start h-16 px-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-              <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-32 h-32 object-contain" />
+              <img src="https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23" alt="BUMEX Logo" className="w-32 h-32 object-contain" />
               
             </div>
           </div>

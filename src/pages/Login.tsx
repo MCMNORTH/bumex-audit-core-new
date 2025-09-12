@@ -110,7 +110,7 @@ const Login = () => {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/real-estate-dashboard-u-i-kit-6wf0w2/assets/z0klmkn6b7a7/Untitled_design_(2).png" alt="BUMEX Logo" className="w-32 h-8 object-contain" />
+            <img src="https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23" alt="BUMEX Logo" className="w-32 h-8 object-contain" />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Audit Management System</h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
