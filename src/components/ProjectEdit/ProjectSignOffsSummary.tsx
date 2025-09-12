@@ -298,7 +298,7 @@ const ProjectSignOffsSummary: React.FC<ProjectSignOffsSummaryProps> = ({
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-900">Project Sign-offs Summary</h2>
+        <h2 className="text-2xl font-semibold text-gray-900">Project Review Summary</h2>
         <Badge variant="outline" className="text-lg px-3 py-1">
           {signed}/{total} Complete ({percentage}%)
         </Badge>
