@@ -30,26 +30,28 @@ const EngagementTypeSection = ({ formData, onFormDataChange }: EngagementTypeSec
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="audit_report_date">{t('engagementType.auditReportDate')}</Label>
-          <Input
-            id="audit_report_date"
-            type="date"
-            value={formData.audit_report_date}
-            onChange={(e) => onFormDataChange({ audit_report_date: e.target.value })}
-          />
+      {formData.financial_statement_audit_report && (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="audit_report_date">{t('engagementType.auditReportDate')}</Label>
+            <Input
+              id="audit_report_date"
+              type="date"
+              value={formData.audit_report_date}
+              onChange={(e) => onFormDataChange({ audit_report_date: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="required_audit_file_closeout_date">{t('engagementType.requiredAuditFileCloseoutDate')}</Label>
+            <Input
+              id="required_audit_file_closeout_date"
+              type="date"
+              value={formData.required_audit_file_closeout_date}
+              onChange={(e) => onFormDataChange({ required_audit_file_closeout_date: e.target.value })}
+            />
+          </div>
         </div>
-        <div>
-          <Label htmlFor="required_audit_file_closeout_date">{t('engagementType.requiredAuditFileCloseoutDate')}</Label>
-          <Input
-            id="required_audit_file_closeout_date"
-            type="date"
-            value={formData.required_audit_file_closeout_date}
-            onChange={(e) => onFormDataChange({ required_audit_file_closeout_date: e.target.value })}
-          />
-        </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -587,7 +587,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   sentinel_approval_email_files: [],
   ceac_approval_email_files: [],
   other_documents_files: [],
-  financial_statement_audit_report: false,
+  financial_statement_audit_report: true,
   auditing_standards: [],
   financial_reporting_framework: [],
   audit_report_date: '',

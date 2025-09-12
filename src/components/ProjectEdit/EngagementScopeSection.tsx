@@ -134,15 +134,19 @@ const EngagementScopeSection = ({
           onFormDataChange={onFormDataChange} 
         />
 
-        <AuditingStandardsSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+        {formData.financial_statement_audit_report && (
+          <AuditingStandardsSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
+        )}
 
-        <ReportingFrameworkSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+        {formData.financial_statement_audit_report && (
+          <ReportingFrameworkSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
+        )}
 
         <ComponentReportingSection 
           formData={formData} 
