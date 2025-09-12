@@ -35,19 +35,29 @@ const TeamSection = ({
 }: TeamSectionProps) => {
   const { logProjectAction } = useLogging();
   const { toast } = useToast();
+  
+  // Ensure team_assignments exists with default values
+  const teamAssignments = formData.team_assignments || {
+    lead_partner_id: '',
+    partner_ids: [],
+    manager_ids: [],
+    in_charge_ids: [],
+    staff_ids: []
+  };
+  
   const leadDeveloper = users.find(u => u.id === formData.lead_developer_id);
-  const leadPartner = users.find(u => u.id === formData.team_assignments.lead_partner_id);
-  const partners = users.filter(u => formData.team_assignments.partner_ids.includes(u.id));
-  const managers = users.filter(u => formData.team_assignments.manager_ids.includes(u.id));
-  const inCharges = users.filter(u => formData.team_assignments.in_charge_ids.includes(u.id));
-  const staffMembers = users.filter(u => formData.team_assignments.staff_ids.includes(u.id));
+  const leadPartner = users.find(u => u.id === teamAssignments.lead_partner_id);
+  const partners = users.filter(u => teamAssignments.partner_ids?.includes(u.id));
+  const managers = users.filter(u => teamAssignments.manager_ids?.includes(u.id));
+  const inCharges = users.filter(u => teamAssignments.in_charge_ids?.includes(u.id));
+  const staffMembers = users.filter(u => teamAssignments.staff_ids?.includes(u.id));
 
   const handleTeamAssignmentChange = async (role: keyof ProjectFormData['team_assignments'], value: string | string[]) => {
-    const oldValue = formData.team_assignments[role];
+    const oldValue = teamAssignments[role];
     
     onFormDataChange({
       team_assignments: {
-        ...formData.team_assignments,
+        ...teamAssignments,
         [role]: value
       }
     });
@@ -207,7 +217,7 @@ const TeamSection = ({
             <Label className="font-medium">Lead Partner</Label>
             <SearchableUserSelector
               users={getSelectableUsers()}
-              value={formData.team_assignments.lead_partner_id}
+              value={teamAssignments.lead_partner_id}
               onValueChange={(value) => handleTeamAssignmentChange('lead_partner_id', value)}
               placeholder="Select lead partner"
               emptyText="users"
@@ -219,7 +229,7 @@ const TeamSection = ({
             <Label className="font-medium">Partners</Label>
             <MultiSelectUserSelector
               users={getSelectableUsers()}
-              values={formData.team_assignments.partner_ids}
+              values={teamAssignments.partner_ids}
               onValuesChange={(values) => handleTeamAssignmentChange('partner_ids', values)}
               placeholder="Select partners"
               emptyText="users"
@@ -231,7 +241,7 @@ const TeamSection = ({
             <Label className="font-medium">Managers</Label>
             <MultiSelectUserSelector
               users={getSelectableUsers()}
-              values={formData.team_assignments.manager_ids}
+              values={teamAssignments.manager_ids}
               onValuesChange={(values) => handleTeamAssignmentChange('manager_ids', values)}
               placeholder="Select managers"
               emptyText="users"
@@ -243,7 +253,7 @@ const TeamSection = ({
             <Label className="font-medium">In Charge</Label>
             <MultiSelectUserSelector
               users={getSelectableUsers()}
-              values={formData.team_assignments.in_charge_ids}
+              values={teamAssignments.in_charge_ids}
               onValuesChange={(values) => handleTeamAssignmentChange('in_charge_ids', values)}
               placeholder="Select in charge members"
               emptyText="users"
@@ -255,7 +265,7 @@ const TeamSection = ({
             <Label className="font-medium">Staff</Label>
             <MultiSelectUserSelector
               users={getSelectableUsers()}
-              values={formData.team_assignments.staff_ids}
+              values={teamAssignments.staff_ids}
               onValuesChange={(values) => handleTeamAssignmentChange('staff_ids', values)}
               placeholder="Select staff members"
               emptyText="users"
