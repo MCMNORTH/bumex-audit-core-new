@@ -90,10 +90,9 @@ const ProjectSidebar = ({
       return null;
     }
 
-    // Get review status indicator - only for leaf sections (not parents) and exclude specific sections
+    // Get review status indicator - exclude specific sections but include parent sections
     const excludedSections = ['team-management', 'project-signoffs-summary'];
-    const shouldShowDot = !section.isParent && 
-                         !excludedSections.includes(section.id) && 
+    const shouldShowDot = !excludedSections.includes(section.id) && 
                          formData && 
                          currentUser;
     
