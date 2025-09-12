@@ -95,8 +95,8 @@ const AuditStrategySection = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="dual-method">Dual method</SelectItem>
-                <SelectItem value="rollover-method">Rollover method</SelectItem>
-                <SelectItem value="iron-curtain-method">Iron curtain method</SelectItem>
+                <SelectItem value="balance-sheet-method">Balance sheet method</SelectItem>
+                <SelectItem value="income-statement-method">Income statement method</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -111,8 +111,8 @@ const AuditStrategySection = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="dual-method">Dual method</SelectItem>
-                <SelectItem value="rollover-method">Rollover method</SelectItem>
-                <SelectItem value="iron-curtain-method">Iron curtain method</SelectItem>
+                <SelectItem value="balance-sheet-method">Balance sheet method</SelectItem>
+                <SelectItem value="income-statement-method">Income statement method</SelectItem>
               </SelectContent>
             </Select>
           </div>
