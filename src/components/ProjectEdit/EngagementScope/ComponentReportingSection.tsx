@@ -210,15 +210,21 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                   <RadioGroupItem value="No" id="statements_no" />
                   <Label htmlFor="statements_no">No</Label>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Not selected" id="statements_not_selected" />
-                  <Label htmlFor="statements_not_selected">Not selected</Label>
-                </div>
               </RadioGroup>
             </div>
           </div>
         </div>
       )}
+
+      {/* Group auditor checkbox - placed after component reporting section */}
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="group_auditor"
+          checked={formData.group_auditor}
+          onCheckedChange={(checked) => onFormDataChange({ group_auditor: checked as boolean })}
+        />
+        <Label htmlFor="group_auditor">Group auditor</Label>
+      </div>
     </div>
   );
 };

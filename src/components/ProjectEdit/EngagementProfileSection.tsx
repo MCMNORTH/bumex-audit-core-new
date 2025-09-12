@@ -586,7 +586,7 @@ const EngagementProfileSection = ({
           independence_rules_iesba_pie: formData.independence_rules_iesba_pie || false,
           reporting_to_kpmg_office: formData.reporting_to_kpmg_office || false,
           reporting_to_non_kpmg_entity: formData.reporting_to_non_kpmg_entity || false,
-          auditing_financial_statements_type: formData.auditing_financial_statements_type || 'Not selected',
+          auditing_financial_statements_type: formData.auditing_financial_statements_type || 'No',
           engagement_quality_control_reviewer: formData.engagement_quality_control_reviewer || false,
           limited_scope_quality_control_reviewer: formData.limited_scope_quality_control_reviewer || false,
           other_reviewer: formData.other_reviewer || false,

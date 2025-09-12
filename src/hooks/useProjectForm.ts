@@ -81,7 +81,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       independence_rules_iesba_pie: (projectData as any).independence_rules_iesba_pie || false,
       reporting_to_kpmg_office: (projectData as any).reporting_to_kpmg_office || false,
       reporting_to_non_kpmg_entity: (projectData as any).reporting_to_non_kpmg_entity || false,
-      auditing_financial_statements_type: (projectData as any).auditing_financial_statements_type || 'Not selected',
+      auditing_financial_statements_type: (projectData as any).auditing_financial_statements_type || 'No',
       engagement_quality_control_reviewer: (projectData as any).engagement_quality_control_reviewer || false,
       limited_scope_quality_control_reviewer: (projectData as any).limited_scope_quality_control_reviewer || false,
       other_reviewer: (projectData as any).other_reviewer || false,
