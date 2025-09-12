@@ -24,6 +24,7 @@ interface ProjectSidebarProps {
   currentUserRole?: string;
   formData?: ProjectFormData;
   currentUser?: User | null;
+  userProjectRole?: string | null;
   onBack: () => void;
   onSectionChange: (sectionId: string) => void;
 }
@@ -36,6 +37,7 @@ const ProjectSidebar = ({
   currentUserRole,
   formData,
   currentUser,
+  userProjectRole,
   onBack,
   onSectionChange
 }: ProjectSidebarProps) => {
@@ -88,8 +90,14 @@ const ProjectSidebar = ({
       return null;
     }
 
-    // Get review status indicator - only for leaf sections (not parents)
-    const reviewIndicator = !section.isParent && formData && currentUser 
+    // Get review status indicator - only for leaf sections (not parents) and exclude specific sections
+    const excludedSections = ['team-management', 'project-signoffs-summary'];
+    const shouldShowDot = !section.isParent && 
+                         !excludedSections.includes(section.id) && 
+                         formData && 
+                         currentUser;
+    
+    const reviewIndicator = shouldShowDot 
       ? getSectionReviewIndicator(section.id, formData, currentUser)
       : null;
 
@@ -164,6 +172,20 @@ const ProjectSidebar = ({
           {sections.map(section => renderSection(section)).filter(Boolean)}
         </div>
       </nav>
+      
+      {/* User info section */}
+      {currentUser && (
+        <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="text-sm">
+            <p className="font-medium text-gray-900 truncate">
+              {currentUser.first_name} {currentUser.last_name}
+            </p>
+            <p className="text-gray-600 capitalize">
+              {userProjectRole ? `${userProjectRole.replace('_', ' ')} • ${currentUser.role}` : currentUser.role}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

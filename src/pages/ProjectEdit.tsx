@@ -6,7 +6,7 @@ import { useFileUpload } from '@/hooks/useFileUpload';
 import ProjectSidebar from '@/components/ProjectEdit/ProjectSidebar';
 import ProjectEditContent from '@/components/ProjectEdit/ProjectEditContent';
 import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
-import { canViewTeamManagement } from '@/utils/permissions';
+import { canViewTeamManagement, getProjectRole } from '@/utils/permissions';
 
 const ProjectEdit = () => {
   const navigate = useNavigate();
@@ -329,6 +329,7 @@ const ProjectEdit = () => {
   };
 
   const selectedClient = clients.find(c => c.id === formData.client_id);
+  const userProjectRole = getProjectRole(user, formData);
 
   if (loading) {
     return <LoadingScreen />;
@@ -344,6 +345,7 @@ const ProjectEdit = () => {
         currentUserRole={user?.role}
         formData={formData}
         currentUser={user}
+        userProjectRole={userProjectRole}
         onBack={() => navigate('/projects')}
         onSectionChange={setActiveSection}
       />
