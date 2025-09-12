@@ -619,7 +619,7 @@ const ProjectEditContent = ({
             users={users}
             sidebarSections={sidebarSections}
             currentUser={currentUser}
-            onUnsign={onUnsign}
+            onUnsign={onUnreview}
           />
         )}
       </div>

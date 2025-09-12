@@ -24,6 +24,8 @@ const ProjectEdit = () => {
     handleSave,
     handleAssignmentChange,
     handleFormDataChange,
+    handleReview,
+    handleUnreview,
     handleSignOff,
     handleUnsign,
   } = useProjectData();
@@ -373,8 +375,8 @@ const ProjectEdit = () => {
         // Pass sidebarSections for dynamic cards and sign-off handlers
         sidebarSections={sidebarSections}
         onSectionChange={setActiveSection}
-        onSignOff={handleSignOff}
-        onUnsign={handleUnsign}
+        onReview={handleReview}
+        onUnreview={handleUnreview}
       />
     </div>
   );
