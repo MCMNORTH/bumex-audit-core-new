@@ -6,12 +6,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Calendar } from 'lucide-react';
 import { Client, User, Project } from '@/types';
-import FileUploadSection from './FileUploadSection';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
-import EntityProfileSection from './EngagementScope/EntityProfileSection';
 import MultiReportingSection from './MultiReportingSection';
-import DataConsiderationsSection from './DataConsiderationsSection';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 interface DocumentFile {
@@ -387,39 +384,13 @@ const EngagementProfileSection = ({
           <div className="space-y-3">
             <div className="flex items-center space-x-2">
               <Checkbox
-                id="is_first_audit"
-                checked={formData.is_first_audit}
-                onCheckedChange={(checked) => onFormDataChange({ is_first_audit: checked as boolean })}
-              />
-              <Label htmlFor="is_first_audit">{t('engagement.firstTimeAudit')}</Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox
                 id="plan_to_roll_forward"
                 checked={formData.plan_to_roll_forward}
                 onCheckedChange={(checked) => onFormDataChange({ plan_to_roll_forward: checked as boolean })}
               />
               <Label htmlFor="plan_to_roll_forward">{t('engagement.planToRollForward')}</Label>
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="enable_external_documents"
-                checked={formData.enable_external_documents}
-                onCheckedChange={(checked) => onFormDataChange({ enable_external_documents: checked as boolean })}
-              />
-              <Label htmlFor="enable_external_documents">{t('engagement.enableExternalDocuments')}</Label>
-            </div>
           </div>
-
-          <FileUploadSection
-            uploadedFile={uploadedFile}
-            uploadStatus={uploadStatus}
-            onFileUpload={onFileUpload}
-            onRemoveFile={onRemoveFile}
-            onDownloadFile={onDownloadFile}
-          />
         </CardContent>
       </Card>
 
@@ -647,21 +618,6 @@ const EngagementProfileSection = ({
         onDownloadMRRFile={onDownloadMRRFile}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle>{t('engagement.entityProfile')}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EntityProfileSection
-            formData={{
-              entity_revenue_greater_than_billion: formData.entity_revenue_greater_than_billion,
-              entity_meets_international_criteria: formData.entity_meets_international_criteria,
-              using_sats_not_on_firm_list: formData.using_sats_not_on_firm_list,
-            }}
-            onFormDataChange={onFormDataChange}
-          />
-        </CardContent>
-      </Card>
 
       <MultiReportingSection
         formData={{
@@ -671,14 +627,6 @@ const EngagementProfileSection = ({
         onFormDataChange={onFormDataChange}
       />
 
-      <DataConsiderationsSection
-        formData={{
-          trial_balances_electronic_format: formData.trial_balances_electronic_format || '',
-          large_batch_journal_entries: formData.large_batch_journal_entries || '',
-          significant_circumstances_impair_da: formData.significant_circumstances_impair_da || ''
-        }}
-        onFormDataChange={onFormDataChange}
-      />
 
     </div>
   );
