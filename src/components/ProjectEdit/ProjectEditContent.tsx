@@ -120,7 +120,7 @@ const ProjectEditContent = ({
       <Separator className="mt-2" />
     </div>;
   const renderEngagementProfileContent = () => <div className="space-y-6">
-      <EngagementProfileSection formData={formData} clients={clients} users={users} uploadedFile={uploadedFile} uploadStatus={uploadStatus} onFormDataChange={onFormDataChange} onAssignmentChange={handleAssignmentChange} onFileUpload={onFileUpload} onRemoveFile={onRemoveFile} onDownloadFile={onDownloadFile} projectId={projectId} mrrUploadedFile={mrrUploadedFile} mrrUploadStatus={mrrUploadStatus} mrrFileInputRef={mrrFileInputRef} onMRRFileUpload={onMRRFileUpload} onRemoveMRRFile={onRemoveMRRFile} onDownloadMRRFile={onDownloadMRRFile} />
+      <EngagementProfileSection formData={formData} clients={clients} users={users} uploadedFile={uploadedFile} uploadStatus={uploadStatus} canEdit={canEdit} onFormDataChange={onFormDataChange} onAssignmentChange={handleAssignmentChange} onFileUpload={onFileUpload} onRemoveFile={onRemoveFile} onDownloadFile={onDownloadFile} projectId={projectId} mrrUploadedFile={mrrUploadedFile} mrrUploadStatus={mrrUploadStatus} mrrFileInputRef={mrrFileInputRef} onMRRFileUpload={onMRRFileUpload} onRemoveMRRFile={onRemoveMRRFile} onDownloadMRRFile={onDownloadMRRFile} />
     </div>;
   const renderSignOffContent = (title: string = 'Sign-off') => <div className="space-y-4">
       {renderPlaceholderSection('Sign-off')}

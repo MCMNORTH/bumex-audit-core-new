@@ -161,6 +161,7 @@ interface EngagementProfileSectionProps {
   users: User[];
   uploadedFile: File | null;
   uploadStatus: 'idle' | 'uploading' | 'success' | 'error';
+  canEdit?: boolean;
   onFormDataChange: (updates: Partial<FormData>) => void;
   onAssignmentChange: (userId: string, checked: boolean) => void;
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -182,6 +183,7 @@ const EngagementProfileSection = ({
   users,
   uploadedFile,
   uploadStatus,
+  canEdit = true,
   onFormDataChange,
   onAssignmentChange,
   onFileUpload,
@@ -226,21 +228,29 @@ const EngagementProfileSection = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <Label htmlFor="client_id">{t('engagement.client')}</Label>
-              <Select
-                value={formData.client_id}
-                onValueChange={(value) => onFormDataChange({ client_id: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder={t('engagement.placeholders.selectClient')} />
-                </SelectTrigger>
-                <SelectContent>
-                  {clients.map((client) => (
-                    <SelectItem key={client.id} value={client.id}>
-                      {client.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {canEdit ? (
+                <Select
+                  value={formData.client_id}
+                  onValueChange={(value) => onFormDataChange({ client_id: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('engagement.placeholders.selectClient')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map((client) => (
+                      <SelectItem key={client.id} value={client.id}>
+                        {client.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  value={clients.find(c => c.id === formData.client_id)?.name || ''}
+                  readOnly
+                  className="bg-gray-50 cursor-not-allowed"
+                />
+              )}
             </div>
             <div>
               <Label htmlFor="status">{t('engagement.status')}</Label>
