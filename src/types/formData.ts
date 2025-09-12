@@ -80,7 +80,19 @@ export interface ProjectFormData {
     in_charge_ids: string[];
     staff_ids: string[];
   };
-  signoffs: {
+  reviews: {
+    [sectionId: string]: {
+      staff_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
+      incharge_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
+      manager_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
+      partner_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
+      lead_partner_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
+      status: 'not_reviewed' | 'ready_for_review' | 'reviewed';
+      current_review_level: 'staff' | 'incharge' | 'manager' | 'partner' | 'lead_partner' | 'completed';
+    };
+  };
+  // Legacy support - will be migrated to reviews
+  signoffs?: {
     [sectionId: string]: {
       signed: boolean;
       signedBy?: string;
@@ -548,6 +560,7 @@ export const getInitialFormData = (): ProjectFormData => ({
     in_charge_ids: [],
     staff_ids: [],
   },
+  reviews: {},
   signoffs: {},
   assigned_to: [],
   status: 'new',

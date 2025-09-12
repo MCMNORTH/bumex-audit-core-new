@@ -49,8 +49,8 @@ interface ProjectEditContentProps {
   onDownloadMRRFile: () => void;
   onSectionChange?: (sectionId: string) => void; // NEW, optional, fallback gracefully
   sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
-  onSignOff?: (sectionId: string, userId: string) => void;
-  onUnsign?: (sectionId: string) => void;
+  onReview?: (sectionId: string) => void;
+  onUnreview?: (sectionId: string) => void;
 }
 const ProjectEditContent = ({
   project,
@@ -80,17 +80,15 @@ const ProjectEditContent = ({
   onDownloadMRRFile,
   onSectionChange = () => {},
   sidebarSections = [],
-  onSignOff = () => {},
-  onUnsign = () => {}
+  onReview = () => {},
+  onUnreview = () => {}
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
   const currentUser = users.find(u => u.id === currentUserId);
   const canEdit = canEditProject(currentUser || null, formData);
   
-  const handleSignOffWrapper = (sectionId: string) => {
-    if (currentUserId) {
-      onSignOff(sectionId, currentUserId);
-    }
+  const handleReviewWrapper = (sectionId: string) => {
+    onReview(sectionId);
   };
   const handleAssignmentChange = (userId: string, checked: boolean) => {
     const currentAssignments = formData.assigned_to || [];
@@ -232,8 +230,8 @@ const ProjectEditContent = ({
               users={users}
               currentUser={currentUser}
               signOffLevel="incharge"
-              onSignOff={handleSignOffWrapper}
-              onUnsign={onUnsign}
+              onReview={handleReviewWrapper}
+              onUnreview={onUnreview}
               sidebarSections={sidebarSections}
             >
                <div className="space-y-4">
@@ -249,8 +247,8 @@ const ProjectEditContent = ({
               users={users}
               currentUser={currentUser}
               signOffLevel="incharge"
-              onSignOff={handleSignOffWrapper}
-              onUnsign={onUnsign}
+              onReview={handleReviewWrapper}
+              onUnreview={onUnreview}
               sidebarSections={sidebarSections}
             >
                <div className="space-y-4">
@@ -266,8 +264,8 @@ const ProjectEditContent = ({
               users={users}
               currentUser={currentUser}
               signOffLevel="incharge"
-              onSignOff={handleSignOffWrapper}
-              onUnsign={onUnsign}
+              onReview={handleReviewWrapper}
+              onUnreview={onUnreview}
               sidebarSections={sidebarSections}
             >
                <div className="space-y-4">
@@ -283,8 +281,8 @@ const ProjectEditContent = ({
               users={users}
               currentUser={currentUser}
               signOffLevel="incharge"
-              onSignOff={handleSignOffWrapper}
-              onUnsign={onUnsign}
+              onReview={handleReviewWrapper}
+              onUnreview={onUnreview}
               sidebarSections={sidebarSections}
             >
                <div className="space-y-4">
@@ -300,8 +298,8 @@ const ProjectEditContent = ({
               users={users}
               currentUser={currentUser}
               signOffLevel="incharge"
-              onSignOff={handleSignOffWrapper}
-              onUnsign={onUnsign}
+              onReview={handleReviewWrapper}
+              onUnreview={onUnreview}
               sidebarSections={sidebarSections}
             >
                <div className="space-y-4">
@@ -420,8 +418,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="manager"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             <div className="space-y-8">
@@ -439,8 +437,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             {renderEngagementProfileContent()}
@@ -454,8 +452,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             {renderSPSpecialistsContent()}
@@ -469,8 +467,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             {renderIndependenceContent()}
@@ -484,8 +482,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             {renderCommunicationsContent()}
@@ -501,8 +499,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
@@ -518,8 +516,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
@@ -535,8 +533,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             <div className="space-y-4">
@@ -557,8 +555,8 @@ const ProjectEditContent = ({
             users={users}
             currentUser={currentUser}
             signOffLevel="incharge"
-            onSignOff={handleSignOffWrapper}
-            onUnsign={onUnsign}
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
             sidebarSections={sidebarSections}
           >
             <div className="space-y-4">

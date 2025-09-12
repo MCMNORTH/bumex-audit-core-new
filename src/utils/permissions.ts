@@ -84,6 +84,90 @@ export function canViewProject(user: User | null, formData: ProjectFormData): bo
   return isProjectMember(user, formData);
 }
 
+export function getRequiredReviewRoles(sectionId: string, sidebarSections: any[]): string[] {
+  const findSection = (sections: any[], targetId: string): any => {
+    for (const section of sections) {
+      if (section.id === targetId) return section;
+      if (section.children) {
+        const found = findSection(section.children, targetId);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+
+  const section = findSection(sidebarSections, sectionId);
+  const signOffLevel = section?.signOffLevel || 'incharge';
+  
+  if (signOffLevel === 'manager') {
+    return ['staff', 'incharge', 'manager', 'partner', 'lead_partner'];
+  } else {
+    return ['staff', 'incharge', 'manager', 'partner', 'lead_partner'];
+  }
+}
+
+export function getCurrentReviewLevel(sectionId: string, formData: ProjectFormData): string {
+  const sectionReviews = formData.reviews?.[sectionId];
+  if (!sectionReviews) return 'staff';
+
+  if (sectionReviews.lead_partner_reviews.length > 0) return 'completed';
+  if (sectionReviews.partner_reviews.length > 0) return 'lead_partner';
+  if (sectionReviews.manager_reviews.length > 0) return 'partner';
+  if (sectionReviews.incharge_reviews.length > 0) return 'manager';
+  if (sectionReviews.staff_reviews.length > 0) return 'incharge';
+  
+  return 'staff';
+}
+
+export function canUserReviewSection(user: User | null, formData: ProjectFormData, sectionId: string): boolean {
+  if (!user) return false;
+  if (isDevOrAdmin(user)) return true;
+
+  const userRole = getProjectRole(user, formData);
+  if (!userRole || userRole === 'lead_developer') return false;
+
+  const currentLevel = getCurrentReviewLevel(sectionId, formData);
+  
+  // User can review if it's their turn in the sequence
+  return userRole === currentLevel;
+}
+
+export function getSectionReviewStatus(sectionId: string, formData: ProjectFormData): 'not_reviewed' | 'ready_for_review' | 'reviewed' {
+  const sectionReviews = formData.reviews?.[sectionId];
+  if (!sectionReviews) return 'not_reviewed';
+
+  if (sectionReviews.lead_partner_reviews.length > 0) return 'reviewed';
+  if (sectionReviews.staff_reviews.length > 0 || 
+      sectionReviews.incharge_reviews.length > 0 || 
+      sectionReviews.manager_reviews.length > 0 || 
+      sectionReviews.partner_reviews.length > 0) {
+    return 'ready_for_review';
+  }
+  
+  return 'not_reviewed';
+}
+
+export function getCompletedReviewRoles(sectionId: string, formData: ProjectFormData): string[] {
+  const sectionReviews = formData.reviews?.[sectionId];
+  if (!sectionReviews) return [];
+
+  const completed: string[] = [];
+  if (sectionReviews.staff_reviews.length > 0) completed.push('staff');
+  if (sectionReviews.incharge_reviews.length > 0) completed.push('incharge');
+  if (sectionReviews.manager_reviews.length > 0) completed.push('manager');
+  if (sectionReviews.partner_reviews.length > 0) completed.push('partner');
+  if (sectionReviews.lead_partner_reviews.length > 0) completed.push('lead_partner');
+  
+  return completed;
+}
+
+export function getPendingReviewRoles(sectionId: string, formData: ProjectFormData): string[] {
+  const completed = getCompletedReviewRoles(sectionId, formData);
+  const allRoles = ['staff', 'incharge', 'manager', 'partner', 'lead_partner'];
+  
+  return allRoles.filter(role => !completed.includes(role));
+}
+
 export function canSignOffSection(user: User | null, formData: ProjectFormData, signOffLevel: 'incharge' | 'manager'): boolean {
   // Developers and admins can always sign off
   if (isDevOrAdmin(user)) return true;

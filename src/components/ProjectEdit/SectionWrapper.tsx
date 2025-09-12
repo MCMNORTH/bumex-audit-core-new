@@ -1,8 +1,8 @@
 import React from 'react';
-import SignOffBar from './SignOffBar';
+import ReviewBar from './ReviewBar';
 import { User } from '@/types';
 import { ProjectFormData } from '@/types/formData';
-import { canSignOffSection } from '@/utils/permissions';
+import { getSectionReviewStatus } from '@/utils/permissions';
 
 interface SectionWrapperProps {
   sectionId: string;
@@ -11,13 +11,13 @@ interface SectionWrapperProps {
   users: User[];
   currentUser: User | null;
   signOffLevel: 'incharge' | 'manager';
-  onSignOff: (sectionId: string) => void;
-  onUnsign: (sectionId: string) => void;
+  onReview: (sectionId: string) => void;
+  onUnreview: (sectionId: string) => void;
   sidebarSections?: any[]; // For hierarchical checking
 }
 
-// Utility function to check if all descendants of a section are signed off
-const areAllDescendantsSignedOff = (sectionId: string, sidebarSections: any[], formData: ProjectFormData): boolean => {
+// Utility function to check if all descendants of a section are reviewed
+const areAllDescendantsReviewed = (sectionId: string, sidebarSections: any[], formData: ProjectFormData): boolean => {
   const findSectionInHierarchy = (sections: any[], targetId: string): any => {
     for (const section of sections) {
       if (section.id === targetId) return section;
@@ -31,14 +31,14 @@ const areAllDescendantsSignedOff = (sectionId: string, sidebarSections: any[], f
 
   const section = findSectionInHierarchy(sidebarSections || [], sectionId);
   if (!section || !section.children || section.children.length === 0) {
-    return true; // Leaf sections are always "ready" for sign-off
+    return true; // Leaf sections are always "ready" for review
   }
 
-  // Check if all immediate children are signed off AND all their descendants
+  // Check if all immediate children are reviewed AND all their descendants
   return section.children.every((child: any) => {
-    const isChildSignedOff = child.signOffLevel ? formData.signoffs?.[child.id]?.signed || false : true;
-    const areChildDescendantsSignedOff = areAllDescendantsSignedOff(child.id, sidebarSections || [], formData);
-    return isChildSignedOff && areChildDescendantsSignedOff;
+    const isChildReviewed = child.signOffLevel ? getSectionReviewStatus(child.id, formData) === 'reviewed' : true;
+    const areChildDescendantsReviewed = areAllDescendantsReviewed(child.id, sidebarSections || [], formData);
+    return isChildReviewed && areChildDescendantsReviewed;
   });
 };
 
@@ -49,40 +49,36 @@ const SectionWrapper: React.FC<SectionWrapperProps> = ({
   users,
   currentUser,
   signOffLevel,
-  onSignOff,
-  onUnsign,
+  onReview,
+  onUnreview,
   sidebarSections = []
 }) => {
-  const signOffData = formData.signoffs?.[sectionId] || { signed: false };
-  const canSignOff = canSignOffSection(currentUser, formData, signOffLevel);
-  const canUnsign = canSignOff; // Same permission for unsigning
+  const reviewStatus = getSectionReviewStatus(sectionId, formData);
   
-  // Check if all descendants are signed off (for hierarchical sign-off)
-  const areDescendantsSignedOff = areAllDescendantsSignedOff(sectionId, sidebarSections, formData);
+  // Check if all descendants are reviewed (for hierarchical review)
+  const areDescendantsReviewed = areAllDescendantsReviewed(sectionId, sidebarSections, formData);
   
-  // Only show sign-off if all descendants are signed off
-  const showSignOff = areDescendantsSignedOff;
+  // Only show review bar if all descendants are reviewed
+  const showReview = areDescendantsReviewed;
   
   return (
     <div>
-      {showSignOff && (
-        <SignOffBar
+      {showReview && (
+        <ReviewBar
           sectionId={sectionId}
-          signOffData={signOffData}
+          formData={formData}
           users={users}
-          canSignOff={canSignOff}
-          canUnsign={canUnsign}
-          onSignOff={onSignOff}
-          onUnsign={onUnsign}
-          signOffLevel={signOffLevel}
+          currentUser={currentUser}
+          onReview={onReview}
+          onUnreview={onUnreview}
         />
       )}
       
-      <div className={signOffData.signed ? 'relative' : ''}>
-        {signOffData.signed && (
+      <div className={reviewStatus === 'reviewed' ? 'relative' : ''}>
+        {reviewStatus === 'reviewed' && (
           <div className="absolute inset-0 bg-gray-50/30 z-10 rounded-lg pointer-events-none" />
         )}
-        <div className={signOffData.signed ? 'relative' : ''}>
+        <div className={reviewStatus === 'reviewed' ? 'relative' : ''}>
           {children}
         </div>
       </div>

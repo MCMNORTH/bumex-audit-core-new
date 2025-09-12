@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -7,6 +6,7 @@ import { Project } from '@/types';
 import { ProjectFormData, getInitialFormData } from '@/types/formData';
 import { useLogging } from '@/hooks/useLogging';
 import { useAuth } from '@/hooks/useAuth';
+import { getProjectRole, isDevOrAdmin, getCurrentReviewLevel } from '@/utils/permissions';
 
 export const useProjectForm = (project: Project | null, projectId?: string) => {
   const { toast } = useToast();
@@ -14,6 +14,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
   const { logProjectAction } = useLogging();
   const [formData, setFormData] = useState<ProjectFormData>({
     ...getInitialFormData(),
+    reviews: {},
     signoffs: {}
   });
   const [saving, setSaving] = useState(false);
@@ -337,7 +338,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       revenue_recognition_fraud_risk: (projectData as any).revenue_recognition_fraud_risk || '',
       revenue_recognition_identified: (projectData as any).revenue_recognition_identified || '',
       overall_fraud_response: (projectData as any).overall_fraud_response || '',
-      signoffs: (projectData as any).signoffs || {}
+      
+      reviews: (projectData as any).reviews || {},
+      signoffs: (projectData as any).signoffs || {},
     });
   };
 
@@ -385,9 +388,149 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
+  const handleReview = async (sectionId: string) => {
+    if (!projectId || !user) return;
+
+    const currentLevel = getCurrentReviewLevel(sectionId, formData);
+    const userRole = getProjectRole(user, formData);
+    
+    if (!userRole || userRole !== currentLevel) {
+      toast({
+        title: 'Error',
+        description: 'You cannot review this section at this time',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const reviewData = {
+      user_id: user.id,
+      reviewed_at: new Date().toISOString(),
+      user_name: `${user.first_name} ${user.last_name}`
+    };
+
+    const existingReviews = formData.reviews?.[sectionId] || {
+      staff_reviews: [],
+      incharge_reviews: [],
+      manager_reviews: [],
+      partner_reviews: [],
+      lead_partner_reviews: [],
+      status: 'not_reviewed',
+      current_review_level: 'staff'
+    };
+
+    const roleKey = `${userRole}_reviews` as keyof typeof existingReviews;
+    const updatedReviews = {
+      ...existingReviews,
+      [roleKey]: [...(existingReviews[roleKey] as any[]), reviewData]
+    };
+
+    // Update status and current level
+    updatedReviews.current_review_level = getNextReviewLevel(userRole) as any;
+    updatedReviews.status = updatedReviews.current_review_level === 'completed' ? 'reviewed' : 'ready_for_review';
+
+    // Update local state
+    setFormData(prev => ({
+      ...prev,
+      reviews: {
+        ...prev.reviews,
+        [sectionId]: updatedReviews
+      }
+    }));
+
+    // Update database immediately
+    try {
+      await updateDoc(doc(db, 'projects', projectId), {
+        [`reviews.${sectionId}`]: updatedReviews
+      });
+      
+      await logProjectAction.update(projectId, `Section ${sectionId} reviewed by ${userRole}`);
+      
+      toast({
+        title: 'Success',
+        description: 'Section reviewed successfully',
+      });
+    } catch (error) {
+      console.error('Error reviewing section:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to review section',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleUnreview = async (sectionId: string) => {
+    if (!projectId || !user) return;
+
+    const userRole = getProjectRole(user, formData);
+    const canUnreview = isDevOrAdmin(user) || userRole;
+
+    if (!canUnreview) {
+      toast({
+        title: 'Error',
+        description: 'You cannot unreview this section',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    const existingReviews = formData.reviews?.[sectionId];
+    if (!existingReviews) return;
+
+    // Reset reviews from the user's level and above
+    const roleHierarchy = ['staff', 'incharge', 'manager', 'partner', 'lead_partner'];
+    const userRoleIndex = roleHierarchy.indexOf(userRole || '');
+    
+    const updatedReviews = { ...existingReviews };
+    
+    // Clear reviews from user's level and higher
+    for (let i = userRoleIndex; i < roleHierarchy.length; i++) {
+      const roleKey = `${roleHierarchy[i]}_reviews` as keyof typeof updatedReviews;
+      (updatedReviews as any)[roleKey] = [];
+    }
+
+    // Recalculate status and current level
+    const newCurrentLevel = getCurrentReviewLevel(sectionId, { ...formData, reviews: { ...formData.reviews, [sectionId]: updatedReviews } });
+    updatedReviews.current_review_level = newCurrentLevel as any;
+    updatedReviews.status = newCurrentLevel === 'completed' ? 'reviewed' : 
+                           newCurrentLevel === 'staff' ? 'not_reviewed' : 'ready_for_review';
+
+    // Update local state
+    setFormData(prev => ({
+      ...prev,
+      reviews: {
+        ...prev.reviews,
+        [sectionId]: updatedReviews
+      }
+    }));
+
+    // Update database immediately
+    try {
+      await updateDoc(doc(db, 'projects', projectId), {
+        [`reviews.${sectionId}`]: updatedReviews
+      });
+      
+      await logProjectAction.update(projectId, `Section ${sectionId} unreviewed by ${userRole}`);
+      
+      toast({
+        title: 'Success',
+        description: 'Section unreviewed successfully',
+      });
+    } catch (error) {
+      console.error('Error unreviewing section:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to unreview section',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  // Legacy sign off handlers (kept for backward compatibility)
   const handleSignOff = async (sectionId: string, userId: string) => {
     if (!projectId) return;
-    
+
     const signOffData = {
       signed: true,
       signedBy: userId,
@@ -409,7 +552,6 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
         [`signoffs.${sectionId}`]: signOffData
       });
       
-      // Log the sign off action
       await logProjectAction.update(projectId, `Section ${sectionId} signed off`);
       
       toast({
@@ -444,7 +586,6 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
         [`signoffs.${sectionId}`]: { signed: false }
       });
       
-      // Log the unsign action
       await logProjectAction.update(projectId, `Section ${sectionId} unsigned`);
       
       toast({
@@ -467,9 +608,24 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
     handleSave,
     handleAssignmentChange,
     handleFormDataChange,
+    handleReview,
+    handleUnreview,
     handleSignOff,
     handleUnsign,
     initializeFormData,
     setFormData
   };
 };
+
+// Helper function to get next review level
+function getNextReviewLevel(currentRole: string): string {
+  const roleSequence: { [key: string]: string } = {
+    staff: 'incharge',
+    incharge: 'manager',
+    manager: 'partner',
+    partner: 'lead_partner',
+    lead_partner: 'completed'
+  };
+  
+  return roleSequence[currentRole] || 'completed';
+}
