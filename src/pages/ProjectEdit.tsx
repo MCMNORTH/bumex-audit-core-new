@@ -285,7 +285,6 @@ const ProjectEdit = () => {
       title: 'Team Management',
       isParent: false,
       active: false,
-      devOnly: true,
     },
     {
       id: 'project-signoffs-summary',

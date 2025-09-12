@@ -8,10 +8,12 @@ import { SearchableUserSelector } from './SearchableUserSelector';
 import { MultiSelectUserSelector } from './MultiSelectUserSelector';
 import { useLogging } from '@/hooks/useLogging';
 import { useToast } from '@/hooks/use-toast';
+import { isDev } from '@/utils/permissions';
 
 interface TeamSectionProps {
   formData: ProjectFormData;
   users: User[];
+  currentUser: User | null;
   currentUserId: string;
   isLeadDeveloper: boolean;
   onFormDataChange: (updates: Partial<ProjectFormData>) => void;
@@ -23,6 +25,7 @@ interface TeamSectionProps {
 const TeamSection = ({
   formData,
   users,
+  currentUser,
   currentUserId,
   isLeadDeveloper,
   onFormDataChange,
@@ -72,7 +75,10 @@ const TeamSection = ({
     return (users || []).filter(user => user.approved && !user.blocked);
   };
 
-  if (!isLeadDeveloper) {
+  const canManageTeam = isDev(currentUser);
+
+  // Show team list view for non-dev users or if not lead developer
+  if (!canManageTeam) {
     return (
       <Card>
         <CardHeader>
@@ -81,51 +87,92 @@ const TeamSection = ({
             Project Team
           </CardTitle>
           <CardDescription>
-            Only the Lead Developer can manage team assignments for this project.
+            View the assigned team members for this project.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="font-medium">Lead Developer</Label>
-              <div className="p-3 bg-muted rounded-md">
+          <div className="space-y-4">
+            {/* Lead Partner - First priority */}
+            {leadPartner && (
+              <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                <Label className="font-semibold text-primary">Lead Partner</Label>
+                <div className="mt-1 text-foreground">
+                  {leadPartner.first_name} {leadPartner.last_name}
+                  {leadPartner.role && (
+                    <span className="ml-2 text-sm text-muted-foreground">({leadPartner.role})</span>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Lead Developer - Second priority */}
+            <div className="p-4 bg-secondary/50 border border-secondary/50 rounded-lg">
+              <Label className="font-semibold">Lead Developer</Label>
+              <div className="mt-1 text-foreground">
                 {leadDeveloper ? `${leadDeveloper.first_name} ${leadDeveloper.last_name}` : 'Not assigned'}
+                {leadDeveloper?.role && (
+                  <span className="ml-2 text-sm text-muted-foreground">({leadDeveloper.role})</span>
+                )}
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label className="font-medium">Lead Partner</Label>
-              <div className="p-3 bg-muted rounded-md">
-                {leadPartner ? `${leadPartner.first_name} ${leadPartner.last_name}` : 'Not assigned'}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="font-medium">Partners</Label>
-              <div className="p-3 bg-muted rounded-md">
-                {partners.length > 0 ? partners.map(p => `${p.first_name} ${p.last_name}`).join(', ') : 'None assigned'}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="font-medium">Managers</Label>
-              <div className="p-3 bg-muted rounded-md">
-                {managers.length > 0 ? managers.map(m => `${m.first_name} ${m.last_name}`).join(', ') : 'None assigned'}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="font-medium">In Charge</Label>
-              <div className="p-3 bg-muted rounded-md">
-                {inCharges.length > 0 ? inCharges.map(ic => `${ic.first_name} ${ic.last_name}`).join(', ') : 'None assigned'}
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label className="font-medium">Staff</Label>
-              <div className="p-3 bg-muted rounded-md">
-                {staffMembers.length > 0 ? staffMembers.map(s => `${s.first_name} ${s.last_name}`).join(', ') : 'None assigned'}
-              </div>
+            {/* Other team members */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {partners.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="font-medium">Partners</Label>
+                  <div className="space-y-1">
+                    {partners.map(p => (
+                      <div key={p.id} className="p-2 bg-muted rounded-md text-sm">
+                        {p.first_name} {p.last_name}
+                        {p.role && <span className="ml-2 text-muted-foreground">({p.role})</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {managers.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="font-medium">Managers</Label>
+                  <div className="space-y-1">
+                    {managers.map(m => (
+                      <div key={m.id} className="p-2 bg-muted rounded-md text-sm">
+                        {m.first_name} {m.last_name}
+                        {m.role && <span className="ml-2 text-muted-foreground">({m.role})</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {inCharges.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="font-medium">In Charge</Label>
+                  <div className="space-y-1">
+                    {inCharges.map(ic => (
+                      <div key={ic.id} className="p-2 bg-muted rounded-md text-sm">
+                        {ic.first_name} {ic.last_name}
+                        {ic.role && <span className="ml-2 text-muted-foreground">({ic.role})</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {staffMembers.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="font-medium">Staff</Label>
+                  <div className="space-y-1">
+                    {staffMembers.map(s => (
+                      <div key={s.id} className="p-2 bg-muted rounded-md text-sm">
+                        {s.first_name} {s.last_name}
+                        {s.role && <span className="ml-2 text-muted-foreground">({s.role})</span>}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

@@ -598,11 +598,12 @@ const ProjectEditContent = ({
         {renderedEntityContent}
 
         {/* TEAM SECTION */}
-        {activeSection === 'team-section' && canViewTeamManagement(currentUser) && (
+        {activeSection === 'team-section' && (
           <div className="space-y-4">
             <TeamSection
               formData={formData}
               users={users}
+              currentUser={currentUser}
               currentUserId={currentUserId || ''}
               isLeadDeveloper={currentUserId === formData.lead_developer_id}
               onFormDataChange={onFormDataChange}
