@@ -31,9 +31,6 @@ const AuditStrategySection = ({
   mrrFileInputRef
 }: AuditStrategySectionProps) => {
   const triggerMRRFileUpload = () => {
-    console.log('Triggering MRR file upload');
-    console.log('mrrFileInputRef:', mrrFileInputRef);
-    console.log('mrrFileInputRef.current:', mrrFileInputRef?.current);
     if (!mrrFileInputRef) {
       console.error('MRR file input ref is not provided');
       return;
@@ -44,7 +41,6 @@ const AuditStrategySection = ({
     }
     try {
       mrrFileInputRef.current.click();
-      console.log('File input clicked successfully');
     } catch (error) {
       console.error('Error clicking file input:', error);
     }
