@@ -384,42 +384,14 @@ const EngagementProfileSection = ({
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="is_first_audit"
-                checked={formData.is_first_audit}
-                onCheckedChange={(checked) => onFormDataChange({ is_first_audit: checked as boolean })}
-              />
-              <Label htmlFor="is_first_audit">{t('engagement.firstTimeAudit')}</Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="plan_to_roll_forward"
-                checked={formData.plan_to_roll_forward}
-                onCheckedChange={(checked) => onFormDataChange({ plan_to_roll_forward: checked as boolean })}
-              />
-              <Label htmlFor="plan_to_roll_forward">{t('engagement.planToRollForward')}</Label>
-            </div>
-            
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="enable_external_documents"
-                checked={formData.enable_external_documents}
-                onCheckedChange={(checked) => onFormDataChange({ enable_external_documents: checked as boolean })}
-              />
-              <Label htmlFor="enable_external_documents">{t('engagement.enableExternalDocuments')}</Label>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="plan_to_roll_forward"
+              checked={formData.plan_to_roll_forward}
+              onCheckedChange={(checked) => onFormDataChange({ plan_to_roll_forward: checked as boolean })}
+            />
+            <Label htmlFor="plan_to_roll_forward">{t('engagement.planToRollForward')}</Label>
           </div>
-
-          <FileUploadSection
-            uploadedFile={uploadedFile}
-            uploadStatus={uploadStatus}
-            onFileUpload={onFileUpload}
-            onRemoveFile={onRemoveFile}
-            onDownloadFile={onDownloadFile}
-          />
         </CardContent>
       </Card>
 
