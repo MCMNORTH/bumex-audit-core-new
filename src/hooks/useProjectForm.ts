@@ -432,7 +432,17 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       current_review_level: 'staff'
     };
 
-    const roleKey = `${userRole}_reviews` as keyof typeof existingReviews;
+    // Map role names to review array keys
+    const roleMapping: { [key: string]: string } = {
+      'staff': 'staff',
+      'in_charge': 'incharge',
+      'manager': 'manager', 
+      'partner': 'partner',
+      'lead_partner': 'lead_partner'
+    };
+
+    const mappedRole = roleMapping[userRole] || userRole;
+    const roleKey = `${mappedRole}_reviews` as keyof typeof existingReviews;
     const updatedReviews = {
       ...existingReviews,
       [roleKey]: [...(existingReviews[roleKey] as any[]), reviewData]
