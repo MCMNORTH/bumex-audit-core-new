@@ -12,7 +12,7 @@ interface SectionWrapperProps {
   currentUser: User | null;
   signOffLevel: 'incharge' | 'manager';
   onReview: (sectionId: string) => void;
-  onUnreview: (sectionId: string) => void;
+  onUnreview: (sectionId: string, role: string, userId: string) => void;
   sidebarSections?: any[]; // For hierarchical checking
 }
 

@@ -108,15 +108,18 @@ export function getRequiredReviewRoles(sectionId: string, sidebarSections: any[]
 
 export function getCurrentReviewLevel(sectionId: string, formData: ProjectFormData): string {
   const sectionReviews = formData.reviews?.[sectionId];
-  if (!sectionReviews) return 'staff';
+  if (!sectionReviews) return 'pending';
 
-  if (sectionReviews.lead_partner_reviews.length > 0) return 'completed';
-  if (sectionReviews.partner_reviews.length > 0) return 'lead_partner';
-  if (sectionReviews.manager_reviews.length > 0) return 'partner';
-  if (sectionReviews.incharge_reviews.length > 0) return 'manager';
-  if (sectionReviews.staff_reviews.length > 0) return 'incharge';
+  // Check if all roles have reviewed
+  if (sectionReviews.lead_partner_reviews.length > 0 &&
+      sectionReviews.partner_reviews.length > 0 &&
+      sectionReviews.manager_reviews.length > 0 &&
+      sectionReviews.incharge_reviews.length > 0 &&
+      sectionReviews.staff_reviews.length > 0) {
+    return 'completed';
+  }
   
-  return 'staff';
+  return 'in_progress';
 }
 
 export function canUserReviewSection(user: User | null, formData: ProjectFormData, sectionId: string): boolean {
@@ -126,10 +129,9 @@ export function canUserReviewSection(user: User | null, formData: ProjectFormDat
   const userRole = getProjectRole(user, formData);
   if (!userRole || userRole === 'lead_developer') return false;
 
-  const currentLevel = getCurrentReviewLevel(sectionId, formData);
-  
-  // User can review if it's their turn in the sequence
-  return userRole === currentLevel;
+  // Any role can review at any time - no sequential restriction
+  const validReviewRoles = ['staff', 'in_charge', 'manager', 'partner', 'lead_partner'];
+  return validReviewRoles.includes(userRole);
 }
 
 export function getSectionReviewStatus(sectionId: string, formData: ProjectFormData): 'not_reviewed' | 'ready_for_review' | 'reviewed' {
@@ -207,14 +209,20 @@ export function getSectionReviewIndicator(
   
   if (!sectionReviews) return 'grey';
   
-  // Green dot: Reviewed by lead partner (highest role)
-  if (sectionReviews.lead_partner_reviews.length > 0) return 'green';
+  // Green dot: All roles have reviewed (completed)
+  if (sectionReviews.lead_partner_reviews.length > 0 &&
+      sectionReviews.partner_reviews.length > 0 &&
+      sectionReviews.manager_reviews.length > 0 &&
+      sectionReviews.incharge_reviews.length > 0 &&
+      sectionReviews.staff_reviews.length > 0) {
+    return 'green';
+  }
   
   // Check if user's role has reviewed
   const userHasReviewed = (() => {
     switch (userRole) {
       case 'staff': return sectionReviews.staff_reviews.length > 0;
-      case 'incharge': return sectionReviews.incharge_reviews.length > 0;
+      case 'in_charge': return sectionReviews.incharge_reviews.length > 0;
       case 'manager': return sectionReviews.manager_reviews.length > 0;
       case 'partner': return sectionReviews.partner_reviews.length > 0;
       case 'lead_partner': return sectionReviews.lead_partner_reviews.length > 0;
@@ -225,9 +233,9 @@ export function getSectionReviewIndicator(
   // Blue dot: Reviewed by user's role
   if (userHasReviewed) return 'blue';
   
-  // Orange dot: Ready for review (user's turn)
+  // Orange dot: Can review but hasn't yet
   if (canUserReviewSection(user, formData, sectionId)) return 'orange';
   
-  // Grey dot: Not reviewed or not user's turn
+  // Grey dot: Cannot review or no reviews yet
   return 'grey';
 }

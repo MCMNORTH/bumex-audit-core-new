@@ -405,13 +405,12 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
   const handleReview = async (sectionId: string) => {
     if (!projectId || !user) return;
 
-    const currentLevel = getCurrentReviewLevel(sectionId, formData);
     const userRole = getProjectRole(user, formData);
     
-    if (!userRole || userRole !== currentLevel) {
+    if (!userRole || userRole === 'lead_developer') {
       toast({
         title: 'Error',
-        description: 'You cannot review this section at this time',
+        description: 'You cannot review this section',
         variant: 'destructive',
       });
       return;
@@ -440,8 +439,9 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
     };
 
     // Update status and current level
-    updatedReviews.current_review_level = getNextReviewLevel(userRole) as any;
-    updatedReviews.status = updatedReviews.current_review_level === 'completed' ? 'reviewed' : 'ready_for_review';
+    const newCurrentLevel = getCurrentReviewLevel(sectionId, { ...formData, reviews: { ...formData.reviews, [sectionId]: updatedReviews } });
+    updatedReviews.current_review_level = newCurrentLevel as any;
+    updatedReviews.status = newCurrentLevel === 'completed' ? 'reviewed' : 'ready_for_review';
 
     // Update local state
     setFormData(prev => ({
@@ -474,41 +474,28 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
     }
   };
 
-  const handleUnreview = async (sectionId: string) => {
+  const handleUnreview = async (sectionId: string, role: string, userId: string) => {
     if (!projectId || !user) return;
-
-    const userRole = getProjectRole(user, formData);
-    const canUnreview = isDevOrAdmin(user) || userRole;
-
-    if (!canUnreview) {
-      toast({
-        title: 'Error',
-        description: 'You cannot unreview this section',
-        variant: 'destructive',
-      });
-      return;
-    }
 
     const existingReviews = formData.reviews?.[sectionId];
     if (!existingReviews) return;
 
-    // Reset reviews from the user's level and above
-    const roleHierarchy = ['staff', 'incharge', 'manager', 'partner', 'lead_partner'];
-    const userRoleIndex = roleHierarchy.indexOf(userRole || '');
+    const roleKey = `${role}_reviews` as keyof typeof existingReviews;
+    const currentRoleReviews = existingReviews[roleKey] as any[];
     
-    const updatedReviews = { ...existingReviews };
+    // Remove the specific review entry
+    const updatedRoleReviews = currentRoleReviews.filter((review: any) => review.user_id !== userId);
     
-    // Clear reviews from user's level and higher
-    for (let i = userRoleIndex; i < roleHierarchy.length; i++) {
-      const roleKey = `${roleHierarchy[i]}_reviews` as keyof typeof updatedReviews;
-      (updatedReviews as any)[roleKey] = [];
-    }
+    const updatedReviews = {
+      ...existingReviews,
+      [roleKey]: updatedRoleReviews
+    };
 
     // Recalculate status and current level
     const newCurrentLevel = getCurrentReviewLevel(sectionId, { ...formData, reviews: { ...formData.reviews, [sectionId]: updatedReviews } });
     updatedReviews.current_review_level = newCurrentLevel as any;
     updatedReviews.status = newCurrentLevel === 'completed' ? 'reviewed' : 
-                           newCurrentLevel === 'staff' ? 'not_reviewed' : 'ready_for_review';
+                           newCurrentLevel === 'pending' ? 'not_reviewed' : 'ready_for_review';
 
     // Update local state
     setFormData(prev => ({
@@ -525,17 +512,17 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
         [`reviews.${sectionId}`]: updatedReviews
       });
       
-      await logProjectAction.update(projectId, `Section ${sectionId} unreviewed by ${userRole}`);
+      await logProjectAction.update(projectId, `Section ${sectionId} - ${role} review removed`);
       
       toast({
         title: 'Success',
-        description: 'Section unreviewed successfully',
+        description: 'Review removed successfully',
       });
     } catch (error) {
-      console.error('Error unreviewing section:', error);
+      console.error('Error removing review:', error);
       toast({
         title: 'Error',
-        description: 'Failed to unreview section',
+        description: 'Failed to remove review',
         variant: 'destructive',
       });
     }

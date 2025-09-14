@@ -50,7 +50,7 @@ interface ProjectEditContentProps {
   onSectionChange?: (sectionId: string) => void; // NEW, optional, fallback gracefully
   sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
   onReview?: (sectionId: string) => void;
-  onUnreview?: (sectionId: string) => void;
+  onUnreview?: (sectionId: string, role: string, userId: string) => void;
 }
 const ProjectEditContent = ({
   project,
@@ -619,7 +619,7 @@ const ProjectEditContent = ({
             users={users}
             sidebarSections={sidebarSections}
             currentUser={currentUser}
-            onUnsign={onUnreview}
+            onUnsign={(sectionId: string) => {}} // This is for sign-offs, not reviews
           />
         )}
       </div>
