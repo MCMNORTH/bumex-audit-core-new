@@ -129,9 +129,24 @@ export function canUserReviewSection(user: User | null, formData: ProjectFormDat
   const userRole = getProjectRole(user, formData);
   if (!userRole || userRole === 'lead_developer') return false;
 
-  // Any role can review at any time - no sequential restriction
-  const validReviewRoles = ['staff', 'in_charge', 'manager', 'partner', 'lead_partner'];
-  return validReviewRoles.includes(userRole);
+  // Role-level gating: if someone of this role already reviewed, block re-review until unreviewed by higher role
+  const sectionReviews = formData.reviews?.[sectionId];
+  const roleMapping: Record<string, 'staff' | 'incharge' | 'manager' | 'partner' | 'lead_partner'> = {
+    staff: 'staff',
+    in_charge: 'incharge',
+    manager: 'manager',
+    partner: 'partner',
+    lead_partner: 'lead_partner',
+  };
+  const mappedRole = roleMapping[userRole as keyof typeof roleMapping];
+  if (!mappedRole) return false;
+
+  const roleKey = `${mappedRole}_reviews` as keyof NonNullable<typeof sectionReviews>;
+  // If no reviews data yet, user can review
+  if (!sectionReviews) return true;
+
+  const existing = (sectionReviews as any)[roleKey] as any[] | undefined;
+  return !(existing && existing.length > 0);
 }
 
 export function getSectionReviewStatus(sectionId: string, formData: ProjectFormData): 'not_reviewed' | 'ready_for_review' | 'reviewed' {

@@ -7,6 +7,7 @@ import { ProjectFormData, getInitialFormData } from '@/types/formData';
 import { useLogging } from '@/hooks/useLogging';
 import { useAuth } from '@/hooks/useAuth';
 import { getProjectRole, isDevOrAdmin, getCurrentReviewLevel } from '@/utils/permissions';
+import { canUnreviewSpecific } from '@/utils/reviewPermissions';
 
 export const useProjectForm = (project: Project | null, projectId?: string) => {
   const { toast } = useToast();
@@ -443,6 +444,15 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
 
     const mappedRole = roleMapping[userRole] || userRole;
     const roleKey = `${mappedRole}_reviews` as keyof typeof existingReviews;
+    // Prevent re-review by same role
+    if ((existingReviews[roleKey] as any[])?.length > 0) {
+      toast({
+        title: 'Already reviewed',
+        description: 'Your role has already reviewed this section. A higher role must unreview before you can review again.',
+      });
+      return;
+    }
+
     const updatedReviews = {
       ...existingReviews,
       [roleKey]: [...(existingReviews[roleKey] as any[]), reviewData]
@@ -489,6 +499,16 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
 
     const existingReviews = formData.reviews?.[sectionId];
     if (!existingReviews) return;
+
+    // Permission guard - only higher roles can unreview
+    if (!canUnreviewSpecific(user, formData, role, userId)) {
+      toast({
+        title: 'Not allowed',
+        description: 'Only higher roles can unreview this entry.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     const roleKey = `${role}_reviews` as keyof typeof existingReviews;
     const currentRoleReviews = existingReviews[roleKey] as any[];

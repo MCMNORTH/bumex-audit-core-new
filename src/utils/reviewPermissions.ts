@@ -21,9 +21,11 @@ export function canUnreviewSpecific(
   if (!userProjectRole) return false;
   
   // Only higher roles can unreview lower roles
+  const normalize = (r: string) => (r === 'incharge' ? 'in_charge' : r);
   const roleHierarchy = ['staff', 'in_charge', 'manager', 'partner', 'lead_partner'];
-  const userRoleIndex = roleHierarchy.indexOf(userProjectRole);
-  const reviewRoleIndex = roleHierarchy.indexOf(reviewRole);
+  const userRoleIndex = roleHierarchy.indexOf(normalize(userProjectRole as string));
+  const reviewRoleIndex = roleHierarchy.indexOf(normalize(reviewRole));
+  if (userRoleIndex === -1 || reviewRoleIndex === -1) return false;
   
   return userRoleIndex > reviewRoleIndex;
 }
@@ -45,11 +47,11 @@ export function getAllSectionReviews(sectionId: string, formData: ProjectFormDat
   
   roles.forEach(role => {
     const roleKey = `${role}_reviews` as keyof typeof sectionReviews;
-    const roleReviews = sectionReviews[roleKey] as Array<{
+    const roleReviews = (sectionReviews[roleKey] as Array<{
       user_id: string;
       user_name: string;
       reviewed_at: string;
-    }>;
+    }>) || [];
     
     roleReviews.forEach(review => {
       allReviews.push({
