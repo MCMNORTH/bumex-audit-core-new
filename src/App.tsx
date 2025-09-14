@@ -19,6 +19,7 @@ import AppControlPage from "./pages/AppControl";
 import NotFound from "./pages/NotFound";
 import { ReferenceDataProvider } from "./hooks/useReferenceData";
 import { TranslationProvider } from "./contexts/TranslationContext";
+import { DesktopOnly } from "./components/DesktopOnly";
 // Initialize Firebase with App Check after React is ready
 import "./lib/firebase";
 
@@ -29,10 +30,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <TranslationProvider>
-        <AuthProvider>
-          <ReferenceDataProvider>
-            <BrowserRouter>
+      <DesktopOnly>
+        <TranslationProvider>
+          <AuthProvider>
+            <ReferenceDataProvider>
+              <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -116,8 +118,9 @@ const App = () => (
         </ReferenceDataProvider>
       </AuthProvider>
     </TranslationProvider>
-  </TooltipProvider>
-</QueryClientProvider>
+      </DesktopOnly>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;
