@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,15 @@ import { cn } from '@/lib/utils';
 import { Home, Users, FolderOpen, FileText, Settings, Menu, X, LogOut, ChevronDown, ChevronRight, Monitor, Target } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { LanguageSelector } from '@/components/LanguageSelector';
+
+// Cache the logo image for faster loading
+const logoUrl = "https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23";
+
+// Preload the logo
+if (typeof window !== 'undefined') {
+  const img = new Image();
+  img.src = logoUrl;
+}
 const getNavigationItems = (t: (key: string) => string) => [{
   name: t('nav.dashboard'),
   href: '/dashboard',
@@ -95,7 +104,7 @@ export const Sidebar = () => {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-start h-16 px-4 border-b border-gray-200">
             <div className="flex items-center space-x-2">
-              <img src="https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23" alt="BUMEX Logo" className="w-32 h-32 object-contain" />
+              <img src={logoUrl} alt="BUMEX Logo" className="w-32 h-32 object-contain" />
               
             </div>
           </div>

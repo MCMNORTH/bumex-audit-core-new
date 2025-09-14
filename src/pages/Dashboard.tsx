@@ -10,7 +10,7 @@ import { collection, query, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { ProjectFormData } from '@/types/formData';
-import { getProjectRole, canSignOffSection } from '@/utils/permissions';
+import { getProjectRole, canUserReviewSection, getSectionReviewIndicator } from '@/utils/permissions';
 import { 
   FolderOpen, 
   Users, 
@@ -29,6 +29,7 @@ import {
 interface ProjectWithRole extends Project {
   client_name?: string;
   user_role?: string | null;
+  reviews?: any;
   ready_sections?: Array<{
     id: string;
     title: string;
@@ -41,7 +42,7 @@ const Dashboard = () => {
   const { clients, users, loading: refLoading } = useReferenceData();
   const navigate = useNavigate();
   const [userProjects, setUserProjects] = useState<ProjectWithRole[]>([]);
-  const [readyToSignSections, setReadyToSignSections] = useState<Array<{
+  const [readyForReviewSections, setReadyForReviewSections] = useState<Array<{
     projectId: string;
     projectName: string;
     sectionId: string;
@@ -55,7 +56,7 @@ const Dashboard = () => {
     managerProjects: 0,
     inChargeProjects: 0,
     staffProjects: 0,
-    readyToSignCount: 0,
+    readyForReviewCount: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -129,7 +130,7 @@ const Dashboard = () => {
           })
           .filter((project): project is ProjectWithRole => project !== null);
 
-        // Find sections ready to sign off for current user
+        // Find sections ready for user's review (orange dot - lower roles have reviewed)
         const readySections: Array<{
           projectId: string;
           projectName: string;
@@ -149,24 +150,22 @@ const Dashboard = () => {
               staff_ids: [],
             },
             signoffs: project.signoffs || {},
+            reviews: project.reviews || {},
             lead_developer_id: project.lead_developer_id || '',
           };
 
           signOffSections.forEach(section => {
-            const isAlreadySigned = projectFormData.signoffs[section.id]?.signed;
-            // Only check sections that aren't already signed
-            if (!isAlreadySigned) {
-              const canSign = canSignOffSection(user, projectFormData as any, section.level);
-              
-              if (canSign) {
-                readySections.push({
-                  projectId: project.id,
-                  projectName: project.engagement_name,
-                  sectionId: section.id,
-                  sectionTitle: section.title,
-                  level: section.level,
-                });
-              }
+            // Check if this section shows orange dot (ready for user's review)
+            const indicator = getSectionReviewIndicator(section.id, projectFormData as any, user);
+            
+            if (indicator === 'orange') {
+              readySections.push({
+                projectId: project.id,
+                projectName: project.engagement_name,
+                sectionId: section.id,
+                sectionTitle: section.title,
+                level: section.level,
+              });
             }
           });
         });
@@ -179,11 +178,11 @@ const Dashboard = () => {
           managerProjects: userAssignedProjects.filter(p => p.user_role === 'manager').length,
           inChargeProjects: userAssignedProjects.filter(p => p.user_role === 'in_charge').length,
           staffProjects: userAssignedProjects.filter(p => p.user_role === 'staff').length,
-          readyToSignCount: readySections.length,
+          readyForReviewCount: readySections.length,
         };
 
         setUserProjects(userAssignedProjects.slice(0, 6)); // Show recent 6
-        setReadyToSignSections(readySections.slice(0, 8)); // Show top 8
+        setReadyForReviewSections(readySections.slice(0, 8)); // Show top 8
         setStats(roleStats);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -285,23 +284,23 @@ const Dashboard = () => {
         </div>
 
         {/* Priority Actions */}
-        {stats.readyToSignCount > 0 && (
-          <Card className="border-orange-200 bg-orange-50">
+        {stats.readyForReviewCount > 0 ? (
+          <Card className="border-blue-200 bg-blue-50">
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-5 w-5 text-orange-600" />
-                <CardTitle className="text-orange-900">Ready for Sign-off</CardTitle>
+                <AlertTriangle className="h-5 w-5 text-blue-600" />
+                <CardTitle className="text-blue-900">Ready for Review</CardTitle>
               </div>
-              <CardDescription className="text-orange-700">
-                {stats.readyToSignCount} sections are ready for your review and sign-off
+              <CardDescription className="text-blue-700">
+                {stats.readyForReviewCount} sections are ready for your review
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {readyToSignSections.slice(0, 4).map((section) => (
+                {readyForReviewSections.slice(0, 4).map((section) => (
                   <div 
                     key={`${section.projectId}-${section.sectionId}`}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg border border-orange-200 hover:border-orange-300 cursor-pointer transition-colors"
+                    className="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-300 cursor-pointer transition-colors"
                     onClick={() => handleSectionClick(section.projectId, section.sectionId)}
                   >
                     <div className="flex-1">
@@ -316,11 +315,33 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
-                {readyToSignSections.length > 4 && (
+                {readyForReviewSections.length > 4 && (
                   <Button variant="outline" className="w-full mt-2" onClick={handleViewAllReadySections}>
-                    View All {stats.readyToSignCount} Ready Sections
+                    View All {stats.readyForReviewCount} Ready Sections
                   </Button>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border-gray-200 bg-gray-50">
+            <CardHeader className="pb-4">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-5 w-5 text-gray-400" />
+                <CardTitle className="text-gray-600">Ready for Review</CardTitle>
+              </div>
+              <CardDescription className="text-gray-500">
+                No sections are currently ready for your review
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-6">
+                <div className="text-gray-400 mb-2">
+                  <CheckCircle className="h-12 w-12 mx-auto" />
+                </div>
+                <p className="text-sm text-gray-500">
+                  All caught up! Check back later for new sections to review.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -396,14 +417,14 @@ const Dashboard = () => {
             </Card>
           )}
 
-          <Card className="bg-gradient-to-r from-orange-50 to-orange-100">
+          <Card className="bg-gradient-to-r from-blue-50 to-blue-100">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-orange-700">Ready to Sign</p>
-                  <p className="text-2xl font-bold text-orange-600">{stats.readyToSignCount}</p>
+                  <p className="text-sm font-medium text-blue-700">Ready to Review</p>
+                  <p className="text-2xl font-bold text-blue-600">{stats.readyForReviewCount}</p>
                 </div>
-                <PenTool className="h-6 w-6 text-orange-600" />
+                <PenTool className="h-6 w-6 text-blue-600" />
               </div>
             </CardContent>
           </Card>
