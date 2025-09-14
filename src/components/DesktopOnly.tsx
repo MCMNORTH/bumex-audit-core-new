@@ -8,8 +8,8 @@ interface DesktopOnlyProps {
 export const DesktopOnly = ({ children }: DesktopOnlyProps) => {
   const isMobile = useIsMobile();
   
-  // Check if screen is smaller than desktop (1024px)
-  const isNonDesktop = typeof window !== 'undefined' && window.innerWidth < 1024;
+  // Check if screen is smaller than desktop (1280px)
+  const isNonDesktop = typeof window !== 'undefined' && window.innerWidth < 1280;
 
   if (isMobile || isNonDesktop) {
     return (
@@ -36,7 +36,7 @@ export const DesktopOnly = ({ children }: DesktopOnlyProps) => {
           <div className="text-sm text-muted-foreground bg-muted p-4 rounded-lg">
             <p className="font-medium mb-1">Minimum Requirements:</p>
             <p>• Desktop or laptop computer</p>
-            <p>• Screen width: 1024px or larger</p>
+            <p>• Screen width: 1280px or larger</p>
           </div>
         </div>
       </div>
