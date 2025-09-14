@@ -105,6 +105,11 @@ interface FormData {
   entity_revenue_greater_than_billion: string;
   entity_meets_international_criteria: boolean;
   using_sats_not_on_firm_list: string;
+  sats_list: Array<{
+    id: string;
+    name: string;
+  }>;
+  sats_reliability_evaluation: string;
   // New multi-reporting fields
   planning_to_use_multi_reporting: string;
   reports: Array<{
@@ -657,6 +662,8 @@ const EngagementProfileSection = ({
               entity_revenue_greater_than_billion: formData.entity_revenue_greater_than_billion,
               entity_meets_international_criteria: formData.entity_meets_international_criteria,
               using_sats_not_on_firm_list: formData.using_sats_not_on_firm_list,
+              sats_list: formData.sats_list || [],
+              sats_reliability_evaluation: formData.sats_reliability_evaluation || '',
             }}
             onFormDataChange={onFormDataChange}
           />

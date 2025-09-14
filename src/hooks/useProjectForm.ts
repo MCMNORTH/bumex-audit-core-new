@@ -105,6 +105,8 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       entity_revenue_greater_than_billion: (projectData as any).entity_revenue_greater_than_billion || '',
       entity_meets_international_criteria: (projectData as any).entity_meets_international_criteria || false,
       using_sats_not_on_firm_list: (projectData as any).using_sats_not_on_firm_list || '',
+      sats_list: (projectData as any).sats_list || [],
+      sats_reliability_evaluation: (projectData as any).sats_reliability_evaluation || '',
       planning_to_use_multi_reporting: (projectData as any).planning_to_use_multi_reporting || 'No',
       reports: (projectData as any).reports || [],
       engagement_partner_id: (projectData as any).engagement_partner_id || '',

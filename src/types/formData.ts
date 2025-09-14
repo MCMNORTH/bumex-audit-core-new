@@ -175,6 +175,11 @@ export interface ProjectFormData {
   entity_revenue_greater_than_billion: string;
   entity_meets_international_criteria: boolean;
   using_sats_not_on_firm_list: string;
+  sats_list: Array<{
+    id: string;
+    name: string;
+  }>;
+  sats_reliability_evaluation: string;
   // Multi-reporting fields
   planning_to_use_multi_reporting: string;
   reports: Array<{
@@ -645,6 +650,8 @@ export const getInitialFormData = (): ProjectFormData => ({
   entity_revenue_greater_than_billion: '',
   entity_meets_international_criteria: false,
   using_sats_not_on_firm_list: '',
+  sats_list: [],
+  sats_reliability_evaluation: '',
   planning_to_use_multi_reporting: 'No',
   reports: [],
   engagement_partner_id: '',
