@@ -40,6 +40,7 @@ export function getAllSectionReviews(sectionId: string, formData: ProjectFormDat
     user_id: string;
     user_name: string;
     reviewed_at: string;
+    type: 'review' | 'unreview';
   }> = [];
 
   // Collect all reviews from all roles
@@ -58,8 +59,21 @@ export function getAllSectionReviews(sectionId: string, formData: ProjectFormDat
         role,
         user_id: review.user_id,
         user_name: review.user_name,
-        reviewed_at: review.reviewed_at
+        reviewed_at: review.reviewed_at,
+        type: 'review'
       });
+    });
+  });
+
+  // Add unreview logs
+  const unreviewLogs = (sectionReviews as any).unreview_logs || [];
+  unreviewLogs.forEach((unreview: any) => {
+    allReviews.push({
+      role: 'unreview',
+      user_id: unreview.unreviewed_by,
+      user_name: `${unreview.unreviewed_by_name} unreviewed ${unreview.original_reviewer_name}`,
+      reviewed_at: unreview.unreviewed_at,
+      type: 'unreview'
     });
   });
 

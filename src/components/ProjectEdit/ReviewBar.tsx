@@ -22,6 +22,7 @@ interface ReviewData {
   manager_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
   partner_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
   lead_partner_reviews: { user_id: string; reviewed_at: string; user_name: string }[];
+  unreview_logs?: { unreviewed_by: string; unreviewed_by_name: string; unreviewed_at: string; original_reviewer_id: string; original_reviewer_name: string }[];
   status: 'not_reviewed' | 'ready_for_review' | 'reviewed';
   current_review_level: 'staff' | 'incharge' | 'manager' | 'partner' | 'lead_partner' | 'completed';
 }
@@ -183,23 +184,25 @@ const ReviewBar: React.FC<ReviewBarProps> = ({
                       <CollapsibleContent className="mt-2">
                         <ScrollArea className="h-32 border rounded p-2">
                           <div className="space-y-2">
-                            {allReviews.slice(0, 10).map((review, index) => (
-                              <div key={index} className="flex items-center justify-between text-xs bg-gray-50 p-2 rounded">
-                                <span className="flex-1">
-                                  <span className="font-medium">{getRoleDisplayName(review.role)}</span>: {review.user_name}
-                                  <span className="text-gray-500 ml-2">{formatDate(review.reviewed_at)}</span>
-                                </span>
-                                {canUnreviewSpecific(currentUser, formData, review.role, review.user_id) && (
-                                  <Button
-                                    onClick={() => handleUnreview(review.role, review.user_id)}
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-6 px-2 text-red-600 hover:bg-red-50 ml-2"
-                                  >
-                                    Unreview
-                                  </Button>
-                                )}
-                              </div>
+                             {allReviews.slice(0, 10).map((review, index) => (
+                               <div key={index} className={`flex items-center justify-between text-xs p-2 rounded ${
+                                 review.type === 'unreview' ? 'bg-red-50' : 'bg-gray-50'
+                               }`}>
+                                 <span className="flex-1">
+                                   <span className="font-medium">{review.type === 'unreview' ? 'Unreview' : getRoleDisplayName(review.role)}</span>: {review.user_name}
+                                   <span className="text-gray-500 ml-2">{formatDate(review.reviewed_at)}</span>
+                                 </span>
+                                 {review.type === 'review' && canUnreviewSpecific(currentUser, formData, review.role, review.user_id) && (
+                                   <Button
+                                     onClick={() => handleUnreview(review.role, review.user_id)}
+                                     variant="ghost"
+                                     size="sm"
+                                     className="h-6 px-2 text-red-600 hover:bg-red-50 ml-2"
+                                   >
+                                     Unreview
+                                   </Button>
+                                 )}
+                               </div>
                             ))}
                           </div>
                         </ScrollArea>

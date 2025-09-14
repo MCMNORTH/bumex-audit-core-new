@@ -429,6 +429,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       manager_reviews: [],
       partner_reviews: [],
       lead_partner_reviews: [],
+      unreview_logs: [],
       status: 'not_reviewed',
       current_review_level: 'staff'
     };
@@ -513,12 +514,23 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
     const roleKey = `${role}_reviews` as keyof typeof existingReviews;
     const currentRoleReviews = existingReviews[roleKey] as any[];
     
-    // Remove the specific review entry
-    const updatedRoleReviews = currentRoleReviews.filter((review: any) => review.user_id !== userId);
+    // Don't remove the review, instead add unreview log entry
+    const unreviewLog = {
+      unreviewed_by: user.id,
+      unreviewed_by_name: `${user.first_name} ${user.last_name}`,
+      unreviewed_at: new Date().toISOString(),
+      original_reviewer_id: userId,
+      original_reviewer_name: currentRoleReviews.find((r: any) => r.user_id === userId)?.user_name || 'Unknown'
+    };
+
+    // Initialize unreview_logs if it doesn't exist
+    const unreviewLogs = (existingReviews as any).unreview_logs || [];
     
     const updatedReviews = {
       ...existingReviews,
-      [roleKey]: updatedRoleReviews
+      unreview_logs: [...unreviewLogs, unreviewLog],
+      // Mark this role as unreviewed by removing from active reviews
+      [roleKey]: currentRoleReviews.filter((review: any) => review.user_id !== userId)
     };
 
     // Recalculate status and current level
@@ -542,7 +554,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
         [`reviews.${sectionId}`]: updatedReviews
       });
       
-      await logProjectAction.update(projectId, `Section ${sectionId} - ${role} review removed`);
+      await logProjectAction.update(projectId, `Section ${sectionId} - ${user.first_name} ${user.last_name} unreviewed ${unreviewLog.original_reviewer_name} (${role})`);
       
       toast({
         title: 'Success',
