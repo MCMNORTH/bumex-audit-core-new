@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Monitor, Smartphone, Tablet } from 'lucide-react';
 
@@ -8,8 +9,17 @@ interface DesktopOnlyProps {
 export const DesktopOnly = ({ children }: DesktopOnlyProps) => {
   const isMobile = useIsMobile();
   
-  // Check if screen is smaller than desktop (1280px)
-  const isNonDesktop = typeof window !== 'undefined' && window.innerWidth < 1280;
+  // Check if screen is smaller than desktop (1280px) with reactive listener
+  const [isNonDesktop, setIsNonDesktop] = React.useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 1280 : false
+  );
+  React.useEffect(() => {
+    const mql = window.matchMedia('(max-width: 1279px)');
+    const onChange = () => setIsNonDesktop(mql.matches);
+    mql.addEventListener('change', onChange);
+    setIsNonDesktop(mql.matches);
+    return () => mql.removeEventListener('change', onChange);
+  }, []);
 
   if (isMobile || isNonDesktop) {
     return (
