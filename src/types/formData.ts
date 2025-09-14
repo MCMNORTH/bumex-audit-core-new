@@ -215,10 +215,15 @@ export interface ProjectFormData {
   significant_circumstances_impair_da: string;
   // Independence fields
   ethics_breaches_identified: string;
+  ethics_breaches_details: string;
   local_quality_manual_compliance: string;
+  local_quality_manual_details: string;
   member_firm_independence_work_paper: string;
+  member_firm_independence_details: string;
   communicate_other_independence_matters: string;
+  communicate_other_independence_details: string;
   independence_compliance_requirements: string;
+  independence_compliance_details: string;
   // TCWG Communications fields
   tcwg_communications: CommunicationItem[];
   tcwg_main_attachments: Array<{name: string, url: string, type: string}>;
@@ -677,10 +682,15 @@ export const getInitialFormData = (): ProjectFormData => ({
   large_batch_journal_entries: 'Not selected',
   significant_circumstances_impair_da: 'Not selected',
   ethics_breaches_identified: 'Not selected',
+  ethics_breaches_details: '',
   local_quality_manual_compliance: 'Not selected',
+  local_quality_manual_details: '',
   member_firm_independence_work_paper: 'Not selected',
+  member_firm_independence_details: '',
   communicate_other_independence_matters: 'Not selected',
+  communicate_other_independence_details: '',
   independence_compliance_requirements: 'Not selected',
+  independence_compliance_details: '',
   // TCWG Communications initial values
   tcwg_communications: [],
   tcwg_main_attachments: [],

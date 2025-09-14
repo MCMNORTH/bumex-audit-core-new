@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 interface IndependenceRequirementsSectionProps {
   formData: any;
@@ -43,6 +44,17 @@ const IndependenceRequirementsSection = ({
               <Label htmlFor="ethics-no">No</Label>
             </div>
           </RadioGroup>
+          {formData.ethics_breaches_identified === 'Yes' && (
+            <div className="mt-3">
+              <Textarea
+                value={formData.ethics_breaches_details || ''}
+                onChange={(e) => onFormDataChange({ ethics_breaches_details: e.target.value })}
+                placeholder="Please provide details..."
+                rows={3}
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* Local quality manual question */}
@@ -64,6 +76,17 @@ const IndependenceRequirementsSection = ({
               <Label htmlFor="quality-no">No</Label>
             </div>
           </RadioGroup>
+          {formData.local_quality_manual_compliance === 'Yes' && (
+            <div className="mt-3">
+              <Textarea
+                value={formData.local_quality_manual_details || ''}
+                onChange={(e) => onFormDataChange({ local_quality_manual_details: e.target.value })}
+                placeholder="Please provide details..."
+                rows={3}
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* Member firm independence work paper question */}
@@ -85,6 +108,17 @@ const IndependenceRequirementsSection = ({
               <Label htmlFor="independence-no">No</Label>
             </div>
           </RadioGroup>
+          {formData.member_firm_independence_work_paper === 'Yes' && (
+            <div className="mt-3">
+              <Textarea
+                value={formData.member_firm_independence_details || ''}
+                onChange={(e) => onFormDataChange({ member_firm_independence_details: e.target.value })}
+                placeholder="Please provide details..."
+                rows={3}
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* Communicate other independence matters section */}
@@ -109,6 +143,17 @@ const IndependenceRequirementsSection = ({
               <Label htmlFor="communicate-no">No</Label>
             </div>
           </RadioGroup>
+          {formData.communicate_other_independence_matters === 'Yes' && (
+            <div className="mt-3">
+              <Textarea
+                value={formData.communicate_other_independence_details || ''}
+                onChange={(e) => onFormDataChange({ communicate_other_independence_details: e.target.value })}
+                placeholder="Please provide details..."
+                rows={3}
+                className="w-full"
+              />
+            </div>
+          )}
         </div>
 
         {/* New compliance section based on the image */}
@@ -130,6 +175,17 @@ const IndependenceRequirementsSection = ({
               <Label htmlFor="compliance-no">No</Label>
             </div>
           </RadioGroup>
+          {formData.independence_compliance_requirements === 'Yes' && (
+            <div className="mt-3">
+              <Textarea
+                value={formData.independence_compliance_details || ''}
+                onChange={(e) => onFormDataChange({ independence_compliance_details: e.target.value })}
+                placeholder="Please provide details..."
+                rows={3}
+                className="w-full"
+              />
+            </div>
+          )}
           <p className="text-sm text-gray-700 mt-2 underline">
             We have attached the relevant documentation in reaching our conclusions regarding independence compliance.
           </p>
