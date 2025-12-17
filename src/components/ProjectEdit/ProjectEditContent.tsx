@@ -21,6 +21,7 @@ import TeamSection from './TeamSection';
 import SectionWrapper from './SectionWrapper';
 import ProjectSignOffsSummary from './ProjectSignOffsSummary';
 import { canEditProject, canViewTeamManagement } from '@/utils/permissions';
+import { CommentsProvider } from '@/contexts/CommentsContext';
 interface ProjectEditContentProps {
   project: Project | null;
   clients: Client[];
@@ -410,10 +411,16 @@ const ProjectEditContent = ({
     );
   };
 
-  return <div className="flex-1 overflow-y-auto">
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
+  return (
+    <CommentsProvider
+      activeSection={activeSection}
+      onCreateComment={onCreateComment}
+      getFieldCommentCount={getFieldCommentCount}
+    >
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-8">
+          <div className="max-w-4xl mx-auto">
+            <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
 
         {/* Main parent section - shows all nested content for 1. Engagement management */}
         {activeSection === 'engagement-management' && (
@@ -627,8 +634,10 @@ const ProjectEditContent = ({
             onUnsign={(sectionId: string) => {}} // This is for sign-offs, not reviews
           />
         )}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>;
+    </CommentsProvider>
+  );
 };
 export default ProjectEditContent;
