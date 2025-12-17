@@ -6,7 +6,7 @@ import ComponentReportingSection from './EngagementScope/ComponentReportingSecti
 import ReviewerSelectionSection from './EngagementScope/ReviewerSelectionSection';
 import ManagementGovernanceSection from './EngagementScope/ManagementGovernanceSection';
 import InvolvementOfOthersSection from './EngagementScope/InvolvementOfOthersSection';
-import ITEnvironmentSection from './EngagementScope/ITEnvironmentSection';
+
 import EngagementTeamSection from './EngagementScope/EngagementTeamSection';
 import DirectionSupervisionSection from './EngagementScope/DirectionSupervisionSection';
 import StrategyConsiderationsSection from './EngagementScope/StrategyConsiderationsSection';
@@ -181,10 +181,6 @@ const EngagementScopeSection = ({
           onFormDataChange={onFormDataChange} 
         />
 
-        <ITEnvironmentSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
 
         <EngagementTeamSection 
           formData={formData} 
