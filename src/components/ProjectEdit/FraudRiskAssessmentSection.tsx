@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ProjectFormData, FraudRiskFactor, FraudRiskAssessment, FinancialStatementFraudRisk } from '@/types/formData';
+import { CommentableQuestion } from './Comments';
 
 interface FraudRiskAssessmentSectionProps {
   formData: ProjectFormData;
@@ -319,12 +320,13 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Identify fraud risks */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Identify fraud risks</h3>
-          <p className="text-sm text-gray-600 mb-4">
-            Identify fraud risk factors considering the following categories
-          </p>
+      <CommentableQuestion fieldId="fraud_risk_factors" label="Identify fraud risks">
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Identify fraud risks</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Identify fraud risk factors considering the following categories
+            </p>
 
           {/* Financial */}
           <Collapsible open={openSections.financial} onOpenChange={() => toggleSection('financial')}>
@@ -412,10 +414,12 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           </Collapsible>
         </CardContent>
       </Card>
+      </CommentableQuestion>
 
       {/* Summary Table */}
-      <Card>
-        <CardContent className="p-6">
+      <CommentableQuestion fieldId="fraud_risk_summary" label="Fraud risk factors summary">
+        <Card>
+          <CardContent className="p-6">
           <h4 className="font-medium mb-4">Use fraud risk factors to identify and assess fraud risks</h4>
           <p className="text-sm text-gray-600 mb-4">Below is a summary of the fraud risk factors identified above</p>
           
@@ -472,10 +476,12 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           />
         </CardContent>
       </Card>
+      </CommentableQuestion>
 
       {/* Identify and assess assertion level fraud risks */}
-      <Card>
-        <CardContent className="p-6">
+      <CommentableQuestion fieldId="fraud_assertion_level" label="Assertion level fraud risks">
+        <Card>
+          <CardContent className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h4 className="font-medium">Identify and assess assertion level fraud risks</h4>
             <Button
@@ -554,9 +560,11 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           </div>
         </CardContent>
       </Card>
+      </CommentableQuestion>
 
       {/* Identify and assess financial statement level fraud risks */}
-      <Card>
+      <CommentableQuestion fieldId="fraud_financial_statement" label="Financial statement level fraud risks">
+        <Card>
         <CardContent className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h4 className="font-medium">Identify and assess financial statement level fraud risks</h4>
@@ -655,42 +663,47 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           </div>
         </CardContent>
       </Card>
+      </CommentableQuestion>
 
       {/* Management override section */}
-      <Card>
-        <CardContent className="p-6">
-          <h4 className="font-medium mb-4">Identify the risk of management override of controls as a fraud risk</h4>
-          <div className="space-y-4">
-            <p className="text-sm">
-              Management is in a unique position to perpetrate fraud because of management's ability to manipulate accounting records and prepare 
-              fraudulent financial statements by overriding controls that otherwise appear to be operating effectively. By its nature, management override 
-              of controls can occur in unpredictable ways. The risk of management override of controls is a fraud risk that is present in all entities.
-            </p>
-            <p className="text-sm">Management may be able to override controls in several ways — including:</p>
-            <ul className="list-disc pl-6 text-sm space-y-1">
-              <li>recording inappropriate or unauthorized journal entries throughout the year or at period end or making adjustments to amounts reported in the financial statements that are not reflected in systematic journal entries;</li>
-              <li>applying bias when making accounting estimates and related judgments; and</li>
-              <li>entering into significant unusual transactions that are outside the normal course of business for the entity or that otherwise appear to be unusual due to their timing, size, or nature.</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
+      <CommentableQuestion fieldId="management_override" label="Management override of controls">
+        <Card>
+          <CardContent className="p-6">
+            <h4 className="font-medium mb-4">Identify the risk of management override of controls as a fraud risk</h4>
+            <div className="space-y-4">
+              <p className="text-sm">
+                Management is in a unique position to perpetrate fraud because of management's ability to manipulate accounting records and prepare 
+                fraudulent financial statements by overriding controls that otherwise appear to be operating effectively. By its nature, management override 
+                of controls can occur in unpredictable ways. The risk of management override of controls is a fraud risk that is present in all entities.
+              </p>
+              <p className="text-sm">Management may be able to override controls in several ways — including:</p>
+              <ul className="list-disc pl-6 text-sm space-y-1">
+                <li>recording inappropriate or unauthorized journal entries throughout the year or at period end or making adjustments to amounts reported in the financial statements that are not reflected in systematic journal entries;</li>
+                <li>applying bias when making accounting estimates and related judgments; and</li>
+                <li>entering into significant unusual transactions that are outside the normal course of business for the entity or that otherwise appear to be unusual due to their timing, size, or nature.</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
+      </CommentableQuestion>
 
       {/* Design and implement overall responses */}
-      <Card>
-        <CardContent className="p-6">
-          <h4 className="font-medium mb-4">Design and implement overall responses</h4>
-          <p className="text-sm text-gray-600 mb-4">
-            Except for management override of controls, no financial statement level fraud risks have been identified.
-          </p>
-          <Textarea
-            placeholder="Enter overall response details..."
-            value={formData.overall_fraud_response || ''}
-            onChange={(e) => onFormDataChange({ overall_fraud_response: e.target.value })}
-            className="min-h-[100px]"
-          />
-        </CardContent>
-      </Card>
+      <CommentableQuestion fieldId="overall_fraud_response" label="Overall responses to fraud risks">
+        <Card>
+          <CardContent className="p-6">
+            <h4 className="font-medium mb-4">Design and implement overall responses</h4>
+            <p className="text-sm text-gray-600 mb-4">
+              Except for management override of controls, no financial statement level fraud risks have been identified.
+            </p>
+            <Textarea
+              placeholder="Enter overall response details..."
+              value={formData.overall_fraud_response || ''}
+              onChange={(e) => onFormDataChange({ overall_fraud_response: e.target.value })}
+              className="min-h-[100px]"
+            />
+          </CardContent>
+        </Card>
+      </CommentableQuestion>
     </div>
   );
 };

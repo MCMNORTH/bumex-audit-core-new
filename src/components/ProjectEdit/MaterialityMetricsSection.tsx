@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem, MaterialityAssessmentItem } from '@/types/formData';
+import { CommentableQuestion } from './Comments';
 
 interface MaterialityMetricsSectionProps {
   formData: ProjectFormData;
@@ -130,7 +131,8 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
     return (
       <>
         {/* Re-evaluate Materiality Section */}
-        <Card>
+        <CommentableQuestion fieldId="materiality_changes" label="Changes in circumstances">
+          <Card>
           <CardContent className="p-6">
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -164,9 +166,11 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
             </div>
           </CardContent>
         </Card>
+        </CommentableQuestion>
 
         {/* Determine actual amount section */}
-        <Card className="mt-6">
+        <CommentableQuestion fieldId="materiality_revision" label="Materiality revision">
+          <Card className="mt-6">
           <CardContent className="p-6">
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900">
@@ -319,13 +323,15 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
             </div>
           </CardContent>
         </Card>
+        </CommentableQuestion>
       </>
     );
   }
 
   return (
     <>
-    <Card>
+    <CommentableQuestion fieldId="materiality_metrics" label="Metrics and benchmark">
+      <Card>
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">
           Identify the relevant metrics and determine the benchmark
@@ -1266,6 +1272,7 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
         </div>
       </CardContent>
     </Card>
+    </CommentableQuestion>
   </>
   );
 };
