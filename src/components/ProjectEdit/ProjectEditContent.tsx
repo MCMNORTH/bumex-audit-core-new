@@ -359,11 +359,6 @@ const ProjectEditContent = ({
              renderedEntityContent = <div className="space-y-4">
                  {renderPlaceholderSection(targetSection.title)}
                 </div>;
-          } else if (targetSection.id === 'fraud-risk') {
-            // Fraud risk assessment section
-             renderedEntityContent = <div className="space-y-4">
-                 <FraudRiskAssessmentSection formData={formData} onFormDataChange={onFormDataChange} />
-               </div>;
           } else {
            // Render placeholder for other leaves
             renderedEntityContent = <div className="space-y-8">
