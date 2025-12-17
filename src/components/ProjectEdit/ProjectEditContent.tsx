@@ -359,8 +359,8 @@ const ProjectEditContent = ({
              renderedEntityContent = <div className="space-y-4">
                  {renderPlaceholderSection(targetSection.title)}
                 </div>;
-          } else {
-           // Render placeholder for other leaves
+          } else if (targetSection.id !== 'fraud-risk') {
+           // Render placeholder for other leaves (fraud-risk handled separately below)
             renderedEntityContent = <div className="space-y-8">
                 {renderPlaceholderSection(targetSection.title + " coming soon")}
               </div>;
