@@ -3,15 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProjectData } from '@/hooks/useProjectData';
 import { useFileUpload } from '@/hooks/useFileUpload';
+import { useComments } from '@/hooks/useComments';
 import ProjectSidebar from '@/components/ProjectEdit/ProjectSidebar';
 import ProjectEditContent from '@/components/ProjectEdit/ProjectEditContent';
 import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
+import { RightToolbar, CommentsPanel } from '@/components/ProjectEdit/Comments';
 import { canViewTeamManagement, getProjectRole } from '@/utils/permissions';
 
 const ProjectEdit = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState('engagement-management');
+  const [showCommentsPanel, setShowCommentsPanel] = useState(false);
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
+  const [selectedFieldLabel, setSelectedFieldLabel] = useState<string>('');
 
   const {
     id,
@@ -29,6 +34,14 @@ const ProjectEdit = () => {
     handleSignOff,
     handleUnsign,
   } = useProjectData();
+
+  const {
+    comments,
+    createComment,
+    markResolved,
+    getSectionCommentCount,
+    getFieldCommentCount,
+  } = useComments(id);
 
   const {
     uploadedFile,
@@ -328,8 +341,32 @@ const ProjectEdit = () => {
     handleDownloadMRRFile(formData.mrr_file);
   };
 
+  // Get all team member IDs for comments
   const selectedClient = clients.find(c => c.id === formData.client_id);
   const userProjectRole = getProjectRole(user, formData);
+
+  // Get all team member IDs for comments
+  const teamMemberIds = [
+    ...(formData.team_assignments?.staff_ids || []),
+    ...(formData.team_assignments?.in_charge_ids || []),
+    ...(formData.team_assignments?.manager_ids || []),
+    ...(formData.team_assignments?.partner_ids || []),
+    formData.team_assignments?.lead_partner_id,
+  ].filter(Boolean) as string[];
+
+  const handleCreateComment = (fieldId: string, sectionId: string, fieldLabel?: string) => {
+    setSelectedFieldId(fieldId);
+    setSelectedFieldLabel(fieldLabel || fieldId);
+    setShowCommentsPanel(true);
+  };
+
+  const handleCloseCommentsPanel = () => {
+    setShowCommentsPanel(false);
+    setSelectedFieldId(null);
+    setSelectedFieldLabel('');
+  };
+
+  const totalSectionComments = getSectionCommentCount(activeSection);
 
   if (loading) {
     return <LoadingScreen />;
@@ -381,6 +418,29 @@ const ProjectEdit = () => {
         onSectionChange={setActiveSection}
         onReview={handleReview}
         onUnreview={handleUnreview}
+        // Comments props
+        onCreateComment={handleCreateComment}
+        getFieldCommentCount={getFieldCommentCount}
+      />
+
+      <RightToolbar
+        onOpenComments={() => setShowCommentsPanel(true)}
+        commentCount={totalSectionComments}
+      />
+
+      <CommentsPanel
+        isOpen={showCommentsPanel}
+        onClose={handleCloseCommentsPanel}
+        comments={comments}
+        users={users}
+        currentUserId={user?.id || ''}
+        projectId={id || ''}
+        sectionId={activeSection}
+        fieldId={selectedFieldId}
+        fieldLabel={selectedFieldLabel}
+        teamMemberIds={teamMemberIds}
+        onCreateComment={createComment}
+        onMarkResolved={markResolved}
       />
     </div>
   );
