@@ -122,5 +122,22 @@ service cloud.firestore {
       // Only approved devs/admins can read logs
       allow read: if isAdmin();
     }
+
+    // -------------------------------
+    // Comments Collection
+    // -------------------------------
+    match /comments/{commentId} {
+      // Team members can read comments for projects they're assigned to
+      allow read: if isApprovedAndNotBlocked();
+      
+      // Approved users can create comments
+      allow create: if isApprovedAndNotBlocked();
+      
+      // Users can update their own comments or comments addressed to them
+      allow update: if isApprovedAndNotBlocked();
+      
+      // Only admins can delete comments
+      allow delete: if isAdmin();
+    }
   }
 }

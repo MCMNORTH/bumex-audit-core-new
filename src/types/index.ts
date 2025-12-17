@@ -120,3 +120,17 @@ export interface AppControl {
   force_update: boolean;
   current_version: string;
 }
+
+export interface Comment {
+  id: string;
+  project_id: string;
+  section_id: string;
+  field_id: string;
+  parent_comment_id: string | null;
+  author_id: string;
+  addressed_to: string | null;
+  content: string;
+  created_at: Date;
+  updated_at: Date | null;
+  resolved: boolean;
+}

@@ -51,6 +51,9 @@ interface ProjectEditContentProps {
   sidebarSections?: any[]; // Accepts the sidebar sections for dynamic cards
   onReview?: (sectionId: string) => void;
   onUnreview?: (sectionId: string, role: string, userId: string) => void;
+  // Comments props
+  onCreateComment?: (fieldId: string, sectionId: string, fieldLabel?: string) => void;
+  getFieldCommentCount?: (sectionId: string, fieldId: string) => number;
 }
 const ProjectEditContent = ({
   project,
@@ -81,7 +84,9 @@ const ProjectEditContent = ({
   onSectionChange = () => {},
   sidebarSections = [],
   onReview = () => {},
-  onUnreview = () => {}
+  onUnreview = () => {},
+  onCreateComment = () => {},
+  getFieldCommentCount = () => 0,
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
   const currentUser = users.find(u => u.id === currentUserId);
