@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Clock, X, Users, Save, Loader2 } from 'lucide-react';
+import { Check, Clock, X, Users, Save, Loader2, ArrowUp } from 'lucide-react';
 import { User } from '@/types';
 import { ProjectFormData } from '@/types/formData';
 import { 
@@ -28,6 +28,21 @@ const CompactReviewFooter: React.FC<CompactReviewFooterProps> = ({
   onSave,
   saving
 }) => {
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const status = getSectionReviewStatus(sectionId, formData);
   const currentLevel = getCurrentReviewLevel(sectionId, formData);
   const canUserReview = canUserReviewSection(currentUser, formData, sectionId);
@@ -163,6 +178,17 @@ const CompactReviewFooter: React.FC<CompactReviewFooterProps> = ({
                 </>
               )}
             </Button>
+
+            {showScrollTop && (
+              <Button
+                onClick={scrollToTop}
+                size="sm"
+                variant="outline"
+                className="ml-1"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
       </div>
