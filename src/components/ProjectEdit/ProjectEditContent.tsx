@@ -20,6 +20,7 @@ import FinancialReportingProcessSection from './FinancialReportingProcessSection
 import TeamSection from './TeamSection';
 import SectionWrapper from './SectionWrapper';
 import ProjectSignOffsSummary from './ProjectSignOffsSummary';
+import CompactReviewFooter from './CompactReviewFooter';
 import { canEditProject, canViewTeamManagement } from '@/utils/permissions';
 import { CommentsProvider } from '@/contexts/CommentsContext';
 interface ProjectEditContentProps {
@@ -413,7 +414,7 @@ const ProjectEditContent = ({
       getFieldCommentCount={getFieldCommentCount}
     >
       <div className="flex-1 overflow-y-auto">
-        <div className="p-8">
+        <div className="p-8 pb-24">
           <div className="max-w-4xl mx-auto">
             <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
 
@@ -632,6 +633,16 @@ const ProjectEditContent = ({
           </div>
         </div>
       </div>
+      
+      {/* Compact Review Footer - always visible */}
+      <CompactReviewFooter
+        sectionId={activeSection}
+        formData={formData}
+        currentUser={currentUser}
+        onReview={handleReviewWrapper}
+        onSave={onSave}
+        saving={saving}
+      />
     </CommentsProvider>
   );
 };
