@@ -5,13 +5,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { isCountryAllowed, getGeolocationData } from '@/lib/geolocation';
 import { GeoRestricted } from '@/components/GeoRestricted';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Checkbox } from '@/components/ui/checkbox';
+
+const REMEMBERED_EMAIL_KEY = 'bumex_remembered_email';
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(true);
   const [isGeoAllowed, setIsGeoAllowed] = useState(true);
@@ -26,6 +30,15 @@ const Login = () => {
     toast
   } = useToast();
   const navigate = useNavigate();
+
+  // Load remembered email on mount
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
+    if (rememberedEmail) {
+      setEmail(rememberedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   // Check geolocation on component mount
   useEffect(() => {
@@ -56,20 +69,26 @@ const Login = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (!authLoading && user) {
-      // SECURITY: Reduced logging for sensitive operations
       navigate('/dashboard');
     }
   }, [user, authLoading, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
+      // Save or clear remembered email based on checkbox
+      if (rememberMe) {
+        localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+      } else {
+        localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+      }
+
       await login(email, password);
       toast({
         title: 'Success',
         description: 'Logged in successfully'
       });
-      // The useEffect above will handle the redirect once user state updates
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -94,23 +113,31 @@ const Login = () => {
 
   // Show loading if auth is still initializing or checking geolocation
   if (authLoading || geoLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
-      </div>;
+      </div>
+    );
   }
 
   // Show geo restriction if not allowed
   if (!isGeoAllowed) {
     return <GeoRestricted country={clientInfo?.country} countryCode={clientInfo?.country_code} />;
   }
-  return <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <img src="https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23" alt="BUMEX Logo" className="w-32 h-8 object-contain" />
+            <img 
+              src="https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23" 
+              alt="BUMEX Logo" 
+              className="w-32 h-8 object-contain" 
+            />
           </div>
           <h2 className="text-2xl font-bold text-gray-900">Audit Management System</h2>
           <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
@@ -125,20 +152,50 @@ const Login = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required className="mt-1" placeholder="Enter your email" />
+                <Input 
+                  id="email" 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  required 
+                  className="mt-1" 
+                  placeholder="Enter your email" 
+                />
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required className="mt-1" placeholder="Enter your password" />
+                <Input 
+                  id="password" 
+                  type="password" 
+                  value={password} 
+                  onChange={e => setPassword(e.target.value)} 
+                  required 
+                  className="mt-1" 
+                  placeholder="Enter your password" 
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="remember-me" 
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                />
+                <Label 
+                  htmlFor="remember-me" 
+                  className="text-sm font-normal cursor-pointer"
+                >
+                  Remember me
+                </Label>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? 'Signing in...' : 'Sign In'}
               </Button>
-
             </form>
           </CardContent>
         </Card>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Login;
