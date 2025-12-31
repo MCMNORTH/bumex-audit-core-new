@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { isCountryAllowed, getGeolocationData } from '@/lib/geolocation';
 import { GeoRestricted } from '@/components/GeoRestricted';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Eye, EyeOff } from 'lucide-react';
 
 const REMEMBERED_EMAIL_KEY = 'bumex_remembered_email';
 
@@ -16,6 +17,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(true);
   const [isGeoAllowed, setIsGeoAllowed] = useState(true);
@@ -164,15 +166,24 @@ const Login = () => {
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  value={password} 
-                  onChange={e => setPassword(e.target.value)} 
-                  required 
-                  className="mt-1" 
-                  placeholder="Enter your password" 
-                />
+                <div className="relative mt-1">
+                  <Input 
+                    id="password" 
+                    type={showPassword ? "text" : "password"}
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    required 
+                    placeholder="Enter your password"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox 
