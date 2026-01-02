@@ -8,7 +8,7 @@ import ProjectSidebar from '@/components/ProjectEdit/ProjectSidebar';
 import ProjectEditContent from '@/components/ProjectEdit/ProjectEditContent';
 import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
 import { RightToolbar, CommentsPanel } from '@/components/ProjectEdit/Comments';
-import { canViewTeamManagement, getProjectRole } from '@/utils/permissions';
+import { canViewTeamManagement, getProjectRole, getPendingReviewRoles } from '@/utils/permissions';
 
 const ProjectEdit = () => {
   const navigate = useNavigate();
@@ -359,31 +359,63 @@ const ProjectEdit = () => {
   // Calculate team member count
   const teamMemberCount = teamMemberIds.length;
 
-  // Calculate sign-off stats - count all signable sections recursively
-  const countSignableSections = (sections: typeof sidebarSections): { total: number; unsigned: number } => {
+  // Calculate sign-off stats and collect unsigned sections
+  const getSignOffData = (sections: typeof sidebarSections) => {
     let total = 0;
     let unsigned = 0;
+    const unsignedSections: { id: string; title: string; number?: string }[] = [];
     
-    const countSection = (section: any) => {
-      // Count this section if it has a signOffLevel
+    const processSection = (section: any) => {
       if (section.signOffLevel) {
         total++;
         const isSigned = formData.signoffs?.[section.id]?.signedBy;
         if (!isSigned) {
           unsigned++;
+          unsignedSections.push({
+            id: section.id,
+            title: section.title,
+            number: section.number,
+          });
         }
       }
-      // Recursively count children
       if (section.children && section.children.length > 0) {
-        section.children.forEach(countSection);
+        section.children.forEach(processSection);
       }
     };
     
-    sections.forEach(countSection);
-    return { total, unsigned };
+    sections.forEach(processSection);
+    return { total, unsigned, unsignedSections };
   };
   
-  const signOffStats = countSignableSections(sidebarSections);
+  const signOffData = getSignOffData(sidebarSections);
+
+  // Calculate pending reviews
+  const getPendingReviewsData = (sections: typeof sidebarSections) => {
+    const pendingReviews: { sectionId: string; sectionTitle: string; pendingRoles: string[] }[] = [];
+    
+    const processSection = (section: any) => {
+      if (section.signOffLevel) {
+        const pendingRoles = getPendingReviewRoles(section.id, formData);
+        // Only include if there are some completed reviews (section is in review flow)
+        const hasAnyReview = formData.reviews?.[section.id];
+        if (hasAnyReview && pendingRoles.length > 0 && pendingRoles.length < 5) {
+          pendingReviews.push({
+            sectionId: section.id,
+            sectionTitle: section.title,
+            pendingRoles: pendingRoles.map(role => role.replace('_', ' ')),
+          });
+        }
+      }
+      if (section.children && section.children.length > 0) {
+        section.children.forEach(processSection);
+      }
+    };
+    
+    sections.forEach(processSection);
+    return pendingReviews;
+  };
+
+  const pendingReviews = getPendingReviewsData(sidebarSections);
 
   if (loading) {
     return <LoadingScreen />;
@@ -448,8 +480,11 @@ const ProjectEdit = () => {
         showTeamManagement={canViewTeamManagement(user)}
         activeSection={activeSection}
         teamMemberCount={teamMemberCount}
-        unsignedSectionsCount={signOffStats.unsigned}
-        totalSectionsCount={signOffStats.total}
+        unsignedSectionsCount={signOffData.unsigned}
+        totalSectionsCount={signOffData.total}
+        unsignedSections={signOffData.unsignedSections}
+        pendingReviews={pendingReviews}
+        onNavigateToSection={setActiveSection}
       />
 
       <CommentsPanel
