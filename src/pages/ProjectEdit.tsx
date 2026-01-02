@@ -295,18 +295,6 @@ const ProjectEdit = () => {
       number: '4.',
       signOffLevel: 'manager' as const,
     },
-    {
-      id: 'team-section',
-      title: 'Team Management',
-      isParent: false,
-      active: false,
-    },
-    {
-      id: 'project-signoffs-summary',
-      title: 'Project Sign-offs Summary',
-      isParent: false,
-      active: false,
-    },
   ];
 
   // Initialize existing files
@@ -426,6 +414,10 @@ const ProjectEdit = () => {
       <RightToolbar
         onOpenComments={() => setShowCommentsPanel(true)}
         commentCount={totalSectionComments}
+        onNavigateToTeam={() => setActiveSection('team-section')}
+        onNavigateToSignOffs={() => setActiveSection('project-signoffs-summary')}
+        showTeamManagement={canViewTeamManagement(user)}
+        activeSection={activeSection}
       />
 
       <CommentsPanel
