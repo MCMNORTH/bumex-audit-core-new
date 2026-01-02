@@ -9,6 +9,9 @@ interface RightToolbarProps {
   onNavigateToSignOffs?: () => void;
   showTeamManagement?: boolean;
   activeSection?: string;
+  teamMemberCount?: number;
+  unsignedSectionsCount?: number;
+  totalSectionsCount?: number;
 }
 
 const RightToolbar: React.FC<RightToolbarProps> = ({
@@ -18,7 +21,12 @@ const RightToolbar: React.FC<RightToolbarProps> = ({
   onNavigateToSignOffs,
   showTeamManagement = false,
   activeSection,
+  teamMemberCount = 0,
+  unsignedSectionsCount = 0,
+  totalSectionsCount = 0,
 }) => {
+  const signedCount = totalSectionsCount - unsignedSectionsCount;
+  const allSigned = totalSectionsCount > 0 && unsignedSectionsCount === 0;
   return (
     <div className="fixed right-0 top-0 h-full z-40 flex flex-col bg-white border-l border-gray-200">
       <TooltipProvider>
@@ -56,10 +64,15 @@ const RightToolbar: React.FC<RightToolbarProps> = ({
                   }`}
                 >
                   <Users className="h-5 w-5" />
+                  {teamMemberCount > 0 && (
+                    <span className="absolute -top-1 -left-1 bg-blue-500 text-white text-xs font-medium rounded-full h-5 min-w-5 px-1 flex items-center justify-center">
+                      {teamMemberCount > 99 ? '99+' : teamMemberCount}
+                    </span>
+                  )}
                 </button>
               </TooltipTrigger>
               <TooltipContent side="left">
-                <p>Team Management</p>
+                <p>Team Management ({teamMemberCount} members)</p>
               </TooltipContent>
             </Tooltip>
           )}
@@ -77,10 +90,17 @@ const RightToolbar: React.FC<RightToolbarProps> = ({
                   }`}
                 >
                   <ClipboardCheck className="h-5 w-5" />
+                  {totalSectionsCount > 0 && (
+                    <span className={`absolute -top-1 -left-1 text-white text-xs font-medium rounded-full h-5 min-w-5 px-1 flex items-center justify-center ${
+                      allSigned ? 'bg-green-500' : 'bg-amber-500'
+                    }`}>
+                      {signedCount}/{totalSectionsCount}
+                    </span>
+                  )}
                 </button>
               </TooltipTrigger>
               <TooltipContent side="left">
-                <p>Project Sign-offs</p>
+                <p>Project Sign-offs ({signedCount}/{totalSectionsCount} signed)</p>
               </TooltipContent>
             </Tooltip>
           )}
