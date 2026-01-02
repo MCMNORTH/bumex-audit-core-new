@@ -32,6 +32,7 @@ interface FormData {
   engagement_quality_control_reviewer: boolean;
   limited_scope_quality_control_reviewer: boolean;
   other_reviewer: boolean;
+  reviewer_not_applicable: boolean;
   governance_management_same_persons: boolean;
   entity_has_internal_audit_function: boolean;
   entity_uses_service_organization: boolean;

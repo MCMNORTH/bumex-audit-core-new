@@ -168,6 +168,7 @@ const translations = {
     'reviewerSelection.engagementQualityControlReviewer': 'Engagement quality control reviewer',
     'reviewerSelection.limitedScopeQualityControlReviewer': 'Limited scope quality control reviewer',
     'reviewerSelection.otherReviewer': 'Other reviewer',
+    'reviewerSelection.notApplicable': 'Not Applicable',
     
     // Management Governance Section
     'managementGovernance.title': 'Management, those charged with governance and internal audit function:',
@@ -330,6 +331,7 @@ const translations = {
     'reviewerSelection.engagementQualityControlReviewer': 'Réviseur de contrôle qualité de la mission',
     'reviewerSelection.limitedScopeQualityControlReviewer': 'Réviseur de contrôle qualité à portée limitée',
     'reviewerSelection.otherReviewer': 'Autre réviseur',
+    'reviewerSelection.notApplicable': 'Non applicable',
     
     // Management Governance Section
     'managementGovernance.title': 'Direction, responsables de la gouvernance et fonction d\'audit interne:',
