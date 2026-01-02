@@ -8,6 +8,7 @@ interface ReviewerSelectionSectionProps {
     engagement_quality_control_reviewer: boolean;
     limited_scope_quality_control_reviewer: boolean;
     other_reviewer: boolean;
+    reviewer_not_applicable: boolean;
   };
   onFormDataChange: (updates: any) => void;
 }
@@ -45,6 +46,15 @@ const ReviewerSelectionSection = ({ formData, onFormDataChange }: ReviewerSelect
             onCheckedChange={(checked) => onFormDataChange({ other_reviewer: checked as boolean })}
           />
           <Label htmlFor="other_reviewer">{t('reviewerSelection.otherReviewer')}</Label>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="reviewer_not_applicable"
+            checked={formData.reviewer_not_applicable}
+            onCheckedChange={(checked) => onFormDataChange({ reviewer_not_applicable: checked as boolean })}
+          />
+          <Label htmlFor="reviewer_not_applicable">{t('reviewerSelection.notApplicable')}</Label>
         </div>
       </div>
     </div>

@@ -148,6 +148,7 @@ export interface ProjectFormData {
   engagement_quality_control_reviewer: boolean;
   limited_scope_quality_control_reviewer: boolean;
   other_reviewer: boolean;
+  reviewer_not_applicable: boolean;
   governance_management_same_persons: boolean;
   entity_has_internal_audit_function: boolean;
   entity_uses_service_organization: boolean;
@@ -634,6 +635,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   engagement_quality_control_reviewer: false,
   limited_scope_quality_control_reviewer: false,
   other_reviewer: false,
+  reviewer_not_applicable: false,
   governance_management_same_persons: false,
   entity_has_internal_audit_function: false,
   entity_uses_service_organization: false,

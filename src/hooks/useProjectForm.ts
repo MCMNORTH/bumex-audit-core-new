@@ -85,6 +85,7 @@ export const useProjectForm = (project: Project | null, projectId?: string) => {
       engagement_quality_control_reviewer: (projectData as any).engagement_quality_control_reviewer || false,
       limited_scope_quality_control_reviewer: (projectData as any).limited_scope_quality_control_reviewer || false,
       other_reviewer: (projectData as any).other_reviewer || false,
+      reviewer_not_applicable: (projectData as any).reviewer_not_applicable || false,
       governance_management_same_persons: (projectData as any).governance_management_same_persons || false,
       entity_has_internal_audit_function: (projectData as any).entity_has_internal_audit_function || false,
       entity_uses_service_organization: (projectData as any).entity_uses_service_organization || false,

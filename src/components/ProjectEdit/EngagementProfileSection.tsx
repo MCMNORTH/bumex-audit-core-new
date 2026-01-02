@@ -79,6 +79,7 @@ interface FormData {
   engagement_quality_control_reviewer: boolean;
   limited_scope_quality_control_reviewer: boolean;
   other_reviewer: boolean;
+  reviewer_not_applicable: boolean;
   governance_management_same_persons: boolean;
   entity_has_internal_audit_function: boolean;
   // New involvement of others fields
@@ -586,6 +587,7 @@ const EngagementProfileSection = ({
           engagement_quality_control_reviewer: formData.engagement_quality_control_reviewer || false,
           limited_scope_quality_control_reviewer: formData.limited_scope_quality_control_reviewer || false,
           other_reviewer: formData.other_reviewer || false,
+          reviewer_not_applicable: formData.reviewer_not_applicable || false,
           governance_management_same_persons: formData.governance_management_same_persons || false,
           entity_has_internal_audit_function: formData.entity_has_internal_audit_function || false,
           // New involvement of others fields
