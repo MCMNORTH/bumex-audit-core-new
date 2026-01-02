@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageSquare, Users, ClipboardCheck, FileCheck, ChevronDown, AlertCircle } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { MessageSquare, Users, ClipboardCheck, FileCheck, AlertCircle, Filter } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -16,6 +16,8 @@ interface PendingReview {
   pendingRoles: string[];
 }
 
+type ReviewFilter = 'all' | 'my-role';
+
 interface RightToolbarProps {
   onOpenComments: () => void;
   commentCount?: number;
@@ -29,7 +31,20 @@ interface RightToolbarProps {
   unsignedSections?: UnsignedSection[];
   pendingReviews?: PendingReview[];
   onNavigateToSection?: (sectionId: string) => void;
+  userProjectRole?: string | null;
 }
+
+const formatRoleName = (role: string): string => {
+  const roleMap: Record<string, string> = {
+    'staff': 'Staff',
+    'in_charge': 'In-Charge',
+    'incharge': 'In-Charge',
+    'manager': 'Manager',
+    'partner': 'Partner',
+    'lead_partner': 'Lead Partner'
+  };
+  return roleMap[role] || role;
+};
 
 const RightToolbar: React.FC<RightToolbarProps> = ({
   onOpenComments,
@@ -44,13 +59,51 @@ const RightToolbar: React.FC<RightToolbarProps> = ({
   unsignedSections = [],
   pendingReviews = [],
   onNavigateToSection,
+  userProjectRole,
 }) => {
   const [signOffsOpen, setSignOffsOpen] = useState(false);
   const [reviewsOpen, setReviewsOpen] = useState(false);
+  const [reviewFilter, setReviewFilter] = useState<ReviewFilter>('all');
   
   const signedCount = totalSectionsCount - unsignedSectionsCount;
   const allSigned = totalSectionsCount > 0 && unsignedSectionsCount === 0;
+
+  // Filter pending reviews based on selected filter
+  const filteredPendingReviews = useMemo(() => {
+    if (reviewFilter === 'all' || !userProjectRole) {
+      return pendingReviews;
+    }
+    
+    // Normalize role for comparison
+    const normalizedUserRole = userProjectRole === 'in_charge' ? 'incharge' : userProjectRole;
+    const userRoleDisplay = formatRoleName(userProjectRole);
+    
+    return pendingReviews.filter(review => 
+      review.pendingRoles.some(role => {
+        const normalizedRole = role.toLowerCase().replace('-', '_').replace(' ', '_');
+        return normalizedRole === normalizedUserRole || 
+               normalizedRole === userProjectRole ||
+               role === userRoleDisplay;
+      })
+    );
+  }, [pendingReviews, reviewFilter, userProjectRole]);
+
   const pendingReviewsCount = pendingReviews.length;
+  const filteredCount = filteredPendingReviews.length;
+  const myRoleCount = useMemo(() => {
+    if (!userProjectRole) return 0;
+    const normalizedUserRole = userProjectRole === 'in_charge' ? 'incharge' : userProjectRole;
+    const userRoleDisplay = formatRoleName(userProjectRole);
+    
+    return pendingReviews.filter(review => 
+      review.pendingRoles.some(role => {
+        const normalizedRole = role.toLowerCase().replace('-', '_').replace(' ', '_');
+        return normalizedRole === normalizedUserRole || 
+               normalizedRole === userProjectRole ||
+               role === userRoleDisplay;
+      })
+    ).length;
+  }, [pendingReviews, userProjectRole]);
 
   const handleNavigateToSection = (sectionId: string) => {
     onNavigateToSection?.(sectionId);
@@ -123,36 +176,75 @@ const RightToolbar: React.FC<RightToolbarProps> = ({
                     >
                       <AlertCircle className="h-5 w-5" />
                       <span className="absolute -top-1 -left-1 bg-orange-500 text-white text-xs font-medium rounded-full h-5 min-w-5 px-1 flex items-center justify-center">
-                        {pendingReviewsCount > 99 ? '99+' : pendingReviewsCount}
+                        {myRoleCount > 0 ? myRoleCount : pendingReviewsCount > 99 ? '99+' : pendingReviewsCount}
                       </span>
                     </button>
                   </PopoverTrigger>
                 </TooltipTrigger>
                 <TooltipContent side="left">
-                  <p>Pending Reviews ({pendingReviewsCount})</p>
+                  <p>Pending Reviews ({myRoleCount > 0 ? `${myRoleCount} for you` : pendingReviewsCount})</p>
                 </TooltipContent>
               </Tooltip>
-              <PopoverContent side="left" align="start" className="w-72 p-0">
+              <PopoverContent side="left" align="start" className="w-80 p-0">
                 <div className="p-3 border-b bg-orange-50">
                   <h4 className="font-medium text-sm text-orange-800">Pending Reviews</h4>
-                  <p className="text-xs text-orange-600">{pendingReviewsCount} section(s) need review</p>
+                  <p className="text-xs text-orange-600">
+                    {reviewFilter === 'my-role' && userProjectRole 
+                      ? `${filteredCount} section(s) need your review`
+                      : `${pendingReviewsCount} section(s) need review`
+                    }
+                  </p>
                 </div>
+                
+                {/* Filter Options */}
+                {userProjectRole && (
+                  <div className="p-2 border-b bg-gray-50 flex gap-1">
+                    <button
+                      onClick={() => setReviewFilter('all')}
+                      className={`flex-1 text-xs px-2 py-1.5 rounded-md transition-colors ${
+                        reviewFilter === 'all'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                      }`}
+                    >
+                      All ({pendingReviewsCount})
+                    </button>
+                    <button
+                      onClick={() => setReviewFilter('my-role')}
+                      className={`flex-1 text-xs px-2 py-1.5 rounded-md transition-colors flex items-center justify-center gap-1 ${
+                        reviewFilter === 'my-role'
+                          ? 'bg-orange-500 text-white'
+                          : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                      }`}
+                    >
+                      <Filter className="h-3 w-3" />
+                      My Role ({myRoleCount})
+                    </button>
+                  </div>
+                )}
+                
                 <ScrollArea className="max-h-64">
                   <div className="p-2">
-                    {pendingReviews.map((review) => (
-                      <button
-                        key={review.sectionId}
-                        onClick={() => handleNavigateToSection(review.sectionId)}
-                        className="w-full text-left p-2 hover:bg-gray-100 rounded-md transition-colors"
-                      >
-                        <p className="text-sm font-medium text-gray-900 truncate">
-                          {review.sectionTitle}
-                        </p>
-                        <p className="text-xs text-orange-600">
-                          Pending: {review.pendingRoles.join(', ')}
-                        </p>
-                      </button>
-                    ))}
+                    {filteredPendingReviews.length > 0 ? (
+                      filteredPendingReviews.map((review) => (
+                        <button
+                          key={review.sectionId}
+                          onClick={() => handleNavigateToSection(review.sectionId)}
+                          className="w-full text-left p-2 hover:bg-gray-100 rounded-md transition-colors"
+                        >
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {review.sectionTitle}
+                          </p>
+                          <p className="text-xs text-orange-600">
+                            Pending: {review.pendingRoles.join(', ')}
+                          </p>
+                        </button>
+                      ))
+                    ) : (
+                      <div className="p-4 text-center text-gray-500 text-sm">
+                        No sections pending your review
+                      </div>
+                    )}
                   </div>
                 </ScrollArea>
               </PopoverContent>

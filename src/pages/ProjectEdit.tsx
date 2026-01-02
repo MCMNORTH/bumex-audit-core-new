@@ -485,6 +485,7 @@ const ProjectEdit = () => {
         unsignedSections={signOffData.unsignedSections}
         pendingReviews={pendingReviews}
         onNavigateToSection={setActiveSection}
+        userProjectRole={userProjectRole}
       />
 
       <CommentsPanel
