@@ -6,8 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { isCountryAllowed, getGeolocationData } from '@/lib/geolocation';
-import { GeoRestricted } from '@/components/GeoRestricted';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -19,9 +17,6 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [geoLoading, setGeoLoading] = useState(true);
-  const [isGeoAllowed, setIsGeoAllowed] = useState(true);
-  const [clientInfo, setClientInfo] = useState<{ country: string; country_code: string } | null>(null);
   const {
     login,
     user,
@@ -40,32 +35,6 @@ const Login = () => {
       setEmail(rememberedEmail);
       setRememberMe(true);
     }
-  }, []);
-
-  // Check geolocation on component mount
-  useEffect(() => {
-    const checkGeolocation = async () => {
-      try {
-        const allowed = await isCountryAllowed();
-        setIsGeoAllowed(allowed);
-        
-        if (!allowed) {
-          const info = await getGeolocationData();
-          setClientInfo({
-            country: info.country,
-            country_code: info.country_code
-          });
-        }
-      } catch (error) {
-        // Silent error for geolocation check
-        // Fail-open: allow access on error
-        setIsGeoAllowed(true);
-      } finally {
-        setGeoLoading(false);
-      }
-    };
-
-    checkGeolocation();
   }, []);
 
   // Redirect if user is already logged in
@@ -113,8 +82,8 @@ const Login = () => {
     }
   }, [authError, toast]);
 
-  // Show loading if auth is still initializing or checking geolocation
-  if (authLoading || geoLoading) {
+  // Show loading if auth is still initializing
+  if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
@@ -123,11 +92,6 @@ const Login = () => {
         </div>
       </div>
     );
-  }
-
-  // Show geo restriction if not allowed
-  if (!isGeoAllowed) {
-    return <GeoRestricted country={clientInfo?.country} countryCode={clientInfo?.country_code} />;
   }
 
   return (
