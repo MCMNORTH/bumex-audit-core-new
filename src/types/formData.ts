@@ -121,8 +121,7 @@ export interface ProjectFormData {
   sentinel_approval_date: string;
   sentinel_expiration_date: string;
   first_period_auditing: string;
-  sentinel_approval_email_files: Array<{name: string, url: string, type: string}>;
-  ceac_approval_email_files: Array<{name: string, url: string, type: string}>;
+  evaluation_approval_documents_files: Array<{name: string, url: string, type: string}>;
   other_documents_files: Array<{name: string, url: string, type: string}>;
   financial_statement_audit_report: boolean;
   auditing_standards: string[];
@@ -608,8 +607,7 @@ export const getInitialFormData = (): ProjectFormData => ({
   sentinel_approval_date: '',
   sentinel_expiration_date: '',
   first_period_auditing: 'Not selected',
-  sentinel_approval_email_files: [],
-  ceac_approval_email_files: [],
+  evaluation_approval_documents_files: [],
   other_documents_files: [],
   financial_statement_audit_report: true,
   auditing_standards: [],

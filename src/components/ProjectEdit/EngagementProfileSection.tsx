@@ -51,8 +51,7 @@ interface FormData {
   // New radio button field
   first_period_auditing: string;
   // Document attachment fields
-  sentinel_approval_email_files: DocumentFile[];
-  ceac_approval_email_files: DocumentFile[];
+  evaluation_approval_documents_files: DocumentFile[];
   other_documents_files: DocumentFile[];
   // Engagement scope and scale fields
   financial_statement_audit_report: boolean;
@@ -541,19 +540,11 @@ const EngagementProfileSection = ({
             
             <div className="bg-gray-50 p-4 rounded-lg space-y-4">
               <DocumentAttachmentSection
-                title={t('engagement.sentinelApprovalEmail')}
-                files={formData.sentinel_approval_email_files}
-                onFilesChange={(files) => onFormDataChange({ sentinel_approval_email_files: files })}
+                title={t('engagement.evaluationApprovalDocuments')}
+                files={formData.evaluation_approval_documents_files}
+                onFilesChange={(files) => onFormDataChange({ evaluation_approval_documents_files: files })}
                 projectId={projectId}
-                storagePrefix="sentinel-approval"
-              />
-              
-              <DocumentAttachmentSection
-                title={t('engagement.ceacApprovalEmail')}
-                files={formData.ceac_approval_email_files}
-                onFilesChange={(files) => onFormDataChange({ ceac_approval_email_files: files })}
-                projectId={projectId}
-                storagePrefix="ceac-approval"
+                storagePrefix="evaluation-approval"
               />
               
               <DocumentAttachmentSection
