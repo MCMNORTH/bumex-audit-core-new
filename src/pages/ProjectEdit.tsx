@@ -356,6 +356,35 @@ const ProjectEdit = () => {
 
   const totalSectionComments = getSectionCommentCount(activeSection);
 
+  // Calculate team member count
+  const teamMemberCount = teamMemberIds.length;
+
+  // Calculate sign-off stats - count all signable sections recursively
+  const countSignableSections = (sections: typeof sidebarSections): { total: number; unsigned: number } => {
+    let total = 0;
+    let unsigned = 0;
+    
+    const countSection = (section: any) => {
+      // Count this section if it has a signOffLevel
+      if (section.signOffLevel) {
+        total++;
+        const isSigned = formData.signoffs?.[section.id]?.signedBy;
+        if (!isSigned) {
+          unsigned++;
+        }
+      }
+      // Recursively count children
+      if (section.children && section.children.length > 0) {
+        section.children.forEach(countSection);
+      }
+    };
+    
+    sections.forEach(countSection);
+    return { total, unsigned };
+  };
+  
+  const signOffStats = countSignableSections(sidebarSections);
+
   if (loading) {
     return <LoadingScreen />;
   }
@@ -418,6 +447,9 @@ const ProjectEdit = () => {
         onNavigateToSignOffs={() => setActiveSection('project-signoffs-summary')}
         showTeamManagement={canViewTeamManagement(user)}
         activeSection={activeSection}
+        teamMemberCount={teamMemberCount}
+        unsignedSectionsCount={signOffStats.unsigned}
+        totalSectionsCount={signOffStats.total}
       />
 
       <CommentsPanel
