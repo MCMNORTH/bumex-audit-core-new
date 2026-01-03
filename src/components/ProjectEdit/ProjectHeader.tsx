@@ -25,6 +25,9 @@ const ProjectHeader = ({
 }: ProjectHeaderProps) => {
   const getSectionTitle = () => {
     switch (activeSection) {
+      // Dashboard
+      case 'project-dashboard': return 'Project Dashboard';
+      
       // Main sections
       case 'engagement-management': return '1. Engagement Management';
       case 'entity-wide-procedures': return '2. Entity wide procedures';
