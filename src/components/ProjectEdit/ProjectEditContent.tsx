@@ -2,6 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Client, User, Project } from '@/types';
 import { ProjectFormData } from '@/types/formData';
 import ProjectHeader from './ProjectHeader';
+import ProjectDashboardSection from './ProjectDashboardSection';
 import EngagementProfileSection from './EngagementProfileSection';
 import IndependenceRequirementsSection from './IndependenceRequirementsSection';
 import { Separator } from '@/components/ui/separator';
@@ -21,7 +22,7 @@ import TeamSection from './TeamSection';
 import SectionWrapper from './SectionWrapper';
 import ProjectSignOffsSummary from './ProjectSignOffsSummary';
 import CompactReviewFooter from './CompactReviewFooter';
-import { canEditProject, canViewTeamManagement } from '@/utils/permissions';
+import { canEditProject, canViewTeamManagement, getPendingReviewRoles } from '@/utils/permissions';
 import { CommentsProvider } from '@/contexts/CommentsContext';
 interface ProjectEditContentProps {
   project: Project | null;
@@ -56,6 +57,18 @@ interface ProjectEditContentProps {
   // Comments props
   onCreateComment?: (fieldId: string, sectionId: string, fieldLabel?: string) => void;
   getFieldCommentCount?: (sectionId: string, fieldId: string) => number;
+  // Dashboard props
+  signOffData?: {
+    total: number;
+    unsigned: number;
+    unsignedSections: { id: string; title: string; number?: string }[];
+  };
+  pendingReviews?: {
+    sectionId: string;
+    sectionTitle: string;
+    pendingRoles: string[];
+  }[];
+  teamMemberCount?: number;
 }
 const ProjectEditContent = ({
   project,
@@ -89,6 +102,9 @@ const ProjectEditContent = ({
   onUnreview = () => {},
   onCreateComment = () => {},
   getFieldCommentCount = () => 0,
+  signOffData = { total: 0, unsigned: 0, unsignedSections: [] },
+  pendingReviews = [],
+  teamMemberCount = 0,
 }: ProjectEditContentProps) => {
   const selectedClient = clients.find(c => c.id === formData.client_id);
   const currentUser = users.find(u => u.id === currentUserId);
@@ -417,6 +433,21 @@ const ProjectEditContent = ({
         <div className="p-8 pb-24">
           <div className="max-w-4xl mx-auto">
             <ProjectHeader projectName={project?.engagement_name || ''} engagementId={project?.engagement_id || ''} activeSection={activeSection} clientName={selectedClient?.name} auditType={formData.audit_type} onBack={onBack} onSave={onSave} saving={saving} />
+
+        {/* Project Dashboard */}
+        {activeSection === 'project-dashboard' && (
+          <ProjectDashboardSection
+            formData={formData}
+            project={project}
+            users={users}
+            clients={clients}
+            sidebarSections={sidebarSections}
+            onSectionChange={onSectionChange}
+            signOffData={signOffData}
+            pendingReviews={pendingReviews}
+            teamMemberCount={teamMemberCount}
+          />
+        )}
 
         {/* Main parent section - shows all nested content for 1. Engagement management */}
         {activeSection === 'engagement-management' && (

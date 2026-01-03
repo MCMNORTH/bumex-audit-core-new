@@ -13,7 +13,7 @@ import { canViewTeamManagement, getProjectRole, getPendingReviewRoles } from '@/
 const ProjectEdit = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState('engagement-management');
+  const [activeSection, setActiveSection] = useState('project-dashboard');
   const [showCommentsPanel, setShowCommentsPanel] = useState(false);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [selectedFieldLabel, setSelectedFieldLabel] = useState<string>('');
@@ -65,6 +65,13 @@ const ProjectEdit = () => {
   } = useFileUpload(id || '', (url) => handleFormDataChange({ mrr_file: url }));
 
   const sidebarSections = [
+    {
+      id: 'project-dashboard',
+      title: 'Project Dashboard',
+      active: true,
+      isParent: false,
+      number: '',
+    },
     {
       id: 'engagement-management',
       title: 'Engagement management',
@@ -470,6 +477,10 @@ const ProjectEdit = () => {
         // Comments props
         onCreateComment={handleCreateComment}
         getFieldCommentCount={getFieldCommentCount}
+        // Dashboard props
+        signOffData={signOffData}
+        pendingReviews={pendingReviews}
+        teamMemberCount={teamMemberCount}
       />
 
       <RightToolbar
