@@ -23,7 +23,8 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
     'Energy',
     'Real Estate',
     'Consumer Goods',
-    'Transportation'
+    'Transportation',
+    'Other'
   ];
 
   const financialReportingOptions = [
@@ -78,7 +79,12 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                 <Label className="text-sm font-medium">Industry(s)</Label>
                 <Select
                   value={formData.entity_industry || ''}
-                  onValueChange={(value) => onFormDataChange({ entity_industry: value })}
+                  onValueChange={(value) => {
+                    onFormDataChange({ entity_industry: value });
+                    if (value !== 'Other') {
+                      onFormDataChange({ entity_industry_other: '' });
+                    }
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select industry" />
@@ -91,6 +97,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                     ))}
                   </SelectContent>
                 </Select>
+                {formData.entity_industry === 'Other' && (
+                  <Input
+                    value={formData.entity_industry_other || ''}
+                    onChange={(e) => onFormDataChange({ entity_industry_other: e.target.value })}
+                    placeholder="Specify industry..."
+                    className="mt-2"
+                  />
+                )}
               </div>
             </div>
 
