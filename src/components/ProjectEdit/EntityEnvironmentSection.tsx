@@ -917,7 +917,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
 
         {/* Consider performing other specific procedures */}
         <div className="space-y-4">
-          <div>
+          <div className="space-y-2">
             <h4 className="text-lg font-semibold">Consider performing other specific procedures</h4>
             <div className="flex items-start space-x-3 mt-2">
               <Checkbox
@@ -929,6 +929,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                 We have performed other specific procedures to identify additional information to understand the entity and its environment.
               </Label>
             </div>
+            {formData.other_specific_procedures_performed && (
+              <Textarea
+                value={formData.other_specific_procedures_details || ''}
+                onChange={(e) => onFormDataChange({ other_specific_procedures_details: e.target.value })}
+                placeholder="Describe the other specific procedures performed..."
+                className="min-h-[100px] ml-6"
+              />
+            )}
           </div>
         </div>
 
@@ -1017,15 +1025,25 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
               </RadioGroup>
             </div>
 
-            <div className="flex items-start space-x-3">
-              <Checkbox
-                id="evaluate_past_audit_info"
-                checked={formData.evaluate_past_audit_information}
-                onCheckedChange={(checked) => onFormDataChange({ evaluate_past_audit_information: checked as boolean })}
-              />
-              <Label htmlFor="evaluate_past_audit_info" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Evaluate whether the information remains relevant and reliable if we plan to limit the nature, timing or extent of risk assessment procedures by relying on information from past audits.
-              </Label>
+            <div className="space-y-2">
+              <div className="flex items-start space-x-3">
+                <Checkbox
+                  id="evaluate_past_audit_info"
+                  checked={formData.evaluate_past_audit_information}
+                  onCheckedChange={(checked) => onFormDataChange({ evaluate_past_audit_information: checked as boolean })}
+                />
+                <Label htmlFor="evaluate_past_audit_info" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  Evaluate whether the information remains relevant and reliable if we plan to limit the nature, timing or extent of risk assessment procedures by relying on information from past audits.
+                </Label>
+              </div>
+              {formData.evaluate_past_audit_information && (
+                <Textarea
+                  value={formData.evaluate_past_audit_information_details || ''}
+                  onChange={(e) => onFormDataChange({ evaluate_past_audit_information_details: e.target.value })}
+                  placeholder="Provide evaluation details..."
+                  className="min-h-[100px] ml-6"
+                />
+              )}
             </div>
           </div>
         </div>
