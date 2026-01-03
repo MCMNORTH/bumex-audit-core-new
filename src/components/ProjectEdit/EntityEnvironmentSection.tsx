@@ -27,13 +27,9 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
   ];
 
   const financialReportingOptions = [
-    'ISA',
     'French GAAP',
-    'US GAAP',
     'IFRS',
-    'UK GAAP',
-    'German GAAP',
-    'Local GAAP'
+    'Mauritanian GAAP'
   ];
 
   const handleAddMarket = () => {
