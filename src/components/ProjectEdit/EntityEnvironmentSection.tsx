@@ -386,26 +386,46 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="document-additional-considerations"
-                checked={formData.document_additional_considerations || false}
-                onCheckedChange={(checked) => onFormDataChange({ document_additional_considerations: checked })}
-              />
-              <Label htmlFor="document-additional-considerations" className="text-sm">
-                Document any additional considerations needed regarding understanding industry, regulatory and other external factors including where the assumptions above are not confirmed
-              </Label>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="document-additional-considerations"
+                  checked={formData.document_additional_considerations || false}
+                  onCheckedChange={(checked) => onFormDataChange({ document_additional_considerations: checked })}
+                />
+                <Label htmlFor="document-additional-considerations" className="text-sm">
+                  Document any additional considerations needed regarding understanding industry, regulatory and other external factors including where the assumptions above are not confirmed
+                </Label>
+              </div>
+              {formData.document_additional_considerations && (
+                <Textarea
+                  value={formData.document_additional_considerations_details || ''}
+                  onChange={(e) => onFormDataChange({ document_additional_considerations_details: e.target.value })}
+                  placeholder="Provide additional considerations..."
+                  className="min-h-[100px] ml-6"
+                />
+              )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="regulatory-factors-relevant"
-                checked={formData.regulatory_factors_relevant || false}
-                onCheckedChange={(checked) => onFormDataChange({ regulatory_factors_relevant: checked })}
-              />
-              <Label htmlFor="regulatory-factors-relevant" className="text-sm">
-                Regulatory factors are relevant to the entity's accounting estimates
-              </Label>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="regulatory-factors-relevant"
+                  checked={formData.regulatory_factors_relevant || false}
+                  onCheckedChange={(checked) => onFormDataChange({ regulatory_factors_relevant: checked })}
+                />
+                <Label htmlFor="regulatory-factors-relevant" className="text-sm">
+                  Regulatory factors are relevant to the entity's accounting estimates
+                </Label>
+              </div>
+              {formData.regulatory_factors_relevant && (
+                <Textarea
+                  value={formData.regulatory_factors_relevant_details || ''}
+                  onChange={(e) => onFormDataChange({ regulatory_factors_relevant_details: e.target.value })}
+                  placeholder="Provide details about regulatory factors..."
+                  className="min-h-[100px] ml-6"
+                />
+              )}
             </div>
           </div>
         </div>
