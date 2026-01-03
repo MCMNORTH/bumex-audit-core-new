@@ -201,7 +201,7 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
             <h3 className="font-semibold text-base mb-4">Setting the tone for our audit</h3>
             <div className="space-y-3 text-sm">
               <p><strong>A.</strong> The purpose of our audit practice is to serve and protect the capital markets and public interest</p>
-              <p><strong>B.</strong> We define audit quality as being the outcome when audits are executed consistently, in line with the requirements and intent of applicable professional standards and applicable legal and regulatory requirements, as well as KPMG policies, within a strong system of quality controls.</p>
+              <p><strong>B.</strong> We define audit quality as being the outcome when audits are executed consistently, in line with the requirements and intent of applicable professional standards and applicable legal and regulatory requirements, as well as Bumex policies, within a strong system of quality controls.</p>
               <p><strong>C.</strong> We are committed to the utmost professionalism, integrity, objectivity and independence</p>
               <p><strong>D.</strong> Setting the tone is a shared responsibility that is led at the engagement level by the lead partner</p>
               <div>
@@ -322,8 +322,8 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
                     </div>
                   </div>
                   <p>ii. There are restrictions with respect to discussions with an audit client regarding potential employment. Consultations with the Ethics and Independence Partner is required prior to any such discussion.</p>
-                  <p>iii. Immediately report breaches or suspected breaches of KPMG independence policies to the Engagement Partner or the Ethics and Independence Partner.</p>
-                  <p>iv. Promptly report breaches or suspected breaches of KPMG policies, other than independence matters, to the Engagement Partner, the appropriate Risk Management Partner, the Ethics and Compliance Hotline [or KPMG International hotline or member firm equivalent hotline), or other appropriate channel. Engagement team members should be familiar with the personal independence policies in Chapter 6 of the Global Quality & Risk Management Manual [or indicate local manual, as applicable.]</p>
+                  <p>iii. Immediately report breaches or suspected breaches of Bumex independence policies to the Engagement Partner or the Ethics and Independence Partner.</p>
+                  <p>iv. Promptly report breaches or suspected breaches of Bumex policies, other than independence matters, to the Engagement Partner, the appropriate Risk Management Partner, the Ethics and Compliance Hotline [or Bumex International hotline or member firm equivalent hotline), or other appropriate channel. Engagement team members should be familiar with the personal independence policies in Chapter 6 of the Global Quality & Risk Management Manual [or indicate local manual, as applicable.]</p>
                 </div>
               </div>
             </div>
