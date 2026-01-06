@@ -174,12 +174,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Step 1: Verify credentials and send OTP
   const verifyCredentials = async (email: string, password: string) => {
     try {
-      // Validate email domain
-      const allowedDomains = ['@bumex.mr', '@overcode.dev'];
-      const isValidDomain = allowedDomains.some(domain => email.toLowerCase().endsWith(domain));
-      
-      if (!isValidDomain) {
-        throw new Error('Access denied: Invalid email address.');
+      // Validate email domain - only @bumex.mr allowed
+      const allowedDomain = '@bumex.mr';
+      if (!email.toLowerCase().trim().endsWith(allowedDomain)) {
+        throw new Error('Access restricted to BUMEX employees only. Please use your @bumex.mr email.');
       }
       
       // Mark that we're entering 2FA flow BEFORE signing in
