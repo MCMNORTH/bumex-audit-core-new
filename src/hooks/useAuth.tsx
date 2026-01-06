@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react';
 import { auth, db } from '@/lib/firebase';
-import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut, sendPasswordResetEmail as firebaseSendPasswordResetEmail } from 'firebase/auth';
 import { doc, getDoc, addDoc, collection, deleteDoc } from 'firebase/firestore';
 import { User } from '@/types';
 import { generateOTP, storeOTP, verifyOTP, sendOTPEmail } from '@/lib/otpUtils';
@@ -25,6 +25,7 @@ interface AuthContextType {
   verifyCredentials: (email: string, password: string) => Promise<void>;
   sendOTP: () => Promise<void>;
   verifyOTPAndLogin: (otp: string) => Promise<void>;
+  sendPasswordResetEmail: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -344,6 +345,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const sendPasswordResetEmailHandler = async (email: string) => {
+    // Validate email domain - only @bumex.mr allowed
+    const allowedDomain = '@bumex.mr';
+    if (!email.toLowerCase().trim().endsWith(allowedDomain)) {
+      throw new Error('Password reset is only available for BUMEX employees with @bumex.mr email.');
+    }
+    
+    try {
+      await firebaseSendPasswordResetEmail(auth, email);
+      // Log password reset request
+      await createLogWithClientInfo('password_reset_requested', email, 'Password reset email sent', 'unknown');
+    } catch (error: any) {
+      if (error.code === 'auth/user-not-found') {
+        // Don't reveal if user exists or not for security
+        // Just pretend it worked
+        return;
+      }
+      throw new Error('Failed to send password reset email. Please try again.');
+    }
+  };
+
   const value = {
     user,
     firebaseUser,
@@ -355,6 +377,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     verifyCredentials,
     sendOTP,
     verifyOTPAndLogin,
+    sendPasswordResetEmail: sendPasswordResetEmailHandler,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
