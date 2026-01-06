@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
+import OTPVerification from '@/components/OTPVerification';
 
 const REMEMBERED_EMAIL_KEY = 'bumex_remembered_email';
 
@@ -17,15 +18,24 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // OTP state
+  const [otpStep, setOtpStep] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [otpError, setOtpError] = useState<string | undefined>();
+  
   const {
     login,
+    verifyCredentials,
+    sendOTP,
+    verifyOTPAndLogin,
+    pendingAuth,
     user,
     authError,
     loading: authLoading
   } = useAuth();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   // Load remembered email on mount
@@ -47,6 +57,8 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setOtpError(undefined);
+    
     try {
       // Save or clear remembered email based on checkbox
       if (rememberMe) {
@@ -55,11 +67,15 @@ const Login = () => {
         localStorage.removeItem(REMEMBERED_EMAIL_KEY);
       }
 
-      await login(email, password);
+      // Verify credentials and send OTP
+      await verifyCredentials(email, password);
+      
       toast({
-        title: 'Success',
-        description: 'Logged in successfully'
+        title: 'Verification Code Sent',
+        description: 'Please check your email for the verification code'
       });
+      
+      setOtpStep(true);
     } catch (error: any) {
       toast({
         title: 'Error',
@@ -69,6 +85,54 @@ const Login = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleVerifyOTP = async (otp: string) => {
+    setIsVerifying(true);
+    setOtpError(undefined);
+    
+    try {
+      await verifyOTPAndLogin(otp);
+      
+      toast({
+        title: 'Success',
+        description: 'Logged in successfully'
+      });
+    } catch (error: any) {
+      setOtpError(error.message || 'Invalid verification code');
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    if (!pendingAuth) return;
+    
+    setIsResending(true);
+    setOtpError(undefined);
+    
+    try {
+      await sendOTP();
+      
+      toast({
+        title: 'Code Sent',
+        description: 'A new verification code has been sent to your email'
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to resend code',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
+
+  const handleBackToLogin = () => {
+    setOtpStep(false);
+    setOtpError(undefined);
+    setPassword('');
   };
 
   // Show auth error if user authentication failed due to approval/blocking
@@ -91,6 +155,21 @@ const Login = () => {
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>
+    );
+  }
+
+  // Show OTP verification screen
+  if (otpStep && pendingAuth) {
+    return (
+      <OTPVerification
+        email={email}
+        onVerify={handleVerifyOTP}
+        onResend={handleResendOTP}
+        onBack={handleBackToLogin}
+        isVerifying={isVerifying}
+        isResending={isResending}
+        error={otpError}
+      />
     );
   }
 
