@@ -19,9 +19,15 @@ import { Search, UserCheck, UserX, Shield, Plus, KeyRound, Ban } from 'lucide-re
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
 
 const createUserSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string()
+    .email('Invalid email address')
+    .refine(
+      (email) => email.toLowerCase().trim().endsWith(ALLOWED_EMAIL_DOMAIN),
+      { message: `Email must be a ${ALLOWED_EMAIL_DOMAIN} address` }
+    ),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   first_name: z.string().min(1, 'First name is required'),
   last_name: z.string().min(1, 'Last name is required'),
@@ -354,7 +360,7 @@ const Users = () => {
                       <FormItem>
                         <FormLabel>Email</FormLabel>
                         <FormControl>
-                          <Input placeholder="user@example.com" {...field} />
+                          <Input placeholder={`user${ALLOWED_EMAIL_DOMAIN}`} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

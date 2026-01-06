@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,8 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import OTPVerification from '@/components/OTPVerification';
+import { isValidCompanyEmail, getEmailDomainError, ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
 
 const REMEMBERED_EMAIL_KEY = 'bumex_remembered_email';
 
@@ -37,6 +38,10 @@ const Login = () => {
   } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Email domain validation
+  const emailDomainError = useMemo(() => getEmailDomainError(email), [email]);
+  const isValidEmail = useMemo(() => isValidCompanyEmail(email), [email]);
 
   // Load remembered email on mount
   useEffect(() => {
@@ -203,9 +208,15 @@ const Login = () => {
                   value={email} 
                   onChange={e => setEmail(e.target.value)} 
                   required 
-                  className="mt-1" 
-                  placeholder="Enter your email" 
+                  className={`mt-1 ${emailDomainError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  placeholder={`name${ALLOWED_EMAIL_DOMAIN}`}
                 />
+                {emailDomainError && (
+                  <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                    <span>{emailDomainError}</span>
+                  </div>
+                )}
               </div>
               <div>
                 <Label htmlFor="password">Password</Label>
@@ -241,7 +252,7 @@ const Login = () => {
                   Remember me
                 </Label>
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full" disabled={loading || (email.includes('@') && !isValidEmail)}>
                 {loading ? 'Signing in...' : 'Sign In'}
               </Button>
             </form>
