@@ -1,5 +1,5 @@
 import { db } from '@/lib/firebase';
-import { doc, setDoc, getDoc, deleteDoc, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, getDoc, getDocFromServer, deleteDoc, Timestamp } from 'firebase/firestore';
 import { supabase } from '@/integrations/supabase/client';
 
 // Generate a random 6-digit OTP
@@ -18,6 +18,8 @@ export const storeOTP = async (userId: string, email: string, otp: string): Prom
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
   
+  console.log('[2FA] Writing OTP document to Firestore for user:', userId);
+
   await setDoc(doc(db, 'pending_otps', userId), {
     user_id: userId,
     email: email,
@@ -27,6 +29,17 @@ export const storeOTP = async (userId: string, email: string, otp: string): Prom
     attempts: 0,
     max_attempts: 3
   });
+
+  // Best-effort confirmation that the doc exists on the server
+  try {
+    const check = await getDocFromServer(doc(db, 'pending_otps', userId));
+    console.log('[2FA] OTP document server check exists:', check.exists());
+    if (!check.exists()) {
+      throw new Error('OTP document not available on server');
+    }
+  } catch (e) {
+    console.warn('[2FA] OTP server check failed (may be offline/AppCheck/rules):', e);
+  }
 };
 
 // Verify OTP against stored value
@@ -35,28 +48,35 @@ export const verifyOTP = async (userId: string, enteredOtp: string): Promise<{
   error?: string;
 }> => {
   try {
-    const otpDoc = await getDoc(doc(db, 'pending_otps', userId));
-    
+    let otpDoc;
+    try {
+      otpDoc = await getDocFromServer(doc(db, 'pending_otps', userId));
+    } catch (e) {
+      // Fallback to cache (offline-friendly)
+      otpDoc = await getDoc(doc(db, 'pending_otps', userId));
+    }
+
     if (!otpDoc.exists()) {
+      console.warn('[2FA] OTP document not found for user:', userId);
       return { valid: false, error: 'No OTP found. Please request a new code.' };
     }
-    
+
     const otpData = otpDoc.data();
     const now = new Date();
     const expiresAt = otpData.expires_at.toDate();
-    
+
     // Check if OTP has expired
     if (now > expiresAt) {
       await deleteDoc(doc(db, 'pending_otps', userId));
       return { valid: false, error: 'OTP has expired. Please request a new code.' };
     }
-    
+
     // Check if max attempts exceeded
     if (otpData.attempts >= otpData.max_attempts) {
       await deleteDoc(doc(db, 'pending_otps', userId));
       return { valid: false, error: 'Too many attempts. Please request a new code.' };
     }
-    
+
     // Verify OTP
     const enteredHash = hashOTP(enteredOtp);
     if (enteredHash === otpData.otp_hash) {
@@ -69,7 +89,7 @@ export const verifyOTP = async (userId: string, enteredOtp: string): Promise<{
         ...otpData,
         attempts: otpData.attempts + 1
       });
-      
+
       const remainingAttempts = otpData.max_attempts - otpData.attempts - 1;
       return { 
         valid: false, 
