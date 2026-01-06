@@ -10,9 +10,11 @@ const DEBUG_TOKEN = '6EAC02E4-1802-4537-AF11-F16CC3B15A50';
 // Check if we're in development/preview environment
 const isDevelopment = () => {
   const hostname = window.location.hostname;
-  // Only lovable.dev and localhost are development environments
+  // Development/preview environments should use debug token
   // Production domains like bumex.overcode.dev, auditcore.bumex.mr should use reCAPTCHA
   return hostname.includes('lovable.dev') || 
+         hostname.includes('lovable.app') || 
+         hostname.includes('lovableproject.com') ||
          hostname.includes('localhost') || 
          hostname === '127.0.0.1';
 };
