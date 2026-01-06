@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +27,7 @@ const OTPVerification = ({
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [expiryCountdown, setExpiryCountdown] = useState(300); // 5 minutes in seconds
+  const lastAutoSubmitRef = useRef<string | null>(null);
 
   // Countdown for resend button
   useEffect(() => {
@@ -46,6 +47,13 @@ const OTPVerification = ({
     }
   }, [expiryCountdown]);
 
+  // Reset auto-submit guard if user edits the code
+  useEffect(() => {
+    if (otp.length < 6) {
+      lastAutoSubmitRef.current = null;
+    }
+  }, [otp]);
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -58,17 +66,24 @@ const OTPVerification = ({
     setCanResend(false);
     setExpiryCountdown(300);
     setOtp('');
+    lastAutoSubmitRef.current = null;
   }, [onResend]);
 
   const handleVerify = useCallback(async () => {
-    if (otp.length === 6) {
+    if (otp.length === 6 && !isVerifying) {
+      // Prevent infinite re-submits on the same 6-digit value
+      lastAutoSubmitRef.current = otp;
       await onVerify(otp);
     }
-  }, [otp, onVerify]);
+  }, [otp, onVerify, isVerifying]);
 
-  // Auto-submit when 6 digits are entered
+  // Auto-submit when 6 digits are entered (once per code)
   useEffect(() => {
-    if (otp.length === 6 && !isVerifying) {
+    if (
+      otp.length === 6 &&
+      !isVerifying &&
+      lastAutoSubmitRef.current !== otp
+    ) {
       handleVerify();
     }
   }, [otp, isVerifying, handleVerify]);
