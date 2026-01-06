@@ -100,7 +100,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   <th className="text-left p-4 font-medium border">Date of inquiry</th>
                   <th className="text-left p-4 font-medium border">Interviewee name</th>
                   <th className="text-left p-4 font-medium border">Interviewee role</th>
-                  <th className="text-left p-4 font-medium border">KPMG interviewer</th>
+                  <th className="text-left p-4 font-medium border">Bumex interviewer</th>
                   <th className="text-left p-4 font-medium border">CERAMIC Components</th>
                   <th className="text-left p-4 font-medium border">Control assessment</th>
                   <th className="text-center p-4 font-medium border">Actions</th>
@@ -160,7 +160,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                         <Input
                           value={inquiry.kpmgInterviewer}
                           onChange={(e) => updateInquiry(inquiry.id, 'kpmgInterviewer', e.target.value)}
-                          placeholder="KPMG interviewer"
+                          placeholder="Bumex interviewer"
                           className="text-sm"
                         />
                       </td>
