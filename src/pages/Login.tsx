@@ -9,7 +9,14 @@ import { useNavigate } from 'react-router-dom';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import OTPVerification from '@/components/OTPVerification';
-import { isValidCompanyEmail, getEmailDomainError, ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
+import { isValidCompanyEmail, ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const REMEMBERED_EMAIL_KEY = 'bumex_remembered_email';
 
@@ -26,11 +33,17 @@ const Login = () => {
   const [isResending, setIsResending] = useState(false);
   const [otpError, setOtpError] = useState<string | undefined>();
   
+  // Forgot password state
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  
   const {
     login,
     verifyCredentials,
     sendOTP,
     verifyOTPAndLogin,
+    sendPasswordResetEmail,
     pendingAuth,
     user,
     authError,
@@ -39,9 +52,19 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Email domain validation
-  const emailDomainError = useMemo(() => getEmailDomainError(email), [email]);
+  // Email domain validation - only show error if email has @ and is not valid bumex email
+  const showDomainError = useMemo(() => {
+    if (!email || !email.includes('@')) return false;
+    return !isValidCompanyEmail(email);
+  }, [email]);
   const isValidEmail = useMemo(() => isValidCompanyEmail(email), [email]);
+  
+  // Reset email validation
+  const resetEmailValid = useMemo(() => isValidCompanyEmail(resetEmail), [resetEmail]);
+  const showResetDomainError = useMemo(() => {
+    if (!resetEmail || !resetEmail.includes('@')) return false;
+    return !isValidCompanyEmail(resetEmail);
+  }, [resetEmail]);
 
   // Load remembered email on mount
   useEffect(() => {
@@ -140,6 +163,38 @@ const Login = () => {
     setPassword('');
   };
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!resetEmailValid) {
+      toast({
+        title: 'Invalid Email',
+        description: `Password reset is only available for ${ALLOWED_EMAIL_DOMAIN} emails.`,
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    setResetLoading(true);
+    try {
+      await sendPasswordResetEmail(resetEmail);
+      toast({
+        title: 'Reset Email Sent',
+        description: 'Please check your email for password reset instructions.'
+      });
+      setForgotPasswordOpen(false);
+      setResetEmail('');
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to send password reset email',
+        variant: 'destructive'
+      });
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   // Show auth error if user authentication failed due to approval/blocking
   useEffect(() => {
     if (authError) {
@@ -208,13 +263,13 @@ const Login = () => {
                   value={email} 
                   onChange={e => setEmail(e.target.value)} 
                   required 
-                  className={`mt-1 ${emailDomainError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                  className={`mt-1 ${showDomainError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                   placeholder={`name${ALLOWED_EMAIL_DOMAIN}`}
                 />
-                {emailDomainError && (
+                {showDomainError && (
                   <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
                     <AlertCircle className="h-3.5 w-3.5" />
-                    <span>{emailDomainError}</span>
+                    <span>Access restricted to BUMEX employees only. Please use your {ALLOWED_EMAIL_DOMAIN} email.</span>
                   </div>
                 )}
               </div>
@@ -255,7 +310,56 @@ const Login = () => {
               <Button type="submit" className="w-full" disabled={loading || (email.includes('@') && !isValidEmail)}>
                 {loading ? 'Signing in...' : 'Sign In'}
               </Button>
+              
+              <div className="text-center mt-4">
+                <button
+                  type="button"
+                  onClick={() => setForgotPasswordOpen(true)}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Forgot your password?
+                </button>
+              </div>
             </form>
+            
+            {/* Forgot Password Dialog */}
+            <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Reset Password</DialogTitle>
+                  <DialogDescription>
+                    Enter your {ALLOWED_EMAIL_DOMAIN} email address and we'll send you a link to reset your password.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <div>
+                    <Label htmlFor="reset-email">Email</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      value={resetEmail}
+                      onChange={e => setResetEmail(e.target.value)}
+                      required
+                      className={`mt-1 ${showResetDomainError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
+                      placeholder={`name${ALLOWED_EMAIL_DOMAIN}`}
+                    />
+                    {showResetDomainError && (
+                      <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
+                        <AlertCircle className="h-3.5 w-3.5" />
+                        <span>Access restricted to BUMEX employees only. Please use your {ALLOWED_EMAIL_DOMAIN} email.</span>
+                      </div>
+                    )}
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full" 
+                    disabled={resetLoading || (resetEmail.includes('@') && !resetEmailValid)}
+                  >
+                    {resetLoading ? 'Sending...' : 'Send Reset Link'}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
       </div>
