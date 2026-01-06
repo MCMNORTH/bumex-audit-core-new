@@ -139,5 +139,13 @@ service cloud.firestore {
       // Only admins can delete comments
       allow delete: if isAdmin();
     }
+
+    // -------------------------------
+    // Pending OTPs Collection (for 2FA)
+    // -------------------------------
+    match /pending_otps/{userId} {
+      // Users can only access their own OTP documents
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
   }
 }

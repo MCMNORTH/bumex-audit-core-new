@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react';
 import { auth, db } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
@@ -9,6 +9,7 @@ import { getGeolocationData } from '@/lib/geolocation';
 interface PendingAuth {
   userId: string;
   email: string;
+  password: string; // Store password temporarily for re-auth after OTP
   userName?: string;
   userData: User;
 }
@@ -67,33 +68,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [pendingAuth, setPendingAuth] = useState<PendingAuth | null>(null);
-  const [skipOTPCheck, setSkipOTPCheck] = useState(false);
+  // Track if we're in the middle of 2FA flow (password verified, awaiting OTP)
+  const twoFactorPendingRef = useRef(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setAuthError(null); // Clear any previous auth errors
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      setAuthError(null);
       
-      if (firebaseUser) {
-        setFirebaseUser(firebaseUser);
+      if (fbUser) {
+        setFirebaseUser(fbUser);
         
-        // If we're in the middle of OTP verification, don't process further
-        if (!skipOTPCheck) {
+        // If we're in 2FA pending state, keep user null (locked behind OTP)
+        if (twoFactorPendingRef.current) {
           setLoading(false);
           return;
         }
         
         try {
           // Fetch user data from Firestore
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          const userDoc = await getDoc(doc(db, 'users', fbUser.uid));
           if (userDoc.exists()) {
-            const userData = { id: firebaseUser.uid, ...userDoc.data() } as User;
+            const userData = { id: fbUser.uid, ...userDoc.data() } as User;
             
             // Check if user is blocked
             if (userData.blocked) {
               setAuthError('Your account has been blocked. Please contact support for assistance.');
               setUser(null);
               await signOut(auth);
-              setSkipOTPCheck(false);
               return;
             }
             
@@ -102,26 +103,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               setAuthError('Your account is pending approval. Please wait for an administrator to approve your account.');
               setUser(null);
               await signOut(auth);
-              setSkipOTPCheck(false);
               return;
             }
             
-            // User is approved and not blocked
+            // User is approved and not blocked - set user state
             setUser(userData);
-            
-            // Log successful login with IP tracking
-            await createLogWithClientInfo('login', userData.id, 'User logged in with 2FA', userData.id);
           } else {
             setAuthError('User account not found. Please contact support.');
             setUser(null);
             await signOut(auth);
           }
         } catch (error) {
+          console.error('Error fetching user data:', error);
           setAuthError('An error occurred while accessing your account. Please try again.');
           setUser(null);
         }
-        
-        setSkipOTPCheck(false);
       } else {
         setUser(null);
         setFirebaseUser(null);
@@ -130,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => unsubscribe();
-  }, [skipOTPCheck]);
+  }, []);
 
   // Step 1: Verify credentials and send OTP
   const verifyCredentials = async (email: string, password: string) => {
@@ -143,6 +139,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Access denied: Invalid email address.');
       }
       
+      // Mark that we're entering 2FA flow BEFORE signing in
+      twoFactorPendingRef.current = true;
+      
       // Attempt to sign in to verify credentials
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const fbUser = userCredential.user;
@@ -150,6 +149,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Fetch user data from Firestore to check status
       const userDoc = await getDoc(doc(db, 'users', fbUser.uid));
       if (!userDoc.exists()) {
+        twoFactorPendingRef.current = false;
         await signOut(auth);
         throw new Error('User account not found. Please contact support.');
       }
@@ -158,42 +158,48 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       // Check if user is blocked
       if (userData.blocked) {
+        twoFactorPendingRef.current = false;
         await signOut(auth);
         throw new Error('Your account has been blocked. Please contact support.');
       }
       
       // Check if user is approved
       if (userData.approved === false) {
+        twoFactorPendingRef.current = false;
         await signOut(auth);
         throw new Error('Your account is pending approval.');
       }
       
-      // Sign out immediately - we'll sign back in after OTP verification
-      await signOut(auth);
-      
-      // Store pending auth info
+      // Store pending auth info (keep Firebase auth active for Firestore access)
       const pendingAuthData: PendingAuth = {
         userId: fbUser.uid,
         email: email,
+        password: password, // Store for potential re-auth
         userName: userData.first_name,
         userData: userData
       };
       setPendingAuth(pendingAuthData);
       
-      // Generate and store OTP
+      // Generate and store OTP (user is still authenticated, so Firestore write works)
       const otp = generateOTP();
+      console.log('[2FA] Storing OTP for user:', fbUser.uid);
       await storeOTP(fbUser.uid, email, otp);
+      console.log('[2FA] OTP stored successfully');
       
       // Send OTP email
+      console.log('[2FA] Sending OTP email to:', email);
       const result = await sendOTPEmail(email, otp, userData.first_name);
       if (!result.success) {
+        console.error('[2FA] Failed to send OTP email:', result.error);
         throw new Error(result.error || 'Failed to send verification email');
       }
+      console.log('[2FA] OTP email sent successfully');
       
       // Log OTP sent event
       await createLogWithClientInfo('otp_sent', fbUser.uid, 'OTP sent for 2FA', fbUser.uid);
       
     } catch (error: any) {
+      twoFactorPendingRef.current = false;
       setPendingAuth(null);
       
       // Handle specific Firebase auth errors
@@ -241,7 +247,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     
     try {
-      // Verify OTP
+      // Verify OTP (user is still authenticated from step 1)
+      console.log('[2FA] Verifying OTP for user:', pendingAuth.userId);
       const result = await verifyOTP(pendingAuth.userId, otp);
       
       if (!result.valid) {
@@ -250,20 +257,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(result.error || 'Invalid verification code');
       }
       
+      console.log('[2FA] OTP verified successfully');
+      
       // OTP is valid - complete login
-      // Set skipOTPCheck to true so onAuthStateChanged will process the login
-      setSkipOTPCheck(true);
+      // Clear 2FA pending state so onAuthStateChanged will set user
+      twoFactorPendingRef.current = false;
       
       // Set user directly from pending auth data
       setUser(pendingAuth.userData);
       
       // Log successful 2FA
       await createLogWithClientInfo('otp_verified', pendingAuth.userId, 'OTP verified successfully', pendingAuth.userId);
+      await createLogWithClientInfo('login', pendingAuth.userId, 'User logged in with 2FA', pendingAuth.userId);
       
       // Clear pending auth
       setPendingAuth(null);
       
     } catch (error: any) {
+      console.error('[2FA] OTP verification error:', error);
       throw error;
     }
   };
@@ -280,6 +291,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await createLogWithClientInfo('logout', user.id, 'User logged out', user.id);
       }
       
+      // Clear all auth state
+      twoFactorPendingRef.current = false;
       await signOut(auth);
       setUser(null);
       setPendingAuth(null);
