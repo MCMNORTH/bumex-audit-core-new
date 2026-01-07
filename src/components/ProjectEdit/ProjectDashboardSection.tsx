@@ -15,6 +15,7 @@ import {
   ClipboardCheck
 } from 'lucide-react';
 import { format, differenceInDays, isAfter, isBefore, isToday } from 'date-fns';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ProjectDashboardSectionProps {
   formData: ProjectFormData;
@@ -47,6 +48,7 @@ const ProjectDashboardSection = ({
   pendingReviews,
   teamMemberCount,
 }: ProjectDashboardSectionProps) => {
+  const { t } = useTranslation();
   const selectedClient = clients.find(c => c.id === formData.client_id);
   
   // Parse dates
@@ -101,28 +103,36 @@ const ProjectDashboardSection = ({
   // Get date status
   const getDateStatus = (date: Date | null) => {
     if (!date) return { label: '', color: '' };
-    if (isToday(date)) return { label: 'Today', color: 'text-blue-600' };
-    if (isBefore(date, today)) return { label: 'Passed', color: 'text-gray-500' };
+    if (isToday(date)) return { label: t('projectDashboard.today'), color: 'text-blue-600' };
+    if (isBefore(date, today)) return { label: t('projectDashboard.passed'), color: 'text-gray-500' };
     const days = differenceInDays(date, today);
-    if (days <= 7) return { label: `${days}d away`, color: 'text-amber-600' };
-    if (days <= 30) return { label: `${days}d away`, color: 'text-blue-600' };
-    return { label: `${days}d away`, color: 'text-gray-500' };
+    if (days <= 7) return { label: `${days}${t('projectDashboard.daysAway')}`, color: 'text-amber-600' };
+    if (days <= 30) return { label: `${days}${t('projectDashboard.daysAway')}`, color: 'text-blue-600' };
+    return { label: `${days}${t('projectDashboard.daysAway')}`, color: 'text-gray-500' };
   };
 
   const signedCount = signOffData.total - signOffData.unsigned;
   const signOffProgress = signOffData.total > 0 ? (signedCount / signOffData.total) * 100 : 0;
+
+  const keyDates = [
+    { label: t('projectDashboard.periodStart'), date: periodStart },
+    { label: t('projectDashboard.expectedStart'), date: expectedStart },
+    { label: t('projectDashboard.auditReportDate'), date: auditReportDate },
+    { label: t('projectDashboard.closeoutDate'), date: closeoutDate },
+    { label: t('projectDashboard.periodEnd'), date: periodEnd },
+  ];
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">{project?.engagement_name || 'Project Dashboard'}</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{project?.engagement_name || t('projectDashboard.title')}</h2>
           <p className="text-gray-500">{selectedClient?.name}</p>
         </div>
         <div className="flex gap-2">
           <Badge className={getStatusColor(formData.status || '')}>
-            {formData.status || 'Not Set'}
+            {formData.status || t('projectDashboard.notSet')}
           </Badge>
           {formData.audit_type && (
             <Badge variant="outline">{formData.audit_type}</Badge>
@@ -135,14 +145,14 @@ const ProjectDashboardSection = ({
         <CardHeader className="pb-2">
           <CardTitle className="text-base font-medium flex items-center gap-2">
             <Calendar className="h-4 w-4 text-muted-foreground" />
-            Project Timeline
+            {t('projectDashboard.timeline')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">{formatDate(periodStart)}</span>
-              <span className="font-medium">{progress}% Complete</span>
+              <span className="font-medium">{progress}% {t('projectDashboard.complete')}</span>
               <span className="text-gray-600">{formatDate(periodEnd)}</span>
             </div>
             <div className="relative">
@@ -159,14 +169,14 @@ const ProjectDashboardSection = ({
               {isOverdue ? (
                 <span className="text-red-600 font-medium flex items-center gap-1">
                   <AlertTriangle className="h-4 w-4" />
-                  {Math.abs(daysRemaining!)} days overdue
+                  {Math.abs(daysRemaining!)} {t('projectDashboard.daysOverdue')}
                 </span>
               ) : daysRemaining !== null ? (
                 <span className={daysRemaining <= 7 ? 'text-amber-600 font-medium' : 'text-gray-600'}>
-                  {daysRemaining} days remaining
+                  {daysRemaining} {t('projectDashboard.daysRemaining')}
                 </span>
               ) : (
-                <span className="text-gray-400">Period dates not set</span>
+                <span className="text-gray-400">{t('projectDashboard.periodDatesNotSet')}</span>
               )}
             </div>
           </div>
@@ -183,7 +193,7 @@ const ProjectDashboardSection = ({
                 <FileCheck className="h-5 w-5 text-green-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Sign-offs</p>
+                <p className="text-sm text-gray-500">{t('projectDashboard.signOffs')}</p>
                 <p className="text-xl font-semibold">{signedCount} / {signOffData.total}</p>
               </div>
             </div>
@@ -199,7 +209,7 @@ const ProjectDashboardSection = ({
                 <ClipboardCheck className="h-5 w-5 text-blue-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Pending Reviews</p>
+                <p className="text-sm text-gray-500">{t('projectDashboard.pendingReviews')}</p>
                 <p className="text-xl font-semibold">{pendingReviews.length}</p>
               </div>
             </div>
@@ -214,7 +224,7 @@ const ProjectDashboardSection = ({
                 <Users className="h-5 w-5 text-purple-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">Team Members</p>
+                <p className="text-sm text-gray-500">{t('projectDashboard.teamMembers')}</p>
                 <p className="text-xl font-semibold">{teamMemberCount}</p>
               </div>
             </div>
@@ -229,7 +239,7 @@ const ProjectDashboardSection = ({
                 <Clock className={`h-5 w-5 ${isOverdue ? 'text-red-600' : 'text-amber-600'}`} />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-500">{isOverdue ? 'Days Overdue' : 'Days Remaining'}</p>
+                <p className="text-sm text-gray-500">{isOverdue ? t('projectDashboard.daysOverdueLabel') : t('projectDashboard.daysRemainingLabel')}</p>
                 <p className="text-xl font-semibold">
                   {daysRemaining !== null ? Math.abs(daysRemaining) : '—'}
                 </p>
@@ -242,17 +252,11 @@ const ProjectDashboardSection = ({
       {/* Key Dates */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-medium">Key Dates</CardTitle>
+          <CardTitle className="text-base font-medium">{t('projectDashboard.keyDates')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { label: 'Period Start', date: periodStart },
-              { label: 'Expected Start', date: expectedStart },
-              { label: 'Audit Report Date', date: auditReportDate },
-              { label: 'Closeout Date', date: closeoutDate },
-              { label: 'Period End', date: periodEnd },
-            ].map((item) => {
+            {keyDates.map((item) => {
               const status = getDateStatus(item.date);
               return (
                 <div key={item.label} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
@@ -278,7 +282,7 @@ const ProjectDashboardSection = ({
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-medium flex items-center gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-500" />
-                Unsigned Sections ({signOffData.unsignedSections.length})
+                {t('projectDashboard.unsignedSections')} ({signOffData.unsignedSections.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -298,7 +302,7 @@ const ProjectDashboardSection = ({
                 ))}
                 {signOffData.unsignedSections.length > 5 && (
                   <p className="text-xs text-gray-500 text-center pt-2">
-                    +{signOffData.unsignedSections.length - 5} more sections
+                    +{signOffData.unsignedSections.length - 5} {t('projectDashboard.moreSections')}
                   </p>
                 )}
               </div>
@@ -312,7 +316,7 @@ const ProjectDashboardSection = ({
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-medium flex items-center gap-2">
                 <ClipboardCheck className="h-4 w-4 text-blue-500" />
-                Pending Reviews ({pendingReviews.length})
+                {t('projectDashboard.pendingReviews')} ({pendingReviews.length})
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -327,7 +331,7 @@ const ProjectDashboardSection = ({
                     <div className="flex flex-col items-start min-w-0">
                       <span className="text-sm truncate w-full">{review.sectionTitle}</span>
                       <span className="text-xs text-gray-500 truncate w-full">
-                        Pending: {review.pendingRoles.join(', ')}
+                        {t('projectDashboard.pending')}: {review.pendingRoles.join(', ')}
                       </span>
                     </div>
                     <ChevronRight className="h-4 w-4 text-gray-400 flex-shrink-0" />
@@ -335,7 +339,7 @@ const ProjectDashboardSection = ({
                 ))}
                 {pendingReviews.length > 5 && (
                   <p className="text-xs text-gray-500 text-center pt-2">
-                    +{pendingReviews.length - 5} more sections
+                    +{pendingReviews.length - 5} {t('projectDashboard.moreSections')}
                   </p>
                 )}
               </div>
@@ -348,7 +352,7 @@ const ProjectDashboardSection = ({
           <Card className="lg:col-span-2">
             <CardContent className="p-6 text-center">
               <CheckCircle2 className="h-8 w-8 text-green-500 mx-auto mb-2" />
-              <p className="text-gray-600">All sections are signed off and reviewed!</p>
+              <p className="text-gray-600">{t('projectDashboard.allSignedAndReviewed')}</p>
             </CardContent>
           </Card>
         )}

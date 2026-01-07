@@ -72,12 +72,12 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
-            Assess the risk associated with the control (RAWTC)
+            {t('comptesAPouvoir.assessRawtc')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
           <div>
-            <p className="font-medium mb-3">Consider the following factors to determine RAWTC:</p>
+            <p className="font-medium mb-3">{t('comptesAPouvoir.considerFactors')}</p>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -86,7 +86,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_impact', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-impact" className="text-sm">
-                  The general IT control has a greater impact on the effective operation of the automated control(s) it supports
+                  {t('comptesAPouvoir.greaterImpact')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -177,7 +177,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
               <div className="w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
                 S
               </div>
-              <span className="text-sm">Significant</span>
+              <span className="text-sm">{t('comptesAPouvoir.significant')}</span>
             </div>
             <div className="flex">
               <Button
@@ -186,7 +186,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 className="rounded-r-none"
                 onClick={() => handleToggleChange('comptesaPouvoir_rawtc_significant', 'true')}
               >
-                Yes
+                {t('common.yes')}
               </Button>
               <Button
                 variant={formData.comptesaPouvoir_rawtc_significant === 'false' ? 'default' : 'outline'}
@@ -194,7 +194,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 className="rounded-l-none"
                 onClick={() => handleToggleChange('comptesaPouvoir_rawtc_significant', 'false')}
               >
-                No
+                {t('common.no')}
               </Button>
             </div>
           </div>
