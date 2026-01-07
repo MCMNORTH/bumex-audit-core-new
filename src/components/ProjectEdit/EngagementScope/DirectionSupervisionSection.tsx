@@ -13,17 +13,17 @@ interface DirectionSupervisionSectionProps {
 const DirectionSupervisionSection = ({ formData, onFormDataChange }: DirectionSupervisionSectionProps) => {
   const { t } = useTranslation();
   return (
-    <CommentableQuestion fieldId="direction-supervision-section" label="Direction and Supervision">
+    <CommentableQuestion fieldId="direction-supervision-section" label={t('directionSupervision.title')}>
       <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Determine the nature, timing, and extent of direction and supervision of engagement team members, and review of their work</h4>
+        <h4 className="font-medium text-gray-900">{t('directionSupervision.title')}</h4>
         
         <div>
-          <Label htmlFor="direction_supervision_documentation" className="text-sm font-medium">Document how we plan to direct and supervise engagement team members, including review of their work.</Label>
+          <Label htmlFor="direction_supervision_documentation" className="text-sm font-medium">{t('directionSupervision.documentLabel')}</Label>
           <Textarea
             id="direction_supervision_documentation"
             value={formData.direction_supervision_documentation || ''}
             onChange={(e) => onFormDataChange({ direction_supervision_documentation: e.target.value })}
-            placeholder="Document your approach to team direction and supervision, including review procedures and communication methods..."
+            placeholder={t('directionSupervision.placeholder')}
             className="min-h-[120px] mt-2"
           />
         </div>

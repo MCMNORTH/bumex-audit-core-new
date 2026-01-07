@@ -110,12 +110,12 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
   };
 
   return (
-    <CommentableQuestion fieldId="business_processes_main" label="Business Processes">
+    <CommentableQuestion fieldId="business_processes_main" label={t('businessProcesses.title')}>
     <Card>
       <CardHeader>
-        <CardTitle>Identify relevant processes</CardTitle>
+        <CardTitle>{t('businessProcesses.identifyProcesses')}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          Identify business processes that are associated with accounts, disclosures, or classes of transactions where there is a reasonable possibility a RMM exists.
+          {t('businessProcesses.identifyDescription')}
         </p>
       </CardHeader>
       <CardContent>
@@ -123,7 +123,7 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
           {/* Left side - Process checkboxes */}
           <div className="space-y-4">
             <div className="bg-slate-100 p-4 rounded-lg">
-              <h4 className="font-medium text-sm mb-3 text-slate-900">Process</h4>
+              <h4 className="font-medium text-sm mb-3 text-slate-900">{t('businessProcesses.process')}</h4>
               <div className="space-y-3">
                 {businessProcesses.map((process) => (
                   <div key={process.id} className="flex items-center space-x-2">
@@ -146,11 +146,11 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
           {/* Right side - Account/disclosure numbers */}
           <div className="space-y-4">
             <div className="bg-slate-100 p-4 rounded-lg">
-              <h4 className="font-medium text-sm mb-3 text-slate-900">Account/disclosure</h4>
+              <h4 className="font-medium text-sm mb-3 text-slate-900">{t('businessProcesses.accountDisclosure')}</h4>
               <div className="space-y-3 min-h-[400px]">
                 {selectedProcesses.length === 0 ? (
                   <p className="text-sm text-muted-foreground italic">
-                    Select processes to view associated accounts
+                    {t('businessProcesses.selectProcesses')}
                   </p>
                 ) : (
                   selectedProcesses.map((processId) => {
@@ -178,12 +178,12 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
         {/* Inventory section */}
         <div className="mt-8 space-y-6">
           <div className="space-y-4">
-            <h4 className="font-medium text-base">Perform relevant procedures over inventory</h4>
+            <h4 className="font-medium text-base">{t('businessProcesses.performInventoryProcedures')}</h4>
             
             <div className="space-y-4">
               <div>
                 <Label className="text-sm font-medium mb-3 block">
-                  Does the entity have inventory that is material to the financial statements?
+                  {t('businessProcesses.inventoryMaterialQuestion')}
                 </Label>
                 <RadioGroup 
                   value={formData.entity_has_material_inventory || ''} 
@@ -192,11 +192,11 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id="inventory-yes" />
-                    <Label htmlFor="inventory-yes" className="text-sm font-normal">Yes</Label>
+                    <Label htmlFor="inventory-yes" className="text-sm font-normal">{t('common.yes')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="no" id="inventory-no" />
-                    <Label htmlFor="inventory-no" className="text-sm font-normal">No</Label>
+                    <Label htmlFor="inventory-no" className="text-sm font-normal">{t('common.no')}</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -208,7 +208,7 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
                   onCheckedChange={handleInventoryWorkpaperChange}
                 />
                 <Label htmlFor="inventory-workpaper" className="text-sm font-normal leading-relaxed">
-                  Confirm we will complete the relevant inventory workpaper (either at the accounting process level or as part of procedures over MNSA)
+                  {t('businessProcesses.confirmInventoryWorkpaper')}
                 </Label>
               </div>
             </div>

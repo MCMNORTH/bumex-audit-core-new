@@ -340,12 +340,30 @@ const translations = {
     
     // Independence Requirements Section
     'independence.title': 'Independence Requirements',
+    'independence.complyWithRequirements': 'Comply with independence requirements',
+    'independence.confirmEach': 'Confirm each of the following:',
+    'independence.ethicsBreachesQuestion': 'Have there been any instances of breaches or suspected breaches of ethics or independence identified during the course of the audit?',
+    'independence.localQualityManualQuestion': 'In addition to the Global Quality and Risk Management Manual, do we need to comply with a local quality and risk management manual?',
+    'independence.memberFirmWorkPaperQuestion': 'Is there an applicable member firm specific independence work paper',
+    'independence.provideDetails': 'Please provide details...',
+    'independence.communicateOtherMatters': 'Communicate other independence matters',
+    'independence.communicateOtherMattersQuestion': 'Other than required communications regarding breaches, will we communicate other independence matters to those charged with governance',
+    'independence.complianceQuestion': 'Are we in compliance with independence requirements, including required consultations?',
+    'independence.attachedDocumentation': 'We have attached the relevant documentation in reaching our conclusions regarding independence compliance.',
     
     // Entity Environment Section
     'entityEnvironment.title': 'Entity and Its Environment',
     
     // Business Processes Section
     'businessProcesses.title': 'Business Processes',
+    'businessProcesses.identifyProcesses': 'Identify relevant processes',
+    'businessProcesses.identifyDescription': 'Identify business processes that are associated with accounts, disclosures, or classes of transactions where there is a reasonable possibility a RMM exists.',
+    'businessProcesses.process': 'Process',
+    'businessProcesses.accountDisclosure': 'Account/disclosure',
+    'businessProcesses.selectProcesses': 'Select processes to view associated accounts',
+    'businessProcesses.performInventoryProcedures': 'Perform relevant procedures over inventory',
+    'businessProcesses.inventoryMaterialQuestion': 'Does the entity have inventory that is material to the financial statements?',
+    'businessProcesses.confirmInventoryWorkpaper': 'Confirm we will complete the relevant inventory workpaper (either at the accounting process level or as part of procedures over MNSA)',
     
     // DI Section
     'di.title': 'Documentation Index',
@@ -759,12 +777,30 @@ const translations = {
     
     // Independence Requirements Section
     'independence.title': "Exigences d'indépendance",
+    'independence.complyWithRequirements': "Se conformer aux exigences d'indépendance",
+    'independence.confirmEach': 'Confirmer chacun des éléments suivants:',
+    'independence.ethicsBreachesQuestion': "Y a-t-il eu des cas de manquements ou de manquements suspectés à l'éthique ou à l'indépendance identifiés au cours de l'audit?",
+    'independence.localQualityManualQuestion': "En plus du Manuel mondial de gestion de la qualité et des risques, devons-nous nous conformer à un manuel local de gestion de la qualité et des risques?",
+    'independence.memberFirmWorkPaperQuestion': "Existe-t-il un document de travail d'indépendance spécifique au cabinet membre applicable",
+    'independence.provideDetails': 'Veuillez fournir des détails...',
+    'independence.communicateOtherMatters': "Communiquer d'autres questions d'indépendance",
+    'independence.communicateOtherMattersQuestion': "Outre les communications requises concernant les manquements, communiquerons-nous d'autres questions d'indépendance aux responsables de la gouvernance",
+    'independence.complianceQuestion': "Sommes-nous en conformité avec les exigences d'indépendance, y compris les consultations requises?",
+    'independence.attachedDocumentation': "Nous avons joint la documentation pertinente pour parvenir à nos conclusions concernant la conformité à l'indépendance.",
     
     // Entity Environment Section
     'entityEnvironment.title': "L'entité et son environnement",
     
     // Business Processes Section
     'businessProcesses.title': 'Processus métier',
+    'businessProcesses.identifyProcesses': 'Identifier les processus pertinents',
+    'businessProcesses.identifyDescription': "Identifier les processus métier associés aux comptes, divulgations ou catégories de transactions où il existe une possibilité raisonnable qu'un RMM existe.",
+    'businessProcesses.process': 'Processus',
+    'businessProcesses.accountDisclosure': 'Compte/divulgation',
+    'businessProcesses.selectProcesses': 'Sélectionner les processus pour voir les comptes associés',
+    'businessProcesses.performInventoryProcedures': "Effectuer les procédures pertinentes sur l'inventaire",
+    'businessProcesses.inventoryMaterialQuestion': "L'entité a-t-elle un inventaire significatif pour les états financiers?",
+    'businessProcesses.confirmInventoryWorkpaper': "Confirmer que nous compléterons le document de travail d'inventaire pertinent (soit au niveau du processus comptable, soit dans le cadre des procédures sur MNSA)",
     
     // DI Section
     'di.title': 'Index de documentation',
