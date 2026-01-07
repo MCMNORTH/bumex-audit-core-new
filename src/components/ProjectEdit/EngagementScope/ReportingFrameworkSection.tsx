@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
+import CommentableQuestion from '../Comments/CommentableQuestion';
 
 interface ReportingFrameworkSectionProps {
   formData: {
@@ -32,39 +33,41 @@ const ReportingFrameworkSection = ({ formData, onFormDataChange }: ReportingFram
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Label className="font-medium text-gray-900">{t('reportingFramework.title')}</Label>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handleAddReportingFramework}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          {t('common.add')}
-        </Button>
-      </div>
-      {formData.financial_reporting_framework.map((framework, index) => (
-        <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-          <Input
-            value={framework}
-            onChange={(e) => handleReportingFrameworkChange(index, e.target.value)}
-            placeholder={t('reportingFramework.placeholder')}
-            className="flex-1"
-          />
+    <CommentableQuestion fieldId="reporting-framework-section" label="Reporting Framework">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="font-medium text-gray-900">{t('reportingFramework.title')}</Label>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
-            onClick={() => handleRemoveReportingFramework(index)}
-            className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+            onClick={handleAddReportingFramework}
           >
-            <Trash2 className="h-4 w-4" />
+            <Plus className="h-4 w-4 mr-2" />
+            {t('common.add')}
           </Button>
         </div>
-      ))}
-    </div>
+        {formData.financial_reporting_framework.map((framework, index) => (
+          <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
+            <Input
+              value={framework}
+              onChange={(e) => handleReportingFrameworkChange(index, e.target.value)}
+              placeholder={t('reportingFramework.placeholder')}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => handleRemoveReportingFramework(index)}
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    </CommentableQuestion>
   );
 };
 

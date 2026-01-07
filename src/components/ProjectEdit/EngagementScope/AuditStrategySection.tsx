@@ -3,6 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Upload, Download, X } from 'lucide-react';
+import CommentableQuestion from '../Comments/CommentableQuestion';
 interface AuditStrategySectionProps {
   formData: {
     gaap_conversion_activity: boolean;
@@ -45,7 +46,8 @@ const AuditStrategySection = ({
       console.error('Error clicking file input:', error);
     }
   };
-  return <div className="space-y-6 border-t pt-6">
+  return <CommentableQuestion fieldId="audit-strategy-section" label="Audit Strategy">
+    <div className="space-y-6 border-t pt-6">
       <div>
         <p className="text-sm text-gray-700 mb-4">
           We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, risks and response for each business process and in the following locations:
@@ -128,6 +130,7 @@ const AuditStrategySection = ({
         display: 'none'
       }} />
       </div>
-    </div>;
+    </div>
+  </CommentableQuestion>;
 };
 export default AuditStrategySection;

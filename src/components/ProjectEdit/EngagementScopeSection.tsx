@@ -12,6 +12,7 @@ import DirectionSupervisionSection from './EngagementScope/DirectionSupervisionS
 import StrategyConsiderationsSection from './EngagementScope/StrategyConsiderationsSection';
 import AuditStrategySection from './EngagementScope/AuditStrategySection';
 import { useTranslation } from '@/contexts/TranslationContext';
+import CommentableQuestion from './Comments/CommentableQuestion';
 
 interface SpecialistTeam {
   id: string;
@@ -138,78 +139,80 @@ const EngagementScopeSection = ({
   const { t } = useTranslation();
   
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('engagement.scopeAndScale')}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <EngagementTypeSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
-
-        {formData.financial_statement_audit_report && (
-          <AuditingStandardsSection 
+    <CommentableQuestion fieldId="engagement-scope-section" label="Engagement Scope">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('engagement.scopeAndScale')}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <EngagementTypeSection 
             formData={formData} 
             onFormDataChange={onFormDataChange} 
           />
-        )}
 
-        {formData.financial_statement_audit_report && (
-          <ReportingFrameworkSection 
+          {formData.financial_statement_audit_report && (
+            <AuditingStandardsSection 
+              formData={formData} 
+              onFormDataChange={onFormDataChange} 
+            />
+          )}
+
+          {formData.financial_statement_audit_report && (
+            <ReportingFrameworkSection 
+              formData={formData} 
+              onFormDataChange={onFormDataChange} 
+            />
+          )}
+
+          <ComponentReportingSection 
             formData={formData} 
             onFormDataChange={onFormDataChange} 
           />
-        )}
 
-        <ComponentReportingSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+          <ReviewerSelectionSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
 
-        <ReviewerSelectionSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+          <ManagementGovernanceSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
 
-        <ManagementGovernanceSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
-
-        <InvolvementOfOthersSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+          <InvolvementOfOthersSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
 
 
-        <EngagementTeamSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+          <EngagementTeamSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
 
-        <DirectionSupervisionSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+          <DirectionSupervisionSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
 
-        <StrategyConsiderationsSection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange} 
-        />
+          <StrategyConsiderationsSection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange} 
+          />
 
-        <AuditStrategySection 
-          formData={formData} 
-          onFormDataChange={onFormDataChange}
-          mrrUploadedFile={mrrUploadedFile}
-          mrrUploadStatus={mrrUploadStatus}
-          mrrFileInputRef={mrrFileInputRef}
-          onMRRFileUpload={onMRRFileUpload}
-          onRemoveMRRFile={onRemoveMRRFile}
-          onDownloadMRRFile={onDownloadMRRFile}
-        />
-      </CardContent>
-    </Card>
+          <AuditStrategySection 
+            formData={formData} 
+            onFormDataChange={onFormDataChange}
+            mrrUploadedFile={mrrUploadedFile}
+            mrrUploadStatus={mrrUploadStatus}
+            mrrFileInputRef={mrrFileInputRef}
+            onMRRFileUpload={onMRRFileUpload}
+            onRemoveMRRFile={onRemoveMRRFile}
+            onDownloadMRRFile={onDownloadMRRFile}
+          />
+        </CardContent>
+      </Card>
+    </CommentableQuestion>
   );
 };
 
