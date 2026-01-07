@@ -69,29 +69,27 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
   };
 
   return (
-    <CommentableQuestion fieldId="di_main" label="D&I General IT Controls">
+    <CommentableQuestion fieldId="di_main" label={t('di.gitcTitle')}>
     <div className="space-y-6">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold mb-2">
-          Understand and evaluate the design and implementation of general IT controls
+          {t('di.understandEvaluate')}
         </h2>
         <p className="text-sm text-gray-600 mb-4">
-          <strong>General IT control:</strong> AD 1.1APD-1
+          <strong>{t('di.gitcReference')}</strong> AD 1.1APD-1
         </p>
-        <p className="text-sm text-gray-600 mb-4">Configuration des mots de passe</p>
+        <p className="text-sm text-gray-600 mb-4">{t('di.passwordConfig')}</p>
       </div>
 
       {/* Description */}
       <Card>
         <CardContent className="p-4">
           <p className="text-sm mb-4">
-            Document how the performance of the general IT control is documented, including, if applicable, the criteria/threshold for investigation used 
-            to identify outliers. If information is used by the control operator and addressed by a general IT control attribute(s), also document how the 
-            general IT control attribute(s) evaluates the relevance and reliability of the information.
+            {t('di.documentPerformance')}
           </p>
           <p className="text-sm font-medium mb-2">
-            Relevant RAFIT(s) addressed by the general IT control for each relevant IT layer.
+            {t('di.relevantRafit')}
           </p>
         </CardContent>
       </Card>
@@ -102,9 +100,9 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
           <div className="flex justify-between items-center">
             <CardTitle className="text-sm font-medium">
               <div className="grid grid-cols-3 gap-4 w-full">
-                <span>RAFIT(s)</span>
-                <span>IT layer(s)</span>
-                <span>How the general IT control addresses the RAFIT</span>
+                <span>{t('di.rafit')}</span>
+                <span>{t('di.itLayer')}</span>
+                <span>{t('di.howAddresses')}</span>
               </div>
             </CardTitle>
             <Button 
@@ -121,10 +119,10 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
           <Table>
             <TableHeader className="sr-only">
               <TableRow>
-                <TableHead>RAFIT(s)</TableHead>
-                <TableHead>IT layer(s)</TableHead>
-                <TableHead>How the general IT control addresses the RAFIT</TableHead>
-                <TableHead>Actions</TableHead>
+                <TableHead>{t('di.rafit')}</TableHead>
+                <TableHead>{t('di.itLayer')}</TableHead>
+                <TableHead>{t('di.howAddresses')}</TableHead>
+                <TableHead>{t('common.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -174,7 +172,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
       <Card>
         <CardHeader className="bg-blue-800 text-white">
           <CardTitle className="text-sm font-medium">
-            Do any of the control attributes involve judgment?
+            {t('di.controlAttributesJudgment')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
@@ -185,7 +183,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               className="rounded-r-none"
               onClick={() => handleToggleChange('control_attributes_judgment', 'true')}
             >
-              True
+              {t('di.true')}
             </Button>
             <Button
               variant={formData.control_attributes_judgment === 'false' ? 'default' : 'outline'}
@@ -193,7 +191,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               className="rounded-l-none"
               onClick={() => handleToggleChange('control_attributes_judgment', 'false')}
             >
-              False
+              {t('di.false')}
             </Button>
           </div>
         </CardContent>
@@ -202,11 +200,11 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
       {/* Determine the nature of procedures */}
       <Card>
         <CardContent className="p-4">
-          <h3 className="font-medium mb-4">Determine the nature of procedures</h3>
+          <h3 className="font-medium mb-4">{t('di.determineNature')}</h3>
           
           <div className="grid grid-cols-2 gap-8">
             <div>
-              <Label className="text-sm font-medium mb-2 block">Nature</Label>
+              <Label className="text-sm font-medium mb-2 block">{t('di.nature')}</Label>
               <div className="flex">
                 <Button
                   variant={formData.procedure_nature === 'AUTOMATED' ? 'default' : 'outline'}
@@ -214,7 +212,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                   className="rounded-r-none"
                   onClick={() => handleToggleChange('procedure_nature', 'AUTOMATED')}
                 >
-                  AUTOMATED
+                  {t('di.automated')}
                 </Button>
                 <Button
                   variant={formData.procedure_nature === 'MANUAL' ? 'default' : 'outline'}
@@ -222,13 +220,13 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                   className="rounded-l-none"
                   onClick={() => handleToggleChange('procedure_nature', 'MANUAL')}
                 >
-                  MANUAL
+                  {t('di.manual')}
                 </Button>
               </div>
             </div>
 
             <div>
-              <Label className="text-sm font-medium mb-2 block">Type</Label>
+              <Label className="text-sm font-medium mb-2 block">{t('di.type')}</Label>
               <div className="flex">
                 <Button
                   variant={formData.procedure_type === 'DETECTIVE' ? 'default' : 'outline'}
@@ -236,7 +234,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                   className="rounded-r-none"
                   onClick={() => handleToggleChange('procedure_type', 'DETECTIVE')}
                 >
-                  DETECTIVE
+                  {t('di.detective')}
                 </Button>
                 <Button
                   variant={formData.procedure_type === 'PREVENTIVE' ? 'default' : 'outline'}
@@ -244,18 +242,18 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                   className="rounded-l-none"
                   onClick={() => handleToggleChange('procedure_type', 'PREVENTIVE')}
                 >
-                  PREVENTIVE
+                  {t('di.preventive')}
                 </Button>
               </div>
             </div>
           </div>
 
           <div className="mt-4">
-            <Label className="text-sm font-medium mb-2 block">Frequency</Label>
+            <Label className="text-sm font-medium mb-2 block">{t('di.frequency')}</Label>
             <Input 
               value={formData.procedure_frequency || "Ad-hoc"} 
               onChange={(e) => onFormDataChange({ procedure_frequency: e.target.value })}
-              placeholder="Enter frequency"
+              placeholder={t('di.frequency')}
             />
           </div>
         </CardContent>
@@ -264,15 +262,15 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
       {/* Add control operator(s) */}
       <Card>
         <CardContent className="p-4">
-          <h3 className="font-medium mb-4">Add control operator(s)</h3>
+          <h3 className="font-medium mb-4">{t('di.addControlOperators')}</h3>
           
           <Card>
             <CardHeader className="bg-blue-800 text-white">
               <div className="flex justify-between items-center">
                 <CardTitle className="text-sm font-medium">
                   <div className="grid grid-cols-2 gap-4 w-full">
-                    <span>Control operator role and/or name</span>
-                    <span>Assess the authority and competence of the control operator(s)</span>
+                    <span>{t('di.controlOperatorRole')}</span>
+                    <span>{t('di.assessAuthority')}</span>
                   </div>
                 </CardTitle>
                 <Button 
@@ -289,9 +287,9 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               <Table>
                 <TableHeader className="sr-only">
                   <TableRow>
-                    <TableHead>Control operator role and/or name</TableHead>
-                    <TableHead>Assess the authority and competence of the control operator(s)</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>{t('di.controlOperatorRole')}</TableHead>
+                    <TableHead>{t('di.assessAuthority')}</TableHead>
+                    <TableHead>{t('common.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -337,8 +335,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
         <CardContent className="p-4 space-y-4">
           <div>
             <p className="text-sm mb-3">
-              Based on our understanding of the company's organizational structure does the control operator(s) have appropriate authority to 
-              perform the control effectively (i.e. the ability to sufficiently challenge process owners in a way that would influence their behavior)?
+              {t('di.authorityQuestion')}
             </p>
             <RadioGroup 
               value={formData.operator_authority || ""} 
@@ -347,15 +344,15 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="authority-yes" />
-                  <Label htmlFor="authority-yes">Yes</Label>
+                  <Label htmlFor="authority-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="authority-no" />
-                  <Label htmlFor="authority-no">No</Label>
+                  <Label htmlFor="authority-no">{t('common.no')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="not-selected" id="authority-not-selected" />
-                  <Label htmlFor="authority-not-selected">Not selected</Label>
+                  <Label htmlFor="authority-not-selected">{t('di.notSelected')}</Label>
                 </div>
               </div>
             </RadioGroup>
@@ -366,10 +363,10 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
       {/* Information Understanding */}
       <Card>
         <CardContent className="p-4">
-          <h3 className="font-medium mb-4">Understand information used by the control operator to perform the general IT control</h3>
+          <h3 className="font-medium mb-4">{t('di.informationUsed')}</h3>
           <div>
             <p className="text-sm mb-3">
-              Is information used by the control operator to perform the general IT control?
+              {t('di.isInformationUsed')}
             </p>
             <RadioGroup 
               value={formData.information_used || ""} 
@@ -378,15 +375,15 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="info-yes" />
-                  <Label htmlFor="info-yes">Yes</Label>
+                  <Label htmlFor="info-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="info-no" />
-                  <Label htmlFor="info-no">No</Label>
+                  <Label htmlFor="info-no">{t('common.no')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="not-selected" id="info-not-selected" />
-                  <Label htmlFor="info-not-selected">Not selected</Label>
+                  <Label htmlFor="info-not-selected">{t('di.notSelected')}</Label>
                 </div>
               </div>
             </RadioGroup>
@@ -397,10 +394,9 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
       {/* Evaluate design and implementation */}
       <Card>
         <CardContent className="p-4">
-          <h3 className="font-medium mb-4">Evaluate design and implementation</h3>
+          <h3 className="font-medium mb-4">{t('di.evaluateDesign')}</h3>
           <p className="text-sm mb-4">
-            Document procedures performed, results of those procedures and evidence obtained for each control attribute to evaluate design and 
-            implementation of the general IT control
+            {t('di.documentProcedures')}
           </p>
           
           <div className="flex space-x-6 mb-4">
@@ -410,7 +406,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                 checked={formData.eval_inquiry || false}
                 onCheckedChange={(checked) => handleCheckboxChange('eval_inquiry', !!checked)}
               />
-              <Label htmlFor="inquiry">Inquiry</Label>
+              <Label htmlFor="inquiry">{t('di.inquiry')}</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox 
@@ -418,7 +414,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                 checked={formData.eval_inspection || false}
                 onCheckedChange={(checked) => handleCheckboxChange('eval_inspection', !!checked)}
               />
-              <Label htmlFor="inspection">Inspection</Label>
+              <Label htmlFor="inspection">{t('di.inspection')}</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox 
@@ -426,7 +422,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                 checked={formData.eval_observation || false}
                 onCheckedChange={(checked) => handleCheckboxChange('eval_observation', !!checked)}
               />
-              <Label htmlFor="observation">Observation</Label>
+              <Label htmlFor="observation">{t('di.observation')}</Label>
             </div>
           </div>
 
@@ -442,11 +438,11 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
       {/* Conclude on design and implementation */}
       <Card>
         <CardContent className="p-4 space-y-4">
-          <h3 className="font-medium mb-4">Conclude on the design and implementation of the general IT control</h3>
+          <h3 className="font-medium mb-4">{t('di.concludeDesign')}</h3>
           
           <div>
             <p className="text-sm mb-3">
-              <strong>Design:</strong> Is the general IT control capable of effectively addressing the related RAFITs?
+              <strong>{t('di.design')}:</strong> {t('di.designQuestion')}
             </p>
             <RadioGroup 
               value={formData.design_conclusion || ""} 
@@ -455,15 +451,15 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="design-yes" />
-                  <Label htmlFor="design-yes">Yes</Label>
+                  <Label htmlFor="design-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="design-no" />
-                  <Label htmlFor="design-no">No</Label>
+                  <Label htmlFor="design-no">{t('common.no')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="not-selected" id="design-not-selected" />
-                  <Label htmlFor="design-not-selected">Not selected</Label>
+                  <Label htmlFor="design-not-selected">{t('di.notSelected')}</Label>
                 </div>
               </div>
             </RadioGroup>
@@ -471,7 +467,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
 
           <div>
             <p className="text-sm mb-3">
-              <strong>Implementation:</strong> Does the general IT control exist and is the entity using it as designed?
+              <strong>{t('di.implementation')}:</strong> {t('di.implementationQuestion')}
             </p>
             <RadioGroup 
               value={formData.implementation_conclusion || ""} 
@@ -480,15 +476,15 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="impl-yes" />
-                  <Label htmlFor="impl-yes">Yes</Label>
+                  <Label htmlFor="impl-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="impl-no" />
-                  <Label htmlFor="impl-no">No</Label>
+                  <Label htmlFor="impl-no">{t('common.no')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="not-selected" id="impl-not-selected" />
-                  <Label htmlFor="impl-not-selected">Not selected</Label>
+                  <Label htmlFor="impl-not-selected">{t('di.notSelected')}</Label>
                 </div>
               </div>
             </RadioGroup>
@@ -496,7 +492,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
 
           <div className="pt-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm">We plan to perform test of operating effectiveness for this general IT control</span>
+              <span className="text-sm">{t('di.planOperatingTest')}</span>
               <div className="flex">
                 <Button
                   variant={formData.plan_operating_test === 'NO' ? 'default' : 'outline'}
@@ -504,7 +500,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                   className="rounded-r-none"
                   onClick={() => handleToggleChange('plan_operating_test', 'NO')}
                 >
-                  NO
+                  {t('common.no').toUpperCase()}
                 </Button>
                 <Button
                   variant={formData.plan_operating_test === 'YES' ? 'default' : 'outline'}
@@ -512,7 +508,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                   className="rounded-l-none"
                   onClick={() => handleToggleChange('plan_operating_test', 'YES')}
                 >
-                  YES
+                  {t('common.yes').toUpperCase()}
                 </Button>
               </div>
             </div>

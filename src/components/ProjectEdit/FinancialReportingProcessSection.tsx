@@ -95,68 +95,68 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
       [field]: value
     } : r));
   };
-  return <CommentableQuestion fieldId="financial_reporting_main" label="Financial Reporting Process">
+  return <CommentableQuestion fieldId="financial_reporting_main" label={t('financialReporting.title')}>
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>1. Financial reporting process</CardTitle>
+          <CardTitle>{t('financialReporting.processTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Understand the financial reporting process */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Understand the financial reporting process</h3>
+            <h3 className="text-lg font-medium">{t('financialReporting.understandProcess')}</h3>
             <p className="text-sm text-muted-foreground">
-              The following are relevant to the process and procedures to enter transaction totals into the general ledger:
+              {t('financialReporting.relevantProcess')}
             </p>
-            <Textarea placeholder="Document the process and procedures to enter transaction totals into the general ledger..." className="min-h-[100px]" />
+            <Textarea placeholder={t('financialReporting.documentProcess')} className="min-h-[100px]" />
           </div>
 
           {/* Translation of financial statements */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <Checkbox id="translation" />
-              <Label htmlFor="translation">Translation of financial statements</Label>
+              <Label htmlFor="translation">{t('financialReporting.translationStatements')}</Label>
             </div>
 
             <div className="space-y-2">
               <p className="text-sm">
-                Does the entity have separate transaction processing IT systems that were not included in our walkthroughs of related business processes?
+                {t('financialReporting.separateSystems')}
               </p>
               <RadioGroup>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="separate-systems-yes" />
-                  <Label htmlFor="separate-systems-yes">Yes</Label>
+                  <Label htmlFor="separate-systems-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="separate-systems-no" />
-                  <Label htmlFor="separate-systems-no">No</Label>
+                  <Label htmlFor="separate-systems-no">{t('common.no')}</Label>
                 </div>
               </RadioGroup>
             </div>
 
             <div className="space-y-2">
               <p className="text-sm">
-                Indicate which of the listed layers of technology comprising IT systems used in the financial reporting process are involved in the initiation, authorization, processing and recording of automated and/or manual journal entries
+                {t('financialReporting.indicateLayers')}
               </p>
               
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">IT Systems</span>
+                <span className="text-sm font-medium">{t('financialReporting.itSystems')}</span>
                 <Button size="sm" onClick={addItSystem} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Add
+                  {t('common.add')}
                 </Button>
               </div>
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Reference</TableHead>
-                    <TableHead>IT system layer(s)</TableHead>
-                    <TableHead>Description of IT system layer</TableHead>
-                    <TableHead>Layer type</TableHead>
-                    <TableHead>Outsourced</TableHead>
-                    <TableHead>Automated</TableHead>
-                    <TableHead>Manual</TableHead>
+                    <TableHead>{t('financialReporting.reference')}</TableHead>
+                    <TableHead>{t('financialReporting.systemLayers')}</TableHead>
+                    <TableHead>{t('financialReporting.descriptionLayer')}</TableHead>
+                    <TableHead>{t('financialReporting.layerType')}</TableHead>
+                    <TableHead>{t('financialReporting.outsourced')}</TableHead>
+                    <TableHead>{t('financialReporting.automated')}</TableHead>
+                    <TableHead>{t('financialReporting.manual')}</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -203,43 +203,43 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
           {/* Information system support */}
           <div className="space-y-2">
             <p className="text-sm">
-              Based on our understanding obtained of the entity's overall IT environment, the entity's business processes and financial reporting process, does the entity's information system appropriately support the preparation of the entity's financial statements in accordance with the applicable financial reporting framework?
+              {t('financialReporting.informationSystemSupport')}
             </p>
             <RadioGroup>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="info-system-yes" />
-                <Label htmlFor="info-system-yes">Yes</Label>
+                <Label htmlFor="info-system-yes">{t('common.yes')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="info-system-no" />
-                <Label htmlFor="info-system-no">No</Label>
+                <Label htmlFor="info-system-no">{t('common.no')}</Label>
               </div>
             </RadioGroup>
           </div>
 
           {/* Process understanding reference */}
           <div className="space-y-4">
-            <h4 className="font-medium bg-blue-900 text-white p-2 rounded">Process understanding reference</h4>
+            <h4 className="font-medium bg-blue-900 text-white p-2 rounded">{t('financialReporting.processReference')}</h4>
             
             <div className="flex items-center space-x-2">
               <Checkbox id="service-org" defaultChecked />
-              <Label htmlFor="service-org">The entity uses a service organization that is relevant to this process</Label>
+              <Label htmlFor="service-org">{t('financialReporting.serviceOrgRelevant')}</Label>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded">Add / link service organization(s)</span>
+                <span className="text-sm font-medium bg-blue-900 text-white p-2 rounded">{t('financialReporting.addLinkServiceOrg')}</span>
                 <Button size="sm" onClick={addServiceOrganization} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Add
+                  {t('common.add')}
                 </Button>
               </div>
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Description</TableHead>
+                    <TableHead>{t('common.id')}</TableHead>
+                    <TableHead>{t('common.description')}</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -264,113 +264,113 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
 
           {/* Accounting policies */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Understand the selection and application of accounting policies or principles</h3>
+            <h3 className="text-lg font-medium">{t('financialReporting.understandPolicies')}</h3>
             <p className="text-sm text-muted-foreground">
-              From the list below, select all the items that apply to entity's circumstances which are not already documented in accounting processes
+              {t('financialReporting.selectApply')}
             </p>
 
             <div className="space-y-3">
               <div className="flex items-center space-x-2">
                 <Checkbox id="significant-changes" />
                 <Label htmlFor="significant-changes" className="text-sm">
-                  There are significant changes in the entity's accounting policies or principles, financial reporting policies or principles, or disclosures
+                  {t('financialReporting.significantChanges')}
                 </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="new-revised" />
                 <Label htmlFor="new-revised" className="text-sm">
-                  There are new or revised financial reporting standards, laws or regulations that affect the entity's accounting policies or practices, including related disclosures
+                  {t('financialReporting.newRevised')}
                 </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="judgment-required" defaultChecked />
                 <Label htmlFor="judgment-required" className="text-sm">
-                  Judgment is required by management in the application of significant accounting policies or principles
+                  {t('financialReporting.judgmentRequired')}
                 </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="controversial-areas" />
                 <Label htmlFor="controversial-areas" className="text-sm">
-                  There are accounting policies or principles in controversial or emerging areas lacking authoritative guidance
+                  {t('financialReporting.controversialAreas')}
                 </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="methods-policies" />
                 <Label htmlFor="methods-policies" className="text-sm">
-                  There are policies or principles relating to methods the entity uses to account for significant and unusual transaction(s)
+                  {t('financialReporting.methodsPolicies')}
                 </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="alternatives" />
                 <Label htmlFor="alternatives" className="text-sm">
-                  There are alternatives in the selection and application of accounting principles
+                  {t('financialReporting.alternatives')}
                 </Label>
               </div>
 
               <div className="flex items-center space-x-2">
                 <Checkbox id="management-bias" />
                 <Label htmlFor="management-bias" className="text-sm">
-                  There are indicators of management bias present in the entity's selection and application of significant accounting policies or principles
+                  {t('financialReporting.managementBias')}
                 </Label>
               </div>
             </div>
 
             <div className="space-y-2">
               <p className="text-sm">
-                Document our understanding and include, if applicable, financial reporting standards, laws, and regulations that are new to the entity, setting out when and how the entity will adopt such requirements.
+                {t('financialReporting.documentUnderstanding')}
               </p>
-              <Textarea placeholder="Document understanding of financial reporting standards, laws, and regulations new to the entity..." className="min-h-[100px]" />
+              <Textarea placeholder={t('financialReporting.documentUnderstanding')} className="min-h-[100px]" />
             </div>
           </div>
 
           {/* Related parties */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Understand the entity's process for related parties</h3>
+            <h3 className="text-lg font-medium">{t('financialReporting.relatedParties')}</h3>
             
             <div className="space-y-2">
               <p className="text-sm">
-                Attach a listing of the entity's related parties, including our understanding of the nature of the entity's relationships and transactions with those related parties.
+                {t('financialReporting.attachListing')}
               </p>
               <div className="bg-blue-900 text-white p-2 rounded">
-                <span className="text-sm">Attachment</span>
+                <span className="text-sm">{t('common.attachment')}</span>
               </div>
             </div>
 
             <div className="space-y-2">
               <p className="text-sm">
-                Has management identified any arrangements or transactions with related parties?
+                {t('financialReporting.arrangementsQuestion')}
               </p>
               <RadioGroup>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="arrangements-yes" />
-                  <Label htmlFor="arrangements-yes">Yes</Label>
+                  <Label htmlFor="arrangements-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="arrangements-no" />
-                  <Label htmlFor="arrangements-no">No</Label>
+                  <Label htmlFor="arrangements-no">{t('common.no')}</Label>
                 </div>
               </RadioGroup>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium">Identify arrangements or transactions with related parties, including related party significant unusual transactions</span>
+                <span className="text-sm font-medium">{t('financialReporting.identifyArrangements')}</span>
                 <Button size="sm" onClick={addRelatedPartyArrangement} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Add
+                  {t('common.add')}
                 </Button>
               </div>
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Description</TableHead>
+                    <TableHead>{t('common.id')}</TableHead>
+                    <TableHead>{t('common.description')}</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -394,32 +394,32 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
 
             <div className="space-y-2">
               <p className="text-sm">
-                Does the entity have a process for authorizing and approving significant transactions and arrangements with related parties and a process for accounting for and disclosing relationships with related parties in the financial statements within the respective accounting process(es)?
+                {t('financialReporting.processAuthQuestion')}
               </p>
               <RadioGroup>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="process-yes" />
-                  <Label htmlFor="process-yes">Yes</Label>
+                  <Label htmlFor="process-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="process-no" />
-                  <Label htmlFor="process-no">No</Label>
+                  <Label htmlFor="process-no">{t('common.no')}</Label>
                 </div>
               </RadioGroup>
             </div>
 
             <div className="space-y-2">
               <p className="text-sm">
-                Have we obtained an understanding of the entity's process for authorizing and approving significant transactions and arrangements with related parties and the entity's process for accounting for and disclosing relationships with related parties in the financial statements within the respective accounting process(es)?
+                {t('financialReporting.understandingQuestion')}
               </p>
               <RadioGroup>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="understanding-yes" />
-                  <Label htmlFor="understanding-yes">Yes</Label>
+                  <Label htmlFor="understanding-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="understanding-no" />
-                  <Label htmlFor="understanding-no">No</Label>
+                  <Label htmlFor="understanding-no">{t('common.no')}</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -427,29 +427,29 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
 
           {/* Significant unusual transactions */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Understand the entity's process for identifying significant unusual transactions</h3>
+            <h3 className="text-lg font-medium">{t('financialReporting.unusualTransactions')}</h3>
             
             <div className="flex items-center space-x-2">
               <Checkbox id="service-org-unusual" />
-              <Label htmlFor="service-org-unusual">The entity uses a service organization that is relevant to this process</Label>
+              <Label htmlFor="service-org-unusual">{t('financialReporting.serviceOrgUsed')}</Label>
             </div>
 
-            <Textarea placeholder="Document understanding of entity's process for identifying significant unusual transactions..." className="min-h-[100px]" />
+            <Textarea placeholder={t('financialReporting.unusualTransactions')} className="min-h-[100px]" />
           </div>
 
           {/* Process understanding table */}
           <div className="space-y-4">
             <div className="bg-blue-900 text-white p-2 rounded flex justify-between">
-              <span className="font-medium">Process understanding</span>
-              <span className="font-medium">Reference</span>
+              <span className="font-medium">{t('financialReporting.processUnderstanding')}</span>
+              <span className="font-medium">{t('common.reference')}</span>
             </div>
             
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Process</TableHead>
-                  <TableHead>Walkthrough</TableHead>
-                  <TableHead>Financial Statement Making</TableHead>
+                  <TableHead>{t('businessProcesses.process')}</TableHead>
+                  <TableHead>{t('financialReporting.walkthrough')}</TableHead>
+                  <TableHead>{t('financialReporting.financialStatementMaking')}</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -457,13 +457,13 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 <TableRow>
                   <TableCell>
                     <div className="text-sm">
-                      Understand the entity's process to identify, authorize, and approve significant unusual transactions.
+                      {t('financialReporting.understandProcess2')}
                     </div>
                   </TableCell>
-                  <TableCell>Walkthrough</TableCell>
+                  <TableCell>{t('financialReporting.walkthrough')}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <span>Financial Statement Making</span>
+                      <span>{t('financialReporting.financialStatementMaking')}</span>
                       <Button variant="ghost" size="sm">
                         <span className="text-blue-600">🔗</span>
                       </Button>
@@ -474,13 +474,13 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 <TableRow>
                   <TableCell>
                     <div className="text-sm">
-                      Understand the entity's process to identify, authorize, and approve significant unusual transactions.
+                      {t('financialReporting.understandProcess2')}
                     </div>
                   </TableCell>
-                  <TableCell>Walkthrough</TableCell>
+                  <TableCell>{t('financialReporting.walkthrough')}</TableCell>
                   <TableCell>
                     <div className="flex items-center space-x-2">
-                      <span>Financial Statement Making</span>
+                      <span>{t('financialReporting.financialStatementMaking')}</span>
                       <Button variant="ghost" size="sm">
                         <span className="text-blue-600">🔗</span>
                       </Button>
@@ -494,7 +494,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
             <div className="flex items-center space-x-2">
               <Checkbox id="identify-sut" />
               <Label htmlFor="identify-sut" className="text-sm">
-                Identify significant unusual transactions (except for related party SUTs identified based on our inquiries with management)
+                {t('financialReporting.identifySut')}
               </Label>
             </div>
           </div>
@@ -502,36 +502,36 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
           {/* Risk assessment section */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">
-              Assess risk of misstatement, identify PRPs and evaluate controls related to the identification of related parties and significant unusual transactions
+              {t('financialReporting.riskAssessment')}
             </h3>
             
-            <Textarea placeholder="Document assessment of risks related to identification of related parties and significant unusual transactions..." className="min-h-[100px]" />
+            <Textarea placeholder={t('financialReporting.riskAssessment')} className="min-h-[100px]" />
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
                 
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  RM LIBRARY
+                  {t('financialReporting.rmLibrary')}
                 </Button>
               </div>
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>CAR</TableHead>
+                    <TableHead>{t('common.id')}</TableHead>
+                    <TableHead>{t('common.description')}</TableHead>
+                    <TableHead>{t('financialReporting.car')}</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <Input placeholder="Risk ID" />
+                      <Input placeholder={t('financialReporting.riskId')} />
                     </TableCell>
                     <TableCell>
-                      <Input placeholder="Risk description" />
+                      <Input placeholder={t('financialReporting.riskDescription')} />
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -553,11 +553,11 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
           {/* Evaluate related parties section */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">
-              Evaluate whether all related parties, relationships and transactions have been identified
+              {t('financialReporting.evaluateRelatedParties')}
             </h3>
             
             <p className="text-sm text-muted-foreground">
-              To address the identified risks, perform procedures to evaluate whether the entity has identified its related parties, relationships and transactions:
+              {t('financialReporting.performProcedures')}
             </p>
 
             <div className="space-y-2">
@@ -565,25 +565,25 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Add
+                  {t('common.add')}
                 </Button>
               </div>
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Procedure</TableHead>
-                    <TableHead>Result</TableHead>
+                    <TableHead>{t('financialReporting.procedure')}</TableHead>
+                    <TableHead>{t('financialReporting.result')}</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <Input placeholder="Describe procedure to evaluate related parties identification" />
+                      <Input placeholder={t('financialReporting.procedure')} />
                     </TableCell>
                     <TableCell>
-                      <Input placeholder="Document procedure result" />
+                      <Input placeholder={t('financialReporting.result')} />
                     </TableCell>
                     <TableCell>
                       <Button variant="ghost" size="sm">
@@ -598,32 +598,32 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
             <div className="space-y-4">
               <div className="space-y-2">
                 <p className="text-sm">
-                  Are additional procedures necessary to obtain sufficient appropriate evidence?
+                  {t('financialReporting.additionalProcedures')}
                 </p>
                 <RadioGroup>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id="additional-procedures-yes" />
-                    <Label htmlFor="additional-procedures-yes">Yes</Label>
+                    <Label htmlFor="additional-procedures-yes">{t('common.yes')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="no" id="additional-procedures-no" />
-                    <Label htmlFor="additional-procedures-no">No</Label>
+                    <Label htmlFor="additional-procedures-no">{t('common.no')}</Label>
                   </div>
                 </RadioGroup>
               </div>
 
               <div className="space-y-2">
                 <p className="text-sm">
-                  Did we discover related parties, or significant related party transactions that management did not identify or disclose to us?
+                  {t('financialReporting.discoverRelated')}
                 </p>
                 <RadioGroup>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id="discover-related-yes" />
-                    <Label htmlFor="discover-related-yes">Yes</Label>
+                    <Label htmlFor="discover-related-yes">{t('common.yes')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="no" id="discover-related-no" />
-                    <Label htmlFor="discover-related-no">No</Label>
+                    <Label htmlFor="discover-related-no">{t('common.no')}</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -633,7 +633,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
           {/* Design response section */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">
-              Design a response to address the RMM(s) related to subsequent events
+              {t('financialReporting.designResponse')}
             </h3>
 
             <div className="space-y-2">
@@ -641,26 +641,26 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
                 
                 <Button size="sm" onClick={() => {}} className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  RM LIBRARY
+                  {t('financialReporting.rmLibrary')}
                 </Button>
               </div>
 
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>CAR</TableHead>
+                    <TableHead>{t('common.id')}</TableHead>
+                    <TableHead>{t('common.description')}</TableHead>
+                    <TableHead>{t('financialReporting.car')}</TableHead>
                     <TableHead></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
                     <TableCell>
-                      <Input placeholder="Response ID" />
+                      <Input placeholder={t('financialReporting.responseId')} />
                     </TableCell>
                     <TableCell>
-                      <Input placeholder="Response description for subsequent events RMM" />
+                      <Input placeholder={t('financialReporting.responseDescription')} />
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
@@ -680,16 +680,16 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
 
             <div className="space-y-2">
               <p className="text-sm">
-                Sufficient appropriate audit evidence obtained for all RMMs associated with the subsequent events:
+                {t('financialReporting.sufficientEvidence')}
               </p>
               <RadioGroup>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="yes" id="sufficient-evidence-yes" />
-                  <Label htmlFor="sufficient-evidence-yes">Yes</Label>
+                  <Label htmlFor="sufficient-evidence-yes">{t('common.yes')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="no" id="sufficient-evidence-no" />
-                  <Label htmlFor="sufficient-evidence-no">No</Label>
+                  <Label htmlFor="sufficient-evidence-no">{t('common.no')}</Label>
                 </div>
               </RadioGroup>
             </div>
