@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import OTPVerification from '@/components/OTPVerification';
 import { isValidCompanyEmail, ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
+import { useTranslation } from '@/contexts/TranslationContext';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
   
   // OTP state
   const [otpStep, setOtpStep] = useState(false);
@@ -99,14 +101,14 @@ const Login = () => {
       await verifyCredentials(email, password);
       
       toast({
-        title: 'Verification Code Sent',
-        description: 'Please check your email for the verification code'
+        title: t('login.verificationCodeSent'),
+        description: t('login.checkEmail')
       });
       
       setOtpStep(true);
     } catch (error: any) {
       toast({
-        title: 'Error',
+        title: t('common.error') || 'Error',
         description: error.message || 'Failed to login',
         variant: 'destructive'
       });
@@ -123,8 +125,8 @@ const Login = () => {
       await verifyOTPAndLogin(otp);
       
       toast({
-        title: 'Success',
-        description: 'Logged in successfully'
+        title: t('common.success') || 'Success',
+        description: t('login.loggedIn') || 'Logged in successfully'
       });
     } catch (error: any) {
       setOtpError(error.message || 'Invalid verification code');
@@ -143,12 +145,12 @@ const Login = () => {
       await sendOTP();
       
       toast({
-        title: 'Code Sent',
-        description: 'A new verification code has been sent to your email'
+        title: t('login.codeSent') || 'Code Sent',
+        description: t('login.newCodeSent') || 'A new verification code has been sent to your email'
       });
     } catch (error: any) {
       toast({
-        title: 'Error',
+        title: t('common.error') || 'Error',
         description: error.message || 'Failed to resend code',
         variant: 'destructive'
       });
@@ -168,8 +170,8 @@ const Login = () => {
     
     if (!resetEmailValid) {
       toast({
-        title: 'Invalid Email',
-        description: `Password reset is only available for ${ALLOWED_EMAIL_DOMAIN} emails.`,
+        title: t('login.invalidEmail'),
+        description: `${t('login.passwordResetRestricted')} ${ALLOWED_EMAIL_DOMAIN} emails.`,
         variant: 'destructive'
       });
       return;
@@ -179,14 +181,14 @@ const Login = () => {
     try {
       await sendPasswordResetEmail(resetEmail);
       toast({
-        title: 'Reset Email Sent',
-        description: 'Please check your email for password reset instructions.'
+        title: t('login.resetEmailSent'),
+        description: t('login.checkEmailReset')
       });
       setForgotPasswordOpen(false);
       setResetEmail('');
     } catch (error: any) {
       toast({
-        title: 'Error',
+        title: t('common.error') || 'Error',
         description: error.message || 'Failed to send password reset email',
         variant: 'destructive'
       });
@@ -199,12 +201,12 @@ const Login = () => {
   useEffect(() => {
     if (authError) {
       toast({
-        title: 'Authentication Error',
+        title: t('login.authenticationError') || 'Authentication Error',
         description: authError,
         variant: 'destructive'
       });
     }
-  }, [authError, toast]);
+  }, [authError, toast, t]);
 
   // Show loading if auth is still initializing
   if (authLoading) {
@@ -212,7 +214,7 @@ const Login = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
         </div>
       </div>
     );
@@ -244,19 +246,19 @@ const Login = () => {
               className="w-32 h-8 object-contain" 
             />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">Audit Management System</h2>
-          <p className="mt-2 text-sm text-gray-600">Sign in to your account</p>
+          <h2 className="text-2xl font-bold text-gray-900">{t('login.auditManagementSystem')}</h2>
+          <p className="mt-2 text-sm text-gray-600">{t('login.signInToAccount')}</p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
-            <CardDescription>Enter your email and password to access the system</CardDescription>
+            <CardTitle>{t('login.signIn')}</CardTitle>
+            <CardDescription>{t('login.enterCredentials')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('login.email')}</Label>
                 <Input 
                   id="email" 
                   type="email" 
@@ -269,12 +271,12 @@ const Login = () => {
                 {showDomainError && (
                   <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
                     <AlertCircle className="h-3.5 w-3.5" />
-                    <span>Access restricted to BUMEX employees only. Please use your {ALLOWED_EMAIL_DOMAIN} email.</span>
+                    <span>{t('login.accessRestricted')} {ALLOWED_EMAIL_DOMAIN} email.</span>
                   </div>
                 )}
               </div>
               <div>
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('login.password')}</Label>
                 <div className="relative mt-1">
                   <Input 
                     id="password" 
@@ -282,7 +284,7 @@ const Login = () => {
                     value={password} 
                     onChange={e => setPassword(e.target.value)} 
                     required 
-                    placeholder="Enter your password"
+                    placeholder={t('login.password')}
                     className="pr-10"
                   />
                   <button
@@ -304,11 +306,11 @@ const Login = () => {
                   htmlFor="remember-me" 
                   className="text-sm font-normal cursor-pointer"
                 >
-                  Remember me
+                  {t('login.rememberMe')}
                 </Label>
               </div>
               <Button type="submit" className="w-full" disabled={loading || (email.includes('@') && !isValidEmail)}>
-                {loading ? 'Signing in...' : 'Sign In'}
+                {loading ? t('login.signingIn') : t('login.signIn')}
               </Button>
               
               <div className="text-center mt-4">
@@ -317,7 +319,7 @@ const Login = () => {
                   onClick={() => setForgotPasswordOpen(true)}
                   className="text-sm text-primary hover:underline"
                 >
-                  Forgot your password?
+                  {t('login.forgotPassword')}
                 </button>
               </div>
             </form>
@@ -326,14 +328,14 @@ const Login = () => {
             <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Reset Password</DialogTitle>
+                  <DialogTitle>{t('login.resetPassword')}</DialogTitle>
                   <DialogDescription>
-                    Enter your {ALLOWED_EMAIL_DOMAIN} email address and we'll send you a link to reset your password.
+                    {t('login.resetPasswordDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleForgotPassword} className="space-y-4">
                   <div>
-                    <Label htmlFor="reset-email">Email</Label>
+                    <Label htmlFor="reset-email">{t('login.email')}</Label>
                     <Input
                       id="reset-email"
                       type="email"
@@ -346,7 +348,7 @@ const Login = () => {
                     {showResetDomainError && (
                       <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
                         <AlertCircle className="h-3.5 w-3.5" />
-                        <span>Access restricted to BUMEX employees only. Please use your {ALLOWED_EMAIL_DOMAIN} email.</span>
+                        <span>{t('login.accessRestricted')} {ALLOWED_EMAIL_DOMAIN} email.</span>
                       </div>
                     )}
                   </div>
@@ -355,7 +357,7 @@ const Login = () => {
                     className="w-full" 
                     disabled={resetLoading || (resetEmail.includes('@') && !resetEmailValid)}
                   >
-                    {resetLoading ? 'Sending...' : 'Send Reset Link'}
+                    {resetLoading ? t('login.sending') : t('login.sendResetLink')}
                   </Button>
                 </form>
               </DialogContent>

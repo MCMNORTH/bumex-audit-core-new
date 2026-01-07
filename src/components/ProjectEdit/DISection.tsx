@@ -132,21 +132,21 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                     <Input
                       value={row.rafit}
                       onChange={(e) => updateRafitRow(row.id, 'rafit', e.target.value)}
-                      placeholder="Enter RAFIT"
+                      placeholder={t('di.rafit')}
                     />
                   </TableCell>
                   <TableCell className="p-2">
                     <Input
                       value={row.itLayer}
                       onChange={(e) => updateRafitRow(row.id, 'itLayer', e.target.value)}
-                      placeholder="Enter IT layer"
+                      placeholder={t('di.itLayer')}
                     />
                   </TableCell>
                   <TableCell className="p-2">
                     <Input
                       value={row.howAddresses}
                       onChange={(e) => updateRafitRow(row.id, 'howAddresses', e.target.value)}
-                      placeholder="How it addresses the RAFIT"
+                      placeholder={t('di.howAddresses')}
                     />
                   </TableCell>
                   <TableCell className="p-2">
@@ -299,14 +299,14 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
                         <Input
                           value={row.role}
                           onChange={(e) => updateOperatorRow(row.id, 'role', e.target.value)}
-                          placeholder="Enter role/name"
+                          placeholder={t('di.controlOperatorRole')}
                         />
                       </TableCell>
                       <TableCell className="p-2">
                         <Input
                           value={row.authority}
                           onChange={(e) => updateOperatorRow(row.id, 'authority', e.target.value)}
-                          placeholder="Assess authority and competence"
+                          placeholder={t('di.assessAuthority')}
                         />
                       </TableCell>
                       <TableCell className="p-2">

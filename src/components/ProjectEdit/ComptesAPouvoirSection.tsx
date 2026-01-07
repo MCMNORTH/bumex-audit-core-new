@@ -96,7 +96,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_deficiencies', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-deficiencies" className="text-sm">
-                  Deficiencies were identified in CERAMIC that relate to this general IT control
+                  {t('comptesAPouvoir.deficienciesCeramic')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -106,7 +106,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_infrequent', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-infrequent" className="text-sm">
-                  - The general IT control operates infrequently
+                  {t('comptesAPouvoir.operatesInfrequently')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -116,7 +116,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_competence', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-competence" className="text-sm">
-                  - Issues with the competence of personnel / change in key personnel performing the general IT control or monitoring its performance
+                  {t('comptesAPouvoir.competenceIssues')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -126,7 +126,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_complex', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-complex" className="text-sm">
-                  - Nature of the general IT control is complex
+                  {t('comptesAPouvoir.complexNature')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -136,7 +136,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_prior_deficiencies', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-prior-deficiencies" className="text-sm">
-                  - Deficiencies identified in prior periods
+                  {t('comptesAPouvoir.priorDeficiencies')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -146,7 +146,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_changes', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-changes" className="text-sm">
-                  - Changes to the general IT control since it was previously tested
+                  {t('comptesAPouvoir.changesSinceTesting')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -156,7 +156,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_judgments', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-judgments" className="text-sm">
-                  - Significance of judgments made in the general IT control operation
+                  {t('comptesAPouvoir.significanceJudgments')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -166,7 +166,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_rawtc_other', checked as boolean)}
                 />
                 <Label htmlFor="rawtc-other" className="text-sm">
-                  Other factor(s)
+                  {t('comptesAPouvoir.otherFactors')}
                 </Label>
               </div>
             </div>
