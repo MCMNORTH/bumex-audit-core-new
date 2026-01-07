@@ -11,6 +11,7 @@ import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { ProjectFormData } from '@/types/formData';
 import { getProjectRole, canUserReviewSection, getSectionReviewIndicator } from '@/utils/permissions';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { 
   FolderOpen, 
   Users, 
@@ -41,6 +42,7 @@ const Dashboard = () => {
   const { user } = useAuth();
   const { clients, users, loading: refLoading } = useReferenceData();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [userProjects, setUserProjects] = useState<ProjectWithRole[]>([]);
   const [readyForReviewSections, setReadyForReviewSections] = useState<Array<{
     projectId: string;
@@ -218,19 +220,19 @@ const Dashboard = () => {
   const getRoleLabel = (role: string | null) => {
     switch (role) {
       case 'lead_developer':
-        return 'Lead Developer';
+        return t('dashboard.roles.leadDeveloper');
       case 'lead_partner':
-        return 'Lead Partner';
+        return t('dashboard.roles.leadPartner');
       case 'partner':
-        return 'Partner';
+        return t('dashboard.roles.partner');
       case 'manager':
-        return 'Manager';
+        return t('dashboard.roles.manager');
       case 'in_charge':
-        return 'In Charge';
+        return t('dashboard.roles.inCharge');
       case 'staff':
-        return 'Staff';
+        return t('dashboard.roles.staff');
       default:
-        return 'Unknown';
+        return t('dashboard.roles.unknown');
     }
   };
 
@@ -256,7 +258,7 @@ const Dashboard = () => {
       <MainLayout>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -278,8 +280,8 @@ const Dashboard = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-600">Welcome back, {user?.first_name}! Here's your project overview.</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+            <p className="text-gray-600">{t('dashboard.welcomeBack')}, {user?.first_name}! {t('dashboard.projectOverview')}</p>
           </div>
         </div>
 
@@ -289,10 +291,10 @@ const Dashboard = () => {
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-2">
                 <AlertTriangle className="h-5 w-5 text-blue-600" />
-                <CardTitle className="text-blue-900">Ready for Review</CardTitle>
+                <CardTitle className="text-blue-900">{t('dashboard.readyForReview')}</CardTitle>
               </div>
               <CardDescription className="text-blue-700">
-                {stats.readyForReviewCount} sections are ready for your review
+                {stats.readyForReviewCount} {t('dashboard.sectionsReady')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -309,7 +311,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={section.level === 'manager' ? 'destructive' : 'secondary'}>
-                        {section.level === 'manager' ? 'Manager+' : 'In Charge+'}
+                        {section.level === 'manager' ? t('dashboard.managerPlus') : t('dashboard.inChargePlus')}
                       </Badge>
                       <ChevronRight className="h-4 w-4 text-gray-400" />
                     </div>
@@ -317,7 +319,7 @@ const Dashboard = () => {
                 ))}
                 {readyForReviewSections.length > 4 && (
                   <Button variant="outline" className="w-full mt-2" onClick={handleViewAllReadySections}>
-                    View All {stats.readyForReviewCount} Ready Sections
+                    {t('dashboard.viewAll')} {stats.readyForReviewCount} {t('dashboard.sectionsReady')}
                   </Button>
                 )}
               </div>
@@ -328,10 +330,10 @@ const Dashboard = () => {
             <CardHeader className="pb-4">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-5 w-5 text-gray-400" />
-                <CardTitle className="text-gray-600">Ready for Review</CardTitle>
+                <CardTitle className="text-gray-600">{t('dashboard.readyForReview')}</CardTitle>
               </div>
               <CardDescription className="text-gray-500">
-                No sections are currently ready for your review
+                {t('dashboard.noSectionsReady')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -340,7 +342,7 @@ const Dashboard = () => {
                   <CheckCircle className="h-12 w-12 mx-auto" />
                 </div>
                 <p className="text-sm text-gray-500">
-                  All caught up! Check back later for new sections to review.
+                  {t('dashboard.allCaughtUp')}
                 </p>
               </div>
             </CardContent>
@@ -353,7 +355,7 @@ const Dashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">My Projects</p>
+                  <p className="text-sm font-medium text-gray-600">{t('dashboard.myProjects')}</p>
                   <p className="text-2xl font-bold text-gray-900">{stats.totalAssignedProjects}</p>
                 </div>
                 <FolderOpen className="h-6 w-6 text-blue-600" />
@@ -366,7 +368,7 @@ const Dashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Lead Dev</p>
+                    <p className="text-sm font-medium text-gray-600">{t('dashboard.leadDev')}</p>
                     <p className="text-2xl font-bold text-purple-600">{stats.leadDeveloperProjects}</p>
                   </div>
                   <Star className="h-6 w-6 text-purple-600" />
@@ -380,7 +382,7 @@ const Dashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Lead Partner</p>
+                    <p className="text-sm font-medium text-gray-600">{t('dashboard.leadPartner')}</p>
                     <p className="text-2xl font-bold text-red-600">{stats.leadPartnerProjects}</p>
                   </div>
                   <Users className="h-6 w-6 text-red-600" />
@@ -394,7 +396,7 @@ const Dashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">Manager</p>
+                    <p className="text-sm font-medium text-gray-600">{t('dashboard.manager')}</p>
                     <p className="text-2xl font-bold text-blue-600">{stats.managerProjects}</p>
                   </div>
                   <TrendingUp className="h-6 w-6 text-blue-600" />
@@ -408,7 +410,7 @@ const Dashboard = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600">In Charge</p>
+                    <p className="text-sm font-medium text-gray-600">{t('dashboard.inCharge')}</p>
                     <p className="text-2xl font-bold text-green-600">{stats.inChargeProjects}</p>
                   </div>
                   <FileText className="h-6 w-6 text-green-600" />
@@ -421,7 +423,7 @@ const Dashboard = () => {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-blue-700">Ready to Review</p>
+                  <p className="text-sm font-medium text-blue-700">{t('dashboard.readyToReview')}</p>
                   <p className="text-2xl font-bold text-blue-600">{stats.readyForReviewCount}</p>
                 </div>
                 <PenTool className="h-6 w-6 text-blue-600" />
@@ -435,11 +437,11 @@ const Dashboard = () => {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>My Projects</CardTitle>
-                <CardDescription>Projects where you have assigned roles</CardDescription>
+                <CardTitle>{t('dashboard.myProjects')}</CardTitle>
+                <CardDescription>{t('dashboard.projectsAssigned')}</CardDescription>
               </div>
               <Button variant="outline" onClick={() => navigate('/projects')}>
-                View All
+                {t('dashboard.viewAll')}
               </Button>
             </div>
           </CardHeader>
@@ -479,9 +481,9 @@ const Dashboard = () => {
             ) : (
               <div className="text-center py-12">
                 <FolderOpen className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No assigned projects</h3>
+                <h3 className="mt-2 text-sm font-medium text-gray-900">{t('dashboard.noAssignedProjects')}</h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  You haven't been assigned to any projects yet.
+                  {t('dashboard.notAssignedYet')}
                 </p>
               </div>
             )}

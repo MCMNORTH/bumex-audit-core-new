@@ -13,11 +13,13 @@ import { db } from '@/lib/firebase';
 import { Client } from '@/types';
 import { Plus, Search, Building, Mail, Globe } from 'lucide-react';
 import { useLogging } from '@/hooks/useLogging';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Clients = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { logClientAction } = useLogging();
+  const { t } = useTranslation();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -69,8 +71,8 @@ const Clients = () => {
     } catch (error) {
       console.error('Error fetching clients:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch clients',
+        title: t('common.error') || 'Error',
+        description: t('clients.fetchError') || 'Failed to fetch clients',
         variant: 'destructive',
       });
     } finally {
@@ -91,8 +93,8 @@ const Clients = () => {
         await logClientAction.update(editingClient.id, `Client ${formData.name} updated`);
         
         toast({
-          title: 'Success',
-          description: 'Client updated successfully',
+          title: t('common.success') || 'Success',
+          description: t('clients.updateSuccess') || 'Client updated successfully',
         });
       } else {
         const docRef = await addDoc(collection(db, 'clients'), {
@@ -104,8 +106,8 @@ const Clients = () => {
         await logClientAction.create(docRef.id, `Client ${formData.name} created`);
         
         toast({
-          title: 'Success',
-          description: 'Client created successfully',
+          title: t('common.success') || 'Success',
+          description: t('clients.createSuccess') || 'Client created successfully',
         });
       }
       
@@ -116,8 +118,8 @@ const Clients = () => {
     } catch (error) {
       console.error('Error saving client:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to save client',
+        title: t('common.error') || 'Error',
+        description: t('clients.saveError') || 'Failed to save client',
         variant: 'destructive',
       });
     }
@@ -154,7 +156,7 @@ const Clients = () => {
       <MainLayout>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('clients.title')}</h1>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
@@ -176,50 +178,50 @@ const Clients = () => {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Clients</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('clients.title')}</h1>
           {canCreateClient && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Client
+                  {t('clients.addClient')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>{editingClient ? 'Edit Client' : 'Add New Client'}</DialogTitle>
+                  <DialogTitle>{editingClient ? t('clients.editClient') : t('clients.addClient')}</DialogTitle>
                   <DialogDescription>
-                    {editingClient ? 'Update client information' : 'Create a new client for audit engagements'}
+                    {editingClient ? t('clients.updateDescription') : t('clients.createDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="name">Client Name</Label>
+                    <Label htmlFor="name">{t('clients.clientName')}</Label>
                     <Input
                       id="name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       required
-                      placeholder="Enter client name"
+                      placeholder={t('clients.clientName')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="client_id">Client ID (GIS entity ID)</Label>
+                    <Label htmlFor="client_id">{t('clients.clientId')}</Label>
                     <Input
                       id="client_id"
                       value={formData.client_id}
                       onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
-                      placeholder="Enter client ID"
+                      placeholder={t('clients.clientId')}
                     />
                   </div>
                   <div>
-                    <Label htmlFor="country">Country</Label>
+                    <Label htmlFor="country">{t('clients.country')}</Label>
                     <Select
                       value={formData.country}
                       onValueChange={(value) => setFormData({ ...formData, country: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select country" />
+                        <SelectValue placeholder={t('clients.country')} />
                       </SelectTrigger>
                       <SelectContent>
                         {countries.map((country) => (
@@ -231,13 +233,13 @@ const Clients = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="sector">Sector</Label>
+                    <Label htmlFor="sector">{t('clients.sector')}</Label>
                     <Select
                       value={formData.sector}
                       onValueChange={(value) => setFormData({ ...formData, sector: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select sector" />
+                        <SelectValue placeholder={t('clients.sector')} />
                       </SelectTrigger>
                       <SelectContent>
                         {sectors.map((sector) => (
@@ -249,22 +251,22 @@ const Clients = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="contact_email">Contact Email</Label>
+                    <Label htmlFor="contact_email">{t('clients.contactEmail')}</Label>
                     <Input
                       id="contact_email"
                       type="email"
                       value={formData.contact_email}
                       onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
                       required
-                      placeholder="Enter contact email"
+                      placeholder={t('clients.contactEmail')}
                     />
                   </div>
                   <div className="flex justify-end space-x-2">
                     <Button type="button" variant="outline" onClick={handleCloseDialog}>
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button type="submit">
-                      {editingClient ? 'Update' : 'Create'} Client
+                      {editingClient ? t('common.edit') : t('common.add')} {t('clients.title').slice(0, -1)}
                     </Button>
                   </div>
                 </form>
@@ -277,7 +279,7 @@ const Clients = () => {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search clients..."
+              placeholder={t('clients.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -319,9 +321,9 @@ const Clients = () => {
         {filteredClients.length === 0 && (
           <div className="text-center py-12">
             <Building className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No clients found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('clients.noClientsFound')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              {searchTerm ? 'Try adjusting your search terms' : 'Get started by creating a new client'}
+              {searchTerm ? t('clients.tryAdjusting') : t('clients.getStarted')}
             </p>
           </div>
         )}

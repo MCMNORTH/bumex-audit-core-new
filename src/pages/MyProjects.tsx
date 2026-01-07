@@ -12,12 +12,14 @@ import { collection, getDocs, query, orderBy, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { Search, FolderOpen, Calendar, Users, Building, Briefcase } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const MyProjects = () => {
   const { user } = useAuth();
   const { clients, loading: refLoading } = useReferenceData();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [projects, setProjects] = useState<(Project & { client_name?: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -71,8 +73,8 @@ const MyProjects = () => {
     } catch (error) {
       console.error('Error fetching my projects:', error);
       toast({
-        title: 'Error',
-        description: 'Failed to fetch your projects',
+        title: t('common.error') || 'Error',
+        description: t('myProjects.fetchError') || 'Failed to fetch your projects',
         variant: 'destructive',
       });
     } finally {
@@ -100,19 +102,19 @@ const MyProjects = () => {
   };
 
   const getUserRole = (project: Project) => {
-    if (!user || !project.team_assignments) return 'Team Member';
+    if (!user || !project.team_assignments) return t('myProjects.roles.teamMember');
     
     const assignments = project.team_assignments;
     
-    if (assignments.lead_partner_id === user.id) return 'Lead Partner';
-    if (assignments.partner_ids?.includes(user.id)) return 'Partner';
-    if (assignments.manager_ids?.includes(user.id)) return 'Manager';
-    if (assignments.in_charge_ids?.includes(user.id)) return 'In Charge';
-    if (assignments.staff_ids?.includes(user.id)) return 'Staff';
-    if (project.lead_developer_id === user.id) return 'Lead Developer';
-    if (project.assigned_to?.includes(user.id)) return 'Team Member';
+    if (assignments.lead_partner_id === user.id) return t('myProjects.roles.leadPartner');
+    if (assignments.partner_ids?.includes(user.id)) return t('myProjects.roles.partner');
+    if (assignments.manager_ids?.includes(user.id)) return t('myProjects.roles.manager');
+    if (assignments.in_charge_ids?.includes(user.id)) return t('myProjects.roles.inCharge');
+    if (assignments.staff_ids?.includes(user.id)) return t('myProjects.roles.staff');
+    if (project.lead_developer_id === user.id) return t('myProjects.roles.leadDeveloper');
+    if (project.assigned_to?.includes(user.id)) return t('myProjects.roles.teamMember');
     
-    return 'Team Member';
+    return t('myProjects.roles.teamMember');
   };
 
   const filteredProjects = projects.filter(project => {
@@ -128,7 +130,7 @@ const MyProjects = () => {
       <MainLayout>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">My Projects</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('myProjects.title')}</h1>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {[...Array(4)].map((_, i) => (
@@ -151,8 +153,8 @@ const MyProjects = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Projects</h1>
-            <p className="text-gray-600">Projects where you are assigned as a team member</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t('myProjects.title')}</h1>
+            <p className="text-gray-600">{t('myProjects.description')}</p>
           </div>
         </div>
 
@@ -160,7 +162,7 @@ const MyProjects = () => {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder="Search projects..."
+              placeholder={t('myProjects.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -168,14 +170,14 @@ const MyProjects = () => {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('myProjects.filterByStatus')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="new">New</SelectItem>
-              <SelectItem value="inprogress">In Progress</SelectItem>
-              <SelectItem value="closed">Closed</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+              <SelectItem value="all">{t('myProjects.allStatus')}</SelectItem>
+              <SelectItem value="new">{t('status.new')}</SelectItem>
+              <SelectItem value="inprogress">{t('status.inprogress')}</SelectItem>
+              <SelectItem value="closed">{t('status.closed')}</SelectItem>
+              <SelectItem value="archived">{t('status.archived')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -186,12 +188,12 @@ const MyProjects = () => {
               <div className="text-center">
                 <Briefcase className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {searchTerm || statusFilter !== 'all' ? 'No projects found' : 'No projects assigned'}
+                  {searchTerm || statusFilter !== 'all' ? t('myProjects.noProjectsFound') : t('myProjects.noProjectsAssigned')}
                 </h3>
                 <p className="text-gray-600">
                   {searchTerm || statusFilter !== 'all' 
-                    ? 'Try adjusting your search criteria.'
-                    : 'You are not currently assigned to any projects.'
+                    ? t('myProjects.tryAdjusting')
+                    : t('myProjects.notAssigned')
                   }
                 </p>
               </div>
@@ -223,7 +225,7 @@ const MyProjects = () => {
                   <div className="space-y-2 text-sm text-gray-600">
                     <div className="flex items-center">
                       <Users className="h-4 w-4 mr-2" />
-                      <span>Your Role: {getUserRole(project)}</span>
+                      <span>{t('myProjects.yourRole')}: {getUserRole(project)}</span>
                     </div>
                     <div className="flex items-center">
                       <FolderOpen className="h-4 w-4 mr-2" />
