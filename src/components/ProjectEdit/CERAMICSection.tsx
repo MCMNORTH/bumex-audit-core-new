@@ -55,17 +55,17 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
   };
 
   return (
-    <CommentableQuestion fieldId="ceramic_main" label="CERAMIC Components">
+    <CommentableQuestion fieldId="ceramic_main" label={t('ceramic.title')}>
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">
-          Obtain an understanding of the CERAMIC components
+          {t('ceramic.obtainUnderstanding')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
           <Label className="text-sm font-medium">
-            Are those charged with governance separate from management (at least one member of those charged with governance is not a member of management)?
+            {t('ceramic.governanceSeparate')}
           </Label>
           <RadioGroup
             value={formData.ceramic_governance_separate || ''}
@@ -74,25 +74,25 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="yes" id="governance-yes" />
-              <Label htmlFor="governance-yes">YES</Label>
+              <Label htmlFor="governance-yes">{t('common.yes').toUpperCase()}</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="no" id="governance-no" />
-              <Label htmlFor="governance-no">NO</Label>
+              <Label htmlFor="governance-no">{t('common.no').toUpperCase()}</Label>
             </div>
           </RadioGroup>
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-4">
-            <Label className="text-sm font-medium">Document inquiries performed to obtain an understanding of the CERAMIC components</Label>
+            <Label className="text-sm font-medium">{t('ceramic.documentInquiries')}</Label>
             <Button 
               onClick={addInquiry}
               size="sm"
               className="bg-green-600 hover:bg-green-700"
             >
               <Plus className="h-4 w-4 mr-1" />
-              Add
+              {t('common.add')}
             </Button>
           </div>
           
@@ -100,20 +100,20 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-blue-700 text-white">
-                  <th className="text-left p-4 font-medium border">Date of inquiry</th>
-                  <th className="text-left p-4 font-medium border">Interviewee name</th>
-                  <th className="text-left p-4 font-medium border">Interviewee role</th>
-                  <th className="text-left p-4 font-medium border">Bumex interviewer</th>
-                  <th className="text-left p-4 font-medium border">CERAMIC Components</th>
-                  <th className="text-left p-4 font-medium border">Control assessment</th>
-                  <th className="text-center p-4 font-medium border">Actions</th>
+                  <th className="text-left p-4 font-medium border">{t('ceramic.dateOfInquiry')}</th>
+                  <th className="text-left p-4 font-medium border">{t('ceramic.intervieweeName')}</th>
+                  <th className="text-left p-4 font-medium border">{t('ceramic.intervieweeRole')}</th>
+                  <th className="text-left p-4 font-medium border">{t('ceramic.bumexInterviewer')}</th>
+                  <th className="text-left p-4 font-medium border">{t('ceramic.ceramicComponents')}</th>
+                  <th className="text-left p-4 font-medium border">{t('ceramic.controlAssessment')}</th>
+                  <th className="text-center p-4 font-medium border">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {formData.ceramic_inquiries?.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="text-center p-12 text-gray-500 border">
-                      No inquiries added yet. Click "Add" to create your first inquiry entry.
+                      {t('ceramic.noInquiries')}
                     </td>
                   </tr>
                 ) : (
@@ -204,8 +204,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
         <div className="space-y-6">
           <div>
             <p className="text-sm text-gray-700 mb-4">
-              In determining whether inquiry alone is sufficient to obtain an understanding of the components of the entity's system of internal control, 
-              determine whether any of the following circumstances exist. If at least one of the circumstances exist, perform more than inquiry.
+              {t('ceramic.inquirySufficiency')}
             </p>
             
             <div className="space-y-3">
@@ -216,7 +215,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   onCheckedChange={(checked) => onFormDataChange({ ceramic_larger_entity: !!checked })}
                 />
                 <Label htmlFor="ceramic-larger-entity" className="text-sm">
-                  Larger entity
+                  {t('ceramic.largerEntity')}
                 </Label>
               </div>
               
@@ -227,7 +226,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   onCheckedChange={(checked) => onFormDataChange({ ceramic_more_complex: !!checked })}
                 />
                 <Label htmlFor="ceramic-more-complex" className="text-sm">
-                  More complex entity
+                  {t('ceramic.moreComplex')}
                 </Label>
               </div>
               
@@ -238,7 +237,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   onCheckedChange={(checked) => onFormDataChange({ ceramic_lack_knowledge: !!checked })}
                 />
                 <Label htmlFor="ceramic-lack-knowledge" className="text-sm">
-                  Lack of existing knowledge of the entity's system of internal controls
+                  {t('ceramic.lackKnowledge')}
                 </Label>
               </div>
               
@@ -249,7 +248,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   onCheckedChange={(checked) => onFormDataChange({ ceramic_planned_reliance: !!checked })}
                 />
                 <Label htmlFor="ceramic-planned-reliance" className="text-sm">
-                  Planned reliance on the entity's control activities to reduce control risk
+                  {t('ceramic.plannedReliance')}
                 </Label>
               </div>
               
@@ -260,7 +259,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   onCheckedChange={(checked) => onFormDataChange({ ceramic_extensive_changes: !!checked })}
                 />
                 <Label htmlFor="ceramic-extensive-changes" className="text-sm">
-                  Extensive changes to the entity's systems and operations based upon our understanding of the entity and its environment in 2.2 Risk assessment
+                  {t('ceramic.extensiveChanges')}
                 </Label>
               </div>
             </div>
@@ -270,7 +269,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
             <Collapsible>
               <CollapsibleTrigger className="flex items-center gap-2 w-full bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition-colors">
                 <ChevronDown className="h-4 w-4" />
-                <span className="font-medium">Control environment:</span>
+                <span className="font-medium">{t('ceramic.controlEnvironment')}</span>
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-4 space-y-4 p-4 bg-gray-50 rounded-md">
                 <div>
@@ -336,10 +335,10 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
                   
                   <div className="mt-6 space-y-3">
                     <Label className="text-sm font-medium">
-                      Document our understanding of the set of controls, processes and structures that address each element above.
+                      {t('ceramic.documentUnderstanding')}
                     </Label>
                     <Textarea
-                      placeholder="Enter your documentation..."
+                      placeholder={t('ceramic.enterDocumentation')}
                       value={formData.ceramic_control_environment_documentation || ''}
                       onChange={(e) => onFormDataChange({ ceramic_control_environment_documentation: e.target.value })}
                       rows={4}
@@ -354,7 +353,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
             <Collapsible>
               <CollapsibleTrigger className="flex items-center gap-2 w-full bg-gray-100 p-3 rounded-md hover:bg-gray-200 transition-colors">
                 <ChevronDown className="h-4 w-4" />
-                <span className="font-medium">Risk Assessment:</span>
+                <span className="font-medium">{t('ceramic.riskAssessment')}</span>
               </CollapsibleTrigger>
               <CollapsibleContent className="mt-4 space-y-4 p-4 bg-gray-50 rounded-md">
                 <div className="space-y-4">

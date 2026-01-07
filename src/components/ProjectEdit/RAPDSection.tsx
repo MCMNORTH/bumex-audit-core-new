@@ -51,16 +51,16 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
   };
 
   return (
-    <CommentableQuestion fieldId="rapd_main" label="RAPD Discussion">
+    <CommentableQuestion fieldId="rapd_main" label={t('rapd.title')}>
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">
-          Discuss matters affecting the identification and assessment of RMMs among the engagement team
+          {t('rapd.title')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <Label htmlFor="meeting-date" className="text-sm font-medium">Date of meeting:</Label>
+          <Label htmlFor="meeting-date" className="text-sm font-medium">{t('rapd.meetingDate')}</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -71,7 +71,7 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {formData.rapd_meeting_date ? format(new Date(formData.rapd_meeting_date), "dd/MM/yyyy") : <span>Pick a date</span>}
+                {formData.rapd_meeting_date ? format(new Date(formData.rapd_meeting_date), "dd/MM/yyyy") : <span>{t('common.pickDate')}</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -88,14 +88,14 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
 
         <div>
           <div className="flex items-center justify-between mb-4">
-            <Label className="text-sm font-medium">Identify key engagement team members</Label>
+            <Label className="text-sm font-medium">{t('rapd.identifyTeamMembers')}</Label>
             <Button 
               onClick={addTeamMember}
               size="sm"
               className="bg-green-600 hover:bg-green-700"
             >
               <Plus className="h-4 w-4 mr-1" />
-              Add
+              {t('common.add')}
             </Button>
           </div>
           
@@ -103,18 +103,18 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-blue-700 text-white">
-                  <th className="text-left p-4 font-medium border">Engagement team member</th>
-                  <th className="text-left p-4 font-medium border">Role</th>
-                  <th className="text-center p-4 font-medium border">Attended meeting</th>
-                  <th className="text-left p-4 font-medium border">Document important matters communicated to those unable to attend</th>
-                  <th className="text-center p-4 font-medium border">Actions</th>
+                  <th className="text-left p-4 font-medium border">{t('rapd.teamMember')}</th>
+                  <th className="text-left p-4 font-medium border">{t('rapd.role')}</th>
+                  <th className="text-center p-4 font-medium border">{t('rapd.attendedMeeting')}</th>
+                  <th className="text-left p-4 font-medium border">{t('rapd.documentMatters')}</th>
+                  <th className="text-center p-4 font-medium border">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {formData.rapd_team_members?.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center p-12 text-gray-500 border">
-                      No team members added yet. Click "Add" to create your first team member entry.
+                      {t('rapd.noTeamMembers')}
                     </td>
                   </tr>
                 ) : (
@@ -170,7 +170,7 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
 
         <div className="space-y-4">
           <div>
-            <Label className="text-sm font-medium">Was the fraud brainstorming discussion held at the same meeting as the RAPD?</Label>
+            <Label className="text-sm font-medium">{t('rapd.fraudBrainstorming')}</Label>
             <RadioGroup
               value={formData.rapd_fraud_brainstorming_same_meeting || ''}
               onValueChange={(value) => onFormDataChange({ rapd_fraud_brainstorming_same_meeting: value })}
@@ -178,11 +178,11 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="fraud-yes" />
-                <Label htmlFor="fraud-yes">Yes</Label>
+                <Label htmlFor="fraud-yes">{t('common.yes')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="fraud-no" />
-                <Label htmlFor="fraud-no">No</Label>
+                <Label htmlFor="fraud-no">{t('common.no')}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -195,14 +195,14 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
               className="mt-1"
             />
             <Label htmlFor="rapd-agenda-confirmation" className="text-sm leading-relaxed">
-              We confirm we discussed, at a minimum, the items included in the RAPD agenda unless the item is indicated as optional.
+              {t('rapd.agendaConfirmation')}
             </Label>
           </div>
         </div>
 
         <div className="space-y-6">
           <div>
-            <h3 className="font-semibold text-base mb-4">Setting the tone for our audit</h3>
+            <h3 className="font-semibold text-base mb-4">{t('rapd.settingTone')}</h3>
             <div className="space-y-3 text-sm">
               <p><strong>A.</strong> The purpose of our audit practice is to serve and protect the capital markets and public interest</p>
               <p><strong>B.</strong> We define audit quality as being the outcome when audits are executed consistently, in line with the requirements and intent of applicable professional standards and applicable legal and regulatory requirements, as well as Bumex policies, within a strong system of quality controls.</p>

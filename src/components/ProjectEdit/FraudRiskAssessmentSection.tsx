@@ -317,7 +317,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           onClick={() => addRow(setRows, fieldName)}
         >
           <Plus className="h-4 w-4 mr-1" />
-          Add
+          {t('common.add')}
         </Button>
       </div>
       
@@ -325,15 +325,15 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
         <table className="w-full border border-gray-200 table-fixed">
           <thead>
             <tr className="bg-blue-900 text-white">
-              <th className="border border-gray-200 p-3 text-left w-24 text-xs">ID</th>
-              <th className="border border-gray-200 p-3 text-left w-40 text-xs">Fraud Risk Factors</th>
-              <th className="border border-gray-200 p-3 text-center w-20 text-xs">Identified</th>
-              <th className="border border-gray-200 p-3 text-center w-24 text-xs">Incentives or pressures</th>
-              <th className="border border-gray-200 p-3 text-center w-24 text-xs">Opportunities</th>
-              <th className="border border-gray-200 p-3 text-center w-28 text-xs">Attitudes or rationalizations</th>
-              <th className="border border-gray-200 p-3 text-center w-32 text-xs">Condition or event present which could lead to a RMM due to fraud</th>
-              <th className="border border-gray-200 p-3 text-center w-28 text-xs">Attachment</th>
-              <th className="border border-gray-200 p-3 text-center w-16 text-xs">Action</th>
+              <th className="border border-gray-200 p-3 text-left w-24 text-xs">{t('common.id')}</th>
+              <th className="border border-gray-200 p-3 text-left w-40 text-xs">{t('fraud.riskFactors')}</th>
+              <th className="border border-gray-200 p-3 text-center w-20 text-xs">{t('fraud.identified')}</th>
+              <th className="border border-gray-200 p-3 text-center w-24 text-xs">{t('fraud.incentivesOrPressures')}</th>
+              <th className="border border-gray-200 p-3 text-center w-24 text-xs">{t('fraud.opportunities')}</th>
+              <th className="border border-gray-200 p-3 text-center w-28 text-xs">{t('fraud.attitudesOrRationalizations')}</th>
+              <th className="border border-gray-200 p-3 text-center w-32 text-xs">{t('fraud.conditionOrEvent')}</th>
+              <th className="border border-gray-200 p-3 text-center w-28 text-xs">{t('common.attachment')}</th>
+              <th className="border border-gray-200 p-3 text-center w-16 text-xs">{t('common.actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -394,7 +394,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                         className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-xs"
                       >
                         <FileText className="h-4 w-4" />
-                        View PDF
+                        {t('common.download')}
                       </a>
                       <Button
                         size="sm"
@@ -403,13 +403,13 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                         onClick={() => handleRemoveAttachment(index, row.attachment, setRows, fieldName)}
                       >
                         <X className="h-3 w-3 mr-1" />
-                        Remove
+                        {t('common.remove')}
                       </Button>
                     </div>
                   ) : (
                     <label className="cursor-pointer flex flex-col items-center gap-1 text-gray-500 hover:text-gray-700">
                       <Upload className="h-5 w-5" />
-                      <span className="text-xs">Upload PDF</span>
+                      <span className="text-xs">{t('common.upload')}</span>
                       <input
                         type="file"
                         accept=".pdf"
@@ -442,12 +442,12 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Identify fraud risks */}
-      <CommentableQuestion fieldId="fraud_risk_factors" label="Identify fraud risks">
+      <CommentableQuestion fieldId="fraud_risk_factors" label={t('fraud.title')}>
         <Card>
           <CardContent className="p-6">
-            <h3 className="text-lg font-semibold mb-4">Identify fraud risks</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('fraud.title')}</h3>
             <p className="text-sm text-gray-600 mb-4">
-              Identify fraud risk factors considering the following categories
+              {t('fraud.riskFactors')}
             </p>
 
           {/* Financial */}
