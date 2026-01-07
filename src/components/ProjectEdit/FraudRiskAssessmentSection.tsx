@@ -282,7 +282,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
         <table className="w-full border border-gray-200 table-fixed">
           <thead>
             <tr className="bg-blue-900 text-white">
-              <th className="border border-gray-200 p-3 text-left w-16 text-xs">ID</th>
+              <th className="border border-gray-200 p-3 text-left w-24 text-xs">ID</th>
               <th className="border border-gray-200 p-3 text-left w-40 text-xs">Fraud Risk Factors</th>
               <th className="border border-gray-200 p-3 text-center w-20 text-xs">Identified</th>
               <th className="border border-gray-200 p-3 text-center w-24 text-xs">Incentives or pressures</th>
