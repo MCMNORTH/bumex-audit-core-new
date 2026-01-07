@@ -274,12 +274,12 @@ const TCWGCommunicationsSection = ({
   };
 
   return (
-    <CommentableQuestion fieldId="tcwg_main" label="TCWG Communications">
+    <CommentableQuestion fieldId="tcwg_main" label={t('tcwg.title')}>
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold">
-            Communicate with Those Charged with Governance (TCWG) - Planning
+            {t('tcwg.planningTitle')}
           </CardTitle>
           <Button 
             onClick={addNewCommunication}
@@ -287,12 +287,12 @@ const TCWGCommunicationsSection = ({
             className="bg-green-600 hover:bg-green-700"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Add
+            {t('common.add')}
           </Button>
         </div>
         <div className="space-y-3">
           <p className="text-sm text-gray-600">
-            We communicate the following:
+            {t('tcwg.weCommunicate')}
           </p>
         </div>
       </CardHeader>
@@ -302,17 +302,17 @@ const TCWGCommunicationsSection = ({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-blue-700 text-white">
-                  <th className="text-left p-6 font-medium border">Topic</th>
-                  <th className="text-center p-6 font-medium border">Included in our engagement letter?</th>
-                  <th className="text-center p-6 font-medium border">Date</th>
-                  <th className="text-center p-6 font-medium border">Actions</th>
+                  <th className="text-left p-6 font-medium border">{t('tcwg.topic')}</th>
+                  <th className="text-center p-6 font-medium border">{t('tcwg.includedInEngagementLetter')}</th>
+                  <th className="text-center p-6 font-medium border">{t('common.date')}</th>
+                  <th className="text-center p-6 font-medium border">{t('common.actions')}</th>
                 </tr>
               </thead>
               <tbody>
                 {communications.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="text-center p-12 text-gray-500 border">
-                      No communications added yet. Click "Add" to create your first communication item.
+                      {t('tcwg.noCommunications')}
                     </td>
                   </tr>
                 ) : (
@@ -362,11 +362,11 @@ const TCWGCommunicationsSection = ({
           </div>
 
           <p className="text-sm text-gray-700 font-medium">
-            Attach the signed engagement letter and any other documents relevant to understanding the terms of the audit.
+            {t('tcwg.attachEngagementLetter')}
           </p>
 
           <DocumentAttachmentSection
-            title="Attachment"
+            title={t('common.attachment')}
             files={mainAttachments}
             onFilesChange={handleMainAttachmentsChange}
             projectId={formData.project_id || 'unknown'}
@@ -378,7 +378,7 @@ const TCWGCommunicationsSection = ({
               <div className="flex items-start space-x-2">
                 <Checkbox className="mt-1" />
                 <p className="text-sm text-blue-800">
-                  When appropriate, attach a copy of either (i) written communications, (ii) materials related to oral communications (including when and to whom it was communicated) and/or (ii) matter not covered by our engagement.
+                  {t('tcwg.attachCopy')}
                 </p>
               </div>
             </div>
@@ -388,7 +388,7 @@ const TCWGCommunicationsSection = ({
           <div className="border-t pt-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold">
-                Inquiries of Those Charged with Governance (TCWG), management and others about RMMs
+                {t('tcwg.inquiriesTitle')}
               </h3>
               <Button 
                 onClick={addNewInquiry}
@@ -396,31 +396,31 @@ const TCWGCommunicationsSection = ({
                 className="bg-green-600 hover:bg-green-700"
               >
                 <Plus className="h-4 w-4 mr-1" />
-                Add
+                {t('common.add')}
               </Button>
             </div>
             
             <p className="text-sm text-gray-600 mb-4">
-              We inquired of the following person(s) or organization(s):
+              {t('tcwg.weInquired')}
             </p>
 
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-blue-700 text-white">
-                    <th className="text-left p-4 font-medium border">Interviewee name</th>
-                    <th className="text-left p-4 font-medium border">Interviewee role</th>
-                    <th className="text-left p-4 font-medium border">Interviewee position</th>
-                    <th className="text-left p-4 font-medium border">Bumex interviewer(s)</th>
-                    <th className="text-left p-4 font-medium border">Date of meeting</th>
-                    <th className="text-center p-4 font-medium border">Actions</th>
+                    <th className="text-left p-4 font-medium border">{t('tcwg.intervieweeName')}</th>
+                    <th className="text-left p-4 font-medium border">{t('tcwg.intervieweeRole')}</th>
+                    <th className="text-left p-4 font-medium border">{t('tcwg.intervieweePosition')}</th>
+                    <th className="text-left p-4 font-medium border">{t('tcwg.bumexInterviewers')}</th>
+                    <th className="text-left p-4 font-medium border">{t('tcwg.dateOfMeeting')}</th>
+                    <th className="text-center p-4 font-medium border">{t('common.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {inquiries.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="text-center p-12 text-gray-500 border">
-                        No inquiries added yet. Click "Add" to create your first inquiry.
+                        {t('tcwg.noInquiries')}
                       </td>
                     </tr>
                   ) : (
