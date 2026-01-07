@@ -34,7 +34,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
   const { t } = useTranslation();
   
   return (
-    <CommentableQuestion fieldId="component-reporting-section" label="Component Reporting">
+    <CommentableQuestion fieldId="component-reporting-section" label={t('componentReporting.title')}>
       <div className="space-y-6">
         <div className="flex items-center space-x-2">
           <Checkbox
@@ -42,7 +42,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
             checked={formData.component_reporting}
             onCheckedChange={(checked) => onFormDataChange({ component_reporting: checked as boolean })}
           />
-          <Label htmlFor="component_reporting">Component reporting</Label>
+          <Label htmlFor="component_reporting">{t('componentReporting.componentReporting')}</Label>
         </div>
         
         {formData.component_reporting && (
@@ -51,7 +51,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox checked={true} disabled />
-                <Label className="font-medium">Applicable auditing standards and other legislative and regulatory requirements:</Label>
+                <Label className="font-medium">{t('componentReporting.applicableAuditingStandardsLabel')}</Label>
               </div>
               <div className="space-y-2">
                 <Select
@@ -59,16 +59,16 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                   onValueChange={(value) => onFormDataChange({ component_reporting_applicable_auditing_standards: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select auditing standards" />
+                    <SelectValue placeholder={t('componentReporting.selectAuditingStandards')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ISA">ISA</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Other">{t('common.other')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {formData.component_reporting_applicable_auditing_standards === 'Other' && (
                   <Input
-                    placeholder="Please specify other auditing standards"
+                    placeholder={t('componentReporting.specifyOtherAuditingStandards')}
                     value={formData.component_reporting_applicable_auditing_standards_other}
                     onChange={(e) => onFormDataChange({ component_reporting_applicable_auditing_standards_other: e.target.value })}
                   />
@@ -80,7 +80,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
                 <Checkbox checked={true} disabled />
-                <Label className="font-medium">Applicable financial reporting framework and other legislative and regulatory requirements:</Label>
+                <Label className="font-medium">{t('componentReporting.applicableFinancialFrameworkLabel')}</Label>
               </div>
               <div className="space-y-2">
                 <Select
@@ -88,16 +88,16 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                   onValueChange={(value) => onFormDataChange({ component_reporting_applicable_financial_framework: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select financial reporting framework" />
+                    <SelectValue placeholder={t('componentReporting.selectFinancialFramework')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ISA">ISA</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
+                    <SelectItem value="Other">{t('common.other')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {formData.component_reporting_applicable_financial_framework === 'Other' && (
                   <Input
-                    placeholder="Please specify other framework"
+                    placeholder={t('componentReporting.specifyOtherFramework')}
                     value={formData.component_reporting_applicable_financial_framework_other}
                     onChange={(e) => onFormDataChange({ component_reporting_applicable_financial_framework_other: e.target.value })}
                   />
@@ -108,7 +108,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
             {/* Date fields */}
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <Label htmlFor="component_reporting_date">Component reporting date*</Label>
+                <Label htmlFor="component_reporting_date">{t('componentReporting.componentReportingDate')}*</Label>
                 <Input
                   id="component_reporting_date"
                   type="date"
@@ -117,7 +117,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                 />
               </div>
               <div>
-                <Label htmlFor="group_audit_report_date">Group audit report date*</Label>
+                <Label htmlFor="group_audit_report_date">{t('componentReporting.groupAuditReportDate')}*</Label>
                 <Input
                   id="group_audit_report_date"
                   type="date"
@@ -126,7 +126,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                 />
               </div>
               <div>
-                <Label htmlFor="required_component_closeout_date">Required component closeout date*</Label>
+                <Label htmlFor="required_component_closeout_date">{t('componentReporting.requiredComponentCloseoutDate')}*</Label>
                 <Input
                   id="required_component_closeout_date"
                   type="date"
@@ -138,7 +138,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
 
             {/* Independence rules */}
             <div className="space-y-4">
-              <Label className="font-medium">Independence rules applicable for the component as communicated by the group audit instructions - Select one of the following:</Label>
+              <Label className="font-medium">{t('componentReporting.independenceRulesLabel')}</Label>
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -146,7 +146,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                     checked={formData.independence_rules_iesba_pie}
                     onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba_pie: checked as boolean })}
                   />
-                  <Label htmlFor="independence_rules_iesba_pie">IESBA PIE</Label>
+                  <Label htmlFor="independence_rules_iesba_pie">{t('componentReporting.iesbaPie')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox
@@ -154,7 +154,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                     checked={formData.independence_rules_iesba_non_pie}
                     onCheckedChange={(checked) => onFormDataChange({ independence_rules_iesba_non_pie: checked as boolean })}
                   />
-                  <Label htmlFor="independence_rules_iesba_non_pie">IESBA non-PIE</Label>
+                  <Label htmlFor="independence_rules_iesba_non_pie">{t('componentReporting.iesbaNonPie')}</Label>
                 </div>
               </div>
             </div>
@@ -167,7 +167,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                   checked={formData.reporting_to_kpmg_office}
                   onCheckedChange={(checked) => onFormDataChange({ reporting_to_kpmg_office: checked as boolean })}
                 />
-                <Label htmlFor="reporting_to_kpmg_office">Reporting to another BUMEX office or member firm</Label>
+                <Label htmlFor="reporting_to_kpmg_office">{t('componentReporting.reportingToKpmgOffice')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -175,18 +175,18 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                   checked={formData.reporting_to_non_kpmg_entity}
                   onCheckedChange={(checked) => onFormDataChange({ reporting_to_non_kpmg_entity: checked as boolean })}
                 />
-                <Label htmlFor="reporting_to_non_kmpg_entity">Reporting to a non-BUMEX entity</Label>
+                <Label htmlFor="reporting_to_non_kmpg_entity">{t('componentReporting.reportingToNonKpmgEntity')}</Label>
               </div>
             </div>
 
             {/* Financial statements type */}
             <div className="space-y-4">
-              <Label className="font-medium">Are we auditing financial statements that are any of the following:</Label>
+              <Label className="font-medium">{t('componentReporting.auditingFinancialStatementsQuestion')}</Label>
               <div className="space-y-2 text-sm">
-                <div>- Consolidated financial statements;</div>
-                <div>- Financial statements prepared using proportionate consolidation;</div>
-                <div>- Financial statements that include at least one investment accounted for by the equity method; or</div>
-                <div>- Combined financial statements of the financial information of entities or business units that have no parent but are under common control or common management?</div>
+                <div>{t('componentReporting.consolidatedStatements')}</div>
+                <div>{t('componentReporting.proportionateConsolidation')}</div>
+                <div>{t('componentReporting.equityMethod')}</div>
+                <div>{t('componentReporting.combinedStatements')}</div>
               </div>
               <div className="flex items-center space-x-4">
                 <RadioGroup
@@ -196,11 +196,11 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="Yes" id="statements_yes" />
-                    <Label htmlFor="statements_yes">Yes</Label>
+                    <Label htmlFor="statements_yes">{t('common.yes')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="No" id="statements_no" />
-                    <Label htmlFor="statements_no">No</Label>
+                    <Label htmlFor="statements_no">{t('common.no')}</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -215,7 +215,7 @@ const ComponentReportingSection = ({ formData, onFormDataChange }: ComponentRepo
             checked={formData.group_auditor}
             onCheckedChange={(checked) => onFormDataChange({ group_auditor: checked as boolean })}
           />
-          <Label htmlFor="group_auditor">Group auditor</Label>
+          <Label htmlFor="group_auditor">{t('componentReporting.groupAuditor')}</Label>
         </div>
       </div>
     </CommentableQuestion>

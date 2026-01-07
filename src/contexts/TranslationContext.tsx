@@ -622,6 +622,51 @@ const translations = {
     'mainBusinessProcesses.stocks': 'Stocks',
     'mainBusinessProcesses.tresorerie': 'Trésorerie',
     'mainBusinessProcesses.mnsaAccounts': 'MNSA. Material non-significant accounts',
+    
+    // Component Reporting Section (additional)
+    'componentReporting.componentReporting': 'Component reporting',
+    'componentReporting.applicableAuditingStandardsLabel': 'Applicable auditing standards and other legislative and regulatory requirements:',
+    'componentReporting.selectAuditingStandards': 'Select auditing standards',
+    'componentReporting.specifyOtherAuditingStandards': 'Please specify other auditing standards',
+    'componentReporting.applicableFinancialFrameworkLabel': 'Applicable financial reporting framework and other legislative and regulatory requirements:',
+    'componentReporting.selectFinancialFramework': 'Select financial reporting framework',
+    'componentReporting.specifyOtherFramework': 'Please specify other framework',
+    'componentReporting.independenceRulesLabel': 'Independence rules applicable for the component as communicated by the group audit instructions - Select one of the following:',
+    'componentReporting.auditingFinancialStatementsQuestion': 'Are we auditing financial statements that are any of the following:',
+    
+    // Audit Strategy Section (additional)
+    'auditStrategy.title': 'Audit Strategy',
+    'auditStrategy.considerInfo': 'We consider the information obtained in defining the audit strategy and plan our audit procedures on this screen, in 3.x.1 Understanding, risks and response for each business process and in the following locations:',
+    'auditStrategy.communications': '1.4 Communications',
+    'auditStrategy.materiality': '2.1.2 Materiality',
+    'auditStrategy.entityEnvironment': '2.2.1 Entity and its environment',
+    'auditStrategy.rapdLink': '2.2.4 RAPD',
+    'auditStrategy.ceramicLink': '2.3.1 CERAMIC',
+    'auditStrategy.litigationClaims': '3.2 Litigation claims and assessments',
+    'auditStrategy.activateGaapTitle': 'Activate GAAP conversion and/or GAAS differences for this report',
+    'auditStrategy.methodEvaluateTitle': 'Method used to evaluate identified misstatements:',
+    
+    // Document Attachment Section
+    'documentAttachment.invalidFileType': 'Invalid file type',
+    'documentAttachment.notPdfOrWord': 'is not a PDF or Word document',
+    'documentAttachment.fileTooLarge': 'File too large',
+    'documentAttachment.largerThan10MB': 'is larger than 10MB',
+    'documentAttachment.filesUploaded': 'Files uploaded',
+    'documentAttachment.filesUploadedSuccess': 'file(s) uploaded successfully',
+    'documentAttachment.uploadFailed': 'Upload failed',
+    'documentAttachment.uploadFailedDescription': 'Failed to upload files. Please try again.',
+    'documentAttachment.downloadNotAvailable': 'Download not available',
+    'documentAttachment.demoFileDescription': 'This is a demo file. In a real implementation, the file would be downloaded from Firebase Storage.',
+    'documentAttachment.dropFilesHere': 'Drop files here or',
+    'documentAttachment.browse': 'browse',
+    'documentAttachment.pdfWordOnly': 'PDF and Word documents only, up to 10MB each',
+    'documentAttachment.uploading': 'Uploading...',
+    'documentAttachment.downloadFile': 'Download file',
+    'documentAttachment.removeFile': 'Remove file',
+    
+    // Common additional
+    'common.title': 'Title',
+    'common.other': 'Other',
   },
   fr: {
     // Navigation
@@ -1236,6 +1281,51 @@ const translations = {
     'mainBusinessProcesses.stocks': 'Stocks',
     'mainBusinessProcesses.tresorerie': 'Trésorerie',
     'mainBusinessProcesses.mnsaAccounts': 'MNSA. Comptes non significatifs mais matériels',
+    
+    // Component Reporting Section (additional)
+    'componentReporting.componentReporting': 'Composante de reporting',
+    'componentReporting.applicableAuditingStandardsLabel': "Normes d'audit applicables et autres exigences législatives et réglementaires:",
+    'componentReporting.selectAuditingStandards': "Sélectionner les normes d'audit",
+    'componentReporting.specifyOtherAuditingStandards': "Veuillez préciser les autres normes d'audit",
+    'componentReporting.applicableFinancialFrameworkLabel': "Cadre de reporting financier applicable et autres exigences législatives et réglementaires:",
+    'componentReporting.selectFinancialFramework': 'Sélectionner le cadre de reporting financier',
+    'componentReporting.specifyOtherFramework': 'Veuillez préciser un autre cadre',
+    'componentReporting.independenceRulesLabel': "Règles d'indépendance applicables à la composante telles que communiquées par les instructions d'audit du groupe - Sélectionner l'une des options suivantes:",
+    'componentReporting.auditingFinancialStatementsQuestion': "Auditons-nous des états financiers qui correspondent à l'un des cas suivants:",
+    
+    // Audit Strategy Section (additional)
+    'auditStrategy.title': "Stratégie d'audit",
+    'auditStrategy.considerInfo': "Nous considérons les informations obtenues pour définir la stratégie d'audit et planifions nos procédures d'audit sur cet écran, dans 3.x.1 Compréhension, risques et réponse pour chaque processus métier et aux emplacements suivants:",
+    'auditStrategy.communications': '1.4 Communications',
+    'auditStrategy.materiality': '2.1.2 Seuil de signification',
+    'auditStrategy.entityEnvironment': "2.2.1 L'entité et son environnement",
+    'auditStrategy.rapdLink': '2.2.4 RAPD',
+    'auditStrategy.ceramicLink': '2.3.1 CERAMIC',
+    'auditStrategy.litigationClaims': '3.2 Litiges, réclamations et évaluations',
+    'auditStrategy.activateGaapTitle': 'Activer la conversion GAAP et/ou les différences GAAS pour ce rapport',
+    'auditStrategy.methodEvaluateTitle': 'Méthode utilisée pour évaluer les anomalies identifiées:',
+    
+    // Document Attachment Section
+    'documentAttachment.invalidFileType': 'Type de fichier invalide',
+    'documentAttachment.notPdfOrWord': "n'est pas un document PDF ou Word",
+    'documentAttachment.fileTooLarge': 'Fichier trop volumineux',
+    'documentAttachment.largerThan10MB': 'dépasse 10 Mo',
+    'documentAttachment.filesUploaded': 'Fichiers téléchargés',
+    'documentAttachment.filesUploadedSuccess': 'fichier(s) téléchargé(s) avec succès',
+    'documentAttachment.uploadFailed': 'Échec du téléchargement',
+    'documentAttachment.uploadFailedDescription': 'Échec du téléchargement des fichiers. Veuillez réessayer.',
+    'documentAttachment.downloadNotAvailable': 'Téléchargement non disponible',
+    'documentAttachment.demoFileDescription': 'Ceci est un fichier de démonstration. Dans une implémentation réelle, le fichier serait téléchargé depuis Firebase Storage.',
+    'documentAttachment.dropFilesHere': 'Déposez les fichiers ici ou',
+    'documentAttachment.browse': 'parcourir',
+    'documentAttachment.pdfWordOnly': 'Documents PDF et Word uniquement, jusqu\'à 10 Mo chacun',
+    'documentAttachment.uploading': 'Téléchargement en cours...',
+    'documentAttachment.downloadFile': 'Télécharger le fichier',
+    'documentAttachment.removeFile': 'Supprimer le fichier',
+    
+    // Common additional
+    'common.title': 'Titre',
+    'common.other': 'Autre',
   },
 };
 
