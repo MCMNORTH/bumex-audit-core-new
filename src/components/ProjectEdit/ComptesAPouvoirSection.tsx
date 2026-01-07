@@ -200,7 +200,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
           </div>
 
           <div className="pt-2">
-            <Label className="text-sm font-medium">Assessed RAWTC</Label>
+            <Label className="text-sm font-medium">{t('comptesAPouvoir.assessedRawtc')}</Label>
             <Input 
               value={formData.comptesaPouvoir_assessed_rawtc || ''}
               onChange={(e) => handleFormDataChange('comptesaPouvoir_assessed_rawtc', e.target.value)}
@@ -214,7 +214,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold">
-            Design procedures to obtain persuasive evidence
+            {t('comptesAPouvoir.designProcedures')}
           </CardTitle>
           <Button
             onClick={addProcedureRow}
@@ -222,21 +222,21 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
             className="bg-green-600 hover:bg-green-700 text-white"
           >
             <Plus className="h-4 w-4 mr-1" />
-            Add
+            {t('common.add')}
           </Button>
         </CardHeader>
         <CardContent className="p-4">
-          <Label className="text-sm font-medium mb-2 block">Determine the nature of procedures</Label>
+          <Label className="text-sm font-medium mb-2 block">{t('comptesAPouvoir.determineNature')}</Label>
           
           <div className="border rounded-lg overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="bg-blue-600 hover:bg-blue-600">
-                  <TableHead className="text-white font-medium">Inquire</TableHead>
-                  <TableHead className="text-white font-medium">Inspect</TableHead>
-                  <TableHead className="text-white font-medium">Observe</TableHead>
-                  <TableHead className="text-white font-medium">Reperform</TableHead>
-                  <TableHead className="text-white font-medium">Involves judgment</TableHead>
+                  <TableHead className="text-white font-medium">{t('comptesAPouvoir.inquire')}</TableHead>
+                  <TableHead className="text-white font-medium">{t('comptesAPouvoir.inspect')}</TableHead>
+                  <TableHead className="text-white font-medium">{t('comptesAPouvoir.observe')}</TableHead>
+                  <TableHead className="text-white font-medium">{t('comptesAPouvoir.reperform')}</TableHead>
+                  <TableHead className="text-white font-medium">{t('comptesAPouvoir.involvesJudgment')}</TableHead>
                   <TableHead className="text-white font-medium w-16"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -275,7 +275,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                           className="rounded-r-none px-2 py-1 text-xs"
                           onClick={() => handleProcedureChange(procedure.id, 'involvesJudgment', 'true')}
                         >
-                          Yes
+                          {t('common.yes')}
                         </Button>
                         <Button
                           variant={procedure.involvesJudgment === 'false' ? 'default' : 'outline'}
@@ -283,7 +283,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                           className="rounded-l-none px-2 py-1 text-xs"
                           onClick={() => handleProcedureChange(procedure.id, 'involvesJudgment', 'false')}
                         >
-                          No
+                          {t('common.no')}
                         </Button>
                       </div>
                     </TableCell>
@@ -304,11 +304,10 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
           </div>
 
           <div className="mt-4">
-            <Label className="text-sm font-medium mb-2 block">Describe the procedures to be performed</Label>
+            <Label className="text-sm font-medium mb-2 block">{t('comptesAPouvoir.describeProcedures')}</Label>
             <Textarea
               value={formData.comptesaPouvoir_procedures_description || ''}
               onChange={(e) => handleFormDataChange('comptesaPouvoir_procedures_description', e.target.value)}
-              placeholder="Veuillez vous référer aux travaux documentés dans l'engagement Cromology Service Reporting audit 2023."
               className="min-h-24"
             />
           </div>
@@ -319,15 +318,15 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
-            Determine the timing of procedures
+            {t('comptesAPouvoir.determineTiming')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
           <div>
-            <p className="text-sm mb-3">Determine when we obtain the evidence about the operating effectiveness of the general IT control</p>
+            <p className="text-sm mb-3">{t('comptesAPouvoir.determineWhenObtain')}</p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
               <div>
-                <Label className="text-sm font-medium">Period covered by audit procedures</Label>
+                <Label className="text-sm font-medium">{t('comptesAPouvoir.periodCovered')}</Label>
                 <Input
                   type="date"
                   value={formData.comptesaPouvoir_period_start || ''}
@@ -336,7 +335,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 />
               </div>
               <div className="flex items-center justify-center">
-                <span className="text-sm text-gray-500">through</span>
+                <span className="text-sm text-gray-500">{t('comptesAPouvoir.through')}</span>
               </div>
               <div>
                 <Input
@@ -350,18 +349,17 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
           </div>
 
           <div>
-            <h4 className="font-medium mb-2">Determine the extent of procedures</h4>
-            <p className="text-sm mb-2">Define the population and how we determined the population is complete</p>
+            <h4 className="font-medium mb-2">{t('comptesAPouvoir.determineExtent')}</h4>
+            <p className="text-sm mb-2">{t('comptesAPouvoir.definePopulation')}</p>
             <Textarea
               value={formData.comptesaPouvoir_extent_description || ''}
               onChange={(e) => handleFormDataChange('comptesaPouvoir_extent_description', e.target.value)}
-              placeholder="Veuillez vous référer aux travaux documentés dans l'engagement Cromology Service Reporting audit 2023."
               className="min-h-24"
             />
           </div>
 
           <div className="flex items-center space-x-4">
-            <Label className="text-sm font-medium">Did we use internal information to select items for testing?</Label>
+            <Label className="text-sm font-medium">{t('comptesAPouvoir.useInternalInfo')}</Label>
             <div className="flex">
               <Button
                 variant={formData.comptesaPouvoir_internal_info === 'true' ? 'default' : 'outline'}
@@ -369,7 +367,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 className="rounded-r-none"
                 onClick={() => handleToggleChange('comptesaPouvoir_internal_info', 'true')}
               >
-                Yes
+                {t('common.yes')}
               </Button>
               <Button
                 variant={formData.comptesaPouvoir_internal_info === 'false' ? 'default' : 'outline'}
@@ -377,7 +375,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 className="rounded-l-none"
                 onClick={() => handleToggleChange('comptesaPouvoir_internal_info', 'false')}
               >
-                No
+                {t('common.no')}
               </Button>
             </div>
           </div>
@@ -388,12 +386,12 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
-            Determine sample size
+            {t('comptesAPouvoir.determineSampleSize')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
           <div>
-            <Label className="text-sm font-medium mb-2 block">Control sample size</Label>
+            <Label className="text-sm font-medium mb-2 block">{t('comptesAPouvoir.controlSampleSize')}</Label>
             <Input
               type="number"
               value={formData.comptesaPouvoir_sample_size || ''}
@@ -411,7 +409,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_increased_sample', checked as boolean)}
               />
               <Label htmlFor="increased-sample" className="text-sm">
-                We increased the control sample size over the control sample size table.
+                {t('comptesAPouvoir.increasedSampleSize')}
               </Label>
             </div>
             <div className="flex items-center space-x-2">
@@ -421,7 +419,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_unpredictability', checked as boolean)}
               />
               <Label htmlFor="unpredictability" className="text-sm">
-                Check if procedure incorporates an element of unpredictability
+                {t('comptesAPouvoir.unpredictability')}
               </Label>
             </div>
           </div>
@@ -432,12 +430,12 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-lg font-semibold">
-            Test operating effectiveness
+            {t('comptesAPouvoir.testOperatingEffectiveness')}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
           <div>
-            <p className="font-medium mb-3">Obtain evidence about the operating effectiveness of the control</p>
+            <p className="font-medium mb-3">{t('comptesAPouvoir.obtainEvidence')}</p>
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -446,7 +444,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_sampling_tool', checked as boolean)}
                 />
                 <Label htmlFor="sampling-tool" className="text-sm">
-                  Use sampling tool to select samples and generate testwork template.
+                  {t('comptesAPouvoir.useSamplingTool')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -456,7 +454,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_generate_template', checked as boolean)}
                 />
                 <Label htmlFor="generate-template" className="text-sm">
-                  Generate testwork template and manually select samples.
+                  {t('comptesAPouvoir.generateTemplate')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -466,14 +464,14 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                   onCheckedChange={(checked) => handleCheckboxChange('comptesaPouvoir_attach_documentation', checked as boolean)}
                 />
                 <Label htmlFor="attach-documentation" className="text-sm">
-                  Attach other testing documentation that includes: the control operator(s) and whether they are consistent with our assessment in the evaluation of design and implementation, and procedures over each of the attributes.
+                  {t('comptesAPouvoir.attachDocumentation')}
                 </Label>
               </div>
             </div>
           </div>
 
           <div className="flex items-center space-x-4">
-            <Label className="text-sm font-medium">Based on procedures performed and evidence obtained were any deviations identified?</Label>
+            <Label className="text-sm font-medium">{t('comptesAPouvoir.deviationsIdentified')}</Label>
             <div className="flex">
               <Button
                 variant={formData.comptesaPouvoir_deviations === 'true' ? 'default' : 'outline'}
@@ -481,7 +479,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 className="rounded-r-none"
                 onClick={() => handleToggleChange('comptesaPouvoir_deviations', 'true')}
               >
-                Yes
+                {t('common.yes')}
               </Button>
               <Button
                 variant={formData.comptesaPouvoir_deviations === 'false' ? 'default' : 'outline'}
@@ -489,22 +487,21 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
                 className="rounded-l-none"
                 onClick={() => handleToggleChange('comptesaPouvoir_deviations', 'false')}
               >
-                No
+                {t('common.no')}
               </Button>
             </div>
           </div>
 
           <div>
-            <Label className="text-sm font-medium mb-2 block">Result of test of operating effectiveness</Label>
+            <Label className="text-sm font-medium mb-2 block">{t('comptesAPouvoir.testResult')}</Label>
             <Input
               value={formData.comptesaPouvoir_test_result || ''}
               onChange={(e) => handleFormDataChange('comptesaPouvoir_test_result', e.target.value)}
-              placeholder="Effective"
             />
           </div>
 
           <div>
-            <Label className="text-sm font-medium mb-2 block">Results of test of operating effectiveness for the period tested</Label>
+            <Label className="text-sm font-medium mb-2 block">{t('comptesAPouvoir.periodTestResult')}</Label>
             <Input
               value={formData.comptesaPouvoir_period_result || ''}
               onChange={(e) => handleFormDataChange('comptesaPouvoir_period_result', e.target.value)}

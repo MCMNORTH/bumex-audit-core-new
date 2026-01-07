@@ -17,12 +17,14 @@ import { db } from '@/lib/firebase';
 import { Project } from '@/types';
 import { Plus, Search, FolderOpen, Calendar, Users, Building } from 'lucide-react';
 import { useLogging } from '@/hooks/useLogging';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const Projects = () => {
   const { user } = useAuth();
   const { clients, users, loading: refLoading } = useReferenceData();
   const { toast } = useToast();
   const { logProjectAction } = useLogging();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [projects, setProjects] = useState<(Project & { client_name?: string })[]>([]);
   const [loading, setLoading] = useState(true);
@@ -258,24 +260,23 @@ const Projects = () => {
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <FolderOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
-            <p className="text-gray-600">You don't have permission to view all projects. Check "My Projects" for projects you're assigned to.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('projects.accessDenied')}</h3>
+            <p className="text-gray-600">{t('projects.noPermission')}</p>
           </div>
         </div>
       </MainLayout>
     );
   }
 
-  
-  // Restrict access to semi-admin and above
+  // Second access check (duplicate but keeping for safety)
   if (!user || !['dev', 'admin', 'semi-admin'].includes(user.role)) {
     return (
       <MainLayout>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="text-center">
             <FolderOpen className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
-            <p className="text-gray-600">You don't have permission to view all projects. Check "My Projects" for projects you're assigned to.</p>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('projects.accessDenied')}</h3>
+            <p className="text-gray-600">{t('projects.noPermission')}</p>
           </div>
         </div>
       </MainLayout>
@@ -287,7 +288,7 @@ const Projects = () => {
       <MainLayout>
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{t('projects.title')}</h1>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {[...Array(4)].map((_, i) => (
@@ -309,32 +310,32 @@ const Projects = () => {
     <MainLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Projects</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('projects.title')}</h1>
           {canCreateProject && (
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Project
+                  {t('projects.addProject')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>{editingProject ? 'Edit Project' : 'Add New Project'}</DialogTitle>
+                  <DialogTitle>{editingProject ? t('projects.editProject') : t('projects.addProject')}</DialogTitle>
                   <DialogDescription>
-                    {editingProject ? 'Update project information' : 'Create a new audit engagement'}
+                    {editingProject ? t('projects.updateDescription') : t('projects.createDescription')}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="client_id">Client</Label>
+                      <Label htmlFor="client_id">{t('projects.client')}</Label>
                       <Select
                         value={formData.client_id}
                         onValueChange={(value) => setFormData({ ...formData, client_id: value })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select client" />
+                          <SelectValue placeholder={t('engagement.placeholders.selectClient')} />
                         </SelectTrigger>
                         <SelectContent>
                           {clients.map((client) => (
@@ -346,7 +347,7 @@ const Projects = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="status">Status</Label>
+                      <Label htmlFor="status">{t('common.status')}</Label>
                       <Select
                         value={formData.status}
                         onValueChange={(value) => setFormData({ ...formData, status: value as Project['status'] })}
@@ -355,50 +356,50 @@ const Projects = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="new">New</SelectItem>
-                          <SelectItem value="inprogress">In Progress</SelectItem>
-                          <SelectItem value="closed">Closed</SelectItem>
-                          <SelectItem value="archived">Archived</SelectItem>
+                          <SelectItem value="new">{t('engagement.statuses.new')}</SelectItem>
+                          <SelectItem value="inprogress">{t('engagement.statuses.inprogress')}</SelectItem>
+                          <SelectItem value="closed">{t('engagement.statuses.closed')}</SelectItem>
+                          <SelectItem value="archived">{t('engagement.statuses.archived')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                   
                   <div>
-                    <Label htmlFor="engagement_name">Engagement Name</Label>
+                    <Label htmlFor="engagement_name">{t('projects.engagementName')}</Label>
                     <Input
                       id="engagement_name"
                       value={formData.engagement_name}
                       onChange={(e) => setFormData({ ...formData, engagement_name: e.target.value })}
                       required
-                      placeholder="Enter engagement name"
+                      placeholder={t('engagement.placeholders.engagementName')}
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="engagement_id">Engagement ID</Label>
+                    <Label htmlFor="engagement_id">{t('projects.engagementId')}</Label>
                     <Input
                       id="engagement_id"
                       value={formData.engagement_id}
                       onChange={(e) => setFormData({ ...formData, engagement_id: e.target.value })}
                       required
-                      placeholder="Enter engagement ID"
+                      placeholder={t('engagement.placeholders.engagementId')}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="project_id">Project ID</Label>
+                    <Label htmlFor="project_id">{t('projects.projectId')}</Label>
                     <Input
                       id="project_id"
                       value={formData.project_id}
                       onChange={(e) => setFormData({ ...formData, project_id: e.target.value })}
-                      placeholder="Enter project ID"
+                      placeholder={t('engagement.placeholders.projectId')}
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="period_start">Period Start</Label>
+                      <Label htmlFor="period_start">{t('projects.periodStart')}</Label>
                       <Input
                         id="period_start"
                         type="date"
@@ -408,7 +409,7 @@ const Projects = () => {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="period_end">Period End</Label>
+                      <Label htmlFor="period_end">{t('projects.periodEnd')}</Label>
                       <Input
                         id="period_end"
                         type="date"
@@ -421,13 +422,13 @@ const Projects = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="audit_type">Audit Type</Label>
+                      <Label htmlFor="audit_type">{t('projects.auditType')}</Label>
                       <Select
                         value={formData.audit_type}
                         onValueChange={(value) => setFormData({ ...formData, audit_type: value })}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select audit type" />
+                          <SelectValue placeholder={t('engagement.placeholders.selectAuditType')} />
                         </SelectTrigger>
                         <SelectContent>
                           {auditTypes.map((type) => (
@@ -439,7 +440,7 @@ const Projects = () => {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="language">Language</Label>
+                      <Label htmlFor="language">{t('projects.language')}</Label>
                       <Select
                         value={formData.language}
                         onValueChange={(value) => setFormData({ ...formData, language: value })}
@@ -459,23 +460,23 @@ const Projects = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="jurisdiction">Jurisdiction</Label>
+                    <Label htmlFor="jurisdiction">{t('projects.jurisdiction')}</Label>
                     <Input
                       id="jurisdiction"
                       value={formData.jurisdiction}
                       onChange={(e) => setFormData({ ...formData, jurisdiction: e.target.value })}
-                      placeholder="Enter jurisdiction"
+                      placeholder={t('engagement.placeholders.jurisdiction')}
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="bumex_office">BUMEX Office</Label>
+                    <Label htmlFor="bumex_office">{t('projects.bumexOffice')}</Label>
                     <Select
                       value={formData.bumex_office}
                       onValueChange={(value) => setFormData({ ...formData, bumex_office: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select BUMEX office" />
+                        <SelectValue placeholder={t('engagement.placeholders.selectBumexOffice')} />
                       </SelectTrigger>
                       <SelectContent>
                         {bumexOffices.map((office) => (
@@ -488,13 +489,13 @@ const Projects = () => {
                   </div>
 
                   <div>
-                    <Label htmlFor="lead_developer_id">Lead Developer</Label>
+                    <Label htmlFor="lead_developer_id">{t('projects.leadDeveloper')}</Label>
                     <Select
                       value={formData.lead_developer_id}
                       onValueChange={(value) => setFormData({ ...formData, lead_developer_id: value })}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select lead developer" />
+                        <SelectValue placeholder={t('projects.leadDeveloper')} />
                       </SelectTrigger>
                       <SelectContent>
                         {users.filter(user => user.role === 'dev').map((user) => (
@@ -512,15 +513,15 @@ const Projects = () => {
                       checked={formData.is_first_audit}
                       onCheckedChange={(checked) => setFormData({ ...formData, is_first_audit: checked as boolean })}
                     />
-                    <Label htmlFor="is_first_audit">First-time audit</Label>
+                    <Label htmlFor="is_first_audit">{t('engagement.firstTimeAudit')}</Label>
                   </div>
 
                   <div className="flex justify-end space-x-2">
                     <Button type="button" variant="outline" onClick={resetForm}>
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button type="submit">
-                      {editingProject ? 'Update' : 'Create'} Project
+                      {editingProject ? t('common.edit') : t('common.add')} {t('projects.title')}
                     </Button>
                   </div>
                 </form>
@@ -533,7 +534,7 @@ const Projects = () => {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search projects..."
+              placeholder={t('projects.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -541,14 +542,14 @@ const Projects = () => {
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
+              <SelectValue placeholder={t('projects.filterByStatus')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="new">New</SelectItem>
-              <SelectItem value="inprogress">In Progress</SelectItem>
-              <SelectItem value="closed">Closed</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+              <SelectItem value="all">{t('projects.allStatus')}</SelectItem>
+              <SelectItem value="new">{t('engagement.statuses.new')}</SelectItem>
+              <SelectItem value="inprogress">{t('engagement.statuses.inprogress')}</SelectItem>
+              <SelectItem value="closed">{t('engagement.statuses.closed')}</SelectItem>
+              <SelectItem value="archived">{t('engagement.statuses.archived')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -584,11 +585,14 @@ const Projects = () => {
                         <div className="flex items-center space-x-2">
                           <h3 className="font-semibold text-gray-900 truncate">{project.engagement_name}</h3>
                           <Badge className={`${getStatusColor(project.status)} text-xs`}>
-                            {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                            {project.status === 'new' ? t('engagement.statuses.new') : 
+                             project.status === 'inprogress' ? t('engagement.statuses.inprogress') :
+                             project.status === 'closed' ? t('engagement.statuses.closed') :
+                             t('engagement.statuses.archived')}
                           </Badge>
                           {project.is_first_audit && (
                             <Badge variant="secondary" className="text-xs">
-                              First Audit
+                              {t('engagement.firstTimeAudit')}
                             </Badge>
                           )}
                         </div>
@@ -611,7 +615,7 @@ const Projects = () => {
                       
                       <div className="flex items-center space-x-1">
                         <Users className="h-4 w-4" />
-                        <span>{totalTeamMembers} members</span>
+                        <span>{totalTeamMembers} {t('projectDashboard.teamMembers').toLowerCase()}</span>
                       </div>
                       
                       <div className="text-sm font-medium text-gray-700 max-w-[100px] truncate">
@@ -628,24 +632,23 @@ const Projects = () => {
                           }}
                           className="text-gray-400 hover:text-gray-600"
                         >
-                          Edit
+                          {t('common.edit')}
                         </Button>
                       )}
                     </div>
                   </div>
                   
-                  {/* Team details row */}
                   <div className="mt-3 ml-11 flex items-center space-x-4 text-xs text-gray-500">
                     {leadPartner && (
-                      <span>Lead Partner: {leadPartner.first_name} {leadPartner.last_name}</span>
+                      <span>{t('dashboard.leadPartner')}: {leadPartner.first_name} {leadPartner.last_name}</span>
                     )}
                     {leadDeveloper && (
-                      <span>Lead Dev: {leadDeveloper.first_name} {leadDeveloper.last_name}</span>
+                      <span>{t('dashboard.leadDev')}: {leadDeveloper.first_name} {leadDeveloper.last_name}</span>
                     )}
-                    {teamCounts.partners > 0 && <span>{teamCounts.partners} Partners</span>}
-                    {teamCounts.managers > 0 && <span>{teamCounts.managers} Managers</span>}
-                    {teamCounts.inCharge > 0 && <span>{teamCounts.inCharge} In Charge</span>}
-                    {teamCounts.staff > 0 && <span>{teamCounts.staff} Staff</span>}
+                    {teamCounts.partners > 0 && <span>{teamCounts.partners} {t('myProjects.roles.partner')}</span>}
+                    {teamCounts.managers > 0 && <span>{teamCounts.managers} {t('myProjects.roles.manager')}</span>}
+                    {teamCounts.inCharge > 0 && <span>{teamCounts.inCharge} {t('myProjects.roles.inCharge')}</span>}
+                    {teamCounts.staff > 0 && <span>{teamCounts.staff} {t('myProjects.roles.staff')}</span>}
                   </div>
                 </CardContent>
               </Card>
@@ -656,11 +659,11 @@ const Projects = () => {
         {filteredProjects.length === 0 && (
           <div className="text-center py-12">
             <FolderOpen className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No projects found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('projects.noProjectsFound')}</h3>
             <p className="mt-1 text-sm text-gray-500">
               {searchTerm || statusFilter !== 'all' 
-                ? 'Try adjusting your search terms or filters' 
-                : 'Get started by creating a new project'}
+                ? t('projects.tryAdjusting')
+                : t('clients.getStarted')}
             </p>
           </div>
         )}
