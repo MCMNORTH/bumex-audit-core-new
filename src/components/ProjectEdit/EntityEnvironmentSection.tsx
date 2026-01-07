@@ -67,20 +67,20 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
   };
 
   return (
-    <CommentableQuestion fieldId="entity_environment_main" label="Entity and Environment">
+    <CommentableQuestion fieldId="entity_environment_main" label={t('entityEnvironment.title')}>
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold">Obtain an understanding of the entity and its environment</h3>
+        <h3 className="text-lg font-semibold">{t('entityEnvironment.obtainUnderstanding')}</h3>
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h4 className="font-medium text-gray-900 mb-4">Understand relevant industry, regulatory and other external factors</h4>
+          <h4 className="font-medium text-gray-900 mb-4">{t('entityEnvironment.understandFactors')}</h4>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="industry-select">Identify the industry(s) in which the entity operates:</Label>
+              <Label htmlFor="industry-select">{t('entityEnvironment.identifyIndustry')}</Label>
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Industry(s)</Label>
+                <Label className="text-sm font-medium">{t('entityEnvironment.industry')}</Label>
                 <Select
                   value={formData.entity_industry || ''}
                   onValueChange={(value) => {
@@ -91,7 +91,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   }}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select industry" />
+                    <SelectValue placeholder={t('entityEnvironment.selectIndustry')} />
                   </SelectTrigger>
                   <SelectContent>
                     {industryOptions.map((industry) => (
@@ -105,7 +105,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   <Input
                     value={formData.entity_industry_other || ''}
                     onChange={(e) => onFormDataChange({ entity_industry_other: e.target.value })}
-                    placeholder="Specify industry..."
+                    placeholder={t('entityEnvironment.specifyIndustry')}
                     className="mt-2"
                   />
                 )}
@@ -113,15 +113,15 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
             </div>
 
             <div className="space-y-2">
-              <Label>Financial reporting framework</Label>
+              <Label>{t('entityEnvironment.financialReportingFramework')}</Label>
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Financial reporting</Label>
+                <Label className="text-sm font-medium">{t('entityEnvironment.financialReporting')}</Label>
                 <Select
                   value={formData.financial_reporting_framework_main || ''}
                   onValueChange={(value) => onFormDataChange({ financial_reporting_framework_main: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select framework" />
+                    <SelectValue placeholder={t('entityEnvironment.selectFramework')} />
                   </SelectTrigger>
                   <SelectContent>
                     {financialReportingOptions.map((framework) => (
@@ -137,11 +137,11 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
         </div>
 
         <div>
-          <h4 className="font-medium text-gray-900 mb-4">Identify the market(s) the entity operates in</h4>
+          <h4 className="font-medium text-gray-900 mb-4">{t('entityEnvironment.identifyMarkets')}</h4>
           
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <Label className="text-sm font-medium">Markets</Label>
+              <Label className="text-sm font-medium">{t('entityEnvironment.markets')}</Label>
               <Button
                 type="button"
                 variant="outline"
@@ -150,7 +150,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                 className="flex items-center gap-2"
               >
                 <Plus className="h-4 w-4" />
-                Add
+                {t('common.add')}
               </Button>
             </div>
 
@@ -160,7 +160,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   <Input
                     value={market}
                     onChange={(e) => handleMarketChange(index, e.target.value)}
-                    placeholder="Enter market"
+                    placeholder={t('entityEnvironment.enterMarket')}
                     className="flex-1"
                   />
                   <Button
@@ -186,7 +186,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
               onCheckedChange={(checked) => onFormDataChange({ provide_brief_understanding: checked })}
             />
             <Label htmlFor="provide-brief-understanding">
-              Provide brief understanding of the entity as necessary.
+              {t('entityEnvironment.provideBriefUnderstanding')}
             </Label>
           </div>
 
@@ -195,7 +195,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
               <Textarea
                 value={formData.entity_brief_understanding || ''}
                 onChange={(e) => onFormDataChange({ entity_brief_understanding: e.target.value })}
-                placeholder="Enter brief understanding of the entity..."
+                placeholder={t('entityEnvironment.enterBriefUnderstanding')}
                 className="min-h-[120px]"
               />
             </div>
@@ -203,12 +203,12 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
         </div>
 
         <div className="space-y-6">
-          <h4 className="font-medium text-gray-900">Confirm the understanding of industry, regulatory environment and other external factors:</h4>
+          <h4 className="font-medium text-gray-900">{t('entityEnvironment.confirmUnderstanding')}</h4>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                There are no significant changes in general economic conditions.
+                {t('entityEnvironment.noSignificantChanges')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -218,7 +218,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('economic_conditions_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -227,7 +227,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('economic_conditions_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>

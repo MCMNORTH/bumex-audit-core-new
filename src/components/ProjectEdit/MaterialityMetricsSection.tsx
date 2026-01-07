@@ -133,21 +133,21 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
     return (
       <>
         {/* Re-evaluate Materiality Section */}
-        <CommentableQuestion fieldId="materiality_changes" label="Changes in circumstances">
+        <CommentableQuestion fieldId="materiality_changes" label={t('materiality.changesInCircumstances')}>
           <Card>
           <CardContent className="p-6">
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900">
-                Determine whether to revise materiality and other materiality measures
+                {t('materiality.changesInCircumstances')}
               </h3>
               
               <div className="space-y-4">
                 <h4 className="text-base font-medium text-gray-800">
-                  Consider whether changes in circumstances have occurred
+                  {t('materiality.considerChanges')}
                 </h4>
                 
                 <p className="text-sm text-gray-700">
-                  Have there been any events or changes in conditions that occurred after we established materiality for the financial statements as a whole (and the related materiality measures), that are likely to affect the users' perceptions about the entity?
+                  {t('materiality.eventsQuestion')}
                 </p>
                 
                 <RadioGroup
@@ -157,11 +157,11 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id="changes-yes" />
-                    <Label htmlFor="changes-yes">Yes</Label>
+                    <Label htmlFor="changes-yes">{t('common.yes')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="no" id="changes-no" />
-                    <Label htmlFor="changes-no">No</Label>
+                    <Label htmlFor="changes-no">{t('common.no')}</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -171,16 +171,16 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
         </CommentableQuestion>
 
         {/* Determine actual amount section */}
-        <CommentableQuestion fieldId="materiality_revision" label="Materiality revision">
+        <CommentableQuestion fieldId="materiality_revision" label={t('materiality.determineActualAmount')}>
           <Card className="mt-6">
           <CardContent className="p-6">
             <div className="space-y-6">
               <h3 className="text-lg font-semibold text-gray-900">
-                Determine the actual amount of the relevant metrics, including the benchmark
+                {t('materiality.determineActualAmount')}
               </h3>
               
               <p className="text-sm text-gray-700">
-                Compare the amounts of the relevant metrics we used to establish materiality to the actual amounts of the relevant metrics
+                {t('materiality.compareAmounts')}
               </p>
               
               <div className="flex items-center justify-between">
@@ -191,7 +191,7 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
                   className="bg-green-600 hover:bg-green-700"
                 >
                   <Plus className="h-4 w-4 mr-1" />
-                  Add
+                  {t('common.add')}
                 </Button>
               </div>
 
@@ -199,23 +199,23 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="bg-blue-700 text-white">
-                      <th className="text-left p-4 font-medium border text-sm">Relevant metric(s)</th>
-                      <th className="text-left p-4 font-medium border text-sm">Benchmark</th>
-                      <th className="text-left p-4 font-medium border text-sm">Initial amount</th>
-                      <th className="text-left p-4 font-medium border text-sm">Materiality as a %</th>
-                      <th className="text-left p-4 font-medium border text-sm">Actual amount</th>
-                      <th className="text-left p-4 font-medium border text-sm">Adjust the actual amount, when appropriate</th>
-                      <th className="text-left p-4 font-medium border text-sm">Adjusted actual amount</th>
-                      <th className="text-left p-4 font-medium border text-sm">Materiality as a %</th>
-                      <th className="text-left p-4 font-medium border text-sm">% change in amount</th>
-                      <th className="text-center p-4 font-medium border text-sm">Actions</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.relevantMetric')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.benchmark')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.initialAmount')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.materialityPercentage')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.actualAmount')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.adjustActualAmount')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.adjustedActualAmount')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.materialityPercentage')}</th>
+                      <th className="text-left p-4 font-medium border text-sm">{t('materiality.percentageChange')}</th>
+                      <th className="text-center p-4 font-medium border text-sm">{t('common.actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {materialityRevisionTableData.length === 0 ? (
                       <tr>
                         <td colSpan={10} className="text-center p-12 text-gray-500 border">
-                          No metrics added yet. Click "Add" to create your first metric.
+                          {t('common.noDataYet')} {t('common.clickToAdd')}
                         </td>
                       </tr>
                     ) : (
@@ -304,7 +304,7 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
               
               <div className="space-y-4 pt-4">
                 <p className="text-sm text-gray-700">
-                  Do the adjusted actual amounts of the relevant metrics including the benchmark indicate a materiality that is significantly different?
+                  {t('materiality.significantlyDifferent')}
                 </p>
                 
                 <RadioGroup
@@ -314,11 +314,11 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="yes" id="significantly-different-yes" />
-                    <Label htmlFor="significantly-different-yes">Yes</Label>
+                    <Label htmlFor="significantly-different-yes">{t('common.yes')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="no" id="significantly-different-no" />
-                    <Label htmlFor="significantly-different-no">No</Label>
+                    <Label htmlFor="significantly-different-no">{t('common.no')}</Label>
                   </div>
                 </RadioGroup>
               </div>
@@ -332,18 +332,18 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
 
   return (
     <>
-    <CommentableQuestion fieldId="materiality_metrics" label="Metrics and benchmark">
+    <CommentableQuestion fieldId="materiality_metrics" label={t('materiality.identifyMetrics')}>
       <Card>
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-6">
-          Identify the relevant metrics and determine the benchmark
+          {t('materiality.identifyMetrics')}
         </h3>
         
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-1">
               <Label htmlFor="mbt_applicable" className="text-sm font-medium">
-                Metrics and Benchmark Table (MBT) that is applicable for the entity
+                {t('materiality.mbtApplicable')}
               </Label>
               <Input
                 id="mbt_applicable"
@@ -355,7 +355,7 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
             
             <div className="space-y-1">
               <Label htmlFor="mbt_industry_scenarios" className="text-sm font-medium">
-                MBT Industry or Scenarios
+                {t('materiality.mbtIndustry')}
               </Label>
               <Input
                 id="mbt_industry_scenarios"
@@ -369,7 +369,7 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
           <div className="grid grid-cols-2 gap-8">
             <div className="space-y-1">
               <Label htmlFor="financial_info_materiality" className="text-sm font-medium">
-                Financial information used for materiality calculation
+                {t('materiality.financialInfo')}
               </Label>
               <Input
                 id="financial_info_materiality"
@@ -381,7 +381,7 @@ const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate 
             
             <div className="space-y-1">
               <Label htmlFor="period_selection" className="text-sm font-medium">
-                Period selection
+                {t('materiality.periodSelection')}
               </Label>
               <Input
                 id="period_selection"
