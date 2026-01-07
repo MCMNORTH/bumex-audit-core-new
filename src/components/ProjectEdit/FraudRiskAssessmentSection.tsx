@@ -8,11 +8,12 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ProjectFormData, FraudRiskFactor, FraudRiskAssessment, FinancialStatementFraudRisk } from '@/types/formData';
+import { ProjectFormData, FraudRiskFactor, FraudRiskAssessment, FinancialStatementFraudRisk, HighRiskCriteriaItem } from '@/types/formData';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { CommentableQuestion } from './Comments';
+import { Link as LinkIcon } from 'lucide-react';
 
 interface FraudRiskAssessmentSectionProps {
   formData: ProjectFormData;
@@ -76,6 +77,10 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
 
   const [financialStatementRows, setFinancialStatementRows] = useState<FinancialStatementFraudRisk[]>(
     formData.fraud_financial_statement || []
+  );
+
+  const [highRiskCriteriaRows, setHighRiskCriteriaRows] = useState<HighRiskCriteriaItem[]>(
+    formData.high_risk_criteria_items || []
   );
 
   const toggleSection = (section: string) => {
@@ -163,6 +168,42 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
     updatedRows[index] = { ...updatedRows[index], [field]: value };
     setFinancialStatementRows(updatedRows);
     onFormDataChange({ fraud_financial_statement: updatedRows });
+  };
+
+  // Handlers for high risk criteria table
+  const addHighRiskCriteriaRow = () => {
+    const newRow: HighRiskCriteriaItem = {
+      id: `HRC${Date.now()}`,
+      reference: '',
+      description: '',
+      rationale: '',
+      method: '',
+      populations: []
+    };
+    const updatedRows = [...(formData.high_risk_criteria_items || []), newRow];
+    setHighRiskCriteriaRows(updatedRows);
+    onFormDataChange({ high_risk_criteria_items: updatedRows });
+  };
+
+  const removeHighRiskCriteriaRow = (index: number) => {
+    const updatedRows = (formData.high_risk_criteria_items || []).filter((_, i) => i !== index);
+    setHighRiskCriteriaRows(updatedRows);
+    onFormDataChange({ high_risk_criteria_items: updatedRows });
+  };
+
+  const updateHighRiskCriteriaRow = (index: number, field: keyof HighRiskCriteriaItem, value: any) => {
+    const updatedRows = [...(formData.high_risk_criteria_items || [])];
+    updatedRows[index] = { ...updatedRows[index], [field]: value };
+    setHighRiskCriteriaRows(updatedRows);
+    onFormDataChange({ high_risk_criteria_items: updatedRows });
+  };
+
+  // Get available populations from fraud_financial_statement for linking
+  const getAvailablePopulations = () => {
+    return (formData.fraud_financial_statement || []).map(row => ({
+      id: row.id,
+      description: row.description
+    }));
   };
 
   // Calculate summary counts
@@ -739,6 +780,118 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                 </div>
               </RadioGroup>
             </div>
+
+            {/* High Risk Criteria Table - shown when No is selected */}
+            {formData.revenue_recognition_identified === 'no' && (
+              <div className="mt-6 border-t pt-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  Identify the high risk criteria, document the rationale for determination, indicate the approach for analysis and relevant populations applied to entries that meet the high risk criteria are tested.
+                </p>
+                
+                <div className="flex justify-between items-center mb-4">
+                  <Button
+                    size="sm"
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                    onClick={addHighRiskCriteriaRow}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    Add
+                  </Button>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full border border-gray-200 table-fixed">
+                    <thead>
+                      <tr className="bg-blue-900 text-white">
+                        <th className="border border-gray-200 p-3 text-left w-28 text-xs">High-risk criteria reference</th>
+                        <th className="border border-gray-200 p-3 text-left w-48 text-xs">High-risk criteria description</th>
+                        <th className="border border-gray-200 p-3 text-left w-40 text-xs">Rationale</th>
+                        <th className="border border-gray-200 p-3 text-left w-32 text-xs">Method used to apply the criteria to the relevant population</th>
+                        <th className="border border-gray-200 p-3 text-left w-48 text-xs">Identify the relevant populations over which the high-risk criteria will be applied</th>
+                        <th className="border border-gray-200 p-3 text-center w-16 text-xs">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {highRiskCriteriaRows.map((row, index) => (
+                        <tr key={index} className="bg-white">
+                          <td className="border border-gray-200 p-2">
+                            <Input
+                              value={row.reference}
+                              onChange={(e) => updateHighRiskCriteriaRow(index, 'reference', e.target.value)}
+                              className="w-full text-sm bg-gray-50 border-gray-300"
+                              placeholder="Reference"
+                            />
+                          </td>
+                          <td className="border border-gray-200 p-2">
+                            <Textarea
+                              value={row.description}
+                              onChange={(e) => updateHighRiskCriteriaRow(index, 'description', e.target.value)}
+                              className="w-full min-h-[80px] resize-none text-sm bg-gray-50 border-gray-300"
+                              placeholder="Description"
+                            />
+                          </td>
+                          <td className="border border-gray-200 p-2">
+                            <Textarea
+                              value={row.rationale}
+                              onChange={(e) => updateHighRiskCriteriaRow(index, 'rationale', e.target.value)}
+                              className="w-full min-h-[80px] resize-none text-sm bg-gray-50 border-gray-300"
+                              placeholder="Rationale"
+                            />
+                          </td>
+                          <td className="border border-gray-200 p-2">
+                            <Textarea
+                              value={row.method}
+                              onChange={(e) => updateHighRiskCriteriaRow(index, 'method', e.target.value)}
+                              className="w-full min-h-[80px] resize-none text-sm bg-gray-50 border-gray-300"
+                              placeholder="Method"
+                            />
+                          </td>
+                          <td className="border border-gray-200 p-2">
+                            <div className="space-y-2">
+                              {getAvailablePopulations().length > 0 ? (
+                                <div className="space-y-1 max-h-24 overflow-y-auto">
+                                  {getAvailablePopulations().map((pop) => (
+                                    <div key={pop.id} className="flex items-center gap-2">
+                                      <Checkbox
+                                        id={`pop-${index}-${pop.id}`}
+                                        checked={row.populations?.includes(pop.id) || false}
+                                        onCheckedChange={(checked) => {
+                                          const newPopulations = checked 
+                                            ? [...(row.populations || []), pop.id]
+                                            : (row.populations || []).filter(p => p !== pop.id);
+                                          updateHighRiskCriteriaRow(index, 'populations', newPopulations);
+                                        }}
+                                      />
+                                      <Label htmlFor={`pop-${index}-${pop.id}`} className="text-xs truncate">
+                                        {pop.id}: {pop.description?.substring(0, 30)}...
+                                      </Label>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-xs text-gray-500 flex items-center gap-1">
+                                  <LinkIcon className="h-3 w-3" />
+                                  Add items to the table above to link
+                                </p>
+                              )}
+                            </div>
+                          </td>
+                          <td className="border border-gray-200 p-2 text-center align-middle">
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => removeHighRiskCriteriaRow(index)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
