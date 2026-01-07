@@ -1,52 +1,53 @@
 import { Card, CardContent } from '@/components/ui/card';
 import CommentableQuestion from './Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface BusinessProcessCard {
   id: string;
   number: string;
-  title: string;
+  titleKey: string;
 }
 
 const businessProcessCards: BusinessProcessCard[] = [
   {
     id: 'financial-reporting',
     number: '1.',
-    title: 'Financial reporting'
+    titleKey: 'mainBusinessProcesses.financialReporting'
   },
   {
     id: 'litigation-claims',
     number: '2.',
-    title: 'Litigation, claims and assessments'
+    titleKey: 'mainBusinessProcesses.litigationClaims'
   },
   {
     id: 'ventes-clients',
     number: '3.',
-    title: 'Ventes - Clients'
+    titleKey: 'mainBusinessProcesses.ventesClients'
   },
   {
     id: 'achats-fournisseurs',
     number: '4.',
-    title: 'Achats - Fournisseurs'
+    titleKey: 'mainBusinessProcesses.achatsFournisseurs'
   },
   {
     id: 'immobilisations-incorporelles',
     number: '5.',
-    title: 'Immobilisations Incorporelles'
+    titleKey: 'mainBusinessProcesses.immobilisations'
   },
   {
     id: 'stocks',
     number: '6.',
-    title: 'Stocks'
+    titleKey: 'mainBusinessProcesses.stocks'
   },
   {
     id: 'tresorerie',
     number: '7.',
-    title: 'Trésorerie'
+    titleKey: 'mainBusinessProcesses.tresorerie'
   },
   {
     id: 'mnsa-accounts',
     number: '8.',
-    title: 'MNSA. Material non-significant accounts'
+    titleKey: 'mainBusinessProcesses.mnsaAccounts'
   }
 ];
 
@@ -55,8 +56,10 @@ interface MainBusinessProcessesSectionProps {
 }
 
 const MainBusinessProcessesSection = ({ onSectionChange = () => {} }: MainBusinessProcessesSectionProps) => {
+  const { t } = useTranslation();
+  
   return (
-    <CommentableQuestion fieldId="main-business-processes-section" label="Business Processes">
+    <CommentableQuestion fieldId="main-business-processes-section" label={t('mainBusinessProcesses.title')}>
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {businessProcessCards.map((process) => (
@@ -68,7 +71,7 @@ const MainBusinessProcessesSection = ({ onSectionChange = () => {} }: MainBusine
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') onSectionChange(process.id);
               }}
-              aria-label={process.title}
+              aria-label={t(process.titleKey)}
               role="button"
             >
               <CardContent className="flex flex-col p-8 items-start min-h-[120px] h-full">
@@ -76,7 +79,7 @@ const MainBusinessProcessesSection = ({ onSectionChange = () => {} }: MainBusine
                   {process.number}
                 </span>
                 <span className="text-gray-900 text-base font-medium">
-                  {process.title}
+                  {t(process.titleKey)}
                 </span>
               </CardContent>
             </Card>

@@ -2,6 +2,7 @@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface EngagementTeamSectionProps {
   formData: {
@@ -12,10 +13,12 @@ interface EngagementTeamSectionProps {
 }
 
 const EngagementTeamSection = ({ formData, onFormDataChange }: EngagementTeamSectionProps) => {
+  const { t } = useTranslation();
+  
   return (
-    <CommentableQuestion fieldId="engagement-team-section" label="Engagement Team">
+    <CommentableQuestion fieldId="engagement-team-section" label={t('engagementTeam.title')}>
       <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Engagement team</h4>
+        <h4 className="font-medium text-gray-900">{t('engagementTeam.title')}</h4>
         
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
@@ -24,7 +27,7 @@ const EngagementTeamSection = ({ formData, onFormDataChange }: EngagementTeamSec
               checked={formData.sufficient_appropriate_resources || false}
               onCheckedChange={(checked) => onFormDataChange({ sufficient_appropriate_resources: checked as boolean })}
             />
-            <Label htmlFor="sufficient_appropriate_resources" className="text-sm">Confirm that sufficient and appropriate resources to perform the engagement are assigned or made available to the engagement in a timely manner</Label>
+            <Label htmlFor="sufficient_appropriate_resources" className="text-sm">{t('engagementTeam.sufficientResources')}</Label>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -33,7 +36,7 @@ const EngagementTeamSection = ({ formData, onFormDataChange }: EngagementTeamSec
               checked={formData.team_competence_and_capabilities || false}
               onCheckedChange={(checked) => onFormDataChange({ team_competence_and_capabilities: checked as boolean })}
             />
-            <Label htmlFor="team_competence_and_capabilities" className="text-sm">Confirm that the members of the engagement team, and any engaged BUMEX specialists and internal auditors who provide direct assistance collectively have the appropriate competence and capabilities, including sufficient time, to perform the engagement</Label>
+            <Label htmlFor="team_competence_and_capabilities" className="text-sm">{t('engagementTeam.competenceAndCapabilities')}</Label>
           </div>
         </div>
       </div>

@@ -14,32 +14,32 @@ interface StrategyConsiderationsSectionProps {
 const StrategyConsiderationsSection = ({ formData, onFormDataChange }: StrategyConsiderationsSectionProps) => {
   const { t } = useTranslation();
   return (
-    <CommentableQuestion fieldId="strategy-considerations-section" label="Strategy Considerations">
+    <CommentableQuestion fieldId="strategy-considerations-section" label={t('strategyConsiderations.title')}>
       <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Other strategy or planning considerations</h4>
+        <h4 className="font-medium text-gray-900">{t('strategyConsiderations.title')}</h4>
         
         <div>
           <Label htmlFor="significant_factors_directing_activities" className="text-sm font-medium">
-            Identify factors that are significant in directing the activities of the engagement team e.g. significant issues and key audit areas.
+            {t('strategyConsiderations.significantFactors')}
           </Label>
           <Textarea
             id="significant_factors_directing_activities"
             value={formData.significant_factors_directing_activities || ''}
             onChange={(e) => onFormDataChange({ significant_factors_directing_activities: e.target.value })}
-            placeholder="Identify and describe significant factors, issues, and key audit areas that will guide the engagement team's activities..."
+            placeholder={t('strategyConsiderations.significantFactorsPlaceholder')}
             className="min-h-[120px] mt-2"
           />
         </div>
 
         <div>
           <Label htmlFor="additional_information_documentation" className="text-sm font-medium">
-            Document any additional information e.g. overall timing of audit activities and preliminary decisions about which locations we will include in our audit scope.
+            {t('strategyConsiderations.additionalInfo')}
           </Label>
           <Textarea
             id="additional_information_documentation"
             value={formData.additional_information_documentation || ''}
             onChange={(e) => onFormDataChange({ additional_information_documentation: e.target.value })}
-            placeholder="Document additional planning information, including timing of audit activities, location scope decisions, and other relevant considerations..."
+            placeholder={t('strategyConsiderations.additionalInfoPlaceholder')}
             className="min-h-[120px] mt-2"
           />
         </div>

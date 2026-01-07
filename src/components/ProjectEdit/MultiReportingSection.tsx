@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
 import CommentableQuestion from './Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface Report {
   id: string;
@@ -31,6 +32,8 @@ const MultiReportingSection = ({
   formData,
   onFormDataChange
 }: MultiReportingSectionProps) => {
+  const { t } = useTranslation();
+  
   const handleAddReport = () => {
     const newReport: Report = {
       id: Date.now().toString(),
@@ -60,14 +63,14 @@ const MultiReportingSection = ({
   };
 
   return (
-    <CommentableQuestion fieldId="multi-reporting-section" label="Multi-Reporting">
+    <CommentableQuestion fieldId="multi-reporting-section" label={t('multiReporting.title')}>
       <Card>
         <CardHeader>
-          <CardTitle>Multi-reporting</CardTitle>
+          <CardTitle>{t('multiReporting.title')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <Label className="text-sm font-medium">Are you planning to use Multi-reporting?</Label>
+            <Label className="text-sm font-medium">{t('multiReporting.planningToUse')}</Label>
             <RadioGroup
               value={formData.planning_to_use_multi_reporting || 'No'}
               onValueChange={(value) => onFormDataChange({ planning_to_use_multi_reporting: value })}
@@ -75,11 +78,11 @@ const MultiReportingSection = ({
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="Yes" id="multi-yes" />
-                <Label htmlFor="multi-yes" className="text-sm">Yes</Label>
+                <Label htmlFor="multi-yes" className="text-sm">{t('common.yes')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="No" id="multi-no" />
-                <Label htmlFor="multi-no" className="text-sm">No</Label>
+                <Label htmlFor="multi-no" className="text-sm">{t('common.no')}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -89,7 +92,7 @@ const MultiReportingSection = ({
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-medium text-gray-900">
-                    Identify the reports (complete this table only after roll forward has been executed if we plan to roll forward the reports from prior period)
+                    {t('multiReporting.identifyReports')}
                   </h4>
                 </div>
                 <Button
@@ -106,10 +109,10 @@ const MultiReportingSection = ({
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-blue-600 hover:bg-blue-600">
-                      <TableHead className="text-white font-medium">Report ID</TableHead>
-                      <TableHead className="text-white font-medium">Report name</TableHead>
-                      <TableHead className="text-white font-medium">Legal entity</TableHead>
-                      <TableHead className="text-white font-medium">Is Primary report?</TableHead>
+                      <TableHead className="text-white font-medium">{t('multiReporting.reportId')}</TableHead>
+                      <TableHead className="text-white font-medium">{t('multiReporting.reportName')}</TableHead>
+                      <TableHead className="text-white font-medium">{t('multiReporting.legalEntity')}</TableHead>
+                      <TableHead className="text-white font-medium">{t('multiReporting.isPrimaryReport')}</TableHead>
                       <TableHead className="text-white font-medium w-12"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -120,7 +123,7 @@ const MultiReportingSection = ({
                           <Input
                             value={report.report_id}
                             onChange={(e) => handleReportChange(report.id, 'report_id', e.target.value)}
-                            placeholder="Enter report ID"
+                            placeholder={t('multiReporting.reportId')}
                             className="border-0 bg-transparent"
                           />
                         </TableCell>
@@ -128,7 +131,7 @@ const MultiReportingSection = ({
                           <Input
                             value={report.report_name}
                             onChange={(e) => handleReportChange(report.id, 'report_name', e.target.value)}
-                            placeholder="Enter report name"
+                            placeholder={t('multiReporting.reportName')}
                             className="border-0 bg-transparent"
                           />
                         </TableCell>
@@ -136,7 +139,7 @@ const MultiReportingSection = ({
                           <Input
                             value={report.legal_entity}
                             onChange={(e) => handleReportChange(report.id, 'legal_entity', e.target.value)}
-                            placeholder="Enter legal entity"
+                            placeholder={t('multiReporting.legalEntity')}
                             className="border-0 bg-transparent"
                           />
                         </TableCell>
@@ -164,7 +167,7 @@ const MultiReportingSection = ({
                     {(!formData.reports || formData.reports.length === 0) && (
                       <TableRow>
                         <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                          No reports added yet. Click the + button to add a report.
+                          {t('multiReporting.noReports')}
                         </TableCell>
                       </TableRow>
                     )}

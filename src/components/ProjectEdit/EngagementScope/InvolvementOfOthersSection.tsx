@@ -49,9 +49,9 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
   };
 
   return (
-    <CommentableQuestion fieldId="involvement-others-section" label="Involvement of Others">
+    <CommentableQuestion fieldId="involvement-others-section" label={t('involvementOfOthers.title')}>
       <div className="space-y-4">
-        <h4 className="font-medium text-gray-900">Involvement of others and specialized skills or knowledge</h4>
+        <h4 className="font-medium text-gray-900">{t('involvementOfOthers.title')}</h4>
         
         <div className="space-y-3">
           <div className="flex items-center space-x-2">
@@ -60,7 +60,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
               checked={formData.entity_uses_service_organization || false}
               onCheckedChange={(checked) => onFormDataChange({ entity_uses_service_organization: checked as boolean })}
             />
-            <Label htmlFor="entity_uses_service_organization">The entity uses a service organization(s)</Label>
+            <Label htmlFor="entity_uses_service_organization">{t('involvementOfOthers.usesServiceOrganization')}</Label>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -69,14 +69,14 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
               checked={formData.plan_to_involve_specialists || false}
               onCheckedChange={(checked) => onFormDataChange({ plan_to_involve_specialists: checked as boolean })}
             />
-            <Label htmlFor="plan_to_involve_specialists">We plan to involve specific team members with specialized skills in accounting and auditing and/or use the work of employed/engaged Bumex specialists and/or management's specialists</Label>
+            <Label htmlFor="plan_to_involve_specialists">{t('involvementOfOthers.planToInvolveSpecialists')}</Label>
           </div>
         </div>
 
         {formData.plan_to_involve_specialists && (
           <div className="space-y-4 p-4 border rounded-lg bg-gray-50">
             <div className="flex items-center justify-between">
-              <Label className="font-medium text-gray-900">Specialist Teams</Label>
+              <Label className="font-medium text-gray-900">{t('involvementOfOthers.specialistTeams')}</Label>
               <Button
                 type="button"
                 onClick={handleAddSpecialistTeam}
@@ -91,9 +91,9 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
               <Table>
                 <TableHeader>
                   <TableRow className="bg-blue-600">
-                    <TableHead className="text-white font-medium">ID</TableHead>
-                    <TableHead className="text-white font-medium">Description</TableHead>
-                    <TableHead className="text-white font-medium">Name</TableHead>
+                    <TableHead className="text-white font-medium">{t('common.id')}</TableHead>
+                    <TableHead className="text-white font-medium">{t('common.description')}</TableHead>
+                    <TableHead className="text-white font-medium">{t('common.name')}</TableHead>
                     <TableHead className="text-white font-medium">Title</TableHead>
                     <TableHead className="text-white font-medium w-12"></TableHead>
                   </TableRow>
@@ -105,7 +105,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                         <Input
                           value={team.id}
                           onChange={(e) => handleSpecialistTeamChange(index, 'id', e.target.value)}
-                          placeholder="Enter ID"
+                          placeholder={t('common.id')}
                           className="border-0 bg-transparent"
                         />
                       </TableCell>
@@ -113,7 +113,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                         <Input
                           value={team.description}
                           onChange={(e) => handleSpecialistTeamChange(index, 'description', e.target.value)}
-                          placeholder="Enter description"
+                          placeholder={t('common.description')}
                           className="border-0 bg-transparent"
                         />
                       </TableCell>
@@ -121,7 +121,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                         <Input
                           value={team.name}
                           onChange={(e) => handleSpecialistTeamChange(index, 'name', e.target.value)}
-                          placeholder="Enter name"
+                          placeholder={t('common.name')}
                           className="border-0 bg-transparent"
                         />
                       </TableCell>
@@ -129,7 +129,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                         <Input
                           value={team.title}
                           onChange={(e) => handleSpecialistTeamChange(index, 'title', e.target.value)}
-                          placeholder="Enter title"
+                          placeholder="Title"
                           className="border-0 bg-transparent"
                         />
                       </TableCell>
@@ -149,7 +149,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                   {(!formData.specialist_teams || formData.specialist_teams.length === 0) && (
                     <TableRow>
                       <TableCell colSpan={5} className="text-center text-gray-500 py-8">
-                        No specialist teams added yet. Click the + button to add a specialist team.
+                        {t('involvementOfOthers.noSpecialistTeams')}
                       </TableCell>
                     </TableRow>
                   )}
