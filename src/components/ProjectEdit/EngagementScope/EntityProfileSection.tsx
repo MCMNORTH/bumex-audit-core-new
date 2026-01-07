@@ -1,4 +1,3 @@
-
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -7,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Trash2, Plus } from 'lucide-react';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface EntityProfileSectionProps {
   formData: {
@@ -23,6 +23,7 @@ interface EntityProfileSectionProps {
 }
 
 const EntityProfileSection = ({ formData, onFormDataChange }: EntityProfileSectionProps) => {
+  const { t } = useTranslation();
   const addSATItem = () => {
     const newItem = {
       id: Date.now().toString(),

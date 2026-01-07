@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ProjectFormData } from '@/types/formData';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface CERAMICSectionProps {
   formData: ProjectFormData;
@@ -22,6 +23,7 @@ interface CERAMICSectionProps {
 }
 
 const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataChange }) => {
+  const { t } = useTranslation();
   const addInquiry = () => {
     const newInquiry = {
       id: Date.now().toString(),

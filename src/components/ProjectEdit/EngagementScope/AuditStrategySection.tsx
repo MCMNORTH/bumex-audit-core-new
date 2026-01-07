@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Upload, Download, X } from 'lucide-react';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 interface AuditStrategySectionProps {
   formData: {
     gaap_conversion_activity: boolean;

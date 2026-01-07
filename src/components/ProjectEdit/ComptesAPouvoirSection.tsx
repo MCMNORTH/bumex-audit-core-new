@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ComptesAPouvoirSectionProps {
   formData: ProjectFormData;
@@ -28,6 +29,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
   formData,
   handleFormDataChange
 }) => {
+  const { t } = useTranslation();
   const handleCheckboxChange = (field: string, checked: boolean) => {
     handleFormDataChange(field, checked);
   };

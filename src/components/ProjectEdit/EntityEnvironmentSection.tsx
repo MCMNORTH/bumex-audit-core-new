@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Trash2, Plus } from 'lucide-react';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface EntityEnvironmentSectionProps {
   formData: any;
@@ -15,6 +16,7 @@ interface EntityEnvironmentSectionProps {
 }
 
 const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ formData, onFormDataChange }) => {
+  const { t } = useTranslation();
   const industryOptions = [
     'Industrial Products',
     'Retail',

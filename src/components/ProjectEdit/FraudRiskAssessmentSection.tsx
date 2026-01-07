@@ -14,6 +14,7 @@ import { storage } from '@/lib/firebase';
 import { toast } from 'sonner';
 import { CommentableQuestion } from './Comments';
 import { Link as LinkIcon } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface FraudRiskAssessmentSectionProps {
   formData: ProjectFormData;
@@ -24,6 +25,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
   formData,
   onFormDataChange
 }) => {
+  const { t } = useTranslation();
   // State for collapsible sections
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     financial: true,

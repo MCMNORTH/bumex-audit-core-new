@@ -10,6 +10,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ProjectFormData } from '@/types/formData';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface DISectionProps {
   formData: ProjectFormData;
@@ -17,6 +18,7 @@ interface DISectionProps {
 }
 
 const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
+  const { t } = useTranslation();
   const [rafitRows, setRafitRows] = useState([
     { id: 1, rafit: '', itLayer: '', howAddresses: '' }
   ]);

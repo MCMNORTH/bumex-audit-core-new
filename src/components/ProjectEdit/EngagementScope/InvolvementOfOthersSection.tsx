@@ -1,4 +1,3 @@
-
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface SpecialistTeam {
   id: string;
@@ -24,6 +24,7 @@ interface InvolvementOfOthersSectionProps {
 }
 
 const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementOfOthersSectionProps) => {
+  const { t } = useTranslation();
   const handleAddSpecialistTeam = () => {
     const newTeam: SpecialistTeam = {
       id: '',

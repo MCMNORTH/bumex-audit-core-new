@@ -1,7 +1,7 @@
-
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface DirectionSupervisionSectionProps {
   formData: {
@@ -11,6 +11,7 @@ interface DirectionSupervisionSectionProps {
 }
 
 const DirectionSupervisionSection = ({ formData, onFormDataChange }: DirectionSupervisionSectionProps) => {
+  const { t } = useTranslation();
   return (
     <CommentableQuestion fieldId="direction-supervision-section" label="Direction and Supervision">
       <div className="space-y-4">
