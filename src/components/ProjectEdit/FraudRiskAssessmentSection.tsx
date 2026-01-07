@@ -454,7 +454,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           <Collapsible open={openSections.financial} onOpenChange={() => toggleSection('financial')}>
             <CollapsibleTrigger className="flex items-center space-x-2 text-left w-full mb-4">
               {openSections.financial ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              <span className="font-medium">Financial</span>
+              <span className="font-medium">{t('fraud.financial')}</span>
             </CollapsibleTrigger>
             <CollapsibleContent>
               {renderFraudRiskTable(financialRows, setFinancialRows, 'fraud_risk_financial', '')}
@@ -465,15 +465,15 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           <Collapsible open={openSections.managementGovernance} onOpenChange={() => toggleSection('managementGovernance')}>
             <CollapsibleTrigger className="flex items-center space-x-2 text-left w-full mb-4">
               {openSections.managementGovernance ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              <span className="font-medium">Management and governance:</span>
+              <span className="font-medium">{t('fraud.managementGovernance')}</span>
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4">
               <div>
-                <p className="font-medium mb-2">(a) Strained relationships with auditors- History of:</p>
+                <p className="font-medium mb-2">{t('fraud.strainedRelationships')}</p>
                 {renderFraudRiskTable(managementRows, setManagementRows, 'fraud_risk_management', '')}
               </div>
               <div>
-                <p className="font-medium mb-2">(b) Other:</p>
+                <p className="font-medium mb-2">{t('fraud.otherManagement')}</p>
                 {renderFraudRiskTable(otherManagementRows, setOtherManagementRows, 'fraud_risk_other_management', '')}
               </div>
             </CollapsibleContent>
@@ -483,7 +483,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           <Collapsible open={openSections.otherInternal} onOpenChange={() => toggleSection('otherInternal')}>
             <CollapsibleTrigger className="flex items-center space-x-2 text-left w-full mb-4">
               {openSections.otherInternal ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              <span className="font-medium">Other internal:</span>
+              <span className="font-medium">{t('fraud.otherInternal')}</span>
             </CollapsibleTrigger>
             <CollapsibleContent>
               {renderFraudRiskTable(otherInternalRows, setOtherInternalRows, 'fraud_risk_other_internal', '')}
@@ -494,7 +494,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           <Collapsible open={openSections.external} onOpenChange={() => toggleSection('external')}>
             <CollapsibleTrigger className="flex items-center space-x-2 text-left w-full mb-4">
               {openSections.external ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              <span className="font-medium">External:</span>
+              <span className="font-medium">{t('fraud.external')}</span>
             </CollapsibleTrigger>
             <CollapsibleContent>
               {renderFraudRiskTable(externalRows, setExternalRows, 'fraud_risk_external', '')}
@@ -505,7 +505,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           <Collapsible open={openSections.misappropriation} onOpenChange={() => toggleSection('misappropriation')}>
             <CollapsibleTrigger className="flex items-center space-x-2 text-left w-full mb-4">
               {openSections.misappropriation ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              <span className="font-medium">Misappropriation of Asset:</span>
+              <span className="font-medium">{t('fraud.misappropriationAssets')}</span>
             </CollapsibleTrigger>
             <CollapsibleContent>
               {renderFraudRiskTable(misappropriationRows, setMisappropriationRows, 'fraud_risk_misappropriation', '')}
@@ -516,7 +516,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           <Collapsible open={openSections.otherFactors} onOpenChange={() => toggleSection('otherFactors')}>
             <CollapsibleTrigger className="flex items-center space-x-2 text-left w-full mb-4">
               {openSections.otherFactors ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              <span className="font-medium">Other fraud risk factors:</span>
+              <span className="font-medium">{t('fraud.otherFactors')}</span>
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="space-y-2">
@@ -529,7 +529,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                     <Plus className="h-4 w-4 mr-1" />
                   </Button>
                 </div>
-                <p className="text-sm text-gray-600">Click to add a customized fraud risk factor</p>
+                <p className="text-sm text-gray-600">{t('fraud.clickToAddCustom')}</p>
                 {renderFraudRiskTable(otherFactorsRows, setOtherFactorsRows, 'fraud_risk_other_factors', '')}
               </div>
             </CollapsibleContent>
@@ -539,28 +539,28 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
       </CommentableQuestion>
 
       {/* Summary Table */}
-      <CommentableQuestion fieldId="fraud_risk_summary" label="Fraud risk factors summary">
+      <CommentableQuestion fieldId="fraud_risk_summary" label={t('fraud.summary')}>
         <Card>
           <CardContent className="p-6">
-          <h4 className="font-medium mb-4">Use fraud risk factors to identify and assess fraud risks</h4>
-          <p className="text-sm text-gray-600 mb-4">Below is a summary of the fraud risk factors identified above</p>
+          <h4 className="font-medium mb-4">{t('fraud.summaryTitle')}</h4>
+          <p className="text-sm text-gray-600 mb-4">{t('fraud.summarySubtitle')}</p>
           
           <div className="overflow-x-auto">
             <table className="w-full border border-gray-200">
               <thead>
                 <tr className="bg-blue-900 text-white">
-                  <th className="border border-gray-200 p-2 text-left">Summary of fraud risk factors identified</th>
-                  <th className="border border-gray-200 p-2 text-center">Financial</th>
-                  <th className="border border-gray-200 p-2 text-center">Management and governance:</th>
-                  <th className="border border-gray-200 p-2 text-center">Other internal:</th>
-                  <th className="border border-gray-200 p-2 text-center">External:</th>
-                  <th className="border border-gray-200 p-2 text-center">Misappropriation of Asset:</th>
-                  <th className="border border-gray-200 p-2 text-center">Other fraud risk factors:</th>
+                  <th className="border border-gray-200 p-2 text-left">{t('fraud.summaryOfFactors')}</th>
+                  <th className="border border-gray-200 p-2 text-center">{t('fraud.financial')}</th>
+                  <th className="border border-gray-200 p-2 text-center">{t('fraud.managementGovernance')}</th>
+                  <th className="border border-gray-200 p-2 text-center">{t('fraud.otherInternal')}</th>
+                  <th className="border border-gray-200 p-2 text-center">{t('fraud.external')}</th>
+                  <th className="border border-gray-200 p-2 text-center">{t('fraud.misappropriationAssets')}</th>
+                  <th className="border border-gray-200 p-2 text-center">{t('fraud.otherFactors')}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td className="border border-gray-200 p-2 font-medium">Incentives or pressures</td>
+                  <td className="border border-gray-200 p-2 font-medium">{t('fraud.incentivesOrPressures')}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.incentives.financial}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.incentives.management}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.incentives.otherInternal}</td>
@@ -569,7 +569,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                   <td className="border border-gray-200 p-2 text-center">{summary.incentives.otherFactors}</td>
                 </tr>
                 <tr>
-                  <td className="border border-gray-200 p-2 font-medium">Opportunities</td>
+                  <td className="border border-gray-200 p-2 font-medium">{t('fraud.opportunities')}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.opportunities.financial}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.opportunities.management}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.opportunities.otherInternal}</td>
@@ -578,7 +578,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                   <td className="border border-gray-200 p-2 text-center">{summary.opportunities.otherFactors}</td>
                 </tr>
                 <tr>
-                  <td className="border border-gray-200 p-2 font-medium">Attitudes or rationalizations</td>
+                  <td className="border border-gray-200 p-2 font-medium">{t('fraud.attitudesOrRationalizations')}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.attitudes.financial}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.attitudes.management}</td>
                   <td className="border border-gray-200 p-2 text-center">{summary.attitudes.otherInternal}</td>
@@ -591,7 +591,7 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
           </div>
 
           <Textarea
-            placeholder="Based on the fraud risk factors above and our risk assessment procedures performed throughout our audit, we have identified the following fraud risks for each of the below categories:"
+            placeholder={t('fraud.basedOnFactors')}
             value={formData.fraud_risk_summary || ''}
             onChange={(e) => onFormDataChange({ fraud_risk_summary: e.target.value })}
             className="mt-4 min-h-[80px]"

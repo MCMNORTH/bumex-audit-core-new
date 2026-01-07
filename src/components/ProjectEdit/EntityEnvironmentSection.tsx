@@ -234,7 +234,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity operates in a legal and/or political environment that is stable.
+                {t('entityEnvironment.stableLegalEnvironment')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -244,7 +244,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('legal_environment_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -253,14 +253,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('legal_environment_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The laws and regulations relevant to the entity are those that are generally applicable for all entities.
+                {t('entityEnvironment.lawsRegulationsApplicable')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -270,7 +270,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('laws_regulations_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -279,14 +279,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('laws_regulations_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                Technologies relevant to the entity's products or services remain unchanged.
+                {t('entityEnvironment.technologiesUnchanged')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -296,7 +296,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('technologies_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -305,14 +305,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('technologies_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                Competitors relevant to the entity remain unchanged.
+                {t('entityEnvironment.competitorsUnchanged')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -322,7 +322,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('competitors_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -331,14 +331,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('competitors_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The industry relevant to the entity is stable and is without significant new developments such as disruptions, decline, or growth.
+                {t('entityEnvironment.industryStable')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -348,7 +348,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('industry_stability_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -357,14 +357,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('industry_stability_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity has continued to operate in the same markets or segments with the same products and services.
+                {t('entityEnvironment.sameMarkets')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -374,7 +374,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('markets_products_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -383,7 +383,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('markets_products_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
@@ -398,14 +398,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onCheckedChange={(checked) => onFormDataChange({ document_additional_considerations: checked })}
                 />
                 <Label htmlFor="document-additional-considerations" className="text-sm">
-                  Document any additional considerations needed regarding understanding industry, regulatory and other external factors including where the assumptions above are not confirmed
+                  {t('entityEnvironment.documentAdditional')}
                 </Label>
               </div>
               {formData.document_additional_considerations && (
                 <Textarea
                   value={formData.document_additional_considerations_details || ''}
                   onChange={(e) => onFormDataChange({ document_additional_considerations_details: e.target.value })}
-                  placeholder="Provide additional considerations..."
+                  placeholder={t('entityEnvironment.provideAdditionalConsiderations')}
                   className="min-h-[100px] ml-6"
                 />
               )}
@@ -419,14 +419,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onCheckedChange={(checked) => onFormDataChange({ regulatory_factors_relevant: checked })}
                 />
                 <Label htmlFor="regulatory-factors-relevant" className="text-sm">
-                  Regulatory factors are relevant to the entity's accounting estimates
+                  {t('entityEnvironment.regulatoryFactorsRelevant')}
                 </Label>
               </div>
               {formData.regulatory_factors_relevant && (
                 <Textarea
                   value={formData.regulatory_factors_relevant_details || ''}
                   onChange={(e) => onFormDataChange({ regulatory_factors_relevant_details: e.target.value })}
-                  placeholder="Provide details about regulatory factors..."
+                  placeholder={t('entityEnvironment.provideRegulatoryDetails')}
                   className="min-h-[100px] ml-6"
                 />
               )}
@@ -435,14 +435,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
         </div>
 
         <div className="space-y-6">
-          <h4 className="font-medium text-gray-900">Understand the nature of the entity</h4>
+          <h4 className="font-medium text-gray-900">{t('entityEnvironment.understandNature')}</h4>
           
           <div className="space-y-4">
-            <h5 className="font-medium text-gray-900">Confirm the understanding of the nature of the entity:</h5>
+            <h5 className="font-medium text-gray-900">{t('entityEnvironment.confirmNatureUnderstanding')}</h5>
             
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity is an owner managed business with limited shareholders, or an entity without share capital that is not a Public Interest Entity.
+                {t('entityEnvironment.ownerManagedBusiness')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -452,7 +452,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_nature_ownership_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -461,14 +461,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_nature_ownership_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity has a limited range of products or services.
+                {t('entityEnvironment.limitedProducts')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -478,7 +478,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_nature_products_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -487,14 +487,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_nature_products_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity has a limited number of facilities or locations.
+                {t('entityEnvironment.limitedFacilities')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -504,7 +504,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_nature_facilities_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -513,14 +513,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_nature_facilities_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity's management or shareholders are those charged with governance.
+                {t('entityEnvironment.managementGovernance')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -530,7 +530,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_management_governance_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -539,14 +539,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_management_governance_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity is in a steady state and no significant changes to the business operations have occurred in current year.
+                {t('entityEnvironment.steadyState')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -556,7 +556,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_steady_state_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -565,14 +565,14 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_steady_state_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
 
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-700 flex-1 pr-4">
-                The entity's transactions are routine and non-complex in nature.
+                {t('entityEnvironment.routineTransactions')}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -582,7 +582,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_transactions_routine_confirmation', 'not_confirmed')}
                   className="text-xs"
                 >
-                  NOT CONFIRMED
+                  {t('entityEnvironment.notConfirmed')}
                 </Button>
                 <Button
                   type="button"
@@ -591,7 +591,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
                   onClick={() => handleConfirmationChange('entity_transactions_routine_confirmation', 'confirmed')}
                   className="text-xs"
                 >
-                  CONFIRMED
+                  {t('entityEnvironment.confirmed')}
                 </Button>
               </div>
             </div>
