@@ -11,6 +11,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import CommentableQuestion from '../Comments/CommentableQuestion';
 
 interface ITEnvironmentSectionProps {
   formData: {

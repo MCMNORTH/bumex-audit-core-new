@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Trash2 } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
+import CommentableQuestion from '../Comments/CommentableQuestion';
 
 interface AuditingStandardsSectionProps {
   formData: {
@@ -32,39 +33,41 @@ const AuditingStandardsSection = ({ formData, onFormDataChange }: AuditingStanda
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <Label className="font-medium text-gray-900">{t('auditingStandards.title')}</Label>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handleAddAuditingStandard}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          {t('common.add')}
-        </Button>
-      </div>
-      {formData.auditing_standards.map((standard, index) => (
-        <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-          <Input
-            value={standard}
-            onChange={(e) => handleAuditingStandardChange(index, e.target.value)}
-            placeholder={t('auditingStandards.placeholder')}
-            className="flex-1"
-          />
+    <CommentableQuestion fieldId="auditing-standards-section" label="Auditing Standards">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="font-medium text-gray-900">{t('auditingStandards.title')}</Label>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="sm"
-            onClick={() => handleRemoveAuditingStandard(index)}
-            className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+            onClick={handleAddAuditingStandard}
           >
-            <Trash2 className="h-4 w-4" />
+            <Plus className="h-4 w-4 mr-2" />
+            {t('common.add')}
           </Button>
         </div>
-      ))}
-    </div>
+        {formData.auditing_standards.map((standard, index) => (
+          <div key={index} className="flex items-center space-x-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
+            <Input
+              value={standard}
+              onChange={(e) => handleAuditingStandardChange(index, e.target.value)}
+              placeholder={t('auditingStandards.placeholder')}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => handleRemoveAuditingStandard(index)}
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    </CommentableQuestion>
   );
 };
 
