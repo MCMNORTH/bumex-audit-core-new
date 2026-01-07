@@ -13,8 +13,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-
 import { ProjectFormData } from '@/types/formData';
+import { CommentableQuestion } from './Comments';
 
 interface CERAMICSectionProps {
   formData: ProjectFormData;
@@ -53,6 +53,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
   };
 
   return (
+    <CommentableQuestion fieldId="ceramic_main" label="CERAMIC Components">
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">
@@ -700,6 +701,7 @@ const CERAMICSection: React.FC<CERAMICSectionProps> = ({ formData, onFormDataCha
         </div>
       </CardContent>
     </Card>
+    </CommentableQuestion>
   );
 };
 

@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Trash2, Plus } from 'lucide-react';
+import { CommentableQuestion } from './Comments';
 
 interface EntityEnvironmentSectionProps {
   formData: any;
@@ -64,6 +65,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
   };
 
   return (
+    <CommentableQuestion fieldId="entity_environment_main" label="Entity and Environment">
     <Card>
       <CardHeader>
         <h3 className="text-lg font-semibold">Obtain an understanding of the entity and its environment</h3>
@@ -1077,6 +1079,7 @@ const EntityEnvironmentSection: React.FC<EntityEnvironmentSectionProps> = ({ for
 
       </CardContent>
     </Card>
+    </CommentableQuestion>
   );
 };
 

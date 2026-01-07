@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { CommentableQuestion } from './Comments';
 
 interface BusinessProcess {
   id: string;
@@ -107,6 +108,7 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
   };
 
   return (
+    <CommentableQuestion fieldId="business_processes_main" label="Business Processes">
     <Card>
       <CardHeader>
         <CardTitle>Identify relevant processes</CardTitle>
@@ -212,6 +214,7 @@ const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProces
         </div>
       </CardContent>
     </Card>
+    </CommentableQuestion>
   );
 };
 

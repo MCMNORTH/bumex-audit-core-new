@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData } from '@/types/formData';
+import { CommentableQuestion } from './Comments';
 
 interface ComptesAPouvoirSectionProps {
   formData: ProjectFormData;
@@ -63,6 +64,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
   };
 
   return (
+    <CommentableQuestion fieldId="comptes_pouvoir_main" label="Comptes à Pouvoir">
     <div className="space-y-6">
       {/* Assess the risk associated with the control (RAWTC) */}
       <Card>
@@ -509,6 +511,7 @@ const ComptesAPouvoirSection: React.FC<ComptesAPouvoirSectionProps> = ({
         </CardContent>
       </Card>
     </div>
+    </CommentableQuestion>
   );
 };
 

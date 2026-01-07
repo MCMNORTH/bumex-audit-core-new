@@ -11,7 +11,7 @@ import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
 import EntityProfileSection from './EngagementScope/EntityProfileSection';
 import MultiReportingSection from './MultiReportingSection';
-
+import { CommentableQuestion } from './Comments';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 interface DocumentFile {

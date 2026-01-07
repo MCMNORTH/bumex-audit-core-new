@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
+import { CommentableQuestion } from './Comments';
 interface FinancialReportingProcessSectionProps {
   formData: any;
   onFormDataChange: (updates: any) => void;
@@ -90,7 +91,8 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
       [field]: value
     } : r));
   };
-  return <div className="space-y-6">
+  return <CommentableQuestion fieldId="financial_reporting_main" label="Financial Reporting Process">
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>1. Financial reporting process</CardTitle>
@@ -690,6 +692,7 @@ const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectio
           </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+    </CommentableQuestion>;
 };
 export default FinancialReportingProcessSection;

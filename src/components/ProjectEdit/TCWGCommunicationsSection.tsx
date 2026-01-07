@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
+import { CommentableQuestion } from './Comments';
 
 interface TCWGCommunicationsSectionProps {
   formData: ProjectFormData;
@@ -271,6 +272,7 @@ const TCWGCommunicationsSection = ({
   };
 
   return (
+    <CommentableQuestion fieldId="tcwg_main" label="TCWG Communications">
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -823,6 +825,7 @@ const TCWGCommunicationsSection = ({
         </div>
       </CardContent>
     </Card>
+    </CommentableQuestion>
   );
 };
 

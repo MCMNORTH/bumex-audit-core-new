@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { CommentableQuestion } from './Comments';
 
 interface IndependenceRequirementsSectionProps {
   formData: any;
@@ -18,6 +19,7 @@ const IndependenceRequirementsSection = ({
   };
 
   return (
+    <CommentableQuestion fieldId="independence_main" label="Independence Requirements">
     <Card>
       <CardHeader>
         <CardTitle>Comply with independence requirements</CardTitle>
@@ -192,6 +194,7 @@ const IndependenceRequirementsSection = ({
         </div>
       </CardContent>
     </Card>
+    </CommentableQuestion>
   );
 };
 

@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ProjectFormData } from '@/types/formData';
+import { CommentableQuestion } from './Comments';
 
 interface RAPDSectionProps {
   formData: ProjectFormData;
@@ -48,6 +49,7 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
   };
 
   return (
+    <CommentableQuestion fieldId="rapd_main" label="RAPD Discussion">
     <Card>
       <CardHeader>
         <CardTitle className="text-lg font-semibold">
@@ -470,6 +472,7 @@ const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange })
         </div>
       </CardContent>
     </Card>
+    </CommentableQuestion>
   );
 };
 
