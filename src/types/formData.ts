@@ -528,6 +528,7 @@ export interface ProjectFormData {
   fraud_financial_statement?: FinancialStatementFraudRisk[];
   revenue_recognition_fraud_risk?: string;
   revenue_recognition_identified?: string;
+  high_risk_criteria_items?: HighRiskCriteriaItem[];
   overall_fraud_response?: string;
 }
 
@@ -558,6 +559,16 @@ export interface FinancialStatementFraudRisk {
   description: string;
   fraudulentReporting: boolean;
   misappropriationAssets: boolean;
+}
+
+// High Risk Criteria Item interface (for fraud risk section when No is selected)
+export interface HighRiskCriteriaItem {
+  id: string;
+  reference: string;
+  description: string;
+  rationale: string;
+  method: string;
+  populations: string[];
 }
 
 // ComptesAPouvoir Procedure Item interface (needed for TOE section)
@@ -899,5 +910,6 @@ export const getInitialFormData = (): ProjectFormData => ({
   fraud_financial_statement: [],
   revenue_recognition_fraud_risk: '',
   revenue_recognition_identified: '',
+  high_risk_criteria_items: [],
   overall_fraud_response: '',
 });
