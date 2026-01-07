@@ -94,7 +94,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                     <TableHead className="text-white font-medium">{t('common.id')}</TableHead>
                     <TableHead className="text-white font-medium">{t('common.description')}</TableHead>
                     <TableHead className="text-white font-medium">{t('common.name')}</TableHead>
-                    <TableHead className="text-white font-medium">Title</TableHead>
+                    <TableHead className="text-white font-medium">{t('common.title')}</TableHead>
                     <TableHead className="text-white font-medium w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -129,7 +129,7 @@ const InvolvementOfOthersSection = ({ formData, onFormDataChange }: InvolvementO
                         <Input
                           value={team.title}
                           onChange={(e) => handleSpecialistTeamChange(index, 'title', e.target.value)}
-                          placeholder="Title"
+                          placeholder={t('common.title')}
                           className="border-0 bg-transparent"
                         />
                       </TableCell>
