@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { ProjectFormData } from '@/types/formData';
+import { CommentableQuestion } from './Comments';
 
 interface DISectionProps {
   formData: ProjectFormData;
@@ -66,6 +67,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
   };
 
   return (
+    <CommentableQuestion fieldId="di_main" label="D&I General IT Controls">
     <div className="space-y-6">
       {/* Header */}
       <div>
@@ -516,6 +518,7 @@ const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
         </CardContent>
       </Card>
     </div>
+    </CommentableQuestion>
   );
 };
 
