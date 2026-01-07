@@ -1,9 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface IndependenceRequirementsSectionProps {
   formData: any;
@@ -14,6 +14,7 @@ const IndependenceRequirementsSection = ({
   formData,
   onFormDataChange
 }: IndependenceRequirementsSectionProps) => {
+  const { t } = useTranslation();
   const handleRadioChange = (field: string, value: string) => {
     onFormDataChange({ [field]: value });
   };

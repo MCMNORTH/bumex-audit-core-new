@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Plus, Trash2 } from 'lucide-react';
 import { ProjectFormData, MaterialityMetricItem, QualitativeFactorItem, MaterialityAssessmentItem } from '@/types/formData';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface MaterialityMetricsSectionProps {
   formData: ProjectFormData;
@@ -18,6 +19,7 @@ interface MaterialityMetricsSectionProps {
 }
 
 const MaterialityMetricsSection = ({ formData, onFormDataChange, showReEvaluate = false }: MaterialityMetricsSectionProps) => {
+  const { t } = useTranslation();
   const materialityTable = (formData as any).materiality_metrics_table || [];
   const qualitativeFactorsTable = (formData as any).qualitative_factors_table || [];
   const materialityAssessmentTable = (formData as any).materiality_assessment_table || [];

@@ -1,7 +1,7 @@
-
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface StrategyConsiderationsSectionProps {
   formData: {
@@ -12,6 +12,7 @@ interface StrategyConsiderationsSectionProps {
 }
 
 const StrategyConsiderationsSection = ({ formData, onFormDataChange }: StrategyConsiderationsSectionProps) => {
+  const { t } = useTranslation();
   return (
     <CommentableQuestion fieldId="strategy-considerations-section" label="Strategy Considerations">
       <div className="space-y-4">

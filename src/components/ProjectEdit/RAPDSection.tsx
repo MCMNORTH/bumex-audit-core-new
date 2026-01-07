@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { ProjectFormData } from '@/types/formData';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface RAPDSectionProps {
   formData: ProjectFormData;
@@ -20,6 +21,7 @@ interface RAPDSectionProps {
 }
 
 const RAPDSection: React.FC<RAPDSectionProps> = ({ formData, onFormDataChange }) => {
+  const { t } = useTranslation();
   const addTeamMember = () => {
     const newMember = {
       id: Date.now().toString(),

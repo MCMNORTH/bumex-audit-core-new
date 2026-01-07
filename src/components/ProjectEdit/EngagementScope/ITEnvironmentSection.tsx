@@ -1,4 +1,3 @@
-
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -12,6 +11,7 @@ import { format } from 'date-fns';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import CommentableQuestion from '../Comments/CommentableQuestion';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ITEnvironmentSectionProps {
   formData: {

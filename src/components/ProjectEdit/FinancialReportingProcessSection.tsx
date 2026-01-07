@@ -9,14 +9,18 @@ import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
+
 interface FinancialReportingProcessSectionProps {
   formData: any;
   onFormDataChange: (updates: any) => void;
 }
+
 const FinancialReportingProcessSection: React.FC<FinancialReportingProcessSectionProps> = ({
   formData,
   onFormDataChange
 }) => {
+  const { t } = useTranslation();
   const [itSystems, setItSystems] = useState([{
     id: 1,
     reference: '',

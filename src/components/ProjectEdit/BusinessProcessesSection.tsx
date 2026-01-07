@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { CommentableQuestion } from './Comments';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface BusinessProcess {
   id: string;
@@ -86,6 +87,7 @@ interface BusinessProcessesSectionProps {
 }
 
 const BusinessProcessesSection = ({ formData, onFormDataChange }: BusinessProcessesSectionProps) => {
+  const { t } = useTranslation();
   const [selectedProcesses, setSelectedProcesses] = useState<string[]>(
     formData.selected_business_processes || []
   );
