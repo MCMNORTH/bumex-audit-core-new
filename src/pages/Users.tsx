@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const createUserSchema = z.object({
   email: z.string()
@@ -46,6 +47,7 @@ const Users = () => {
   const [isCreatingUser, setIsCreatingUser] = useState(false);
   const { user: currentUser } = useAuth();
   const { logUserAction } = useLogging();
+  const { t } = useTranslation();
 
   const createUserForm = useForm<CreateUserFormData>({
     resolver: zodResolver(createUserSchema),
@@ -305,8 +307,8 @@ const Users = () => {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Shield className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Access Denied</h3>
-          <p className="text-gray-600">You don't have permission to view this page.</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('users.accessDenied')}</h3>
+          <p className="text-gray-600">{t('users.noPermission')}</p>
         </div>
       </div>
     );
@@ -315,8 +317,8 @@ const Users = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
-        <p className="text-gray-600">Manage user accounts and permissions</p>
+        <h1 className="text-2xl font-bold text-gray-900">{t('users.title')}</h1>
+        <p className="text-gray-600">{t('users.description')}</p>
       </div>
 
       <div className="flex items-center justify-between">
@@ -324,18 +326,18 @@ const Users = () => {
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
-              placeholder="Search users..."
+              placeholder={t('users.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <span>Total Users: {users.length}</span>
+            <span>{t('users.totalUsers')}: {users.length}</span>
             <span>•</span>
-            <span>Approved: {users.filter(u => u.approved).length}</span>
+            <span>{t('users.approved')}: {users.filter(u => u.approved).length}</span>
             <span>•</span>
-            <span>Blocked: {users.filter(u => (u as any).blocked).length}</span>
+            <span>{t('users.blocked')}: {users.filter(u => (u as any).blocked).length}</span>
           </div>
         </div>
         
@@ -344,12 +346,12 @@ const Users = () => {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Create User
+                {t('users.createUser')}
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Create New User</DialogTitle>
+                <DialogTitle>{t('users.createNewUser')}</DialogTitle>
               </DialogHeader>
               <Form {...createUserForm}>
                 <form onSubmit={createUserForm.handleSubmit(createUser)} className="space-y-4">
@@ -358,7 +360,7 @@ const Users = () => {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>{t('users.email')}</FormLabel>
                         <FormControl>
                           <Input placeholder={`user${ALLOWED_EMAIL_DOMAIN}`} {...field} />
                         </FormControl>
@@ -371,9 +373,9 @@ const Users = () => {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Password</FormLabel>
+                        <FormLabel>{t('users.password')}</FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="Enter password" {...field} />
+                          <Input type="password" placeholder={t('users.password')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -385,9 +387,9 @@ const Users = () => {
                       name="first_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>First Name</FormLabel>
+                          <FormLabel>{t('users.firstName')}</FormLabel>
                           <FormControl>
-                            <Input placeholder="John" {...field} />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -398,9 +400,9 @@ const Users = () => {
                       name="last_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Last Name</FormLabel>
+                          <FormLabel>{t('users.lastName')}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Doe" {...field} />
+                            <Input {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -412,11 +414,11 @@ const Users = () => {
                     name="role"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Role</FormLabel>
+                        <FormLabel>{t('users.role')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a role" />
+                              <SelectValue />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
@@ -442,7 +444,7 @@ const Users = () => {
                           />
                         </FormControl>
                         <FormLabel className="text-sm font-medium">
-                          Approve user immediately
+                          {t('users.approveImmediately')}
                         </FormLabel>
                       </FormItem>
                     )}
@@ -454,10 +456,10 @@ const Users = () => {
                       onClick={() => setIsCreateDialogOpen(false)}
                       disabled={isCreatingUser}
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button type="submit" disabled={isCreatingUser}>
-                      {isCreatingUser ? 'Creating...' : 'Create User'}
+                      {isCreatingUser ? t('users.creating') : t('users.createUser')}
                     </Button>
                   </div>
                 </form>
@@ -491,9 +493,9 @@ const Users = () => {
               <CardContent className="pt-6">
                 <div className="text-center py-8">
                   <UserX className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">No users found</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{t('logs.noLogsFound')}</h3>
                   <p className="text-gray-600">
-                    {searchTerm ? 'Try adjusting your search criteria.' : 'No users have been registered yet.'}
+                    {searchTerm ? t('logs.tryAdjusting') : t('logs.noActivityLogs')}
                   </p>
                 </div>
               </CardContent>
@@ -529,7 +531,7 @@ const Users = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">Approved:</span>
+                          <span className="text-sm font-medium">{t('users.approved')}:</span>
                           <Switch
                             checked={user.approved || false}
                             onCheckedChange={(checked) => updateUserApproval(user.id, checked)}
@@ -537,7 +539,7 @@ const Users = () => {
                           />
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium">Blocked:</span>
+                          <span className="text-sm font-medium">{t('users.blocked')}:</span>
                           <Switch
                             checked={(user as any).blocked || false}
                             onCheckedChange={(checked) => blockUser(user.id, checked)}
@@ -546,7 +548,7 @@ const Users = () => {
                         </div>
                         {['dev', 'admin'].includes(currentUser.role) && !(currentUser.role === 'admin' && user.role === 'dev') && (
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm font-medium">Role:</span>
+                            <span className="text-sm font-medium">{t('users.role')}:</span>
                             <Select
                               value={user.role}
                               onValueChange={(value) => updateUserRole(user.id, value)}
@@ -581,7 +583,7 @@ const Users = () => {
                           disabled={updatingUsers.has(user.id)}
                         >
                           <KeyRound className="h-4 w-4 mr-2" />
-                          Reset Password
+                          {t('users.resetPassword')}
                         </Button>
                       </div>
                     )}
