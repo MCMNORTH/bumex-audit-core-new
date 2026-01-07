@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { Trash2, Plus, ChevronDown, ChevronRight } from 'lucide-react';
+import { Trash2, Plus, ChevronDown, ChevronRight, Upload, FileText, X } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ProjectFormData, FraudRiskFactor, FraudRiskAssessment, FinancialStatementFraudRisk } from '@/types/formData';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { storage } from '@/lib/firebase';
+import { toast } from 'sonner';
 import { CommentableQuestion } from './Comments';
 
 interface FraudRiskAssessmentSectionProps {
@@ -211,6 +214,51 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
 
   const summary = calculateSummary();
 
+  // PDF upload handler
+  const handlePdfUpload = async (
+    file: File,
+    index: number,
+    setRows: React.Dispatch<React.SetStateAction<FraudRiskFactor[]>>,
+    fieldName: keyof ProjectFormData
+  ) => {
+    if (!file.type.includes('pdf')) {
+      toast.error('Please upload a PDF file');
+      return;
+    }
+
+    try {
+      const fileName = `fraud-attachments/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, fileName);
+      await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(storageRef);
+      
+      updateRow(index, 'attachment', downloadUrl, setRows, fieldName);
+      toast.success('PDF uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading PDF:', error);
+      toast.error('Failed to upload PDF');
+    }
+  };
+
+  const handleRemoveAttachment = async (
+    index: number,
+    currentUrl: string,
+    setRows: React.Dispatch<React.SetStateAction<FraudRiskFactor[]>>,
+    fieldName: keyof ProjectFormData
+  ) => {
+    try {
+      if (currentUrl) {
+        const storageRef = ref(storage, currentUrl);
+        await deleteObject(storageRef).catch(() => {});
+      }
+      updateRow(index, 'attachment', '', setRows, fieldName);
+      toast.success('Attachment removed');
+    } catch (error) {
+      console.error('Error removing attachment:', error);
+      updateRow(index, 'attachment', '', setRows, fieldName);
+    }
+  };
+
   const renderFraudRiskTable = (
     rows: FraudRiskFactor[],
     setRows: React.Dispatch<React.SetStateAction<FraudRiskFactor[]>>,
@@ -231,56 +279,56 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
       </div>
       
       <div className="overflow-x-auto">
-        <table className="w-full border border-gray-200">
+        <table className="w-full border border-gray-200 table-fixed">
           <thead>
             <tr className="bg-blue-900 text-white">
-              <th className="border border-gray-200 p-2 text-left">ID</th>
-              <th className="border border-gray-200 p-2 text-left">Fraud Risk Factors</th>
-              <th className="border border-gray-200 p-2 text-center">Identified</th>
-              <th className="border border-gray-200 p-2 text-center">Incentives or pressures</th>
-              <th className="border border-gray-200 p-2 text-center">Opportunities</th>
-              <th className="border border-gray-200 p-2 text-center">Attitudes or rationalizations</th>
-              <th className="border border-gray-200 p-2 text-center">Condition or event present which could lead to a RMM due to fraud</th>
-              <th className="border border-gray-200 p-2 text-center">Attachment</th>
-              <th className="border border-gray-200 p-2 text-center">Action</th>
+              <th className="border border-gray-200 p-3 text-left w-16 text-xs">ID</th>
+              <th className="border border-gray-200 p-3 text-left w-40 text-xs">Fraud Risk Factors</th>
+              <th className="border border-gray-200 p-3 text-center w-20 text-xs">Identified</th>
+              <th className="border border-gray-200 p-3 text-center w-24 text-xs">Incentives or pressures</th>
+              <th className="border border-gray-200 p-3 text-center w-24 text-xs">Opportunities</th>
+              <th className="border border-gray-200 p-3 text-center w-28 text-xs">Attitudes or rationalizations</th>
+              <th className="border border-gray-200 p-3 text-center w-32 text-xs">Condition or event present which could lead to a RMM due to fraud</th>
+              <th className="border border-gray-200 p-3 text-center w-28 text-xs">Attachment</th>
+              <th className="border border-gray-200 p-3 text-center w-16 text-xs">Action</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row, index) => (
-              <tr key={index}>
+              <tr key={index} className="bg-white">
                 <td className="border border-gray-200 p-2">
                   <Input
                     value={row.id}
                     onChange={(e) => updateRow(index, 'id', e.target.value, setRows, fieldName)}
-                    className="w-full border-0 p-1"
+                    className="w-full text-sm bg-gray-50 border-gray-300"
                   />
                 </td>
                 <td className="border border-gray-200 p-2">
                   <Textarea
                     value={row.description}
                     onChange={(e) => updateRow(index, 'description', e.target.value, setRows, fieldName)}
-                    className="w-full border-0 p-1 min-h-[60px] resize-none"
+                    className="w-full min-h-[80px] resize-none text-sm bg-gray-50 border-gray-300"
                   />
                 </td>
-                <td className="border border-gray-200 p-2 text-center">
+                <td className="border border-gray-200 p-2 text-center align-middle">
                   <Checkbox
                     checked={row.identified}
                     onCheckedChange={(checked) => updateRow(index, 'identified', checked, setRows, fieldName)}
                   />
                 </td>
-                <td className="border border-gray-200 p-2 text-center">
+                <td className="border border-gray-200 p-2 text-center align-middle">
                   <Checkbox
                     checked={row.incentives}
                     onCheckedChange={(checked) => updateRow(index, 'incentives', checked, setRows, fieldName)}
                   />
                 </td>
-                <td className="border border-gray-200 p-2 text-center">
+                <td className="border border-gray-200 p-2 text-center align-middle">
                   <Checkbox
                     checked={row.opportunities}
                     onCheckedChange={(checked) => updateRow(index, 'opportunities', checked, setRows, fieldName)}
                   />
                 </td>
-                <td className="border border-gray-200 p-2 text-center">
+                <td className="border border-gray-200 p-2 text-center align-middle">
                   <Checkbox
                     checked={row.attitudes}
                     onCheckedChange={(checked) => updateRow(index, 'attitudes', checked, setRows, fieldName)}
@@ -290,17 +338,48 @@ const FraudRiskAssessmentSection: React.FC<FraudRiskAssessmentSectionProps> = ({
                   <Input
                     value={typeof row.conditions === 'string' ? row.conditions : ''}
                     onChange={(e) => updateRow(index, 'conditions', e.target.value, setRows, fieldName)}
-                    className="w-full border-0 p-1"
+                    className="w-full text-sm bg-gray-50 border-gray-300"
                   />
                 </td>
-                <td className="border border-gray-200 p-2">
-                  <Input
-                    value={row.attachment}
-                    onChange={(e) => updateRow(index, 'attachment', e.target.value, setRows, fieldName)}
-                    className="w-full border-0 p-1"
-                  />
+                <td className="border border-gray-200 p-2 text-center align-middle">
+                  {row.attachment ? (
+                    <div className="flex flex-col items-center gap-1">
+                      <a
+                        href={row.attachment}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 flex items-center gap-1 text-xs"
+                      >
+                        <FileText className="h-4 w-4" />
+                        View PDF
+                      </a>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-6 px-2 text-xs text-red-600 hover:text-red-800"
+                        onClick={() => handleRemoveAttachment(index, row.attachment, setRows, fieldName)}
+                      >
+                        <X className="h-3 w-3 mr-1" />
+                        Remove
+                      </Button>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer flex flex-col items-center gap-1 text-gray-500 hover:text-gray-700">
+                      <Upload className="h-5 w-5" />
+                      <span className="text-xs">Upload PDF</span>
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handlePdfUpload(file, index, setRows, fieldName);
+                        }}
+                      />
+                    </label>
+                  )}
                 </td>
-                <td className="border border-gray-200 p-2 text-center">
+                <td className="border border-gray-200 p-2 text-center align-middle">
                   <Button
                     size="sm"
                     variant="destructive"
