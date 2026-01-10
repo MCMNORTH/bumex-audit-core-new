@@ -18,8 +18,6 @@ export const storeOTP = async (userId: string, email: string, otp: string): Prom
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
   
-  console.log('[2FA] Writing OTP document to Firestore for user:', userId);
-
   await setDoc(doc(db, 'pending_otps', userId), {
     user_id: userId,
     email: email,
@@ -33,12 +31,11 @@ export const storeOTP = async (userId: string, email: string, otp: string): Prom
   // Best-effort confirmation that the doc exists on the server
   try {
     const check = await getDocFromServer(doc(db, 'pending_otps', userId));
-    console.log('[2FA] OTP document server check exists:', check.exists());
     if (!check.exists()) {
       throw new Error('OTP document not available on server');
     }
   } catch (e) {
-    console.warn('[2FA] OTP server check failed (may be offline/AppCheck/rules):', e);
+    // Silent fail for offline/AppCheck/rules issues
   }
 };
 
@@ -57,7 +54,6 @@ export const verifyOTP = async (userId: string, enteredOtp: string): Promise<{
     }
 
     if (!otpDoc.exists()) {
-      console.warn('[2FA] OTP document not found for user:', userId);
       return { valid: false, error: 'No OTP found. Please request a new code.' };
     }
 
