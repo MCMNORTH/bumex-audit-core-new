@@ -3,9 +3,24 @@ import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+// Allowed origins for CORS - restrict to known domains
+const ALLOWED_ORIGINS = [
+  "https://bumex.overcode.dev",
+  "https://auditcore.bumex.mr",
+  "https://lovable.app",
+  "https://lovable.dev",
+  "http://localhost:5173",
+  "http://localhost:8080",
+];
+
+const getCorsHeaders = (origin: string | null): Record<string, string> => {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) 
+    ? origin 
+    : ALLOWED_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  };
 };
 
 interface OTPEmailRequest {
@@ -15,7 +30,8 @@ interface OTPEmailRequest {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  console.log("send-otp-email function called");
+  const origin = req.headers.get("origin");
+  const corsHeaders = getCorsHeaders(origin);
   
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
