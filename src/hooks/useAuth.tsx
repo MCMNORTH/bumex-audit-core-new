@@ -76,7 +76,6 @@ const hasPendingOTP = async (userId: string): Promise<boolean> => {
     return new Date() < expiresAt;
   } catch (error) {
     // If we can't check (permissions, offline), assume no pending OTP
-    console.warn('[2FA] Could not check pending OTP:', error);
     return false;
   }
 };
@@ -138,10 +137,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           
           // Check if there's a pending OTP for this user (prevents refresh bypass)
           // Skip this check if 2FA was just completed in this session
-          if (!twoFactorCompletedRef.current) {
+    if (!twoFactorCompletedRef.current) {
             const hasPending = await hasPendingOTP(fbUser.uid);
             if (hasPending) {
-              console.log('[2FA] Pending OTP found on auth state change - signing out to enforce 2FA');
               // User has a pending OTP - they haven't completed 2FA
               // Sign them out to force re-authentication
               await signOut(auth);
@@ -224,18 +222,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       // Generate and store OTP (user is still authenticated, so Firestore write works)
       const otp = generateOTP();
-      console.log('[2FA] Storing OTP for user:', fbUser.uid);
       await storeOTP(fbUser.uid, email, otp);
-      console.log('[2FA] OTP stored successfully');
       
       // Send OTP email
-      console.log('[2FA] Sending OTP email to:', email);
       const result = await sendOTPEmail(email, otp, userData.first_name);
       if (!result.success) {
-        console.error('[2FA] Failed to send OTP email:', result.error);
         throw new Error(result.error || 'Failed to send verification email');
       }
-      console.log('[2FA] OTP email sent successfully');
       
       // Log OTP sent event
       await createLogWithClientInfo('otp_sent', fbUser.uid, 'OTP sent for 2FA', fbUser.uid);
@@ -288,7 +281,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     try {
       // Verify OTP (user is still authenticated from step 1)
-      console.log('[2FA] Verifying OTP for user:', pendingAuth.userId);
       const result = await verifyOTP(pendingAuth.userId, otp);
       
       if (!result.valid) {
@@ -296,8 +288,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         await createLogWithClientInfo('otp_failed', pendingAuth.userId, result.error || 'Invalid OTP', pendingAuth.userId);
         throw new Error(result.error || 'Invalid verification code');
       }
-      
-      console.log('[2FA] OTP verified successfully');
       
       // OTP is valid - complete login
       // Mark 2FA as completed so onAuthStateChanged won't block
@@ -315,7 +305,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setPendingAuth(null);
       
     } catch (error: any) {
-      console.error('[2FA] OTP verification error:', error);
       throw error;
     }
   };
