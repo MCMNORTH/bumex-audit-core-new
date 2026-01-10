@@ -7,14 +7,19 @@ export const generateOTP = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-// Hash OTP for secure storage (using simple btoa for now, can upgrade to crypto)
-const hashOTP = (otp: string): string => {
-  return btoa(otp + 'bumex-salt-2024');
+// Hash OTP for secure storage using SHA-256
+const hashOTP = async (otp: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(otp);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 };
 
 // Store OTP in Firestore with expiration
 export const storeOTP = async (userId: string, email: string, otp: string): Promise<void> => {
-  const otpHash = hashOTP(otp);
+  const otpHash = await hashOTP(otp);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now
   
@@ -74,7 +79,7 @@ export const verifyOTP = async (userId: string, enteredOtp: string): Promise<{
     }
 
     // Verify OTP
-    const enteredHash = hashOTP(enteredOtp);
+    const enteredHash = await hashOTP(enteredOtp);
     if (enteredHash === otpData.otp_hash) {
       // OTP is valid, delete it
       await deleteDoc(doc(db, 'pending_otps', userId));
