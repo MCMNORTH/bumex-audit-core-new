@@ -153,7 +153,7 @@ const Users = () => {
       const appCheckToken = await getAppCheckToken();
 
       // Create user in Firebase Auth using REST API
-      const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA'}`, {
+      const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${import.meta.env.VITE_FIREBASE_API_KEY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -255,7 +255,7 @@ const Users = () => {
       // Get App Check token for enforced endpoints
       const appCheckToken = await getAppCheckToken();
 
-      const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${import.meta.env.VITE_FIREBASE_API_KEY || 'AIzaSyC8-gUpAw7jqdCb63DVt6O5KZ7ISt-GXsA'}`, {
+      const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${import.meta.env.VITE_FIREBASE_API_KEY}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

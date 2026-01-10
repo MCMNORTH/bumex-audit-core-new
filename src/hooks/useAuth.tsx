@@ -244,11 +244,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       twoFactorPendingRef.current = false;
       setPendingAuth(null);
       
-      // Handle specific Firebase auth errors
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
-        throw new Error('Invalid email or password.');
-      } else if (error.code === 'auth/user-not-found') {
-        throw new Error('No account found with this email.');
+      // Use generic error messages to prevent account enumeration
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        throw new Error('Invalid credentials. Please check your email and password.');
       } else if (error.code === 'auth/too-many-requests') {
         throw new Error('Too many failed attempts. Please try again later.');
       }
