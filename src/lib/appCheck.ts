@@ -15,6 +15,7 @@ const isDevelopment = () => {
   return hostname.includes('lovable.dev') || 
          hostname.includes('lovable.app') || 
          hostname.includes('lovableproject.com') ||
+         hostname.includes('netlify.app') ||
          hostname.includes('localhost') || 
          hostname === '127.0.0.1';
 };
