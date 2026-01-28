@@ -1,34 +1,57 @@
 
-# Plan: Add auditcore.netlify.app as Secondary Domain
 
-## Overview
-Add `auditcore.netlify.app` to the allowed origins so it can communicate with the backend services.
+# Plan: Fix Firebase App Check for auditcore.netlify.app
 
-## Changes Required
+## Problem
+The 403 errors are caused by Firebase App Check rejecting requests from `auditcore.netlify.app` because:
+1. The domain is not in the `isDevelopment()` function, so it tries to use production reCAPTCHA
+2. The reCAPTCHA Enterprise site key is not configured to allow this domain in Google Cloud Console
 
-### 1. Update CORS Origins in Edge Function
-**File:** `supabase/functions/send-otp-email/index.ts`
+## Solution: Add Netlify Domain to Development Check (Option A)
 
-Add `https://auditcore.netlify.app` to the `ALLOWED_ORIGINS` array (line 7-14):
+This is the quickest fix that will get your Netlify deployment working immediately.
 
+### File to Modify
+**`src/lib/appCheck.ts`** - Update the `isDevelopment()` function
+
+### Current Code (lines 11-20)
 ```typescript
-const ALLOWED_ORIGINS = [
-  "https://bumex.overcode.dev",
-  "https://auditcore.bumex.mr",
-  "https://auditcore.netlify.app",  // NEW
-  "https://lovable.app",
-  "https://lovable.dev",
-  "http://localhost:5173",
-  "http://localhost:8080",
-];
+const isDevelopment = () => {
+  const hostname = window.location.hostname;
+  return hostname.includes('lovable.dev') || 
+         hostname.includes('lovable.app') || 
+         hostname.includes('lovableproject.com') ||
+         hostname.includes('localhost') || 
+         hostname === '127.0.0.1';
+};
 ```
 
-This allows the OTP email function to accept requests from your Netlify domain.
+### Updated Code
+```typescript
+const isDevelopment = () => {
+  const hostname = window.location.hostname;
+  return hostname.includes('lovable.dev') || 
+         hostname.includes('lovable.app') || 
+         hostname.includes('lovableproject.com') ||
+         hostname.includes('netlify.app') ||
+         hostname.includes('localhost') || 
+         hostname === '127.0.0.1';
+};
+```
 
-## Post-Implementation
-After the change is made, the edge function will be automatically redeployed. Your Netlify-hosted version will then be able to:
-- Send OTP verification emails
-- Communicate with the backend services
+## What This Does
+- Adds `netlify.app` to the development domain check
+- When accessed from `auditcore.netlify.app`, the app will use the Firebase App Check debug token instead of reCAPTCHA Enterprise
+- This bypasses the reCAPTCHA domain restriction issue
 
-## Optional: Firebase App Check
-If you want this domain to use production reCAPTCHA instead of debug mode, no changes are needed - the domain doesn't match any development patterns, so it will automatically use production App Check.
+## Alternative: Production Configuration (Option B)
+If you want `auditcore.netlify.app` to use proper production reCAPTCHA instead:
+
+1. Go to Google Cloud Console -> Security -> reCAPTCHA Enterprise
+2. Find site key `6LcdD8crAAAAAFQIAF1-fmksvvEFqymce3YWJ1OK`
+3. Add `auditcore.netlify.app` to allowed domains
+4. No code changes needed
+
+## Recommendation
+Option A (code change) is faster and works immediately. Option B is more secure for production but requires manual Google Cloud Console configuration.
+
