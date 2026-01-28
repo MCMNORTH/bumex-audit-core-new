@@ -7,6 +7,7 @@ const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 const ALLOWED_ORIGINS = [
   "https://bumex.overcode.dev",
   "https://auditcore.bumex.mr",
+  "https://auditcore.netlify.app",
   "https://lovable.app",
   "https://lovable.dev",
   "http://localhost:5173",
