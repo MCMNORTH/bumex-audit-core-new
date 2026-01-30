@@ -12,18 +12,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export const MobileDrawer = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getStarredProjects } = useAppStore();
   const { currentUser } = useAuth();
   const { t } = useLanguage();
-  
-  const starredProjects = getStarredProjects();
 
   const isRouteActive = (path: string) => {
     return location.pathname === path;
-  };
-
-  const handleProjectSelect = (projectId: string) => {
-    navigate(`/projects/${projectId}/details`);
   };
 
   return (
@@ -65,39 +58,6 @@ export const MobileDrawer = () => {
           </Button>
         </div>
 
-        <div className="p-4">
-          <div className="mb-2 text-xs uppercase font-semibold text-gray-400">
-            {t('starredProjects')}
-          </div>
-          <div className="space-y-1">
-            {starredProjects.length > 0 ? (
-              starredProjects.map(project => (
-                <button
-                  key={project.id}
-                  onClick={() => handleProjectSelect(project.id)}
-                  className="w-full text-left p-2 rounded-md flex items-center gap-2 hover:bg-sidebar-accent transition-colors"
-                >
-                  {project.imageUrl ? (
-                    <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
-                      <img 
-                        src={project.imageUrl} 
-                        alt={project.name} 
-                        className="object-cover w-full h-full" 
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                      {project.key.substring(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                  <span className="truncate">{project.name}</span>
-                </button>
-              ))
-            ) : (
-              <div className="text-sm text-gray-500 p-2">{t('noStarredProjects')}</div>
-            )}
-          </div>
-        </div>
       </div>
 
       {/* Language Selector */}

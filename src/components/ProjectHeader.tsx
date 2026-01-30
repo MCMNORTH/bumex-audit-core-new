@@ -2,8 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAppStore } from "@/store";
-import { Edit, Star, FilePlus } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Edit, FilePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 interface ProjectHeaderProps {
   projectId: string;
@@ -13,10 +12,7 @@ export const ProjectHeader = ({
 }: ProjectHeaderProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    getProjectById,
-    toggleStarProject
-  } = useAppStore();
+  const { getProjectById } = useAppStore();
   const project = getProjectById(projectId);
   const [activeTab, setActiveTab] = useState<string>("");
   useEffect(() => {
@@ -34,11 +30,6 @@ export const ProjectHeader = ({
   if (!project) {
     return <div className="bg-white border-b border-border p-4">Project not found</div>;
   }
-  const handleStarClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await toggleStarProject(projectId);
-  };
   const handleTabClick = (value: string) => {
     let route = `/projects/${projectId}`;
     if (value !== "board") {
@@ -64,10 +55,6 @@ export const ProjectHeader = ({
               <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
               <span className="text-sm text-gray-600">{project.key}</span>
             </div>
-            <Button variant="ghost" size="icon" className="text-gray-600 hover:text-yellow-500" onClick={handleStarClick}>
-              <Star className={cn("h-5 w-5", project.starred ? "fill-yellow-400 text-yellow-400" : "fill-none")} />
-              <span className="sr-only">{project.starred ? "Unstar" : "Star"} project</span>
-            </Button>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleCreateIssueClick} className="flex items-center gap-1 bg-blue-600 text-white border-blue-600 hover:bg-blue-700">

@@ -16,8 +16,6 @@ const translations = {
     // Navigation
     dashboard: 'Dashboard',
     myInvoices: 'My Invoices',
-    starredProjects: 'Starred Projects',
-    noStarredProjects: 'No starred projects',
     profile: 'Profile',
     
     // Auth
@@ -79,8 +77,6 @@ const translations = {
     // Navigation
     dashboard: 'Tableau de bord',
     myInvoices: 'Mes Factures',
-    starredProjects: 'Projets Favoris',
-    noStarredProjects: 'Aucun projet favori',
     profile: 'Profil',
     
     // Auth

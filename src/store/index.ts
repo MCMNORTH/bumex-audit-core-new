@@ -35,8 +35,6 @@ interface AppState {
   setSelectedIssue: (issue: Issue | null) => void;
   addToRecentProjects: (project: Project) => void;
   
-  toggleStarProject: (projectId: string) => Promise<void>;
-  getStarredProjects: () => Project[];
   
   addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Project>;
   updateProject: (project: Project) => Promise<void>;
@@ -193,30 +191,6 @@ export const useAppStore = create<AppState>()(
         });
       },
       
-      toggleStarProject: async (projectId) => {
-        const project = get().projects.find(p => p.id === projectId);
-        if (!project) return;
-        
-        const updatedProject = {
-          ...project,
-          starred: !project.starred,
-          updatedAt: new Date().toISOString()
-        };
-        
-        // Update in Firestore
-        await firestore.updateProject(projectId, updatedProject);
-        
-        // Update local state
-        set((state) => ({
-          projects: state.projects.map(p => p.id === projectId ? updatedProject : p),
-          selectedProject: state.selectedProject?.id === projectId ? updatedProject : state.selectedProject,
-          recentProjects: state.recentProjects.map(p => p.id === projectId ? updatedProject : p)
-        }));
-      },
-      
-      getStarredProjects: () => {
-        return get().projects.filter(project => project.starred && !project.deleted);
-      },
       
       setSelectedIssue: (issue) => set({ selectedIssue: issue }),
       
