@@ -17,8 +17,7 @@ export const Sidebar = () => {
   const { t } = useLanguage();
   const {
     selectedProject,
-    setSelectedProject,
-    getStarredProjects
+    setSelectedProject
   } = useAppStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -60,7 +59,7 @@ export const Sidebar = () => {
 
   // Use the fetched userName or fall back to email
   const displayName = userName || currentUser?.email?.split('@')[0] || "User";
-  const starredProjects = getStarredProjects();
+  
 
   // Check current route for highlighting active links
   const isRouteActive = (path: string) => {
@@ -101,25 +100,6 @@ export const Sidebar = () => {
 
       
       <div className="p-2 overflow-y-auto flex-1">
-        <div className={cn("mb-2 text-xs uppercase font-semibold text-gray-400", !isOpen && "hidden")}>
-          {t('starredProjects')}
-        </div>
-        <ul className="space-y-1">
-          {starredProjects.length > 0 ? starredProjects.map(project => 
-            <li key={project.id}>
-              <button onClick={() => handleProjectSelect(project)} className={cn("w-full text-left p-2 rounded-md flex items-center gap-2", "hover:bg-sidebar-accent transition-colors", selectedProject?.id === project.id ? "bg-sidebar-accent" : "bg-transparent")}>
-                {project.imageUrl ? <div className="w-6 h-6 rounded-md overflow-hidden flex-shrink-0">
-                    <AspectRatio ratio={1 / 1}>
-                      <img src={project.imageUrl} alt={project.name} className="object-cover w-full h-full" />
-                    </AspectRatio>
-                  </div> : <div className="w-6 h-6 bg-jira-blue-dark rounded-md flex items-center justify-center text-white font-semibold text-xs flex-shrink-0">
-                    {project.key.substring(0, 2).toUpperCase()}
-                  </div>}
-                {isOpen && <span>{project.name}</span>}
-              </button>
-            </li>
-          ) : isOpen && <li className="text-sm text-gray-500 p-2">{t('noStarredProjects')}</li>}
-        </ul>
       </div>
       
       {/* Language Selector */}

@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Star } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProjectProgress from "@/components/ProjectProgress";
 import { useAuth } from "@/contexts/AuthContext";
@@ -18,8 +18,7 @@ const Dashboard = () => {
     epics,
     fetchProjects,
     fetchIssues,
-    fetchEpics,
-    toggleStarProject
+    fetchEpics
   } = useAppStore();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
@@ -64,11 +63,6 @@ const Dashboard = () => {
   const totalIssues = issues.length;
   const completedIssues = issues.filter(issue => issue.status === 'done').length;
 
-  const handleStarClick = async (e: React.MouseEvent, projectId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await toggleStarProject(projectId);
-  };
 
   const handleProjectClick = (projectId: string) => {
     navigate(`/projects/${projectId}/details`);
@@ -114,21 +108,6 @@ const Dashboard = () => {
                             )}
                             <CardTitle>{project.name}</CardTitle>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-gray-400 hover:text-yellow-500"
-                            onClick={(e) => handleStarClick(e, project.id)}
-                          >
-                            <Star 
-                              className={cn(
-                                "h-4 w-4",
-                                project.starred 
-                                  ? "fill-yellow-400 text-yellow-400" 
-                                  : "fill-none"
-                              )} 
-                            />
-                          </Button>
                         </div>
                       </CardHeader>
                       <CardContent>

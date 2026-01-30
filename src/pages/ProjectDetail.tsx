@@ -2,10 +2,8 @@ import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAppStore } from "@/store";
 import { useEffect, useState } from "react";
-import { Calendar, User, Target, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Calendar, User, Target } from "lucide-react";
 import ProjectProgress from "@/components/ProjectProgress";
-import { cn } from "@/lib/utils";
 import MobileHeader from "@/components/MobileHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -18,7 +16,6 @@ const ProjectDetail = () => {
     getProjectById, 
     fetchIssues, 
     fetchEpics,
-    toggleStarProject,
     getIssuesByProject,
     getEpicsByProject
   } = useAppStore();
@@ -48,11 +45,6 @@ const ProjectDetail = () => {
     loadProjectData();
   }, [projectId, fetchIssues, fetchEpics]);
 
-  const handleStarClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await toggleStarProject(projectId);
-  };
 
   if (!project) {
     return (
@@ -80,35 +72,18 @@ const ProjectDetail = () => {
       <div className="p-6 max-w-7xl mx-auto">
         {/* Project Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-4">
-              {project.imageUrl ? (
-                <img src={project.imageUrl} alt={project.name} className="w-16 h-16 object-cover rounded-lg" />
-              ) : (
-                <div className="w-16 h-16 bg-[#459ed7] rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                  {project.key.substring(0, 2).toUpperCase()}
-                </div>
-              )}
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
-                <p className="text-lg text-gray-600">{project.key}</p>
+          <div className="flex items-center gap-4">
+            {project.imageUrl ? (
+              <img src={project.imageUrl} alt={project.name} className="w-16 h-16 object-cover rounded-lg" />
+            ) : (
+              <div className="w-16 h-16 bg-[#459ed7] rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                {project.key.substring(0, 2).toUpperCase()}
               </div>
+            )}
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">{project.name}</h1>
+              <p className="text-lg text-gray-600">{project.key}</p>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10 text-gray-400 hover:text-yellow-500"
-              onClick={handleStarClick}
-            >
-              <Star 
-                className={cn(
-                  "h-6 w-6",
-                  project.starred 
-                    ? "fill-yellow-400 text-yellow-400" 
-                    : "fill-none"
-                )} 
-              />
-            </Button>
           </div>
           
           {project.description && (
