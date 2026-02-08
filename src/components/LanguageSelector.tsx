@@ -1,45 +1,95 @@
-import React from 'react';
-import { Globe } from 'lucide-react';
+
+import { Languages } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { useTranslation, Language } from '@/contexts/TranslationContext';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-export const LanguageSelector: React.FC = () => {
-  const { language, setLanguage, t } = useTranslation();
+interface LanguageSelectorProps {
+  showIcon?: boolean;
+  variant?: "sidebar" | "mobile" | "login";
+}
 
-  const languages: { value: Language; label: string; flag: string }[] = [
-    { value: 'en', label: t('language.english'), flag: '🇺🇸' },
-    { value: 'fr', label: t('language.french'), flag: '🇫🇷' },
+export const LanguageSelector = ({ showIcon = true, variant = "sidebar" }: LanguageSelectorProps) => {
+  const { language, setLanguage, t } = useLanguage();
+
+  const languages = [
+    { value: 'en', label: t('english'), flag: '🇺🇸' },
+    { value: 'fr', label: t('french'), flag: '🇫🇷' }
   ];
 
-  const currentLanguage = languages.find(lang => lang.value === language);
+  if (variant === "login") {
+    return (
+      <div className="mb-4">
+        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr')}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder={t('language')} />
+          </SelectTrigger>
+          <SelectContent>
+            {languages.map((lang) => (
+              <SelectItem key={lang.value} value={lang.value}>
+                <span className="flex items-center gap-2">
+                  <span>{lang.flag}</span>
+                  <span>{lang.label}</span>
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  }
+
+  if (variant === "mobile") {
+    return (
+      <div className="p-4 border-t border-sidebar-border">
+        <div className="mb-2 text-xs uppercase font-semibold text-gray-400">
+          {t('language')}
+        </div>
+        <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr')}>
+          <SelectTrigger className="w-full bg-sidebar border-sidebar-border">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {languages.map((lang) => (
+              <SelectItem key={lang.value} value={lang.value}>
+                <span className="flex items-center gap-2">
+                  <span>{lang.flag}</span>
+                  <span>{lang.label}</span>
+                </span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    );
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">{currentLanguage?.flag} {currentLanguage?.label}</span>
-          <span className="sm:hidden">{currentLanguage?.flag}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {languages.map((lang) => (
-          <DropdownMenuItem
-            key={lang.value}
-            onClick={() => setLanguage(lang.value)}
-            className={language === lang.value ? 'bg-accent' : ''}
-          >
-            <span className="mr-2">{lang.flag}</span>
-            {lang.label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="p-2 border-t border-sidebar-border">
+      <div className="mb-2 text-xs uppercase font-semibold text-gray-400">
+        {t('language')}
+      </div>
+      <Select value={language} onValueChange={(value) => setLanguage(value as 'en' | 'fr')}>
+        <SelectTrigger className="w-full bg-sidebar border-sidebar-border text-sidebar-foreground">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {languages.map((lang) => (
+            <SelectItem key={lang.value} value={lang.value}>
+              <span className="flex items-center gap-2">
+                <span>{lang.flag}</span>
+                <span>{lang.label}</span>
+              </span>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 };

@@ -1,370 +1,173 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Eye, EyeOff, AlertCircle } from 'lucide-react';
-import OTPVerification from '@/components/OTPVerification';
-import { isValidCompanyEmail, ALLOWED_EMAIL_DOMAIN } from '@/utils/domainValidation';
-import { useTranslation } from '@/contexts/TranslationContext';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { Mail, Lock } from "lucide-react";
+import { firestore } from "@/lib/firebase";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const REMEMBERED_EMAIL_KEY = 'bumex_remembered_email';
+const loginSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address."
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters."
+  })
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { t } = useTranslation();
-  
-  // OTP state
-  const [otpStep, setOtpStep] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isResending, setIsResending] = useState(false);
-  const [otpError, setOtpError] = useState<string | undefined>();
-  
-  // Forgot password state
-  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false);
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetLoading, setResetLoading] = useState(false);
-  
+  const { t } = useLanguage();
+  const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const {
     login,
-    verifyCredentials,
-    sendOTP,
-    verifyOTPAndLogin,
-    sendPasswordResetEmail,
-    pendingAuth,
-    user,
-    authError,
-    loading: authLoading
+    logout
   } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
-
-  // Email domain validation - only show error if email has @ and is not valid bumex email
-  const showDomainError = useMemo(() => {
-    if (!email || !email.includes('@')) return false;
-    return !isValidCompanyEmail(email);
-  }, [email]);
-  const isValidEmail = useMemo(() => isValidCompanyEmail(email), [email]);
-  
-  // Reset email validation
-  const resetEmailValid = useMemo(() => isValidCompanyEmail(resetEmail), [resetEmail]);
-  const showResetDomainError = useMemo(() => {
-    if (!resetEmail || !resetEmail.includes('@')) return false;
-    return !isValidCompanyEmail(resetEmail);
-  }, [resetEmail]);
-
-  // Load remembered email on mount
-  useEffect(() => {
-    const rememberedEmail = localStorage.getItem(REMEMBERED_EMAIL_KEY);
-    if (rememberedEmail) {
-      setEmail(rememberedEmail);
-      setRememberMe(true);
+  const form = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: ""
     }
-  }, []);
-
-  // Redirect if user is already logged in
-  useEffect(() => {
-    if (!authLoading && user) {
-      navigate('/dashboard');
-    }
-  }, [user, authLoading, navigate]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setOtpError(undefined);
-    
+  });
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    setAuthError(null);
     try {
-      // Save or clear remembered email based on checkbox
-      if (rememberMe) {
-        localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
-      } else {
-        localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+      // First authenticate the user with Firebase
+      const userCredential = await login(data.email, data.password);
+      console.log("User authenticated successfully:", userCredential.user.uid);
+
+      // Then check if the user is a client
+      if (userCredential.user) {
+        const userData = await firestore.getUser(userCredential.user.uid);
+        console.log("User data retrieved:", userData);
+        console.log("Client field value:", userData?.client);
+        console.log("Client field type:", typeof userData?.client);
+
+        // Strict check for client access - must be explicitly true
+        if (userData && userData.client === true) {
+          console.log("Client verification passed - allowing login");
+          toast("Login successful", {
+            description: "Welcome back!"
+          });
+          navigate("/");
+        } else {
+          // Handle different failure cases
+          console.log("Client verification failed - denying access");
+          if (!userData) {
+            console.log("No user data found in Firestore");
+            setAuthError("User profile not found. Please contact support.");
+          } else if (userData.client === false) {
+            console.log("User has client = false");
+            setAuthError("Access denied. Only clients can access this application.");
+          } else if (userData.client === undefined || userData.client === null) {
+            console.log("User has no client field set");
+            setAuthError("Access denied. User account not properly configured.");
+          } else {
+            console.log("Unknown client field value:", userData.client);
+            setAuthError("Access denied. Invalid account configuration.");
+          }
+
+          // If not client, sign them out using the logout function from AuthContext
+          await logout();
+          toast("Access denied", {
+            description: "Only clients can access this application."
+          });
+        }
       }
-
-      // Verify credentials and send OTP
-      await verifyCredentials(email, password);
-      
-      toast({
-        title: t('login.verificationCodeSent'),
-        description: t('login.checkEmail')
-      });
-      
-      setOtpStep(true);
-    } catch (error: any) {
-      toast({
-        title: t('common.error') || 'Error',
-        description: error.message || 'Failed to login',
-        variant: 'destructive'
-      });
+    } catch (error) {
+      console.error("Login error:", error);
+      // Check if it's a Firebase auth error or a client verification error
+      if (error instanceof Error && error.message.includes("auth/")) {
+        setAuthError("Invalid email or password. Please try again.");
+        toast("Login failed", {
+          description: "Invalid email or password. Please try again."
+        });
+      } else {
+        setAuthError("An error occurred during login. Please try again.");
+        toast("Login failed", {
+          description: "An error occurred during login. Please try again."
+        });
+      }
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
-
-  const handleVerifyOTP = async (otp: string) => {
-    setIsVerifying(true);
-    setOtpError(undefined);
-    
-    try {
-      await verifyOTPAndLogin(otp);
-      
-      toast({
-        title: t('common.success') || 'Success',
-        description: t('login.loggedIn') || 'Logged in successfully'
-      });
-    } catch (error: any) {
-      setOtpError(error.message || 'Invalid verification code');
-    } finally {
-      setIsVerifying(false);
-    }
-  };
-
-  const handleResendOTP = async () => {
-    if (!pendingAuth) return;
-    
-    setIsResending(true);
-    setOtpError(undefined);
-    
-    try {
-      await sendOTP();
-      
-      toast({
-        title: t('login.codeSent') || 'Code Sent',
-        description: t('login.newCodeSent') || 'A new verification code has been sent to your email'
-      });
-    } catch (error: any) {
-      toast({
-        title: t('common.error') || 'Error',
-        description: error.message || 'Failed to resend code',
-        variant: 'destructive'
-      });
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  const handleBackToLogin = () => {
-    setOtpStep(false);
-    setOtpError(undefined);
-    setPassword('');
-  };
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!resetEmailValid) {
-      toast({
-        title: t('login.invalidEmail'),
-        description: `${t('login.passwordResetRestricted')} ${ALLOWED_EMAIL_DOMAIN} emails.`,
-        variant: 'destructive'
-      });
-      return;
-    }
-    
-    setResetLoading(true);
-    try {
-      await sendPasswordResetEmail(resetEmail);
-      toast({
-        title: t('login.resetEmailSent'),
-        description: t('login.checkEmailReset')
-      });
-      setForgotPasswordOpen(false);
-      setResetEmail('');
-    } catch (error: any) {
-      toast({
-        title: t('common.error') || 'Error',
-        description: error.message || 'Failed to send password reset email',
-        variant: 'destructive'
-      });
-    } finally {
-      setResetLoading(false);
-    }
-  };
-
-  // Show auth error if user authentication failed due to approval/blocking
-  useEffect(() => {
-    if (authError) {
-      toast({
-        title: t('login.authenticationError') || 'Authentication Error',
-        description: authError,
-        variant: 'destructive'
-      });
-    }
-  }, [authError, toast, t]);
-
-  // Show loading if auth is still initializing
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">{t('common.loading')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show OTP verification screen
-  if (otpStep && pendingAuth) {
-    return (
-      <OTPVerification
-        email={email}
-        onVerify={handleVerifyOTP}
-        onResend={handleResendOTP}
-        onBack={handleBackToLogin}
-        isVerifying={isVerifying}
-        isResending={isResending}
-        error={otpError}
-      />
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <img 
-              src="https://firebasestorage.googleapis.com/v0/b/bumex-2713a.firebasestorage.app/o/auditcore%20(1).png?alt=media&token=1b78a202-db03-4072-a347-ee63d8f40c23" 
-              alt="BUMEX Logo" 
-              className="w-32 h-8 object-contain" 
-            />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900">{t('login.auditManagementSystem')}</h2>
-          <p className="mt-2 text-sm text-gray-600">{t('login.signInToAccount')}</p>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>{t('login.signIn')}</CardTitle>
-            <CardDescription>{t('login.enterCredentials')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="email">{t('login.email')}</Label>
-                <Input 
-                  id="email" 
-                  type="email" 
-                  value={email} 
-                  onChange={e => setEmail(e.target.value)} 
-                  required 
-                  className={`mt-1 ${showDomainError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                  placeholder={`name${ALLOWED_EMAIL_DOMAIN}`}
-                />
-                {showDomainError && (
-                  <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                    <span>{t('login.accessRestricted')} {ALLOWED_EMAIL_DOMAIN} email.</span>
-                  </div>
-                )}
-              </div>
-              <div>
-                <Label htmlFor="password">{t('login.password')}</Label>
-                <div className="relative mt-1">
-                  <Input 
-                    id="password" 
-                    type={showPassword ? "text" : "password"}
-                    value={password} 
-                    onChange={e => setPassword(e.target.value)} 
-                    required 
-                    placeholder={t('login.password')}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="remember-me" 
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked === true)}
-                />
-                <Label 
-                  htmlFor="remember-me" 
-                  className="text-sm font-normal cursor-pointer"
-                >
-                  {t('login.rememberMe')}
-                </Label>
-              </div>
-              <Button type="submit" className="w-full" disabled={loading || (email.includes('@') && !isValidEmail)}>
-                {loading ? t('login.signingIn') : t('login.signIn')}
-              </Button>
-              
-              <div className="text-center mt-4">
-                <button
-                  type="button"
-                  onClick={() => setForgotPasswordOpen(true)}
-                  className="text-sm text-primary hover:underline"
-                >
-                  {t('login.forgotPassword')}
-                </button>
-              </div>
-            </form>
-            
-            {/* Forgot Password Dialog */}
-            <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t('login.resetPassword')}</DialogTitle>
-                  <DialogDescription>
-                    {t('login.resetPasswordDescription')}
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleForgotPassword} className="space-y-4">
-                  <div>
-                    <Label htmlFor="reset-email">{t('login.email')}</Label>
-                    <Input
-                      id="reset-email"
-                      type="email"
-                      value={resetEmail}
-                      onChange={e => setResetEmail(e.target.value)}
-                      required
-                      className={`mt-1 ${showResetDomainError ? 'border-destructive focus-visible:ring-destructive' : ''}`}
-                      placeholder={`name${ALLOWED_EMAIL_DOMAIN}`}
-                    />
-                    {showResetDomainError && (
-                      <div className="flex items-center gap-1.5 mt-1.5 text-destructive text-sm">
-                        <AlertCircle className="h-3.5 w-3.5" />
-                        <span>{t('login.accessRestricted')} {ALLOWED_EMAIL_DOMAIN} email.</span>
-                      </div>
-                    )}
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
-                    disabled={resetLoading || (resetEmail.includes('@') && !resetEmailValid)}
-                  >
-                    {resetLoading ? t('login.sending') : t('login.sendResetLink')}
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </CardContent>
-        </Card>
+    <div className="h-screen w-screen flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md flex flex-col items-center mb-8">
+        <img src="https://storage.googleapis.com/flutterflow-io-6f20.appspot.com/projects/over-work-98o8wz/assets/k8h0x3i2mmoy/logo_wide_transparent_black_writing.png" alt="Jira Management Logo" className="w-full max-w-[280px] mb-6" />
       </div>
+      
+      <Card className="w-full max-w-md shadow-lg border-0 px-[30px]">
+        <CardHeader className="pb-2">
+          <div className="text-center">
+            <h2 className="text-xl font-medium">{t('welcomeBack')}</h2>
+            <p className="text-sm text-gray-500">{t('signInToYourAccount')}</p>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-4">
+          <LanguageSelector variant="login" />
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {authError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                  {authError}
+                </div>
+              )}
+              <FormField 
+                control={form.control} 
+                name="email" 
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('email')}</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input placeholder="you@example.com" className="pl-10" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField 
+                control={form.control} 
+                name="password" 
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('password')}</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <Input type="password" placeholder="••••••••" className="pl-10" {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+                {isLoading ? t('signingIn') : t('signIn')}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+        <CardFooter className="flex justify-center pt-0">
+        </CardFooter>
+      </Card>
     </div>
   );
 };
