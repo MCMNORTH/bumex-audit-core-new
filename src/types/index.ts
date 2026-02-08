@@ -1,136 +1,132 @@
+
+export type Priority = "highest" | "high" | "medium" | "low" | "lowest";
+
+export type Status = "todo" | "in-progress" | "in-review" | "done";
+
+export type IssueType = "task" | "bug" | "story" | "epic" | "subtask";
+
 export interface User {
   id: string;
+  name: string;
   email: string;
-  first_name: string;
-  last_name: string;
-  role: 'dev' | 'admin' | 'semi-admin' | 'users';
-  approved?: boolean;
-  blocked?: boolean;
-  created_at?: Date;
+  displayName?: string;
+  avatarUrl?: string;
+  userType?: "admin" | "user" | "client";
+  contactNumber?: string;
+  fullName?: string;
+  createdAt?: string;
+  company?: string;
+  uid?: string;
+  admin?: boolean; // Added boolean flag for admin users
+  client?: boolean; // Added boolean flag for client users
 }
 
-export interface Client {
+export type Sprint = {
   id: string;
   name: string;
-  client_id?: string;
-  country: string;
-  sector: string;
-  contact_email: string;
-  created_at: Date;
+  projectId: string;
+  startDate?: string;
+  endDate?: string;
+  status: "future" | "active" | "completed";
+  goal?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export interface Issue {
+  id: string;
+  title: string;
+  description?: string;
+  type: "bug" | "task" | "story" | "epic" | "subtask";
+  status: Status;
+  priority: "highest" | "high" | "medium" | "low" | "lowest";
+  assignee?: string; // Changed from assigneeId to assignee (stores name)
+  reporterId: string;
+  epicId?: string;
+  sprintId?: string;
+  parentId?: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubTask extends Issue {
+  parentId: string; // Required for subtasks
+  type: "subtask";   // Subtasks always have this type
 }
 
 export interface Project {
   id: string;
-  client_id: string;
-  engagement_name: string;
-  engagement_id: string;
-  project_id?: string;
-  lead_developer_id: string;
-  team_assignments?: {
-    lead_partner_id?: string;
-    partner_ids?: string[];
-    manager_ids?: string[];
-    in_charge_ids?: string[];
-    staff_ids?: string[];
-  };
-  signoffs?: {
-    [sectionId: string]: {
-      signed: boolean;
-      signedBy?: string;
-      signedAt?: string;
-    };
-  };
-  assigned_to: string[]; // Deprecated but kept for backward compatibility
-  status: 'new' | 'inprogress' | 'closed' | 'archived';
-  period_start: Date;
-  period_end: Date;
-  audit_type: string;
-  jurisdiction: string;
-  bumex_office?: string;
-  language: string;
-  is_first_audit: boolean;
-  created_by: string;
-  created_at: Date;
-  // Engagement evaluation fields
-  engagement_evaluation_id?: string;
-  engagement_evaluation_status?: string;
-  evaluation_approval_date?: string;
-  planned_expiration_date?: string;
-  // Sentinel approval fields
-  sentinel_approval_number?: string;
-  sentinel_approval_status?: string;
-  sentinel_approval_date?: string;
-  sentinel_expiration_date?: string;
-  // Radio button field
-  first_period_auditing?: string;
-  // Document attachment fields
-  sentinel_approval_email_files?: string[];
-  ceac_approval_email_files?: string[];
-  other_documents_files?: string[];
-  // Engagement scope and scale fields
-  financial_statement_audit_report?: boolean;
-  auditing_standards?: string[];
-  financial_reporting_framework?: string[];
-  audit_report_date?: string;
-  required_audit_file_closeout_date?: string;
-  // New component reporting and reviewer fields
-  component_reporting?: boolean;
-  component_reporting_details?: string;
-  group_auditor?: boolean;
-  engagement_quality_control_reviewer?: boolean;
-  limited_scope_quality_control_reviewer?: boolean;
-  other_reviewer?: boolean;
-  governance_management_same_persons?: boolean;
-  entity_has_internal_audit_function?: boolean;
-  // New involvement of others fields
-  entity_uses_service_organization?: boolean;
-  plan_to_involve_specialists?: boolean;
-  specialist_teams?: Array<{
-    id: string;
-    description: string;
-    name: string;
-    title: string;
-  }>;
-  // IT environment fields
-  entity_highly_dependent_on_it?: string;
-  plan_to_rely_on_automated_controls?: string;
-  use_it_critically_checklist?: boolean;
-  // Engagement team fields
-  sufficient_appropriate_resources?: boolean;
-  team_competence_and_capabilities?: boolean;
-  // Direction and supervision field
-  direction_supervision_documentation?: string;
-  // Other strategy or planning considerations fields
-  significant_factors_directing_activities?: string;
-  additional_information_documentation?: string;
+  name: string;
+  key: string;
+  description?: string;
+  lead: string; // User ID
+  owner?: string; // User ID of the project owner (client)
+  createdAt: string;
+  updatedAt: string;
+  avatarUrl?: string;
+  deleted?: boolean;
+  imageUrl?: string;
 }
 
-export interface Log {
+export interface Epic {
   id: string;
-  user_id: string;
-  action: string;
-  target_id: string;
-  timestamp: Date;
-  details?: string;
+  title: string;
+  description?: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  status: Status;
 }
 
-export interface AppControl {
-  maintenance_mode: boolean;
-  maintenance_message: string;
-  force_update: boolean;
-  current_version: string;
+export interface InvoiceItem {
+  description: string;
+  quantity: number;
+  price: number;
 }
 
-export interface Comment {
+export type Currency = "MRU" | "USD" | "EUR";
+
+export interface Payment {
   id: string;
-  project_id: string;
-  section_id: string;
-  field_id: string;
-  parent_comment_id: string | null;
-  author_id: string;
-  addressed_to: string | null;
-  content: string;
-  created_at: Date;
-  updated_at: Date | null;
-  resolved: boolean;
+  amount: number;
+  date: string;
+  note?: string;
+}
+
+// Define a separate type for invoice statuses
+export type InvoiceStatus = "draft" | "pending" | "paid" | "partial" | "overdue" | "cancelled";
+
+export interface Invoice {
+  id: string;
+  userId: string;
+  clientName: string; // For storage/display of the client name
+  clientContact?: string; // New field for email or phone contact
+  items: InvoiceItem[];
+  total: number;
+  currency: Currency;
+  status: InvoiceStatus;
+  issueDate: string;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+  payments?: Payment[];
+  amountPaid?: number;
+  deleted?: boolean; // Added deleted flag
+}
+
+export interface Quote {
+  id: string;
+  userId: string;
+  clientName: string; // For storage/display of the client name
+  clientContact?: string; // New field for email or phone contact
+  items: InvoiceItem[];
+  total: number;
+  currency: Currency;
+  status: "draft" | "pending" | "accepted" | "rejected" | "expired";
+  issueDate: string;
+  validUntil: string;
+  createdAt: string;
+  updatedAt: string;
+  deleted?: boolean; // Added deleted flag
 }
