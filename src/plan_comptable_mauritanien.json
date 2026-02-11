@@ -1,0 +1,2942 @@
+[
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "100000",
+    "label": "Capital individuel ou capital social"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "100100",
+    "label": "Capital souscrit non appelé"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "100200",
+    "label": "Capital souscrit appelé, non versé"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "100300",
+    "label": "Capital souscrit appelé, versé"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "100310",
+    "label": "Capital amorti"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "104000",
+    "label": "Primes liées au capital social"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "104100",
+    "label": "Primes d’émission"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "104200",
+    "label": "Primes de fusion"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "104300",
+    "label": "Primes d’apport"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "105000",
+    "label": "Fonds de dotation"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "108000",
+    "label": "Compte de l’exploitant"
+  },
+  {
+    "classe": 1,
+    "section_code": "10",
+    "section_label": "CAPITAL",
+    "account": "109000",
+    "label": "Actionnaire capital souscrit –non appelé"
+  },
+  {
+    "classe": 1,
+    "section_code": "11",
+    "section_label": "RÉSERVES",
+    "account": "110000",
+    "label": "Réserves légales"
+  },
+  {
+    "classe": 1,
+    "section_code": "11",
+    "section_label": "RÉSERVES",
+    "account": "113000",
+    "label": "Réserves statutaires et ou contractuelles"
+  },
+  {
+    "classe": 1,
+    "section_code": "11",
+    "section_label": "RÉSERVES",
+    "account": "114000",
+    "label": "Réserves réglementées"
+  },
+  {
+    "classe": 1,
+    "section_code": "11",
+    "section_label": "RÉSERVES",
+    "account": "115000",
+    "label": "Réserves libres"
+  },
+  {
+    "classe": 1,
+    "section_code": "11",
+    "section_label": "RÉSERVES",
+    "account": "116000",
+    "label": "Autres réserves"
+  },
+  {
+    "classe": 1,
+    "section_code": "12",
+    "section_label": "REPORT A NOUVEAU",
+    "account": "120000",
+    "label": "Report à nouveau (solde créditeur)"
+  },
+  {
+    "classe": 1,
+    "section_code": "12",
+    "section_label": "REPORT A NOUVEAU",
+    "account": "129000",
+    "label": "Report à nouveau (solde débiteur)"
+  },
+  {
+    "classe": 1,
+    "section_code": "13",
+    "section_label": "RÉSULTAT NET EN ATTENTE D’ AFFECTATION",
+    "account": "130000",
+    "label": "Résultat net (solde créditeur)"
+  },
+  {
+    "classe": 1,
+    "section_code": "13",
+    "section_label": "RÉSULTAT NET EN ATTENTE D’ AFFECTATION",
+    "account": "139000",
+    "label": "Résultat net (solde débiteur)"
+  },
+  {
+    "classe": 1,
+    "section_code": "14",
+    "section_label": "SUBVENTION D’ EQUIPEMENT",
+    "account": "140000",
+    "label": "Subventions d’équipement reçues"
+  },
+  {
+    "classe": 1,
+    "section_code": "14",
+    "section_label": "SUBVENTION D’ EQUIPEMENT",
+    "account": "149000",
+    "label": "Subvention d’équipement inscrites au compte de résultat (solde débiteur)"
+  },
+  {
+    "classe": 1,
+    "section_code": "15",
+    "section_label": "PLUS VALUS ET PROVISIONS RÉGLEMENTÉES",
+    "account": "150000",
+    "label": "Plus-valus à réinvestir"
+  },
+  {
+    "classe": 1,
+    "section_code": "15",
+    "section_label": "PLUS VALUS ET PROVISIONS RÉGLEMENTÉES",
+    "account": "150800",
+    "label": "Amortissement spécial de réemploi"
+  },
+  {
+    "classe": 1,
+    "section_code": "15",
+    "section_label": "PLUS VALUS ET PROVISIONS RÉGLEMENTÉES",
+    "account": "151000",
+    "label": "Écarts de réévaluation"
+  },
+  {
+    "classe": 1,
+    "section_code": "15",
+    "section_label": "PLUS VALUS ET PROVISIONS RÉGLEMENTÉES",
+    "account": "152000",
+    "label": "provisions réglementées"
+  },
+  {
+    "classe": 1,
+    "section_code": "16",
+    "section_label": "EMPRUNTS ET DETTES ASSIMILÉES A LONG ET MOYEN TERME",
+    "account": "160000",
+    "label": "Emprunts obligataire"
+  },
+  {
+    "classe": 1,
+    "section_code": "16",
+    "section_label": "EMPRUNTS ET DETTES ASSIMILÉES A LONG ET MOYEN TERME",
+    "account": "162000",
+    "label": "Emprunt auprès des établissements de crédit"
+  },
+  {
+    "classe": 1,
+    "section_code": "16",
+    "section_label": "EMPRUNTS ET DETTES ASSIMILÉES A LONG ET MOYEN TERME",
+    "account": "165000",
+    "label": "Dépôts et cautionnement reçus"
+  },
+  {
+    "classe": 1,
+    "section_code": "16",
+    "section_label": "EMPRUNTS ET DETTES ASSIMILÉES A LONG ET MOYEN TERME",
+    "account": "167000",
+    "label": "Avances de l’Etat"
+  },
+  {
+    "classe": 1,
+    "section_code": "16",
+    "section_label": "EMPRUNTS ET DETTES ASSIMILÉES A LONG ET MOYEN TERME",
+    "account": "168000",
+    "label": "Autres emprunts et dettes assimilées (billet de fond, Fournisseurs et effets à payer à long et moyen terme)"
+  },
+  {
+    "classe": 1,
+    "section_code": "16",
+    "section_label": "EMPRUNTS ET DETTES ASSIMILÉES A LONG ET MOYEN TERME",
+    "account": "169000",
+    "label": "Primes de remboursements des obligations"
+  },
+  {
+    "classe": 1,
+    "section_code": "17",
+    "section_label": "DETTES RATTACHÉES A DES PARTICIPATIONS",
+    "account": "175000",
+    "label": "Dettes rattachées à des participations (groupe)"
+  },
+  {
+    "classe": 1,
+    "section_code": "17",
+    "section_label": "DETTES RATTACHÉES A DES PARTICIPATIONS",
+    "account": "178000",
+    "label": "Dettes rattachées à des sociétés en participation"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "190000",
+    "label": "Provisions pour risque"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "190100",
+    "label": "Provisions pour litiges"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "190200",
+    "label": "Provisions pour garanties données aux clients"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "190300",
+    "label": "Provisions pour perte sur marché à terme"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "190400",
+    "label": "Provisions pour amendes, doubles droits, pénalités"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "194000",
+    "label": "Provisions pour pensions et obligations similaires"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "195000",
+    "label": "Provisions pour impôts"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "196000",
+    "label": "Provisions pour renouvellement des immobilisations (Entreprises concessionnaires)"
+  },
+  {
+    "classe": 1,
+    "section_code": "19",
+    "section_label": "PROVISIONS POUR RISQUES ET CHARGES",
+    "account": "197000",
+    "label": "Provisions pour charges à repartir sur plusieurs exercices"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "200000",
+    "label": "Frais immobilisés"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "200100",
+    "label": "Frais relatifs au pacte social"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "200300",
+    "label": "Frais d’émission des emprunts"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "200400",
+    "label": "Frais d’acquisition des immobilisations"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "200500",
+    "label": "Frais exceptionnelles à étaler sur plusieurs exercices"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "203000",
+    "label": "Frais de recherches et du développement"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "205000",
+    "label": "Valeurs incorporelles immobilisées"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "205100",
+    "label": "Droit au bail"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "205200",
+    "label": "Fonds commercial"
+  },
+  {
+    "classe": 2,
+    "section_code": "20",
+    "section_label": "FRAIS ET VALEURS INCORPORELLES IMMOBILISÉES",
+    "account": "205800",
+    "label": "Autres immobilisations incorporelles"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "210000",
+    "label": "Terrains"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "210100",
+    "label": "Terrains de chantiers"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "210200",
+    "label": "Sous-sol et sur-sol"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "210300",
+    "label": "Terrains de gisement"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "210500",
+    "label": "Terrains d’exploitation agricole"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "210600",
+    "label": "Terrains bâtis (ensemble industriels, administratifs, commerciaux)"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "211000",
+    "label": "Agencements et aménagements des terrains"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "212000",
+    "label": "Constructions"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "212050",
+    "label": "Bâtiments administratifs et commerciaux"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "212080",
+    "label": "Autres ensembles immobiliers"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "213000",
+    "label": "Installations complexes spécialisés"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "214000",
+    "label": "Matériel d’exploitation"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "215000",
+    "label": "Matériel de transport"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "216000",
+    "label": "Matériel de bureau et informatique"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "217000",
+    "label": "immobilisations animales (animaux de reproduction, de trait, laitiers)"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "218000",
+    "label": "Autres immobilisations corporelles"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "218100",
+    "label": "Mobiliers de logement"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "218200",
+    "label": "Installations, agencements, aménagements"
+  },
+  {
+    "classe": 2,
+    "section_code": "21",
+    "section_label": "IMMOBILISATIONS INCORPORELLES",
+    "account": "218300",
+    "label": "Emballages récupérables identifiables"
+  },
+  {
+    "classe": 2,
+    "section_code": "22",
+    "section_label": "IMMOBILISATIONS MISES EN CONCESSION",
+    "account": "220000",
+    "label": "Par le concédant"
+  },
+  {
+    "classe": 2,
+    "section_code": "22",
+    "section_label": "IMMOBILISATIONS MISES EN CONCESSION",
+    "account": "225000",
+    "label": "Par le concessionnaire"
+  },
+  {
+    "classe": 2,
+    "section_code": "22",
+    "section_label": "IMMOBILISATIONS MISES EN CONCESSION",
+    "account": "229000",
+    "label": "Droit du concédant (en nature)"
+  },
+  {
+    "classe": 2,
+    "section_code": "23",
+    "section_label": "IMMOBILISATIONS EN COURS",
+    "account": "230000",
+    "label": "Immobilisations corporelles en cours"
+  },
+  {
+    "classe": 2,
+    "section_code": "23",
+    "section_label": "IMMOBILISATIONS EN COURS",
+    "account": "237000",
+    "label": "Avances et acomptes versées sur immobilisations incorporelles"
+  },
+  {
+    "classe": 2,
+    "section_code": "23",
+    "section_label": "IMMOBILISATIONS EN COURS",
+    "account": "238000",
+    "label": "Avances et acomptes sur commande d’immobilisations Corporelles"
+  },
+  {
+    "classe": 2,
+    "section_code": "26",
+    "section_label": "PRÊTS ET AUTRES CRÉANCES A LONG ET MOYEN TERME",
+    "account": "260000",
+    "label": "prêts avances consentis à long et moyen terme (aux associés, au Personnel, billets de fonds)"
+  },
+  {
+    "classe": 2,
+    "section_code": "26",
+    "section_label": "PRÊTS ET AUTRES CRÉANCES A LONG ET MOYEN TERME",
+    "account": "264000",
+    "label": "Créances sur clients ( à long et moyen terme)"
+  },
+  {
+    "classe": 2,
+    "section_code": "26",
+    "section_label": "PRÊTS ET AUTRES CRÉANCES A LONG ET MOYEN TERME",
+    "account": "265000",
+    "label": "Dépôts et cautionnement versés"
+  },
+  {
+    "classe": 2,
+    "section_code": "26",
+    "section_label": "PRÊTS ET AUTRES CRÉANCES A LONG ET MOYEN TERME",
+    "account": "268000",
+    "label": "Autres créances immobilisées"
+  },
+  {
+    "classe": 2,
+    "section_code": "27",
+    "section_label": "PARTICIPATIONS ET TITRES IMMOBILISES",
+    "account": "270000",
+    "label": "Titres de participation"
+  },
+  {
+    "classe": 2,
+    "section_code": "27",
+    "section_label": "PARTICIPATIONS ET TITRES IMMOBILISES",
+    "account": "272000",
+    "label": "Titres immobilisés"
+  },
+  {
+    "classe": 2,
+    "section_code": "27",
+    "section_label": "PARTICIPATIONS ET TITRES IMMOBILISES",
+    "account": "275000",
+    "label": "Créances rattachées à des participations (groupe)"
+  },
+  {
+    "classe": 2,
+    "section_code": "27",
+    "section_label": "PARTICIPATIONS ET TITRES IMMOBILISES",
+    "account": "278000",
+    "label": "Créance rattachées à des sociétés en participation"
+  },
+  {
+    "classe": 2,
+    "section_code": "27",
+    "section_label": "PARTICIPATIONS ET TITRES IMMOBILISES",
+    "account": "279000",
+    "label": "Versements restant à effectuer sur titres de participation ou des Titres immobilisés non libérés"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280000",
+    "label": "Amortissements des frais immobilisés"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280010",
+    "label": "Amortissements des frais relatifs au pacte social"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280030",
+    "label": "Amortissements des frais d’émission des emprunts"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280040",
+    "label": "Amortissements des frais d’acquisitions des immobilisations"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280050",
+    "label": "Amortissements des frais à immobiliser sur plusieurs exercices"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280300",
+    "label": "Amortissements des frais de recherche et de développement"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "296000",
+    "label": "Provisions pour depreciations des prets et avances consenties (a long et moyen terme)"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280500",
+    "label": "Amortissements des valeurs incorporelles immobilisées à long et moyen terme"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "296400",
+    "label": "Provisions pour dépréciation des créances sur clients"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "280580",
+    "label": "Amortissements des autres immobilisations incorporelles"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "296500",
+    "label": "Provisions pour dépréciation des dépôts"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281030",
+    "label": "Amortissements des terrains de gisements"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "296800",
+    "label": "Provisions pour dépréciation des autres créances immobilisées"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281100",
+    "label": "Amortissements des agencements et aménagement des terrains"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "297000",
+    "label": "Provisions pour dépréciation des participations et titres"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281200",
+    "label": "Amortissement des constructions immobilisés"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281220",
+    "label": "Amortissements des installations, agencements, aménagements des constructions"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "297200",
+    "label": "Provisions pour dépréciation des titres immobilisés"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "297500",
+    "label": "Provisions pour dépréciation des créances rattachées à des entreprises"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281250",
+    "label": "Amortissements des ouvrages d’infrastructures participations (groupe)"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281300",
+    "label": "Amortissements des installations complexes spécialisées"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "297800",
+    "label": "Provisions pour dépréciation des créances rattachées à des sociétés"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281400",
+    "label": "Amortissements du matériel d’exploitation en participation"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281500",
+    "label": "Amortissement du matériel de transport"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281600",
+    "label": "Amortissements du matériel de bureau et informatique"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281700",
+    "label": "Amortissements des immobilisations animales"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281800",
+    "label": "Amortissements des autres immobilisations corporelles"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281810",
+    "label": "Amortissements du mobilier de logement"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281820",
+    "label": "Amortissements des installations, agencement et aménagements"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "281830",
+    "label": "Amortissements des emballages récupérables identifiables"
+  },
+  {
+    "classe": 2,
+    "section_code": "28",
+    "section_label": "AMORTISSEMENT DES IMMOBILISATIONS",
+    "account": "282000",
+    "label": "Amortissement des immobilisations mises en concession"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "290500",
+    "label": "Provisions pour dépréciation des valeurs incorporelles immobilisées"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "290510",
+    "label": "Provisions pour dépréciation du droit au bail"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "290520",
+    "label": "Provisions pour dépréciation de fonds de commerce"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "291000",
+    "label": "Provision pour dépréciations des terrains"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "291010",
+    "label": "Provisions pour dépréciations des terrains de chantiers"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "291020",
+    "label": "Provisions pour dépréciations du sous-sol et sur-sol"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "291050",
+    "label": "Provisions pour dépréciations des terrains d’exploitation agricole"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "291060",
+    "label": "Provisions pour dépréciations des terrains bâtis"
+  },
+  {
+    "classe": 2,
+    "section_code": "29",
+    "section_label": "PROVISIONS POUR DEPRECIATIONS DES IMMOBILISATIONS",
+    "account": "293000",
+    "label": "Provisions pour dépréciations des immobilisations en cours"
+  },
+  {
+    "classe": 3,
+    "section_code": "30",
+    "section_label": "MARCHANDISES",
+    "account": "300000",
+    "label": "Marchandises (ou groupe A)"
+  },
+  {
+    "classe": 3,
+    "section_code": "30",
+    "section_label": "MARCHANDISES",
+    "account": "301000",
+    "label": "Marchandises (Ou groupe B)"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "310000",
+    "label": "Matières premières"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312000",
+    "label": "Matières et fournitures consommables"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312100",
+    "label": "Combustibles, carburant et lubrifiants"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312200",
+    "label": "Fournitures et matériaux d’entretien"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312300",
+    "label": "Fournitures d’atelier, d’usine et de magasin"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312400",
+    "label": "Petits outillages"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312500",
+    "label": "Produits d’entretien"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312600",
+    "label": "Fournitures de bureau et administratives"
+  },
+  {
+    "classe": 3,
+    "section_code": "31",
+    "section_label": "MATIÈRES PREMIÈRES ET AUTRES APPROVISIONNEMENTS",
+    "account": "312800",
+    "label": "Autre matières et fournitures"
+  },
+  {
+    "classe": 3,
+    "section_code": "32",
+    "section_label": "EMBALLAGES",
+    "account": "320000",
+    "label": "Emballages perdus"
+  },
+  {
+    "classe": 3,
+    "section_code": "32",
+    "section_label": "EMBALLAGES",
+    "account": "325000",
+    "label": "Emballages récupérables non identifiables"
+  },
+  {
+    "classe": 3,
+    "section_code": "32",
+    "section_label": "EMBALLAGES",
+    "account": "327000",
+    "label": "Emballages à usage mixte"
+  },
+  {
+    "classe": 3,
+    "section_code": "33",
+    "section_label": "ENCOURS DE PRODUCTION DE BIENS (OU DE SERVICES",
+    "account": "330000",
+    "label": "Produits en cours"
+  },
+  {
+    "classe": 3,
+    "section_code": "33",
+    "section_label": "ENCOURS DE PRODUCTION DE BIENS (OU DE SERVICES",
+    "account": "332000",
+    "label": "Travaux en cours"
+  },
+  {
+    "classe": 3,
+    "section_code": "33",
+    "section_label": "ENCOURS DE PRODUCTION DE BIENS (OU DE SERVICES",
+    "account": "335000",
+    "label": "Etudes en cours"
+  },
+  {
+    "classe": 3,
+    "section_code": "33",
+    "section_label": "ENCOURS DE PRODUCTION DE BIENS (OU DE SERVICES",
+    "account": "337000",
+    "label": "Prestations de services en cours"
+  },
+  {
+    "classe": 3,
+    "section_code": "36",
+    "section_label": "PRODUITS RÉSIDUELS (OU MATIÈRES DE RECUPERATION)",
+    "account": "361000",
+    "label": "Déchets"
+  },
+  {
+    "classe": 3,
+    "section_code": "36",
+    "section_label": "PRODUITS RÉSIDUELS (OU MATIÈRES DE RECUPERATION)",
+    "account": "365000",
+    "label": "Rebuts"
+  },
+  {
+    "classe": 3,
+    "section_code": "36",
+    "section_label": "PRODUITS RÉSIDUELS (OU MATIÈRES DE RECUPERATION)",
+    "account": "366000",
+    "label": "Matières et produits de récupération"
+  },
+  {
+    "classe": 3,
+    "section_code": "39",
+    "section_label": "PRODUCTION POUR DEPRECIATION DES STOCKS ET DES",
+    "account": "390000",
+    "label": "Provisions pour dépréciation des stocks de marchandises"
+  },
+  {
+    "classe": 3,
+    "section_code": "39",
+    "section_label": "PRODUCTION POUR DEPRECIATION DES STOCKS ET DES",
+    "account": "391000",
+    "label": "Provisions pour dépréciation des stocks de matières premières et autres approvisionnements"
+  },
+  {
+    "classe": 3,
+    "section_code": "39",
+    "section_label": "PRODUCTION POUR DEPRECIATION DES STOCKS ET DES",
+    "account": "392000",
+    "label": "Provisions pour dépréciation des stocks d’emballages"
+  },
+  {
+    "classe": 3,
+    "section_code": "39",
+    "section_label": "PRODUCTION POUR DEPRECIATION DES STOCKS ET DES",
+    "account": "393000",
+    "label": "Provisions pour dépréciation des stocks d’encours"
+  },
+  {
+    "classe": 3,
+    "section_code": "39",
+    "section_label": "PRODUCTION POUR DEPRECIATION DES STOCKS ET DES",
+    "account": "394000",
+    "label": "Provisions pour dépréciation des stocks de produits Intermédiaires"
+  },
+  {
+    "classe": 3,
+    "section_code": "39",
+    "section_label": "PRODUCTION POUR DEPRECIATION DES STOCKS ET DES",
+    "account": "395000",
+    "label": "Provisions pour dépréciation des stocks de produits finis"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "400000",
+    "label": "Fournisseurs"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "400300",
+    "label": "Fournisseurs sous-traitants"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "400400",
+    "label": "Fournisseurs des biens d’équipement"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "400500",
+    "label": "Fournisseurs sociétés apparentées"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "400800",
+    "label": "Fournisseurs retenues de garantie"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "405000",
+    "label": "Effets à payer"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "408000",
+    "label": "Fournisseurs factures à recevoir (non parvenues)"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "409000",
+    "label": "Fournisseurs débiteurs"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "409600",
+    "label": "Fournisseurs créances pour emballages et matériel à rendre"
+  },
+  {
+    "classe": 4,
+    "section_code": "40",
+    "section_label": "FOURNISSEURS ET COMPTES RATTACHES",
+    "account": "409700",
+    "label": "Rabais, remises et ristourne à obtenir (avoirs non encore reçus)"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "410000",
+    "label": "clients"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "410300",
+    "label": "Clients, Etats et collectivités publiques"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "410500",
+    "label": "Clients, sociétés apparentées"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "410800",
+    "label": "Clients, retenues de garantie"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "412000",
+    "label": "Clients douteux ou litigieux"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "415000",
+    "label": "Effets à recevoir"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "417000",
+    "label": "Créances sur des travaux non encore facturables (Opérations à long terme)"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "418000",
+    "label": "Clients factures à établir"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "419000",
+    "label": "Clients créditeurs"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "419600",
+    "label": "Clients, dettes pour emballages et matériels consignés"
+  },
+  {
+    "classe": 4,
+    "section_code": "41",
+    "section_label": "CLIENTS ET COMPTES RATTACHES",
+    "account": "419700",
+    "label": "Rabais, remises et ristournes à accorder (avoirs à établir)"
+  },
+  {
+    "classe": 4,
+    "section_code": "42",
+    "section_label": "PERSONNEL ET COMPTES RATTACHES",
+    "account": "420000",
+    "label": "Rémunérations dues au personnel"
+  },
+  {
+    "classe": 4,
+    "section_code": "42",
+    "section_label": "PERSONNEL ET COMPTES RATTACHES",
+    "account": "422000",
+    "label": "Organismes sociaux rattachés à l’entreprise (Œuvres sociales –Comité d’entreprise)"
+  },
+  {
+    "classe": 4,
+    "section_code": "42",
+    "section_label": "PERSONNEL ET COMPTES RATTACHES",
+    "account": "425000",
+    "label": "Avances et acomptes au personnel"
+  },
+  {
+    "classe": 4,
+    "section_code": "42",
+    "section_label": "PERSONNEL ET COMPTES RATTACHES",
+    "account": "426000",
+    "label": "Dépôt au personnel"
+  },
+  {
+    "classe": 4,
+    "section_code": "42",
+    "section_label": "PERSONNEL ET COMPTES RATTACHES",
+    "account": "427000",
+    "label": "Oppositions"
+  },
+  {
+    "classe": 4,
+    "section_code": "42",
+    "section_label": "PERSONNEL ET COMPTES RATTACHES",
+    "account": "428000",
+    "label": "Dettes provisionnées pour congés à payer"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "430000",
+    "label": "Fonds de dotation et subvention à recevoir (à subdiviser s’il y a lieu en subvention d’investissement, subvention d’exploitation, Subvention d’équilibre)"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "431000",
+    "label": "Opérations particulières avec l’état, les collectivités publiques, Les organismes internationaux"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "432000",
+    "label": "Impôts sur le bénéfice et Impôt minimum forfaitaire"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "433000",
+    "label": "Impôts recouvrables sur les tiers"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "434000",
+    "label": "Impôts sur les traitements et salaires (retenue à la source)"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "435000",
+    "label": "Taxes sur le chiffre d’affaire"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "436000",
+    "label": "Douanes et autres impôts et taxes"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "437000",
+    "label": "Obligations cautionnées"
+  },
+  {
+    "classe": 4,
+    "section_code": "43",
+    "section_label": "ETAT ET AUTRES COLLECTIVITÉS PUBLIQUES",
+    "account": "438000",
+    "label": "Charges à payer (et produits à recevoir)"
+  },
+  {
+    "classe": 4,
+    "section_code": "44",
+    "section_label": "Sécurité sociale et autres organismes sociaux",
+    "account": "440000",
+    "label": "Sécurité sociale"
+  },
+  {
+    "classe": 4,
+    "section_code": "44",
+    "section_label": "Sécurité sociale et autres organismes sociaux",
+    "account": "442000",
+    "label": "Autres organismes sociaux"
+  },
+  {
+    "classe": 4,
+    "section_code": "44",
+    "section_label": "Sécurité sociale et autres organismes sociaux",
+    "account": "448000",
+    "label": "Charges à payer (et produits à recevoir)"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "450000",
+    "label": "Associés comptes d’apport en société"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "451000",
+    "label": "Associés-Capital souscrit et appelé mais non versé"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "452000",
+    "label": "Associés, versements anticipés et reçus sur augmentation de capital"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "453000",
+    "label": "Actionnaires défaillants"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "454000",
+    "label": "Associés Capital à rembourser"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "455000",
+    "label": "Associé dividendes à payer"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "456000",
+    "label": "Comptes courants des associés et administrateurs"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "457000",
+    "label": "Compte des sociétés du groupe (Société mère-filiale-sous filiale- Participation multiples)"
+  },
+  {
+    "classe": 4,
+    "section_code": "45",
+    "section_label": "ASSOCIES-COMPTES COURANTS-GROUPE",
+    "account": "458000",
+    "label": "Associés-opérations faites en commun"
+  },
+  {
+    "classe": 4,
+    "section_code": "46",
+    "section_label": "DÉBITEURS ET CRÉDITEURS DIVERS",
+    "account": "460000",
+    "label": "Obligataires (Obligations échues à rembourser-coupons à payer)"
+  },
+  {
+    "classe": 4,
+    "section_code": "46",
+    "section_label": "DÉBITEURS ET CRÉDITEURS DIVERS",
+    "account": "462000",
+    "label": "Débiteurs sur cession d’immobilisations (et valeurs mobilières de Placement)"
+  },
+  {
+    "classe": 4,
+    "section_code": "46",
+    "section_label": "DÉBITEURS ET CRÉDITEURS DIVERS",
+    "account": "464000",
+    "label": "Autres comptes débiteurs et créditeurs"
+  },
+  {
+    "classe": 4,
+    "section_code": "46",
+    "section_label": "DÉBITEURS ET CRÉDITEURS DIVERS",
+    "account": "468000",
+    "label": "Charges à payer et produits à recevoir"
+  },
+  {
+    "classe": 4,
+    "section_code": "48",
+    "section_label": "COMPTES DE RÉGULARISATION ET D’ ATTENTE",
+    "account": "480000",
+    "label": "Charges constatées d’avance"
+  },
+  {
+    "classe": 4,
+    "section_code": "48",
+    "section_label": "COMPTES DE RÉGULARISATION ET D’ ATTENTE",
+    "account": "481000",
+    "label": "Produits constatées d’avance"
+  },
+  {
+    "classe": 4,
+    "section_code": "48",
+    "section_label": "COMPTES DE RÉGULARISATION ET D’ ATTENTE",
+    "account": "484000",
+    "label": "Différence de conversion sur opérations en devise-passif"
+  },
+  {
+    "classe": 4,
+    "section_code": "48",
+    "section_label": "COMPTES DE RÉGULARISATION ET D’ ATTENTE",
+    "account": "486000",
+    "label": "Comptes d’abonnement des charges et des produits"
+  },
+  {
+    "classe": 4,
+    "section_code": "48",
+    "section_label": "COMPTES DE RÉGULARISATION ET D’ ATTENTE",
+    "account": "488000",
+    "label": "Comptes d’attentes et à régulariser"
+  },
+  {
+    "classe": 4,
+    "section_code": "49",
+    "section_label": "PROVISIONS POUR DÉPRÉCIATION DES COMPTES DE TIERS",
+    "account": "490000",
+    "label": "Provisions pour dépréciation des comptes clients"
+  },
+  {
+    "classe": 4,
+    "section_code": "49",
+    "section_label": "PROVISIONS POUR DÉPRÉCIATION DES COMPTES DE TIERS",
+    "account": "495000",
+    "label": "Provisions pour dépréciation des comptes d’associés et groupe"
+  },
+  {
+    "classe": 4,
+    "section_code": "49",
+    "section_label": "PROVISIONS POUR DÉPRÉCIATION DES COMPTES DE TIERS",
+    "account": "496000",
+    "label": "Provisions pour dépréciation des comptes de débiteurs divers"
+  },
+  {
+    "classe": 5,
+    "section_code": null,
+    "section_label": null,
+    "account": "591000",
+    "label": "Provisions pour dépréciations des prêts à court terme"
+  },
+  {
+    "classe": 5,
+    "section_code": null,
+    "section_label": null,
+    "account": "592000",
+    "label": "Provisions pour dépréciations des valeurs mobilières de placement"
+  },
+  {
+    "classe": 5,
+    "section_code": "52",
+    "section_label": "VALEURS MOBILIÈRES DE PLACEMENT",
+    "account": "520000",
+    "label": "Actions"
+  },
+  {
+    "classe": 5,
+    "section_code": "52",
+    "section_label": "VALEURS MOBILIÈRES DE PLACEMENT",
+    "account": "525000",
+    "label": "Autres titres conférant un droit de propriété"
+  },
+  {
+    "classe": 5,
+    "section_code": "52",
+    "section_label": "VALEURS MOBILIÈRES DE PLACEMENT",
+    "account": "526000",
+    "label": "Obligations"
+  },
+  {
+    "classe": 5,
+    "section_code": "52",
+    "section_label": "VALEURS MOBILIÈRES DE PLACEMENT",
+    "account": "527000",
+    "label": "Bons du trésor et bons de caisse à court terme"
+  },
+  {
+    "classe": 5,
+    "section_code": "52",
+    "section_label": "VALEURS MOBILIÈRES DE PLACEMENT",
+    "account": "528000",
+    "label": "Autres valeurs mobilières conférant un droit de propriété"
+  },
+  {
+    "classe": 5,
+    "section_code": "52",
+    "section_label": "VALEURS MOBILIÈRES DE PLACEMENT",
+    "account": "529000",
+    "label": "Versements restant à effectuer sur les valeurs mobilières de placement non Libérées"
+  },
+  {
+    "classe": 5,
+    "section_code": "49",
+    "section_label": "CHÈQUES, EFFETS ET COUPONS A L’ENCAISSEMENT",
+    "account": "540000",
+    "label": "Chèques à encaisser"
+  },
+  {
+    "classe": 5,
+    "section_code": "49",
+    "section_label": "CHÈQUES, EFFETS ET COUPONS A L’ENCAISSEMENT",
+    "account": "541000",
+    "label": "Effets à l’encaissement"
+  },
+  {
+    "classe": 5,
+    "section_code": "49",
+    "section_label": "CHÈQUES, EFFETS ET COUPONS A L’ENCAISSEMENT",
+    "account": "542000",
+    "label": "Effets à l’escompte"
+  },
+  {
+    "classe": 5,
+    "section_code": "49",
+    "section_label": "CHÈQUES, EFFETS ET COUPONS A L’ENCAISSEMENT",
+    "account": "547000",
+    "label": "Coupons échus à l’encaissement"
+  },
+  {
+    "classe": 5,
+    "section_code": "50",
+    "section_label": "BANQUES, INSTITUTIONS FINANCIÈRES ET ASSIMILÉES",
+    "account": "550000",
+    "label": "Banques en Mauritanie Banques à l’étranger"
+  },
+  {
+    "classe": 5,
+    "section_code": "50",
+    "section_label": "BANQUES, INSTITUTIONS FINANCIÈRES ET ASSIMILÉES",
+    "account": "554000",
+    "label": "Chèques postaux"
+  },
+  {
+    "classe": 5,
+    "section_code": "50",
+    "section_label": "BANQUES, INSTITUTIONS FINANCIÈRES ET ASSIMILÉES",
+    "account": "555000",
+    "label": "Caisse du trésor"
+  },
+  {
+    "classe": 5,
+    "section_code": "50",
+    "section_label": "BANQUES, INSTITUTIONS FINANCIÈRES ET ASSIMILÉES",
+    "account": "556000",
+    "label": "Agents de change"
+  },
+  {
+    "classe": 5,
+    "section_code": "50",
+    "section_label": "BANQUES, INSTITUTIONS FINANCIÈRES ET ASSIMILÉES",
+    "account": "558000",
+    "label": "Autres organismes financiers"
+  },
+  {
+    "classe": 5,
+    "section_code": "50",
+    "section_label": "BANQUES, INSTITUTIONS FINANCIÈRES ET ASSIMILÉES",
+    "account": "559000",
+    "label": "Concours bancaires courants"
+  },
+  {
+    "classe": 5,
+    "section_code": "51",
+    "section_label": "CAISSE",
+    "account": "560000",
+    "label": "Caisse siège"
+  },
+  {
+    "classe": 5,
+    "section_code": "51",
+    "section_label": "CAISSE",
+    "account": "561000",
+    "label": "Caisses succursales"
+  },
+  {
+    "classe": 5,
+    "section_code": "53",
+    "section_label": "VIREMENTS INTERNES",
+    "account": "580000",
+    "label": "Virements de fonds"
+  },
+  {
+    "classe": 5,
+    "section_code": "53",
+    "section_label": "VIREMENTS INTERNES",
+    "account": "586000",
+    "label": "Achats comptants"
+  },
+  {
+    "classe": 5,
+    "section_code": "53",
+    "section_label": "VIREMENTS INTERNES",
+    "account": "587000",
+    "label": "Ventes comptant"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "600000",
+    "label": "Marchandises"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601000",
+    "label": "Matières premières et autres approvisionnements"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601200",
+    "label": "Matières et fournitures consommables"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601210",
+    "label": "Combustible, carburant et lubrifiants"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601220",
+    "label": "Fournitures et matériels d’entretien"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601230",
+    "label": "Fourniture d’atelier d’usine et de magasin"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601240",
+    "label": "Petits outillage"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601250",
+    "label": "Produits d’entretien"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601260",
+    "label": "Fournitures de bureau et administratives"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "601280",
+    "label": "Autres matières et fournitures"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "602000",
+    "label": "Emballages"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "602500",
+    "label": "Emballages récupérables non identifiables"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "602700",
+    "label": "Emballages à usage mixtes"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "603000",
+    "label": "Variations de stocks"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "603100",
+    "label": "Variations de stocks de matières premières et autres approvisionnements"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "603200",
+    "label": "Variations de stocks d’emballages"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606000",
+    "label": "Achats d’approvisionnement non stockés"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606100",
+    "label": "Combustible, carburant et lubrifiant"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606200",
+    "label": "Fournitures et matériaux d’entretien"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606300",
+    "label": "Fournitures d’atelier, d’usine et de magasin"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606400",
+    "label": "Petits outillages"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606500",
+    "label": "Produits d’entretien"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606600",
+    "label": "Fournitures de bureau et administratives"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606700",
+    "label": "Vêtements de travail"
+  },
+  {
+    "classe": 5,
+    "section_code": "60",
+    "section_label": "CHATS ET VARIATIONS DE STOCKS",
+    "account": "606800",
+    "label": "Autres matières et fournitures"
+  },
+  {
+    "classe": 5,
+    "section_code": "61",
+    "section_label": "ACHATS DE SOUS-TRAITANCE",
+    "account": "610000",
+    "label": "Achats de sous-traitance"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "620",
+    "label": "Locations et charges locatives diverses"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "6200",
+    "label": "Locations mobilières et immobilières, charges de copropriété"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "6202",
+    "label": "Redevances de crédit-bail"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "6203",
+    "label": "Malis sur emballages restitués"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "621",
+    "label": "Travaux d’entretiens et de réparations"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "623",
+    "label": "Primes d’assurance"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "6230",
+    "label": "Multirisques (incendies, vols, responsabilité civile)"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "6234",
+    "label": "Assurance transport"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "6238",
+    "label": "Autres risques"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "624",
+    "label": "Etudes et recherches"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "625",
+    "label": "Documentation générale et technique"
+  },
+  {
+    "classe": 5,
+    "section_code": "62",
+    "section_label": "CHARGES EXTERNES LIÉES L’INVESTISSEMENT",
+    "account": "626",
+    "label": "Frais de colloques, séminaires et conférence"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "630",
+    "label": "Transports"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6300",
+    "label": "transports sur achat (2)"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6301",
+    "label": "Transports sur vente"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6302",
+    "label": "Transports entre établissements"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6305",
+    "label": "Transports collectif du personnel"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6308",
+    "label": "Autres frais de transports"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "631",
+    "label": "Déplacements, missions et réceptions"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6310",
+    "label": "Voyages et déplacements"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6315",
+    "label": "Missions"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6317",
+    "label": "Réceptions"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "632",
+    "label": "Frais postaux et télécommunications"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "633",
+    "label": "Rémunérations d’intermédiaires et honoraires"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6330",
+    "label": "Personnel intérimaire"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6331",
+    "label": "honoraires (services d’ingénierie, d’architecte, de conseil juridique, fiscal, de comptable)"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6332",
+    "label": "Frais d’acte et de contentieux"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6333",
+    "label": "Traitement automatique des informations, organismes d’études, D’ assistance technique)"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6334",
+    "label": "Commissions et courtages (et rémunérations des transitaires)"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6338",
+    "label": "Divers"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "634",
+    "label": "Publicités et propagandes, publications, promotions des ventes (Annonces, échantillons, foire et expositions, cadeau à la clientèle, Catalogues et imprimés)"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "635",
+    "label": "Services bancaires 652 Charges sociales et de prévoyance"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6350",
+    "label": "Commissions sur ouverture de crédit 6520 Cotisations de sécurité sociale"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6351",
+    "label": "Frais de tenue de compte 6525 Cotisations aux mutuelles"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6354",
+    "label": "Frais sur effets 6526 Cotisations aux caisses de retraite"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6355",
+    "label": "Frais sur titres 6527 Prestations directes-familiales-retraites"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6356",
+    "label": "locations de coffres 654 Cotisations sociales personnelles de l’exploitant et des"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "637",
+    "label": "Quote-part de frais du siège à l’étranger membre des sociétés de personne, gérant majoritaire"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "638",
+    "label": "Charges diverses (Cotisations, frais de recrutements du personnel, frais de 655 Autres charges sociales Conseils et d’assemblées.) 6550 Versement aux œuvres sociales"
+  },
+  {
+    "classe": 5,
+    "section_code": "63",
+    "section_label": "CHARGES EXTERNES LIÉES A L’ ACTIVITÉ",
+    "account": "6551",
+    "label": "Médecine de travail"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "640",
+    "label": "Fermages et revenus de la terre 656 Frais de recyclage et de formation professionnelle"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "641",
+    "label": "Redevances pour concession, brevets, licences, droit d’auteur et de (0)657 Avantages en nature (logement, voiture, assurance, santé, Production transport, vêtements, alimentation …)"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "642",
+    "label": "RRR accordés 66 IMPÔTS, TAXES ET VERSEMENTS ASSIMILÉES"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "643",
+    "label": "Jetons de présence 660 Impôts directes et taxes assimilées 6601 patentes et droits de"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "645",
+    "label": "Dons pourboires et subventions accordées License (0) 646 Créances irrécouvrables 6600 Impôts fonciers et taxes annexes (0) 647 Amendes, pénalités sur marchés pour infraction autres que fiscales 6601 Patentes et droits de License (0)648 Autres charges et pertes exceptionnelles 6602 Taxes sur les véhicules à moteurs (0) 6480 Perte d’actifs non immobilisés (Manquant caisse, stocks) 6605 Taxes d’apprentissage (0)6481 Pertes sur actifs immobilisés 6606 Impôts régionaux (taxes d’habitations et d’enlèvement des ordures (0)6482 Lots ménagères, taxes sur les armes à feu) (0)6483 Malis provenant de clauses d’indexation 6607 Taxe sur le bétail (0) 6484 Malis provenant du rachat de l’entreprise d’actions et d’obligations émises par elle même"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "661",
+    "label": "Taxes et impôts indirects"
+  },
+  {
+    "classe": 5,
+    "section_code": "64",
+    "section_label": "CHARGES ET PERTES DIVERSES 6552 Soins médicaux et pharmacie",
+    "account": "6610",
+    "label": "Taxes sur le chiffre d’affaire (importations, ventes, prestations de"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "650",
+    "label": "rémunérations du personnel (dont gérance majoritaire et administrateurs"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6611",
+    "label": "Taxes de consommation (produits pétroliers, boissons alcooliques, de société) tabac, thé…)"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6500",
+    "label": "Salaires, appointements, commissions de base 6618 Autres impôts indirectes et taxes spécifiques (Taxe de circulation"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6501",
+    "label": "Main d’œuvre occasionnelle sur les viandes, taxes spéciales sur les projections cinématographiques)"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6503",
+    "label": "Heures supplémentaires 662 Enregistrements et timbres"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6505",
+    "label": "Congés payés 6620 Droits d’enregistrement des actes et marchés"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6506",
+    "label": "Primes et gratifications 6621 Droits de timbres"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6507",
+    "label": "Indemnités de préavis et de licenciement 6628 Autres droits"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6508",
+    "label": "Indemnités et avantages divers en espèce 663 Droits de douane"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "651",
+    "label": "Rémunération du travail de l’exploitant et de sa famille 6630 Droits de douanes à l’importation"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "6631",
+    "label": "Droits de douane à l’exportation"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "664",
+    "label": "Impôts et taxes dans le cadre d’organismes africains"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "665",
+    "label": "Impôts et taxes dans le cadre d’organismes internationaux"
+  },
+  {
+    "classe": 5,
+    "section_code": "65",
+    "section_label": "FRAIS DE PERSONNEL services)",
+    "account": "666",
+    "label": "Impôts et taxes exigibles à l’étranger (0)667 Pénalités et amendes fiscales"
+  },
+  {
+    "classe": 5,
+    "section_code": "67",
+    "section_label": "CHARGES FINANCIERES",
+    "account": "670",
+    "label": "Intérêts des emprunts (dont prime de remboursement des obligations)"
+  },
+  {
+    "classe": 5,
+    "section_code": "67",
+    "section_label": "CHARGES FINANCIERES",
+    "account": "672",
+    "label": "Intérêts des comptes courant et des dépôts"
+  },
+  {
+    "classe": 5,
+    "section_code": "67",
+    "section_label": "CHARGES FINANCIERES",
+    "account": "673",
+    "label": "Intérêts bancaires et sur opérations de financement"
+  },
+  {
+    "classe": 5,
+    "section_code": "67",
+    "section_label": "CHARGES FINANCIERES",
+    "account": "674",
+    "label": "Intérêts des obligations cautionnées"
+  },
+  {
+    "classe": 5,
+    "section_code": "67",
+    "section_label": "CHARGES FINANCIERES",
+    "account": "676",
+    "label": "Escomptes accordés (0)678 Différence de change (pertes)"
+  },
+  {
+    "classe": 5,
+    "section_code": "68",
+    "section_label": "DOTATIONS AUX COMPTES D’AMORTISSEMENT ET DE",
+    "account": "680",
+    "label": "DOTATIONS AUX AMORTISSEMENTS (CLASSE 2)"
+  },
+  {
+    "classe": 5,
+    "section_code": "68",
+    "section_label": "DOTATIONS AUX COMPTES D’AMORTISSEMENT ET DE",
+    "account": "685",
+    "label": "Dotations aux provisions pour dépréciations des éléments de l’actif (classe2, 3,"
+  },
+  {
+    "classe": 5,
+    "section_code": "68",
+    "section_label": "DOTATIONS AUX COMPTES D’AMORTISSEMENT ET DE",
+    "account": "687",
+    "label": "Dotations aux provisions réglementées"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "700",
+    "label": "Ventes de marchandises (a subdiviser selon les besoins)"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "701",
+    "label": "Productions vendues (travaux, prestations de services) 7010 Productions desbiens"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7012",
+    "label": "travaux"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7015",
+    "label": "Etudes"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7017",
+    "label": "Prestations de services"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "706",
+    "label": "Produits des activités annexes"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7060",
+    "label": "Produits des services exploités dans l’intérêt du personnel"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7061",
+    "label": "Commissions et courtages"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7062",
+    "label": "Locations diverses"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7063",
+    "label": "Bonis sur reprises d’emballages"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7064",
+    "label": "Ports facturés aux clients"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7065",
+    "label": "Ventes d’emballages récupérables"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "70650",
+    "label": "Ventes d’emballages achetés"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "70651",
+    "label": "Ventes d’emballages produits"
+  },
+  {
+    "classe": 7,
+    "section_code": "70",
+    "section_label": "VENTES DE MARCHANDISES, PRODUCTION VENDUE",
+    "account": "7068",
+    "label": "Autres produits des activités annexes"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "713",
+    "label": "Variations des « encours de production"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "7130",
+    "label": "Produits en cours"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "713500",
+    "label": "Etudes en cours"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "713700",
+    "label": "Prestations de services en cours"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "714000",
+    "label": "Variations des produits intermédiaires"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "715000",
+    "label": "Variations des produits finis"
+  },
+  {
+    "classe": 7,
+    "section_code": "71",
+    "section_label": "PRODUCTION STOCKEE OU DESTOCKAGE (VARIATION DEL’EXERCICE)",
+    "account": "716000",
+    "label": "Variations des produits résiduels"
+  },
+  {
+    "classe": 7,
+    "section_code": "72",
+    "section_label": "PRODUCTION DE L’ENTREPRISE POUR ELLE-MEME",
+    "account": "722000",
+    "label": "Production immobilisée (auto-équipement)"
+  },
+  {
+    "classe": 7,
+    "section_code": "72",
+    "section_label": "PRODUCTION DE L’ENTREPRISE POUR ELLE-MEME",
+    "account": "723000",
+    "label": "Production autoconsommée"
+  },
+  {
+    "classe": 7,
+    "section_code": "72",
+    "section_label": "PRODUCTION DE L’ENTREPRISE POUR ELLE-MEME",
+    "account": "726000",
+    "label": "Services rendus par l’entreprise pur elle même"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "740000",
+    "label": "Fermages et métayages"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "741000",
+    "label": "Redevances pour concessions, brevets, License, droits d’auteur et de propriété)"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "744000",
+    "label": "Subvention d’équipement, quotepart virée au résultat de l’exercice"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "745000",
+    "label": "Cotisations et dons reçus (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "746000",
+    "label": "Rentrées des créances amorties (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "747000",
+    "label": "Dégrèvement d’impôts (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "74",
+    "section_label": "PRODUITS ET PROFITS DIVERS",
+    "account": "748000",
+    "label": "Autres produits et profits exceptionnelles"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "770000",
+    "label": "REVENUS DES PRETS ET AUTRES CREANCES IMMOBILIERES"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "771000",
+    "label": "Revenus des titres immobilisés et des valeurs mobilières de placement (dividendes, coupons d’obligations etc…)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "772000",
+    "label": "Revenus des comptes courants et des dépôts"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "776000",
+    "label": "Escomptes obtenus (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "778000",
+    "label": "Différences de change (0)78 REPRISE SUR AMORTISSEMENT (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "780000",
+    "label": "Reprises sur amortissements (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "785000",
+    "label": "Reprises sur provisions pour dépréciations (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "787000",
+    "label": "Reprises sur provisions pour risques et charges (0)79 FRAIS A IMMOBILISER OU A TRANSFERER (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "791000",
+    "label": "Frais à immobiliser (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "792000",
+    "label": "frais à transférer (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "792100",
+    "label": "Frais à transférer aux comptes de cession d’éléments d’actif (0)"
+  },
+  {
+    "classe": 7,
+    "section_code": "77",
+    "section_label": "PRODUITS FINANCIERS",
+    "account": "792200",
+    "label": "Avantages en nature"
+  },
+  {
+    "classe": 8,
+    "section_code": "84",
+    "section_label": "RESULTAT DE CESSION D’ELEMENTS DE L’ACTIF IMMOBILISE (ETVMP)",
+    "account": "840000",
+    "label": "PLUS-VALUES DE CESSION"
+  },
+  {
+    "classe": 8,
+    "section_code": "84",
+    "section_label": "RESULTAT DE CESSION D’ELEMENTS DE L’ACTIF IMMOBILISE (ETVMP)",
+    "account": "849000",
+    "label": "Moins-values de cession"
+  },
+  {
+    "classe": 8,
+    "section_code": "85",
+    "section_label": "RESULTAT NET AVANT IMPOT",
+    "account": "855000",
+    "label": "réintégrations des plus-values à investir"
+  },
+  {
+    "classe": 8,
+    "section_code": "85",
+    "section_label": "RESULTAT NET AVANT IMPOT",
+    "account": "859000",
+    "label": "Engagement de réinvestir"
+  },
+  {
+    "classe": 9,
+    "section_code": null,
+    "section_label": null,
+    "account": "974000",
+    "label": "Différence d’inventaire constatées"
+  },
+  {
+    "classe": 9,
+    "section_code": null,
+    "section_label": null,
+    "account": "975000",
+    "label": "Différences sur cout et taux de cessions"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "903000",
+    "label": "Stocks réfléchis"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "977000",
+    "label": "Produits d’exploitation non incorporés"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "904000",
+    "label": "Achats réfléchis"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "978000",
+    "label": "Différences sur résultats (perte et profits)"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "906000",
+    "label": "Charges par nature et dotations réfléchis 98 RESULTATS ANALYTIQUES D’EXPLOITATION"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "907000",
+    "label": "Produits d’exploitation réfléchis 981 à 985 Résultats analytiques (a subdiviser en cas de biens)"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "908000",
+    "label": "Résultats réfléchis"
+  },
+  {
+    "classe": 9,
+    "section_code": "90",
+    "section_label": "COMPTES REFLECHIS 976 Différences sur niveau d’activité",
+    "account": "986000",
+    "label": "Reports des écarts sur couts préétablies"
+  },
+  {
+    "classe": 9,
+    "section_code": "91",
+    "section_label": "RECLASSEMENTS PREALABLE DES CHARGES ET DES PRODUITS 987 Report des",
+    "account": "918000",
+    "label": "Reclassements préalables des charges (selon le besoin de l’entreprise)"
+  },
+  {
+    "classe": 9,
+    "section_code": "91",
+    "section_label": "RECLASSEMENTS PREALABLE DES CHARGES ET DES PRODUITS 987 Report des",
+    "account": "988000",
+    "label": "Report des résultats"
+  },
+  {
+    "classe": 9,
+    "section_code": "91",
+    "section_label": "RECLASSEMENTS PREALABLE DES CHARGES ET DES PRODUITS 987 Report des",
+    "account": "919000",
+    "label": "Reclassements préalables des produits 99 LIAISONS INTERNES"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "920000",
+    "label": "Centres d’administrations"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "996000",
+    "label": "Cessions reçues d’autres établissements"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "924000",
+    "label": "Centre d’approvisionnement"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "997000",
+    "label": "Cessions fournies à d’autres établissements"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "925000",
+    "label": "Centre de production"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "927000",
+    "label": "Centre de distribution Comptes de bilan d’ouverture et de bilan de clôture"
+  },
+  {
+    "classe": 9,
+    "section_code": "92",
+    "section_label": "CENTRES D’ANALYSE 991 Liaisons internes dans un même établissement",
+    "account": "928000",
+    "label": "Centre des activités non professionnelles 01"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "940000",
+    "label": "MARCHANDISES 04"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "941000",
+    "label": "Matières premières et autres approvisionnements 05"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "942000",
+    "label": "Emballages"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "943000",
+    "label": "Encours de production des biens ou des services Comptes de gestion hors exploitation"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "944000",
+    "label": "Produits intermédiaires 06"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "945000",
+    "label": "Produits finis 07"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "946000",
+    "label": "Produits résiduels Résultat hors exploitation"
+  },
+  {
+    "classe": 9,
+    "section_code": "94",
+    "section_label": "INVENTAIRE PERMANENT DES STOCKS 03",
+    "account": "949000",
+    "label": "Provisions pour dépréciations des stocks et des encours 08"
+  },
+  {
+    "classe": 9,
+    "section_code": "96",
+    "section_label": "ECARTS SUR COUTS PREALABLES 09 Engagements hors bilan-liaison comptabilité",
+    "account": "960000",
+    "label": "encarts sur matières budgétaire"
+  },
+  {
+    "classe": 9,
+    "section_code": "96",
+    "section_label": "ECARTS SUR COUTS PREALABLES 09 Engagements hors bilan-liaison comptabilité",
+    "account": "963000",
+    "label": "Ecarts sur main d’oeuvre"
+  },
+  {
+    "classe": 9,
+    "section_code": "96",
+    "section_label": "ECARTS SUR COUTS PREALABLES 09 Engagements hors bilan-liaison comptabilité",
+    "account": "966000",
+    "label": "Ecarts sur autres charges"
+  },
+  {
+    "classe": 9,
+    "section_code": "96",
+    "section_label": "ECARTS SUR COUTS PREALABLES 09 Engagements hors bilan-liaison comptabilité",
+    "account": "090000",
+    "label": "Engagements hors bilan"
+  },
+  {
+    "classe": 9,
+    "section_code": "96",
+    "section_label": "ECARTS SUR COUTS PREALABLES 09 Engagements hors bilan-liaison comptabilité",
+    "account": "968000",
+    "label": "Ecarts sur frais de centres d’analyses imputés"
+  },
+  {
+    "classe": 9,
+    "section_code": "97",
+    "section_label": "DIFFERENCES D’INCORPORATION Avals, cautions, garanties, effets circulant sous",
+    "account": "970000",
+    "label": "différences d’incorporation sur matières redevances de crédit-bail restant à courir, autres engagements données"
+  },
+  {
+    "classe": 9,
+    "section_code": "97",
+    "section_label": "DIFFERENCES D’INCORPORATION Avals, cautions, garanties, effets circulant sous",
+    "account": "971000",
+    "label": "Différences sur amortissements, provisions et autres charges incorporables"
+  },
+  {
+    "classe": 9,
+    "section_code": "97",
+    "section_label": "DIFFERENCES D’INCORPORATION Avals, cautions, garanties, effets circulant sous",
+    "account": "090500",
+    "label": "Engagements reçus par l’entreprise -avals, cautions, garanties -créances escomptées non échues -engagements reçus pour l’utilisation en crédit-bail -Autres engagements reçus"
+  },
+  {
+    "classe": 9,
+    "section_code": "97",
+    "section_label": "DIFFERENCES D’INCORPORATION Avals, cautions, garanties, effets circulant sous",
+    "account": "090900",
+    "label": "Contrepartie des engagements -Contrepartie"
+  },
+  {
+    "classe": 9,
+    "section_code": "97",
+    "section_label": "DIFFERENCES D’INCORPORATION Avals, cautions, garanties, effets circulant sous",
+    "account": "092000",
+    "label": "Liaisons comptabilité générale-comptabilité analytique"
+  },
+  {
+    "classe": 9,
+    "section_code": "97",
+    "section_label": "DIFFERENCES D’INCORPORATION Avals, cautions, garanties, effets circulant sous",
+    "account": "092500",
+    "label": "Opérations d’exploitations -Dépenses budgétaires d’investissements -Recettes budgétaires d’investissement -Débiteurs-créditeurs divers sur dépenses et recettes d’investissement"
+  }
+]

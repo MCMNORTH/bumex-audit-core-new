@@ -1,0 +1,151 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // -------------------------------
+    // Utility Functions
+    // -------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc(uid) {
+      return get(/databases/$(database)/documents/users/$(uid));
+    }
+
+    function currentUserDoc() {
+      return userDoc(request.auth.uid);
+    }
+
+    function isApprovedAndNotBlocked() {
+      return isSignedIn()
+        && currentUserDoc().exists()
+        && currentUserDoc().data.approved == true
+        && currentUserDoc().data.blocked != true;
+    }
+
+    function isDev() {
+      return isApprovedAndNotBlocked()
+        && currentUserDoc().data.role == "dev";
+    }
+
+    function isAdmin() {
+      return isApprovedAndNotBlocked()
+        && currentUserDoc().data.role in ["dev", "admin"];
+    }
+
+    function isSemiAdminOrAbove() {
+      return isApprovedAndNotBlocked()
+        && currentUserDoc().data.role in ["dev", "admin", "semi-admin"];
+    }
+
+    // -------------------------------
+    // App Control Collection
+    // -------------------------------
+    match /app_control/{docId} {
+      allow read: if isApprovedAndNotBlocked();
+      allow write: if isDev();
+    }
+
+    // -------------------------------
+    // Users Collection
+    // -------------------------------
+    match /users/{userId} {
+      // Any signed-in user can read their own document (needed for auth checks)
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      
+      // Devs and admins can read all users
+      allow read: if isAdmin();
+      
+      // Users can update their own profile (excluding sensitive fields)
+      allow update: if isApprovedAndNotBlocked()
+        && request.auth.uid == userId
+        && !("role" in request.resource.data)
+        && !("approved" in request.resource.data)
+        && !("blocked" in request.resource.data);
+      
+      // Devs and admins can manage users
+      allow update: if isAdmin();
+      
+      // Only devs can create and delete users
+      allow create, delete: if isDev();
+    }
+
+    // -------------------------------
+    // Clients Collection
+    // -------------------------------
+    match /clients/{clientId} {
+      allow read, write: if isSemiAdminOrAbove();
+    }
+
+    // -------------------------------
+    // Projects Collection
+    // -------------------------------
+    match /projects/{projectId} {
+      // Semi-admin and above can read all projects
+      allow read: if isSemiAdminOrAbove();
+      
+      // Team members can read projects they're assigned to
+      allow read: if isApprovedAndNotBlocked()
+        && request.auth.uid in resource.data.member_ids;
+      
+      // Only semi-admin and above can write projects
+      allow write: if isSemiAdminOrAbove();
+    }
+
+    // -------------------------------
+    // Cycles Collection
+    // -------------------------------
+    match /cycles/{cycleId} {
+      allow read: if isApprovedAndNotBlocked();
+      allow write: if isAdmin();
+    }
+
+    // -------------------------------
+    // Reference Data Collections
+    // -------------------------------
+    match /{collection}/{docId} {
+      allow read: if collection in ["responses", "risks", "substantives"]
+        && isApprovedAndNotBlocked();
+      
+      allow write: if collection in ["responses", "risks", "substantives"]
+        && isAdmin();
+    }
+
+    // -------------------------------
+    // Logs Collection
+    // -------------------------------
+    match /logs/{logId} {
+      // Any signed-in user can create logs (needed for login/logout tracking)
+      allow create: if isSignedIn();
+      
+      // Only approved devs/admins can read logs
+      allow read: if isAdmin();
+    }
+
+    // -------------------------------
+    // Comments Collection
+    // -------------------------------
+    match /comments/{commentId} {
+      // Team members can read comments for projects they're assigned to
+      allow read: if isApprovedAndNotBlocked();
+      
+      // Approved users can create comments
+      allow create: if isApprovedAndNotBlocked();
+      
+      // Users can update their own comments or comments addressed to them
+      allow update: if isApprovedAndNotBlocked();
+      
+      // Only admins can delete comments
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------
+    // Pending OTPs Collection (for 2FA)
+    // -------------------------------
+    match /pending_otps/{userId} {
+      // Users can only access their own OTP documents
+      allow read, write: if isSignedIn() && request.auth.uid == userId;
+    }
+  }
+}
