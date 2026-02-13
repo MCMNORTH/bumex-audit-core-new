@@ -1,6 +1,14 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
   Tabs,
   TabsContent,
   TabsList,
@@ -73,13 +81,39 @@ type FsNode = {
   children: FsNode[];
 };
 
+type FsTemplate = {
+  id: string;
+  name: string;
+  tree: FsNode[];
+};
+
+class NoDndPointerSensor extends PointerSensor {
+  static activators = [
+    {
+      eventName: 'onPointerDown',
+      handler: ({ nativeEvent }: { nativeEvent: PointerEvent }) => {
+        const target = nativeEvent.target as HTMLElement | null;
+        if (target?.closest?.('[data-no-dnd]')) {
+          return false;
+        }
+        return true;
+      },
+    },
+  ];
+}
+
 const formatBalanceValue = (value: number) =>
   Number.isFinite(value)
     ? new Intl.NumberFormat('fr-FR').format(value)
     : String(value ?? '');
 
-const padAccount = (value: string) =>
-  value.length >= 6 ? value : value.padEnd(6, '0');
+const padAccount = (value: string) => {
+  const digits = String(value ?? '').replace(/\D/g, '');
+  if (!digits) return '';
+  const normalized = digits.replace(/^0+/, '') || '0';
+  const trimmed = normalized.length > 6 ? normalized.slice(0, 6) : normalized;
+  return trimmed.length >= 6 ? trimmed : trimmed.padEnd(6, '0');
+};
 
 const findSheetName = (sheetNames: string[], expected: string) => {
   const exact = sheetNames.find((name) => name === expected);
@@ -221,9 +255,15 @@ const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
 const ProcessDropZone = ({
   process,
   children,
+  collapsed = false,
+  onToggle,
+  actions,
 }: {
   process: { id: string; name: string };
   children: ReactNode;
+  collapsed?: boolean;
+  onToggle?: () => void;
+  actions?: ReactNode;
 }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `process:${process.id}`,
@@ -237,10 +277,28 @@ const ProcessDropZone = ({
       }`}
     >
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-900">{process.name}</span>
-        {isOver && <span className="text-xs text-blue-600">Drop here</span>}
+        <div className="flex items-center gap-2">
+          {onToggle && (
+            <button
+              type="button"
+              className="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50"
+              onClick={onToggle}
+              data-no-dnd
+              aria-label={collapsed ? 'Expand' : 'Collapse'}
+            >
+              <ChevronRight
+                className={`h-3 w-3 transition-transform ${collapsed ? '' : 'rotate-90'}`}
+              />
+            </button>
+          )}
+          <span className="text-sm font-medium text-gray-900">{process.name}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {isOver && <span className="text-xs text-blue-600">Drop here</span>}
+          {actions}
+        </div>
       </div>
-      {children}
+      {!collapsed && children}
     </div>
   );
 };
@@ -319,6 +377,7 @@ const KnowledgeBasePage = ({
   const [balancesDocExists, setBalancesDocExists] = useState<boolean | null>(null);
   const loadInProgressRef = useRef(false);
   const unsubscribeRef = useRef<(() => void) | null>(null);
+  const pcmAutoRebuildRef = useRef(false);
   const [cycles, setCycles] = useState<Cycle[]>([]);
   const [mappingDoc, setMappingDoc] = useState<{
     status?: 'in_progress' | 'completed' | 'error';
@@ -332,6 +391,7 @@ const KnowledgeBasePage = ({
   const [selectedProcesses, setSelectedProcesses] = useState<ProcessItem[]>([]);
   const [draftProcesses, setDraftProcesses] = useState<ProcessItem[]>([]);
   const [showProcessLibrary, setShowProcessLibrary] = useState(false);
+  const [collapsedProcesses, setCollapsedProcesses] = useState<Set<string>>(new Set());
   const [balanceImportError, setBalanceImportError] = useState<string | null>(null);
   const [balanceImportMessage, setBalanceImportMessage] = useState<string | null>(null);
   const [processImportError, setProcessImportError] = useState<string | null>(null);
@@ -340,18 +400,32 @@ const KnowledgeBasePage = ({
     template: 'bumex_pcm' | 'manual';
     tree: FsNode[];
   } | null>(null);
+  const [fsTemplates, setFsTemplates] = useState<FsTemplate[]>([]);
+  const [fsTemplateId, setFsTemplateId] = useState<string | null>(null);
+  const [fsTemplateName, setFsTemplateName] = useState<string | null>(null);
   const [activeFsRow, setActiveFsRow] = useState<BalanceRow | null>(null);
   const [fsError, setFsError] = useState<string | null>(null);
   const [fsLoading, setFsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'financial-statements' | 'balances' | 'process-mapping'>('financial-statements');
   const [showManualMapping, setShowManualMapping] = useState(false);
   const [autoMapMessage, setAutoMapMessage] = useState<string | null>(null);
+  const [balanceMappingTree, setBalanceMappingTree] = useState<FsNode[] | null>(
+    null
+  );
+  const [pcmLibraryOpen, setPcmLibraryOpen] = useState(false);
+  const [pcmLibraryTargetId, setPcmLibraryTargetId] = useState<string | null>(
+    null
+  );
+  const [pcmLibraryQuery, setPcmLibraryQuery] = useState('');
+  const [pcmLibrarySelected, setPcmLibrarySelected] = useState<Set<string>>(
+    new Set()
+  );
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
   const balanceImportInputRef = useRef<HTMLInputElement | null>(null);
   const processImportInputRef = useRef<HTMLInputElement | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
+    useSensor(NoDndPointerSensor, { activationConstraint: { distance: 6 } })
   );
 
   useEffect(() => {
@@ -435,9 +509,17 @@ const KnowledgeBasePage = ({
       (snap) => {
         setFsLoading(false);
         if (snap.exists()) {
-          setFsStructure(snap.data() as typeof fsStructure);
+          const data = snap.data() as typeof fsStructure & {
+            templateName?: string | null;
+            templateId?: string | null;
+          };
+          setFsStructure(data);
+          setFsTemplateName(data.templateName ?? null);
+          setFsTemplateId(data.templateId ?? null);
         } else {
           setFsStructure(null);
+          setFsTemplateName(null);
+          setFsTemplateId(null);
         }
       },
       (error) => {
@@ -447,6 +529,21 @@ const KnowledgeBasePage = ({
     );
 
     return () => unsubscribe();
+  }, [projectId]);
+
+  useEffect(() => {
+    if (!projectId) return;
+    const loadTemplates = async () => {
+      const templatesPath = `projects/${projectId}/knowledge_base/fs_templates`;
+      const snap = await getDocs(collection(db, templatesPath));
+      const list = snap.docs.map((docSnap) => ({
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<FsTemplate, 'id'>),
+      })) as FsTemplate[];
+      list.sort((a, b) => a.name.localeCompare(b.name));
+      setFsTemplates(list);
+    };
+    loadTemplates();
   }, [projectId]);
 
   useEffect(() => {
@@ -499,10 +596,37 @@ const KnowledgeBasePage = ({
   const balanceNByAccount = useMemo(() => {
     const map = new Map<string, BalanceRow>();
     balanceN.forEach((row) => {
-      if (row.account) map.set(padAccount(row.account), row);
+      if (!row.account) return;
+      const key = padAccount(row.account);
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, { ...row, account: key, balance: row.balance ?? 0 });
+        return;
+      }
+      map.set(key, {
+        ...existing,
+        balance: (existing.balance ?? 0) + (row.balance ?? 0),
+      });
     });
     return map;
   }, [balanceN]);
+  const balanceN1ByAccount = useMemo(() => {
+    const map = new Map<string, BalanceRow>();
+    balanceN1.forEach((row) => {
+      if (!row.account) return;
+      const key = padAccount(row.account);
+      const existing = map.get(key);
+      if (!existing) {
+        map.set(key, { ...row, account: key, balance: row.balance ?? 0 });
+        return;
+      }
+      map.set(key, {
+        ...existing,
+        balance: (existing.balance ?? 0) + (row.balance ?? 0),
+      });
+    });
+    return map;
+  }, [balanceN1]);
   const uniqueBalanceRows = useMemo(() => {
     const map = new Map<string, BalanceRow>();
     balanceN.forEach((row) => {
@@ -548,9 +672,57 @@ const KnowledgeBasePage = ({
   const balanceStatus = balancesDoc?.status;
   const balanceError = balancesDoc?.errorMessage;
 
+  const fixMojibakeLabel = (value: string) => {
+    const replacements: Record<string, string> = {
+      "â€™": "’",
+      "â€œ": "“",
+      "â€�": "”",
+      "â€“": "–",
+      "â€”": "—",
+      "â€¦": "…",
+      "Ã©": "é",
+      "Ã¨": "è",
+      "Ãª": "ê",
+      "Ã«": "ë",
+      "Ãà": "à",
+      "Ãâ": "â",
+      "Ãä": "ä",
+      "Ãî": "î",
+      "Ãï": "ï",
+      "Ãô": "ô",
+      "Ãö": "ö",
+      "Ãû": "û",
+      "Ãü": "ü",
+      "Ãù": "ù",
+      "Ãç": "ç",
+      "Ã‰": "É",
+      "Ãˆ": "È",
+      "ÃŠ": "Ê",
+      "Ã€": "À",
+      "Ã‚": "Â",
+      "ÃŽ": "Î",
+      "Ã”": "Ô",
+      "Ã›": "Û",
+      "Ãœ": "Ü",
+      "Ã‡": "Ç",
+    };
+    let fixed = value;
+    for (const [bad, good] of Object.entries(replacements)) {
+      fixed = fixed.split(bad).join(good);
+    }
+    return fixed.replace(/Ã\s+(?=[A-Za-zÀ-ÿ])/g, "à ");
+  };
+
+  const formatLabel = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return trimmed;
+    const lower = trimmed.toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  };
+
   const createNode = (label: string): FsNode => ({
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    label,
+    label: formatLabel(fixMojibakeLabel(label)),
     kind: 'group',
     accounts: [],
     totalN: 0,
@@ -558,9 +730,9 @@ const KnowledgeBasePage = ({
     children: [],
   });
 
-  const createAccountNode = (code: string, label: string): FsNode => ({
+  const createAccountNode = (code: string, label: string, displayCode?: string): FsNode => ({
     id: `${code}-${Math.random().toString(36).slice(2, 6)}`,
-    label: `${code} - ${label}`,
+    label: `${displayCode ?? code} - ${formatLabel(fixMojibakeLabel(label))}`,
     kind: 'account',
     code,
     accounts: [],
@@ -575,15 +747,42 @@ const KnowledgeBasePage = ({
     section_label: string;
     account: string;
     label: string;
+    zero_prefix?: boolean;
   }>;
 
   const pcmList = useMemo(() => {
-    return rawPcmList.map((item) => {
+    const list = rawPcmList.map((item) => {
       const rawAccount = String(item.account);
       const padded = padAccount(rawAccount);
       return { ...item, account: padded, rawAccount, rawLen: rawAccount.length };
     });
+    const hasConcours = list.some((item) => item.account === '559000');
+    if (!hasConcours) {
+      list.push({
+        classe: 5,
+        section_code: '55',
+        section_label: 'Banques',
+        account: '559000',
+        label: 'Concours bancaires courants',
+        rawAccount: '559000',
+        rawLen: 6,
+      });
+    }
+    const hasImpotResultat = list.some((item) => item.account === '860000');
+    if (!hasImpotResultat) {
+      list.push({
+        classe: 8,
+        section_code: '86',
+        section_label: 'IMPOT SUR LE RESULTAT',
+        account: '860000',
+        label: 'IMPÔTS SUR LE RÉSULTAT (IMF ET IMPÔTS SUR LES BÉNÉFICES)',
+        rawAccount: '860000',
+        rawLen: 6,
+      });
+    }
+    return list;
   }, [rawPcmList]);
+
 
   const pcmByCode = useMemo(() => {
     const map = new Map<string, (typeof pcmList)[number]>();
@@ -630,6 +829,7 @@ const KnowledgeBasePage = ({
 
   const pcmLeafAccounts = getLeafAccounts();
   const pcmAccountsForStructure = useMemo(() => {
+    return pcmList.filter((item) => item.rawLen >= 3);
     const titleLabels = [
       'actif immobilisé',
       'actif circulant',
@@ -683,22 +883,49 @@ const KnowledgeBasePage = ({
     });
   }, [pcmList]);
 
+  const pcmLibraryItems = useMemo(() => {
+    const query = pcmLibraryQuery.trim().toLowerCase();
+    if (!query) return pcmAccountsForStructure;
+    return pcmAccountsForStructure.filter((item) => {
+      return (
+        item.account.includes(query) ||
+        item.label.toLowerCase().includes(query)
+      );
+    });
+  }, [pcmAccountsForStructure, pcmLibraryQuery]);
+
   const buildPcmStructure = (): FsNode[] => {
     const actif = createNode('ACTIF');
     const passif = createNode('PASSIF');
     const resultat = createNode('RESULTAT');
 
-    const variantNodesFor = (label: string) => [
-      createNode(`${label} brut`),
-      createNode(`${label} amortissement`),
-      createNode(`${label} depreciation`),
-    ];
+    const createVariantGroup = (
+      label: string,
+      options: { amortissement?: boolean; depreciation?: boolean } = {}
+    ) => {
+      const { amortissement = true, depreciation = true } = options;
+      const group = createNode(label);
+      const children = [createNode(`${label} brut`)];
+      if (amortissement) {
+        children.push(createNode(`${label} amortissement`));
+      }
+      if (depreciation) {
+        children.push(createNode(`${label} depreciation`));
+      }
+      group.children = children;
+      return group;
+    };
+
+    const variantNodesFor = (label: string) => [createVariantGroup(label)];
+
+    const depreciationNodeFor = (label: string) =>
+      createNode(`${label} depreciation`);
 
     const actifImmobilise = createNode('Actif immobilisé');
     actifImmobilise.children = [
       createNode('Immobilisations incorporelles'),
       createNode('Immobilisations corporelles'),
-      createNode('Immobilisations en cours'),
+      createVariantGroup('Immobilisations en cours', { amortissement: false, depreciation: true }),
       createNode('Immobilisations financières'),
     ];
     const immCorporelles = actifImmobilise.children.find(
@@ -724,6 +951,46 @@ const KnowledgeBasePage = ({
       ];
     }
 
+    const labelActifImmobilise = actifImmobilise.label;
+    const labelImmCorp = immCorporelles?.label ?? 'Immobilisations corporelles';
+    const labelImmEnCours =
+      actifImmobilise.children.find((node) => node.label.includes('en cours'))
+        ?.label ?? 'Immobilisations en cours';
+    const labelImmFin = immFinancieres?.label ?? 'Immobilisations financiÃ¨res';
+    const labelTerrains =
+      immCorporelles?.children.find((node) =>
+        node.label.toLowerCase().includes('terrain')
+      )?.label ?? 'Terrains';
+    const labelConstructions =
+      immCorporelles?.children.find((node) =>
+        node.label.toLowerCase().includes('construction')
+      )?.label ?? 'Constructions';
+    const labelMatExploitation =
+      immCorporelles?.children.find((node) =>
+        node.label.toLowerCase().includes('exploitation')
+      )?.label ?? 'MatÃ©riel dâ€™exploitation';
+    const labelMatTransport =
+      immCorporelles?.children.find((node) =>
+        node.label.toLowerCase().includes('transport')
+      )?.label ?? 'MatÃ©riel de transport';
+    const labelMatBureau =
+      immCorporelles?.children.find((node) =>
+        node.label.toLowerCase().includes('bureau')
+          || node.label.toLowerCase().includes('informat')
+      )?.label ?? 'MatÃ©riel de bureau et informatique';
+    const labelAutresImmCorp =
+      immCorporelles?.children.find((node) =>
+        node.label.toLowerCase().includes('autres immobilisations')
+      )?.label ?? 'Autres immobilisations corporelles';
+    const labelTitresParticipation =
+      immFinancieres?.children.find((node) =>
+        node.label.toLowerCase().includes('participation')
+      )?.label ?? 'Titres de participation';
+    const labelAutresImmFin =
+      immFinancieres?.children.find((node) =>
+        node.label.toLowerCase().includes('autres immobilisations')
+      )?.label ?? 'Autres immobilisations financiÃ¨res';
+
     const actifCirculant = createNode('Actif circulant');
     actifCirculant.children = [
       createNode('Valeurs d’exploitation'),
@@ -732,24 +999,44 @@ const KnowledgeBasePage = ({
     ];
     const valeursExploitation = actifCirculant.children[0];
     valeursExploitation.children = [
-      ...variantNodesFor('Stocks'),
-      ...variantNodesFor('En-cours'),
+      createVariantGroup('Stocks', { amortissement: false, depreciation: true }),
+      createVariantGroup('En-cours', { amortissement: false, depreciation: true }),
     ];
     const valeursReal = actifCirculant.children[1];
     valeursReal.children = [
-      ...variantNodesFor('Fournisseurs débiteurs'),
-      ...variantNodesFor('Clients et comptes rattachés'),
-      ...variantNodesFor('Personnel et comptes rattachés'),
-      ...variantNodesFor('État, collectivités et organismes sociaux'),
-      ...variantNodesFor('Associés et groupe'),
-      ...variantNodesFor('Débiteurs divers'),
+      createNode('Fournisseurs débiteurs'),
+      createNode('Clients et comptes rattachés'),
+      depreciationNodeFor('Clients et comptes rattachés'),
+      createNode('Personnel et comptes rattachés'),
+      createNode('État, collectivités et organismes sociaux'),
+      createNode('Associés et groupe'),
+      depreciationNodeFor('Associés et groupe'),
+      createNode('Débiteurs divers'),
+      depreciationNodeFor('Débiteurs divers'),
+    ];
+    valeursReal.children = [
+      createNode('Fournisseurs débiteurs'),
+      createVariantGroup('Clients et comptes rattachés', {
+        amortissement: false,
+        depreciation: true,
+      }),
+      createNode('Personnel et comptes rattachés'),
+      createNode('État, collectivités et organismes sociaux'),
+      createVariantGroup('Associés et groupe', {
+        amortissement: false,
+        depreciation: true,
+      }),
+      createVariantGroup('Débiteurs divers', {
+        amortissement: false,
+        depreciation: true,
+      }),
     ];
     const valeursDisponibles = actifCirculant.children[2];
     valeursDisponibles.children = [
-      ...variantNodesFor('Prêts à court terme'),
-      ...variantNodesFor('Valeurs mobilières de placement'),
-      ...variantNodesFor('Banques'),
-      ...variantNodesFor('Caisse'),
+      createNode('Prêts à court terme'),
+      createNode('Valeurs mobilières de placement'),
+      createNode('Banques'),
+      createNode('Caisse'),
     ];
 
     const comptesRegulActif = createNode('Comptes de régularisation');
@@ -759,6 +1046,9 @@ const KnowledgeBasePage = ({
       createNode('Comptes d’attente et à régulariser'),
     ];
 
+    const regulActifCharges = comptesRegulActif.children[0];
+    const regulActifDiff = comptesRegulActif.children[1];
+    const regulActifAttente = comptesRegulActif.children[2];
     actif.children = [actifImmobilise, actifCirculant, comptesRegulActif];
 
     const capitauxPropres = createNode('Capitaux propres');
@@ -795,6 +1085,24 @@ const KnowledgeBasePage = ({
       createNode('Concours bancaires courants'),
     ];
 
+    const normalizeNodeLabel = (value: string) => {
+      const trimmed = value.trim().toLowerCase();
+      return trimmed.normalize
+        ? trimmed.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        : trimmed;
+    };
+    const addToDettesCourtTerme = (
+      labelHint: string,
+      account: { account: string; label: string }
+    ) => {
+      const hint = normalizeNodeLabel(labelHint);
+      const target =
+        dettesCourtTerme.children.find((child) =>
+          normalizeNodeLabel(child.label).includes(hint)
+        ) ?? dettesCourtTerme;
+      target.children.push(createAccountNode(account.account, account.label));
+    };
+
     const comptesRegulPassif = createNode('Comptes de régularisation');
     comptesRegulPassif.children = [
       createNode('Produits constatés d’avance'),
@@ -802,6 +1110,9 @@ const KnowledgeBasePage = ({
       createNode('Comptes d’attente et à régulariser'),
     ];
 
+    const regulPassifProduits = comptesRegulPassif.children[0];
+    const regulPassifDiff = comptesRegulPassif.children[1];
+    const regulPassifAttente = comptesRegulPassif.children[2];
     passif.children = [capitauxPropres, empruntsDettes, comptesRegulPassif];
 
     const resultatExploitation = createNode('Résultat d’exploitation');
@@ -819,19 +1130,32 @@ const KnowledgeBasePage = ({
       createNode('Produits hors exploitation'),
       createNode('Charges hors exploitation'),
     ];
-    const resultatAvantImpot = createNode('Résultat avant impôt');
     const impotResultat = createNode('Impôt sur le résultat');
-    const resultatNet = createNode('Résultat net');
     resultat.children = [
       resultatExploitation,
       resultatFinancier,
       resultatHors,
-      resultatAvantImpot,
       impotResultat,
-      resultatNet,
     ];
 
     const rootNodes = [actif, passif, resultat];
+
+    const normalizeLabelForMatch = (value: string) => {
+      const trimmed = value.trim();
+      let repaired = trimmed;
+      for (let i = 0; i < 2; i += 1) {
+        try {
+          repaired = decodeURIComponent(escape(repaired));
+        } catch {
+          break;
+        }
+      }
+      const lower = repaired.toLowerCase();
+      const deaccent = lower.normalize
+        ? lower.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        : lower;
+      return deaccent.replace(/[^a-z0-9]/g, '');
+    };
 
     const findNodeByLabelPath = (nodes: FsNode[], path: string[]): FsNode | null => {
       if (path.length === 0) return null;
@@ -839,7 +1163,7 @@ const KnowledgeBasePage = ({
       let list = nodes;
       for (const label of path) {
         current = list.find(
-          (node) => node.label.trim().toLowerCase() === label.trim().toLowerCase()
+          (node) => normalizeLabelForMatch(node.label) === normalizeLabelForMatch(label)
         );
         if (!current) return null;
         list = current.children;
@@ -847,15 +1171,50 @@ const KnowledgeBasePage = ({
       return current || null;
     };
 
-    const addAccountToPath = (path: string[], account: { account: string; label: string }) => {
+    const addAccountToPath = (
+      path: string[],
+      account: { account: string; label: string; zero_prefix?: boolean }
+    ) => {
       const target = findNodeByLabelPath(rootNodes, path);
       if (!target) return;
-      target.children.push(createAccountNode(account.account, account.label));
+      const labelOverrides: Record<string, string> = {
+        '634000':
+          'Publicité et propagande ; publications, promotion des ventes (annonces, échantillons, foires et expositions, cadeaux à la clientèle, catalogues et imprimés…)',
+        '638000':
+          'Charges diverses (cotisations, frais de recrutement du personnel, frais de conseil et d’assemblées…)',
+        '654000':
+          'Cotisations sociales, personnelles de l’exploitant et des membres de sociétés de personnes, gérants majoritaires',
+        '657000':
+          'Avantages en nature (logement, voiture, assurances, santé, transport, vêtements, alimentation…)',
+        '660600':
+          'Impôts régionaux (taxe d’habitation et d’enlèvement des ordures ménagères, taxe sur les armes à feu…)',
+        '661800':
+          'Autres impôts indirects et taxes spécifiques (taxes de circulation sur les viandes, taxes spéciales sur les projections cinématographiques…)',
+        '860000': 'IMPÔTS SUR LE RÉSULTAT (IMF ET IMPÔTS SUR LES BÉNÉFICES)',
+        '559000': 'Concours bancaires courants',
+        '260000':
+          'PrÃªts et avances consentis Ã  long et moyen terme (aux associÃ©s, au personnel, et de fonds)',
+      };
+      const label = labelOverrides[account.account] ?? account.label;
+      const displayCode =
+        account.zero_prefix && account.account.length === 6
+          ? `0${account.account.slice(0, 5)}`
+          : account.account;
+      const brutLabel = `${target.label} brut`;
+      const brutChild = target.children.find(
+        (child) =>
+          normalizeLabelForMatch(child.label) === normalizeLabelForMatch(brutLabel)
+      );
+      if (brutChild) {
+        brutChild.children.push(createAccountNode(account.account, label, displayCode));
+        return;
+      }
+      target.children.push(createAccountNode(account.account, label, displayCode));
     };
 
     const variantForCode = (code: string) => {
       if (code.startsWith('28')) return 'amortissement';
-      if (code.startsWith('29') || code.startsWith('39')) return 'depreciation';
+      if (code.startsWith('29')) return 'depreciation';
       return 'brut';
     };
 
@@ -865,7 +1224,7 @@ const KnowledgeBasePage = ({
     ) => {
       const variant = variantForCode(account.account);
       const last = path[path.length - 1];
-      const targetPath = [...path.slice(0, -1), `${last} ${variant}`];
+      const targetPath = [...path, `${last} ${variant}`];
       addAccountToPath(targetPath, account);
     };
 
@@ -919,7 +1278,90 @@ const KnowledgeBasePage = ({
       return null;
     };
 
-    const resolveResultatPath = (code: string) => {
+    const resolveActifPostPathV2 = (code: string, labelValue: string) => {
+      if (code.startsWith('20')) {
+        return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations incorporelles'], isSubTitle: true };
+      }
+      if (code.startsWith('21')) {
+        if (code.startsWith('210') || labelValue.includes('terrain')) {
+          return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'Terrains'], isSubTitle: false };
+        }
+        if (code.startsWith('212') || labelValue.includes('construction') || labelValue.includes('bÃ¢timent')) {
+          return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'Constructions'], isSubTitle: false };
+        }
+        if (labelValue.includes('exploitation')) {
+          return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'MatÃ©riel dâ€™exploitation'], isSubTitle: false };
+        }
+        if (labelValue.includes('transport')) {
+          return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'MatÃ©riel de transport'], isSubTitle: false };
+        }
+        if (labelValue.includes('bureau') || labelValue.includes('informat') || labelValue.includes('mobilier')) {
+          return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'MatÃ©riel de bureau et informatique'], isSubTitle: false };
+        }
+        return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'Autres immobilisations corporelles'], isSubTitle: false };
+      }
+      if (code.startsWith('22') || code.startsWith('24') || code.startsWith('25')) {
+        return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations corporelles', 'Autres immobilisations corporelles'], isSubTitle: false };
+      }
+      if (code.startsWith('23')) {
+        return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations en cours'], isSubTitle: true };
+      }
+      if (code.startsWith('26') || code.startsWith('27')) {
+        if (labelValue.includes('particip')) {
+          return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations financiÃ¨res', 'Titres de participation'], isSubTitle: false };
+        }
+        return { path: ['ACTIF', 'Actif immobilisÃ©', 'Immobilisations financiÃ¨res', 'Autres immobilisations financiÃ¨res'], isSubTitle: false };
+      }
+      return null;
+    };
+
+    const resolveActifPostPathNormalized = (code: string, labelValue: string) => {
+      if (code.startsWith('20')) {
+        return { path: ['ACTIF', labelActifImmobilise, 'Immobilisations incorporelles'], isSubTitle: true };
+      }
+      if (code.startsWith('21')) {
+        if (code.startsWith('210') || labelValue.includes('terrain')) {
+          return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelTerrains], isSubTitle: false };
+        }
+        if (code.startsWith('212') || labelValue.includes('construction') || labelValue.includes('bÃƒÂ¢timent')) {
+          return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelConstructions], isSubTitle: false };
+        }
+        if (labelValue.includes('exploitation')) {
+          return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelMatExploitation], isSubTitle: false };
+        }
+        if (labelValue.includes('transport')) {
+          return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelMatTransport], isSubTitle: false };
+        }
+        if (labelValue.includes('bureau') || labelValue.includes('informat') || labelValue.includes('mobilier')) {
+          return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelMatBureau], isSubTitle: false };
+        }
+        return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelAutresImmCorp], isSubTitle: false };
+      }
+      if (code.startsWith('22') || code.startsWith('24') || code.startsWith('25')) {
+        return { path: ['ACTIF', labelActifImmobilise, labelImmCorp, labelAutresImmCorp], isSubTitle: false };
+      }
+      if (code.startsWith('23')) {
+        return { path: ['ACTIF', labelActifImmobilise, labelImmEnCours], isSubTitle: true };
+      }
+      if (code.startsWith('26') || code.startsWith('27')) {
+        if (labelValue.includes('particip')) {
+          return { path: ['ACTIF', labelActifImmobilise, labelImmFin, labelTitresParticipation], isSubTitle: false };
+        }
+        return { path: ['ACTIF', labelActifImmobilise, labelImmFin, labelAutresImmFin], isSubTitle: false };
+      }
+      return null;
+    };
+
+    const resolveResultatPath = (item: (typeof pcmAccountsForStructure)[number]) => {
+      const code = item.account;
+      if (item.zero_prefix) {
+        if (code.startsWith('7')) {
+          return ['RESULTAT', 'Résultat hors exploitation', 'Produits hors exploitation'];
+        }
+        if (code.startsWith('6')) {
+          return ['RESULTAT', 'Résultat hors exploitation', 'Charges hors exploitation'];
+        }
+      }
       if (code.startsWith('70') || code.startsWith('71') || code.startsWith('72') || code.startsWith('74') || code.startsWith('76') || code.startsWith('78') || code.startsWith('79')) {
         return ['RESULTAT', 'Résultat d’exploitation', 'Produits d’exploitation'];
       }
@@ -932,12 +1374,6 @@ const KnowledgeBasePage = ({
       if (code.startsWith('67')) {
         return ['RESULTAT', 'Résultat financier', 'Charges financières'];
       }
-      if (code.startsWith('07') || code.startsWith('830') || code.startsWith('840')) {
-        return ['RESULTAT', 'Résultat hors exploitation', 'Produits hors exploitation'];
-      }
-      if (code.startsWith('06') || code.startsWith('839') || code.startsWith('849')) {
-        return ['RESULTAT', 'Résultat hors exploitation', 'Charges hors exploitation'];
-      }
       if (code.startsWith('86')) {
         return ['RESULTAT', 'Impôt sur le résultat'];
       }
@@ -949,9 +1385,61 @@ const KnowledgeBasePage = ({
       const label = normalized(account.label);
       const classe = account.classe;
 
-      const resultatPath = resolveResultatPath(code);
+      if (
+        code === '200000' &&
+        (!label.includes('immobilis'))
+      ) {
+        return;
+      }
+
+      const resultatPath = resolveResultatPath(account);
       if (resultatPath) {
         addAccountToPath(resultatPath, account);
+        return;
+      }
+
+      if (classe === 1) {
+        if (code.startsWith('10')) {
+          addAccountToPath(['PASSIF', 'Capitaux propres', 'Situation nette', 'Capital'], account);
+          return;
+        }
+        if (code.startsWith('11')) {
+          addAccountToPath(['PASSIF', 'Capitaux propres', 'Situation nette', 'RÃ©serves'], account);
+          return;
+        }
+        if (code.startsWith('12')) {
+          addAccountToPath(['PASSIF', 'Capitaux propres', 'Situation nette', 'Report Ã  nouveau'], account);
+          return;
+        }
+        if (code.startsWith('13')) {
+          addAccountToPath(['PASSIF', 'Capitaux propres', 'Situation nette', 'RÃ©sultat de lâ€™exercice'], account);
+          return;
+        }
+        if (code.startsWith('14')) {
+          addAccountToPath(['PASSIF', 'Capitaux propres', 'Subventions dâ€™Ã©quipement'], account);
+          return;
+        }
+        if (code.startsWith('15')) {
+          if (label.includes('rÃ©Ã©valuation') || label.includes('reevaluation')) {
+            addAccountToPath(['PASSIF', 'Capitaux propres', 'Ã‰cart de rÃ©Ã©valuation'], account);
+          } else {
+            addAccountToPath(['PASSIF', 'Capitaux propres', 'Provisions rÃ©glementÃ©es'], account);
+          }
+          return;
+        }
+        if (code.startsWith('16') || code.startsWith('17')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Emprunts et dettes Ã  long et moyen terme'], account);
+          return;
+        }
+        if (code.startsWith('18')) {
+          addAccountToPath(['PASSIF', 'Capitaux propres', 'Compte de liaison des succursales'], account);
+          return;
+        }
+        if (code.startsWith('19')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Provisions pour risques et charges'], account);
+          return;
+        }
+        addAccountToPath(['PASSIF', 'Capitaux propres'], account);
         return;
       }
 
@@ -961,7 +1449,7 @@ const KnowledgeBasePage = ({
           const brutAccount = pcmByCode.get(brutCode);
           const targetLabel = normalized(brutAccount?.label ?? account.label);
           const targetCode = brutAccount?.account ?? brutCode;
-          const resolved = resolveActifPostPath(targetCode, targetLabel);
+          const resolved = resolveActifPostPathNormalized(targetCode, targetLabel);
           if (resolved) {
             if (resolved.isSubTitle) {
               const isIncorp =
@@ -970,21 +1458,16 @@ const KnowledgeBasePage = ({
                     segment.trim().toLowerCase() ===
                     'immobilisations incorporelles'
                 );
-              if (!isIncorp) {
-                const variant = variantForCode(code);
-                const labelBase = brutAccount?.label ?? account.label;
-                addAccountToPath(resolved.path, {
-                  account: account.account,
-                  label: `${labelBase} - ${variant}`,
-                });
-              }
+            if (!isIncorp) {
+              addAccountToVariantPath(resolved.path, account);
+            }
             } else {
               addAccountToVariantPath(resolved.path, account);
             }
           }
           return;
         }
-        const resolved = resolveActifPostPath(code, label);
+        const resolved = resolveActifPostPathNormalized(code, label);
         if (resolved) {
           if (resolved.isSubTitle) {
             addAccountToPath(resolved.path, account);
@@ -998,42 +1481,324 @@ const KnowledgeBasePage = ({
       }
 
       if (classe === 3) {
-        if (label.includes('en cours')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs d’exploitation', 'En-cours'], account);
+        const isEnCours =
+          code.startsWith('33') ||
+          code.startsWith('38') ||
+          label.includes('en cours') ||
+          label.includes('en-cours');
+        const isDepreciation =
+          code.startsWith('39') || label.includes('dÃ©prÃ©ciation') || label.includes('depreciation');
+        const [stocksGroup, encoursGroup] = valeursExploitation.children;
+        const getVariantNode = (group: FsNode | undefined, suffix: string) => {
+          if (!group) return undefined;
+          const targetLabel = `${group.label} ${suffix}`;
+          return group.children.find(
+            (child) =>
+              normalizeLabelForMatch(child.label) ===
+              normalizeLabelForMatch(targetLabel)
+          );
+        };
+        const stocksBrutNode = getVariantNode(stocksGroup, 'brut');
+        const stocksDepNode = getVariantNode(stocksGroup, 'depreciation');
+        const encoursBrutNode = getVariantNode(encoursGroup, 'brut');
+        const encoursDepNode = getVariantNode(encoursGroup, 'depreciation');
+        const pushTo = (node?: FsNode) => {
+          if (!node) return;
+          node.children.push(createAccountNode(account.account, account.label));
+        };
+        if (isDepreciation) {
+          const isEnCoursDep =
+            code.startsWith('393') || label.includes('en cours') || label.includes('en-cours');
+          pushTo(isEnCoursDep ? encoursDepNode : stocksDepNode);
+          return;
+          addAccountToPath(
+            ['ACTIF', 'Actif circulant', 'Valeurs dâ€™exploitation', isEnCoursDep ? 'En-cours depreciation' : 'Stocks depreciation'],
+            account
+          );
+        } else if (isEnCours) {
+          pushTo(encoursBrutNode);
+          return;
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs dâ€™exploitation', 'En-cours'], account);
         } else {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs d’exploitation', 'Stocks'], account);
+          pushTo(stocksBrutNode);
+          return;
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs dâ€™exploitation', 'Stocks'], account);
         }
         return;
       }
 
       if (classe === 4) {
-        if (label.includes('fournisseur')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Fournisseurs débiteurs'], account);
-        } else if (label.includes('client')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Clients et comptes rattachés'], account);
-        } else if (label.includes('personnel')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Personnel et comptes rattachés'], account);
-        } else if (label.includes('etat') || label.includes('collect')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'État, collectivités et organismes sociaux'], account);
-        } else if (label.includes('associ')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Associés et groupe'], account);
-        } else {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Débiteurs divers'], account);
+        if (code.startsWith('480')) {
+          regulActifCharges.children.push(createAccountNode(account.account, account.label));
+          return;
+        }
+        if (code.startsWith('481')) {
+          regulPassifProduits.children.push(createAccountNode(account.account, account.label));
+          return;
+        }
+        if (code.startsWith('4841') || code.startsWith('484')) {
+          regulActifDiff.children.push(createAccountNode(account.account, account.label));
+          return;
+        }
+        if (code.startsWith('4840') || code.startsWith('485')) {
+          regulPassifDiff.children.push(createAccountNode(account.account, account.label));
+          return;
+        }
+        if (code.startsWith('4881')) {
+          regulActifAttente.children.push(createAccountNode(account.account, account.label));
+          return;
+        }
+        if (code.startsWith('4880')) {
+          regulPassifAttente.children.push(createAccountNode(account.account, account.label));
+          return;
+        }
+        if (code.startsWith('4881')) {
+          addAccountToPath(['ACTIF', 'Comptes de rÃƒÂ©gularisation', 'Comptes dÃ¢â‚¬â„¢attente et ÃƒÂ  rÃƒÂ©gulariser'], account);
+          return;
+        }
+        if (code.startsWith('4880')) {
+          addAccountToPath(['PASSIF', 'Comptes de rÃƒÂ©gularisation', 'Comptes dÃ¢â‚¬â„¢attente et ÃƒÂ  rÃƒÂ©gulariser'], account);
+          return;
+        }
+        if (code.startsWith('48')) {
+          if (code.startsWith('480')) {
+            addAccountToPath(['ACTIF', 'Comptes de rÃ©gularisation', 'Charges constatÃ©es dâ€™avance'], account);
+            return;
+          }
+          if (code.startsWith('481')) {
+            addAccountToPath(['PASSIF', 'Comptes de rÃ©gularisation', 'Produits constatÃ©s dâ€™avance'], account);
+            return;
+          }
+          if (code.startsWith('4841')) {
+            addAccountToPath(['ACTIF', 'Comptes de rÃ©gularisation', 'DiffÃ©rences de conversion - Actif'], account);
+            return;
+          }
+          if (code.startsWith('4840')) {
+            addAccountToPath(['PASSIF', 'Comptes de rÃ©gularisation', 'DiffÃ©rences de conversion - Passif'], account);
+            return;
+          }
+          if (code.startsWith('4881')) {
+            addAccountToPath(['ACTIF', 'Comptes de rÃƒÂ©gularisation', 'Comptes dÃ¢â‚¬â„¢attente et ÃƒÂ  rÃƒÂ©gulariser'], account);
+            return;
+          }
+          if (code.startsWith('4880')) {
+            addAccountToPath(['PASSIF', 'Comptes de rÃƒÂ©gularisation', 'Comptes dÃ¢â‚¬â„¢attente et ÃƒÂ  rÃƒÂ©gulariser'], account);
+            return;
+          }
+          if (label.includes('produits constat')) {
+            addAccountToPath(['PASSIF', 'Comptes de rÃ©gularisation', 'Produits constatÃ©s dâ€™avance'], account);
+          } else if (label.includes('passif')) {
+            addAccountToPath(['PASSIF', 'Comptes de rÃ©gularisation', 'DiffÃ©rences de conversion - Passif'], account);
+          } else if (label.includes('actif')) {
+            addAccountToPath(['ACTIF', 'Comptes de rÃ©gularisation', 'DiffÃ©rences de conversion - Actif'], account);
+          } else {
+            addAccountToPath(['ACTIF', 'Comptes de rÃ©gularisation', 'Comptes dâ€™attente et Ã  rÃ©gulariser'], account);
+          }
+          return;
+        }
+
+        if (code.startsWith('49')) {
+          if (code.startsWith('491')) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃ©alisables Ã  court terme', 'Clients et comptes rattachÃ©s depreciation'], account);
+            return;
+          }
+          if (code.startsWith('495')) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃ©alisables Ã  court terme', 'AssociÃ©s et groupe depreciation'], account);
+            return;
+          }
+          if (code.startsWith('496')) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃ©alisables Ã  court terme', 'DÃ©biteurs divers depreciation'], account);
+            return;
+          }
+        }
+
+        if (code.startsWith('409')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃ©alisables Ã  court terme', 'Fournisseurs dÃ©biteurs'], account);
+          return;
+        }
+        if (code.startsWith('40')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes Ã  court terme', 'Fournisseurs et comptes rattachÃ©s'], account);
+          return;
+        }
+        if (code.startsWith('419')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes Ã  court terme', 'Clients crÃ©diteurs'], account);
+          return;
+        }
+        if (code.startsWith('41')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃ©alisables Ã  court terme', 'Clients et comptes rattachÃ©s'], account);
+          return;
+        }
+        if (code.startsWith('42')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes Ã  court terme', 'Personnel et comptes rattachÃ©s'], account);
+          return;
+        }
+        if (code.startsWith('43') || code.startsWith('44')) {
+          addToDettesCourtTerme('etat', account);
+          return;
+        }
+        if (code.startsWith('45')) {
+          if (
+            label.includes('dÃƒÂ©bit') ||
+            label.includes('debit') ||
+            label.includes('dÃƒÂ©biteur') ||
+            label.includes('debiteur') ||
+            label.includes('crÃƒÂ©ance') ||
+            label.includes('creance') ||
+            label.includes('avance')
+          ) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃƒÂ©alisables ÃƒÂ  court terme', 'AssociÃƒÂ©s et groupe'], account);
+            return;
+          }
+        }
+        if (code.startsWith('45')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes Ã  court terme', 'AssociÃ©s et groupe'], account);
+          return;
+        }
+        if (code.startsWith('46')) {
+          if (label.includes('crÃ©dit') || label.includes('crediteur') || label.includes('crÃ©diteur')) {
+            addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes Ã  court terme', 'CrÃ©diteurs divers'], account);
+          } else {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs rÃ©alisables Ã  court terme', 'DÃ©biteurs divers'], account);
+          }
+          return;
         }
         return;
       }
 
       if (classe === 5) {
-        if (label.includes('prêt')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Prêts à court terme'], account);
-        } else if (label.includes('valeurs mobili')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Valeurs mobilières de placement'], account);
-        } else if (label.includes('banque')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Banques'], account);
-        } else if (label.includes('caisse')) {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Caisse'], account);
+        if (code.startsWith('559')) {
+          addAccountToPath(
+            ['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'Concours bancaires courants'],
+            account
+          );
+          return;
+        }
+        if (code.startsWith('50')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes Ã  court terme', 'Emprunts Ã  court terme'], account);
+          return;
+        }
+        if (code.startsWith('51')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'PrÃªts Ã  court terme'], account);
+          return;
+        }
+        if (code.startsWith('52')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Valeurs mobiliÃ¨res de placement'], account);
+          return;
+        }
+        if (code.startsWith('54') || code.startsWith('55') || code.startsWith('58')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Banques'], account);
+          return;
+        }
+        if (code.startsWith('56') || code.startsWith('57')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Caisse'], account);
+          return;
+        }
+        return;
+      }
+
+      if (false) {
+      if (classe === 3) {
+        if (code.startsWith('39') || label.includes('dépréciation')) {
+          if (label.includes('en cours')) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs d’exploitation', 'En-cours depreciation'], account);
+          } else {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs d’exploitation', 'Stocks depreciation'], account);
+          }
+        } else if (label.includes('en cours')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs d’exploitation', 'En-cours'], account);
         } else {
-          addAccountToVariantPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Prêts à court terme'], account);
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs d’exploitation', 'Stocks'], account);
+        }
+        return;
+      }
+
+      if (classe === 4) {
+        if (code.startsWith('48')) {
+          if (code.startsWith('480')) {
+            addAccountToPath(['ACTIF', 'Comptes de régularisation', 'Charges constatées d’avance'], account);
+          } else if (code.startsWith('4841')) {
+            addAccountToPath(['ACTIF', 'Comptes de régularisation', 'Différences de conversion - Actif'], account);
+          } else if (code.startsWith('4881')) {
+            if (label.includes('produits constatés')) {
+              addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Produits constatés d’avance'], account);
+            } else {
+              addAccountToPath(['ACTIF', 'Comptes de régularisation', 'Comptes d’attente et à régulariser'], account);
+            }
+          } else if (code.startsWith('4840')) {
+            addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Différences de conversion - Passif'], account);
+          } else if (code.startsWith('4880')) {
+            addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Comptes d’attente et à régulariser'], account);
+          } else if (label.includes('produits constatés')) {
+            addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Produits constatés d’avance'], account);
+          } else if (label.includes('conversion')) {
+            addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Différences de conversion - Passif'], account);
+          } else {
+            addAccountToPath(['ACTIF', 'Comptes de régularisation', 'Comptes d’attente et à régulariser'], account);
+          }
+          return;
+        }
+
+        if (code.startsWith('409')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Fournisseurs débiteurs'], account);
+          return;
+        }
+        if (code.startsWith('40')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'Fournisseurs et comptes rattachés'], account);
+          return;
+        }
+        if (code.startsWith('419')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'Clients créditeurs'], account);
+          return;
+        }
+        if (code.startsWith('41')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Clients et comptes rattachés'], account);
+          return;
+        }
+        if (code.startsWith('42')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'Personnel et comptes rattachés'], account);
+          return;
+        }
+        if (code.startsWith('43') || code.startsWith('44')) {
+          addToDettesCourtTerme('etat', account);
+          return;
+        }
+        if (code.startsWith('45')) {
+          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'Associés et groupe'], account);
+          return;
+        }
+        if (code.startsWith('46')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Débiteurs divers'], account);
+          return;
+        }
+        if (code.startsWith('49') || label.includes('dépréciation')) {
+          if (label.includes('client')) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Clients et comptes rattachés depreciation'], account);
+            return;
+          }
+          if (label.includes('associ') || label.includes('groupe')) {
+            addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Associés et groupe depreciation'], account);
+            return;
+          }
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs réalisables à court terme', 'Débiteurs divers depreciation'], account);
+          return;
+        }
+        return;
+      }
+
+      if (classe === 5) {
+        if (code.startsWith('59') || label.includes('dépréciation')) {
+          return;
+        }
+        if (label.includes('prêt')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Prêts à court terme'], account);
+        } else if (label.includes('valeurs mobili')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Valeurs mobilières de placement'], account);
+        } else if (label.includes('banque')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Banques'], account);
+        } else if (label.includes('caisse')) {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Caisse'], account);
+        } else {
+          addAccountToPath(['ACTIF', 'Actif circulant', 'Valeurs disponibles', 'Prêts à court terme'], account);
         }
         return;
       }
@@ -1104,7 +1869,7 @@ const KnowledgeBasePage = ({
           return;
         }
         if (label.includes('état') || label.includes('collect') || label.includes('organisme')) {
-          addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'États, collectivités et organismes sociaux'], account);
+          addToDettesCourtTerme('etat', account);
           return;
         }
         if (label.includes('associ') || label.includes('groupe')) {
@@ -1123,25 +1888,62 @@ const KnowledgeBasePage = ({
           addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme', 'Concours bancaires courants'], account);
           return;
         }
-        if (label.includes('produits constatés')) {
-          addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Produits constatés d’avance'], account);
-          return;
-        }
-        if (label.includes('différences de conversion') || label.includes('conversion')) {
-          addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Différences de conversion - Passif'], account);
-          return;
-        }
-        if (label.includes('attente') || label.includes('régulariser')) {
-          addAccountToPath(['PASSIF', 'Comptes de régularisation', 'Comptes d’attente et à régulariser'], account);
-          return;
-        }
         addAccountToPath(['PASSIF', 'Emprunts et dettes', 'Dettes à court terme'], account);
         return;
       }
 
+      }
     });
 
+    const ensureSubventionAccount = (code: string, label: string) => {
+      const target = findNodeByLabelPath(rootNodes, [
+        'PASSIF',
+        'Capitaux propres',
+        'Subventions d’équipement',
+      ]);
+      if (!target) return;
+      const padded = padAccount(code);
+      const exists = target.children.some(
+        (child) => child.kind === 'account' && padAccount(child.code ?? '') === padded
+      );
+      if (exists) return;
+      const pcmAccount = pcmByCode.get(padded);
+      target.children.push(
+        createAccountNode(padded, pcmAccount?.label ?? label)
+      );
+    };
+
+    ensureSubventionAccount(
+      '140',
+      'Subvention d’équipement reçues'
+    );
+    ensureSubventionAccount(
+      '149',
+      'Subvention d’équipement inscrites au comptes de résultat (solde débiteur)'
+    );
+
     return rootNodes;
+  };
+
+  const shouldRebuildPcmTree = (nodes: FsNode[]) => {
+    let needs = false;
+    const walk = (items: FsNode[], path: string[]) => {
+      items.forEach((node) => {
+        const label = node.label.trim().toLowerCase();
+        const inImmobilise = path.some((segment) =>
+          segment.trim().toLowerCase().includes('actif immobilisé')
+        );
+        if (!inImmobilise && (label.includes('amortissement') || label.endsWith(' brut'))) {
+          needs = true;
+        }
+        if (label.includes('fournisseurs débiteurs brut') || label.includes('clients créditeurs brut')) {
+          needs = true;
+        }
+        walk(node.children, [...path, node.label]);
+      });
+    };
+    walk(nodes, []);
+    return needs;
   };
 
   const getAssignedAccounts = (nodes: FsNode[]): Set<string> => {
@@ -1175,48 +1977,92 @@ const KnowledgeBasePage = ({
     return count;
   }, [fsStructure]);
 
-  const normalizeBalance = (value: number, rootLabel: string) => {
-    const upper = rootLabel.trim().toUpperCase();
-    if (upper === 'PASSIF') {
-      return Math.abs(value);
-    }
-    return value;
+  const normalizeBalance = (value: number) => value;
+
+  const sumBalancesForAccounts = (accounts: Set<string>) => {
+    let n = 0;
+    let n1 = 0;
+    accounts.forEach((account) => {
+      const nRow = balanceNByAccount.get(account);
+      const n1Row = balanceN1ByAccount.get(account);
+      n += normalizeBalance(nRow?.balance ?? 0);
+      n1 += normalizeBalance(n1Row?.balance ?? 0);
+    });
+    return { n, n1 };
   };
 
-  const updateTotals = (node: FsNode, rootLabel: string): FsNode => {
-    const children = node.children.map((child) => updateTotals(child, rootLabel));
-    const ownTotals = node.accounts.reduce(
-      (acc, account) => {
-        const nRow = balanceN.find((row) => row.account === account);
-        const n1Row = balanceN1.find((row) => row.account === account);
-        acc.n += normalizeBalance(nRow?.balance ?? 0, rootLabel);
-        acc.n1 += normalizeBalance(n1Row?.balance ?? 0, rootLabel);
-        return acc;
-      },
+  const sumBalancesForPrefix = (code: string) => {
+    let prefix = code;
+    while (prefix.endsWith('0') && prefix.length > 3) {
+      prefix = prefix.slice(0, -1);
+    }
+    let n = 0;
+    let n1 = 0;
+    balanceAccountCodes.forEach((accountCode) => {
+      if (!accountCode.startsWith(prefix)) return;
+      const nRow = balanceNByAccount.get(accountCode);
+      const n1Row = balanceN1ByAccount.get(accountCode);
+      n += normalizeBalance(nRow?.balance ?? 0);
+      n1 += normalizeBalance(n1Row?.balance ?? 0);
+    });
+    return { n, n1 };
+  };
+
+  const updateTotals = (
+    node: FsNode,
+    rootLabel: string
+  ): { node: FsNode; accounts: Set<string> } => {
+    const childResults = node.children.map((child) =>
+      updateTotals(child, rootLabel)
+    );
+    const ownAccounts = new Set(node.accounts);
+    if (node.kind === 'account' && node.code) {
+      ownAccounts.add(node.code);
+    }
+    const accountSet = new Set(ownAccounts);
+    childResults.forEach((result) => {
+      result.accounts.forEach((account) => accountSet.add(account));
+    });
+    let ownTotals = sumBalancesForAccounts(ownAccounts);
+    if (node.kind === 'account' && node.code && node.accounts.length === 0) {
+      ownTotals = sumBalancesForAccounts([node.code]);
+    }
+    const childTotals = childResults.reduce(
+      (acc, result) => ({
+        n: acc.n + result.node.totalN,
+        n1: acc.n1 + result.node.totalN1,
+      }),
       { n: 0, n1: 0 }
     );
-    const childrenTotals = children.reduce(
-      (acc, child) => {
-        acc.n += child.totalN;
-        acc.n1 += child.totalN1;
-        return acc;
-      },
-      { n: 0, n1: 0 }
-    );
+    const totals = {
+      n: ownTotals.n + childTotals.n,
+      n1: ownTotals.n1 + childTotals.n1,
+    };
     return {
-      ...node,
-      totalN: ownTotals.n + childrenTotals.n,
-      totalN1: ownTotals.n1 + childrenTotals.n1,
-      children,
+      node: {
+        ...node,
+        totalN: totals.n,
+        totalN1: totals.n1,
+        children: childResults.map((result) => result.node),
+      },
+      accounts: accountSet,
     };
   };
 
   const fsTreeWithTotals = useMemo(() => {
     if (!fsStructure) return null;
     return fsStructure.tree.map((node) =>
-      updateTotals(node, node.label)
+      updateTotals(node, node.label).node
     );
-  }, [fsStructure, balanceN, balanceN1]);
+  }, [fsStructure, balanceNByAccount, balanceN1ByAccount, balanceAccountCodes]);
+
+  const statusTreeSource = balanceMappingTree ?? fsStructure?.tree ?? null;
+  const statusTreeWithTotals = useMemo(() => {
+    if (!statusTreeSource) return null;
+    return statusTreeSource.map((node) =>
+      updateTotals(node, node.label).node
+    );
+  }, [statusTreeSource, balanceNByAccount, balanceN1ByAccount, balanceAccountCodes]);
 
   const findNodeByLabel = (nodes: FsNode[], label: string) =>
     nodes.find(
@@ -1224,19 +2070,40 @@ const KnowledgeBasePage = ({
     );
 
   const fsActif = useMemo(() => {
-    if (!fsTreeWithTotals) return null;
-    return findNodeByLabel(fsTreeWithTotals, 'ACTIF');
-  }, [fsTreeWithTotals]);
+    if (!statusTreeWithTotals) return null;
+    return findNodeByLabel(statusTreeWithTotals, 'ACTIF');
+  }, [statusTreeWithTotals]);
 
   const fsPassif = useMemo(() => {
-    if (!fsTreeWithTotals) return null;
-    return findNodeByLabel(fsTreeWithTotals, 'PASSIF');
-  }, [fsTreeWithTotals]);
+    if (!statusTreeWithTotals) return null;
+    return findNodeByLabel(statusTreeWithTotals, 'PASSIF');
+  }, [statusTreeWithTotals]);
 
   const fsResultat = useMemo(() => {
-    if (!fsTreeWithTotals) return null;
-    return findNodeByLabel(fsTreeWithTotals, 'RESULTAT');
-  }, [fsTreeWithTotals]);
+    if (!statusTreeWithTotals) return null;
+    return findNodeByLabel(statusTreeWithTotals, 'RESULTAT');
+  }, [statusTreeWithTotals]);
+
+  const getDisplayTotals = (node: FsNode, absDisplay: boolean) => {
+    const base = { n: node.totalN ?? 0, n1: node.totalN1 ?? 0 };
+    if (!absDisplay) return base;
+    return { n: Math.abs(base.n), n1: Math.abs(base.n1) };
+  };
+
+  const fsActifAbsTotals = useMemo(
+    () => (fsActif ? getDisplayTotals(fsActif, true) : { n: 0, n1: 0 }),
+    [fsActif]
+  );
+
+  const fsPassifAbsTotals = useMemo(
+    () => (fsPassif ? getDisplayTotals(fsPassif, true) : { n: 0, n1: 0 }),
+    [fsPassif]
+  );
+
+  const resultTotals = useMemo(() => {
+    if (!fsResultat) return { n: 0, n1: 0 };
+    return getDisplayTotals(fsResultat, false);
+  }, [fsResultat]);
 
   const balanceNet = useMemo(() => {
     const rows = [...balanceN, ...balanceN1];
@@ -1248,49 +2115,65 @@ const KnowledgeBasePage = ({
     [mappingSourceUniqueRows]
   );
   const mappedCount = useMemo(() => {
-    if (!fsStructure) return 0;
-    const assigned = getAssignedAccounts(fsStructure.tree);
+    const tree = balanceMappingTree ?? fsStructure?.tree;
+    if (!tree) return 0;
+    const assigned = getAssignedAccounts(tree);
     let count = 0;
     assigned.forEach((account) => {
       if (balanceAccountSet.has(account)) count += 1;
     });
     return count;
-  }, [fsStructure, balanceAccountSet]);
+  }, [balanceMappingTree, fsStructure, balanceAccountSet]);
   const totalAccounts = mappingSourceUniqueRows.length;
+  const currentTemplateLabel = fsTemplateName
+    ?? (fsStructure?.template === 'bumex_pcm' ? 'BUMEX PCM' : 'Manual');
 
-  const renderFsNode = (node: FsNode, depth = 0) => {
+  const renderFsNode = (node: FsNode, depth = 0, absDisplay = false) => {
+    if (depth === 0) {
+      return (
+        <div key={`${node.id}-${depth}`} className="space-y-1">
+          {node.children.map((child) => renderFsNode(child, depth + 1, absDisplay))}
+        </div>
+      );
+    }
+    const nodeTotals = getDisplayTotals(node, absDisplay);
+    const displayN1 = nodeTotals.n1;
+    const displayN = nodeTotals.n;
     return (
       <div key={`${node.id}-${depth}`} className="space-y-1">
         <div
-          className="flex items-center justify-between text-sm"
-          style={{ paddingLeft: depth * 12 }}
+          className="grid items-center gap-6 rounded-md border border-slate-200/70 bg-white px-2 py-1.5 text-sm shadow-sm transition-colors hover:bg-slate-50"
+          style={{ paddingLeft: depth * 12, gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}
         >
           <span className="truncate">{node.label}</span>
-          <div className="flex items-center gap-3 text-right">
-            <span className="min-w-[90px] text-xs text-muted-foreground">
-              N-1: {node.totalN1.toLocaleString()}
-            </span>
-            <span className="min-w-[90px] font-medium">
-              {node.totalN.toLocaleString()}
-            </span>
-          </div>
+          <span className="text-right text-xs text-muted-foreground tabular-nums">
+            {formatBalanceValue(displayN1)}
+          </span>
+          <span className="text-right font-medium tabular-nums">
+            {formatBalanceValue(displayN)}
+          </span>
         </div>
         {node.children.length > 0 && (
           <div className="space-y-1">
-            {node.children.map((child) => renderFsNode(child, depth + 1))}
+            {node.children.map((child) => renderFsNode(child, depth + 1, absDisplay))}
           </div>
         )}
       </div>
     );
   };
 
-  const saveFsStructure = async (next: { template: 'bumex_pcm' | 'manual'; tree: FsNode[] }) => {
+  const saveFsStructure = async (
+    next: { template: 'bumex_pcm' | 'manual'; tree: FsNode[] },
+    meta?: { templateName?: string | null; templateId?: string | null }
+  ) => {
     if (!projectId) return;
     const structurePath = `projects/${projectId}/knowledge_base/financial_statements`;
     await setDoc(
       doc(db, structurePath),
       {
         ...next,
+        templateName: meta?.templateName ?? null,
+        templateId: meta?.templateId ?? null,
         updatedAt: serverTimestamp(),
       },
       { merge: true }
@@ -1299,21 +2182,42 @@ const KnowledgeBasePage = ({
 
   const setStructureAndSave = async (
     template: 'bumex_pcm' | 'manual',
-    tree: FsNode[]
+    tree: FsNode[],
+    meta?: { templateName?: string | null; templateId?: string | null }
   ) => {
     const next = { template, tree };
     setFsStructure(next);
-    await saveFsStructure(next);
+    const templateName = meta?.templateName ?? fsTemplateName ?? null;
+    const templateId = meta?.templateId ?? fsTemplateId ?? null;
+    await saveFsStructure(next, { templateName, templateId });
   };
+
+  useEffect(() => {
+    if (!fsStructure || fsStructure.template !== 'bumex_pcm') return;
+    if (pcmAutoRebuildRef.current) return;
+    pcmAutoRebuildRef.current = true;
+    if (!shouldRebuildPcmTree(fsStructure.tree)) return;
+    const nextTree = buildPcmStructure();
+    void setStructureAndSave('bumex_pcm', nextTree);
+  }, [fsStructure]);
 
   const handleChoosePcm = async () => {
     const tree = buildPcmStructure();
     setShowManualMapping(false);
     setAutoMapMessage(null);
-    await setStructureAndSave('bumex_pcm', tree);
+    setFsTemplateName(null);
+    setFsTemplateId(null);
+    await setStructureAndSave('bumex_pcm', tree, {
+      templateName: null,
+      templateId: null,
+    });
   };
 
   const handleChooseManual = async () => {
+    const name = window.prompt('Template name');
+    if (!name) return;
+    const trimmed = name.trim();
+    if (!trimmed) return;
     const tree = [
       createNode('ACTIF'),
       createNode('PASSIF'),
@@ -1321,7 +2225,12 @@ const KnowledgeBasePage = ({
     ];
     setShowManualMapping(false);
     setAutoMapMessage(null);
-    await setStructureAndSave('manual', tree);
+    setFsTemplateName(trimmed);
+    setFsTemplateId(null);
+    await setStructureAndSave('manual', tree, {
+      templateName: trimmed,
+      templateId: null,
+    });
   };
 
   const handleSwitchToPcm = async () => {
@@ -1336,6 +2245,60 @@ const KnowledgeBasePage = ({
       return;
     }
     await handleChooseManual();
+  };
+
+  const handleSaveTemplate = async () => {
+    if (!projectId || !fsStructure || fsStructure.template !== 'manual') return;
+    const name =
+      fsTemplateName?.trim() ||
+      window.prompt('Template name');
+    if (!name) return;
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const templatesPath = `projects/${projectId}/knowledge_base/fs_templates`;
+    const existing = fsTemplates.find(
+      (template) => template.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    const docRef = existing
+      ? doc(db, templatesPath, existing.id)
+      : doc(collection(db, templatesPath));
+    await setDoc(
+      docRef,
+      {
+        name: trimmed,
+        tree: fsStructure.tree,
+        updatedAt: serverTimestamp(),
+        createdAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+    const nextId = docRef.id;
+    setFsTemplateName(trimmed);
+    setFsTemplateId(nextId);
+    setFsTemplates((prev) => {
+      const without = prev.filter((template) => template.id !== nextId);
+      return [...without, { id: nextId, name: trimmed, tree: fsStructure.tree }]
+        .sort((a, b) => a.name.localeCompare(b.name));
+    });
+    await setStructureAndSave('manual', fsStructure.tree, {
+      templateName: trimmed,
+      templateId: nextId,
+    });
+  };
+
+  const handleSelectTemplate = async (value: string) => {
+    if (value === 'pcm') {
+      await handleChoosePcm();
+      return;
+    }
+    const template = fsTemplates.find((item) => item.id === value);
+    if (!template) return;
+    setFsTemplateName(template.name);
+    setFsTemplateId(template.id);
+    await setStructureAndSave('manual', template.tree, {
+      templateName: template.name,
+      templateId: template.id,
+    });
   };
 
   const updateTreeById = (
@@ -1422,18 +2385,85 @@ const KnowledgeBasePage = ({
         return;
       }
     }
-    const code = window.prompt('Code du compte PCM (ex: 2100)');
-    if (!code) return;
-    const account = pcmList.find((item) => item.account === code);
-    if (!account) {
-      window.alert('Account not found in the chart of accounts.');
-      return;
-    }
+    const codeRaw = window.prompt('Account code (ex: 2100)');
+    if (!codeRaw) return;
+    const label = window.prompt('Account label');
+    if (!label) return;
+    const code = padAccount(codeRaw);
     const nextTree = updateTreeById(fsStructure.tree, nodeId, (node) => ({
       ...node,
-      children: [...node.children, createAccountNode(account.account, account.label)],
+      children: [...node.children, createAccountNode(code, label)],
     }));
     await setStructureAndSave(fsStructure.template, nextTree);
+  };
+
+  const collectAccountCodes = (nodes: FsNode[], acc = new Set<string>()) => {
+    nodes.forEach((node) => {
+      if (node.kind === 'account' && node.code) {
+        acc.add(node.code);
+      }
+      node.accounts.forEach((account) => acc.add(account));
+      if (node.children.length) {
+        collectAccountCodes(node.children, acc);
+      }
+    });
+    return acc;
+  };
+
+  const openPcmLibrary = (nodeId: string) => {
+    setPcmLibraryTargetId(nodeId);
+    setPcmLibrarySelected(new Set());
+    setPcmLibraryQuery('');
+    setPcmLibraryOpen(true);
+  };
+
+  const togglePcmLibraryAccount = (code: string) => {
+    setPcmLibrarySelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) {
+        next.delete(code);
+      } else {
+        next.add(code);
+      }
+      return next;
+    });
+  };
+
+  const applyPcmLibrarySelection = async () => {
+    if (!fsStructure || !pcmLibraryTargetId) {
+      setPcmLibraryOpen(false);
+      return;
+    }
+    const selected = Array.from(pcmLibrarySelected);
+    if (!selected.length) {
+      setPcmLibraryOpen(false);
+      return;
+    }
+    const existing = collectAccountCodes(fsStructure.tree);
+    const missing: string[] = [];
+    const nodesToAdd: FsNode[] = [];
+    selected.forEach((code) => {
+      const account = pcmByCode.get(code);
+      if (!account) {
+        missing.push(code);
+        return;
+      }
+      if (existing.has(code)) return;
+      nodesToAdd.push(createAccountNode(account.account, account.label));
+    });
+    if (missing.length) {
+      window.alert(`Account(s) not found in PCM: ${missing.join(', ')}`);
+    }
+    if (!nodesToAdd.length) {
+      setPcmLibraryOpen(false);
+      return;
+    }
+    const nextTree = updateTreeById(fsStructure.tree, pcmLibraryTargetId, (node) => ({
+      ...node,
+      children: [...node.children, ...nodesToAdd],
+    }));
+    await setStructureAndSave(fsStructure.template, nextTree);
+    setPcmLibraryOpen(false);
   };
 
 
@@ -1602,12 +2632,11 @@ const KnowledgeBasePage = ({
     ]);
     docSheet.addRow([]);
     docSheet.addRow(['✅ Onglet obligatoire: Mapping']);
-    docSheet.addRow(['✅ Colonnes obligatoires:']);
+    docSheet.addRow(['✅ Colonnes obligatoires (toutes):']);
     docSheet.addRow(['- excel_account (obligatoire)']);
+    docSheet.addRow(['- excel_label (obligatoire)']);
     docSheet.addRow(['- fs_account_code (obligatoire)']);
-    docSheet.addRow(['Colonnes facultatives:']);
-    docSheet.addRow(['- excel_label']);
-    docSheet.addRow(['- fs_account_label']);
+    docSheet.addRow(['- fs_account_label (obligatoire)']);
     docSheet.addRow([]);
     docSheet.addRow(['⚠️ Règles importantes']).font = { bold: true };
     docSheet.addRow(['- 1 ligne = 1 sous-compte Excel rattaché à 1 compte PCM.']);
@@ -1616,7 +2645,9 @@ const KnowledgeBasePage = ({
     docSheet.addRow([]);
     docSheet.addRow(['📚 Lexique']).font = { bold: true };
     docSheet.addRow(['- excel_account: compte issu du fichier Excel de balance.']);
+    docSheet.addRow(['- excel_label: libellé du compte Excel.']);
     docSheet.addRow(['- fs_account_code: compte standard PCM.']);
+    docSheet.addRow(['- fs_account_label: libellé du compte PCM.']);
 
     const rows: Array<{
       excel_account: string;
@@ -1662,6 +2693,26 @@ const KnowledgeBasePage = ({
     });
     applyVerticalBorders(mapSheet, 4, rows.length + 1);
     docSheet.views = [{ showGridLines: false }];
+
+    const libSheet = workbook.addWorksheet('Library');
+    libSheet.columns = [
+      { header: 'account_code', key: 'account_code', width: 20 },
+      { header: 'account_label', key: 'account_label', width: 50 },
+    ];
+    libSheet.views = [{ state: 'frozen', ySplit: 1, showGridLines: true }];
+    applyHeaderStyle(libSheet.getRow(1), 2);
+    pcmList.forEach((item) => {
+      libSheet.addRow({
+        account_code: item.account,
+        account_label: item.label,
+      });
+    });
+    libSheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1 && rowNumber % 2 === 0) {
+        applyZebra(row, 2);
+      }
+    });
+    applyVerticalBorders(libSheet, 2, pcmList.length + 1);
 
     await downloadExcel(workbook, 'balance_mapping.xlsx');
   };
@@ -1718,13 +2769,13 @@ const KnowledgeBasePage = ({
     await handleAssignAccount(nodeId, account);
   };
 
-  const toggleNodeCollapsed = (nodeId: string) => {
+  const toggleNodeCollapsed = (nodeKey: string) => {
     setCollapsedNodes((prev) => {
       const next = new Set(prev);
-      if (next.has(nodeId)) {
-        next.delete(nodeId);
+      if (next.has(nodeKey)) {
+        next.delete(nodeKey);
       } else {
-        next.add(nodeId);
+        next.add(nodeKey);
       }
       return next;
     });
@@ -1733,7 +2784,9 @@ const KnowledgeBasePage = ({
   const handleAutoMap = async () => {
     if (!fsStructure) return;
     if (fsStructure.template !== 'bumex_pcm') {
-      const ok = window.confirm('Auto mapping uses BUMEX PCM. Replace the current structure?');
+      const ok = window.confirm(
+        'Auto mapping will use BUMEX PCM for Trial Balance status only. Continue?'
+      );
       if (!ok) return;
     }
     setShowManualMapping(false);
@@ -1873,43 +2926,52 @@ const KnowledgeBasePage = ({
       );
     });
 
-    await setStructureAndSave('bumex_pcm', nextTree);
-    setAutoMapMessage('Accounts were placed into the Financial Statements structure.');
+    setBalanceMappingTree(nextTree);
+    setAutoMapMessage('Accounts were placed into Trial Balance status.');
   };
 
   const renderStructureEditorNode = (
     node: FsNode,
     depth = 0,
-    allowEdit = false
+    allowEdit = false,
+    path: string[] = []
   ) => {
     const padding = depth * 12;
-    const isCollapsed = collapsedNodes.has(node.id);
+    const nodePath = [...path, node.label];
+    const nodeKey = nodePath.join(' / ');
+    const isCollapsed = collapsedNodes.has(nodeKey);
+    const labelLower = node.label.trim().toLowerCase();
     const isRoot =
-      node.label === 'ACTIF' ||
-      node.label === 'PASSIF' ||
-      node.label === 'RESULTAT';
+      labelLower === 'actif' ||
+      labelLower === 'passif' ||
+      labelLower === 'resultat';
     return (
-      <FsDropZone key={node.id} nodeId={node.id}>
+      <div key={node.id} className="rounded-md border border-dashed p-2">
         <div className="space-y-2">
           <div
             className="flex items-center justify-between text-sm"
             style={{ paddingLeft: padding }}
           >
-            <div className="flex items-center gap-2">
-            {node.kind === 'group' && (
-              <button
-                type="button"
-                aria-label={isCollapsed ? 'Expand section' : 'Collapse section'}
-                className="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50"
-                onClick={() => toggleNodeCollapsed(node.id)}
-              >
-                <ChevronRight
-                  className={`h-3 w-3 transition-transform ${isCollapsed ? '' : 'rotate-90'}`}
-                />
-              </button>
-            )}
-            <span className="font-medium">{node.label}</span>
-            </div>
+            <button
+              type="button"
+              className="flex items-center gap-2 text-left"
+              data-no-dnd
+              onClick={() => {
+                if (node.kind === 'group') toggleNodeCollapsed(nodeKey);
+              }}
+            >
+              {node.kind === 'group' && (
+                <span
+                  className="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50"
+                  aria-hidden="true"
+                >
+                  <ChevronRight
+                    className={`h-3 w-3 transition-transform ${isCollapsed ? '' : 'rotate-90'}`}
+                  />
+                </span>
+              )}
+              <span className="font-medium">{node.label}</span>
+            </button>
     {node.kind === 'group' && allowEdit && (
       <div className="flex items-center gap-2">
         {fsStructure?.template === 'manual' && isRoot && (
@@ -1949,14 +3011,23 @@ const KnowledgeBasePage = ({
           </button>
         )}
         {fsStructure?.template === 'manual' && (depth === 2 || depth === 3) && (
-          <button
-            type="button"
-            className="text-xs text-muted-foreground hover:text-foreground"
-            onClick={() => handleAddAccountToGroup(node.id)}
-          >
-            Add PCM account
-          </button>
-                )}
+          <>
+            <button
+              type="button"
+              className="text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => handleAddAccountToGroup(node.id)}
+            >
+              Add account
+            </button>
+            <button
+              type="button"
+              className="text-xs text-muted-foreground hover:text-foreground"
+              onClick={() => openPcmLibrary(node.id)}
+            >
+              Add PCM account
+            </button>
+          </>
+        )}
           <button
             type="button"
             className="text-xs text-muted-foreground hover:text-foreground"
@@ -2001,43 +3072,51 @@ const KnowledgeBasePage = ({
           {!isCollapsed && node.children.length > 0 && (
             <div className="space-y-2">
               {node.children.map((child) =>
-                renderStructureEditorNode(child, depth + 1, allowEdit)
+                renderStructureEditorNode(child, depth + 1, allowEdit, nodePath)
               )}
             </div>
           )}
         </div>
-      </FsDropZone>
+      </div>
     );
   };
 
   const renderStructureReadOnlyNode = (
     node: FsNode,
     depth = 0,
-    allowRemove = false
+    allowRemove = false,
+    path: string[] = []
   ) => {
     const padding = depth * 12;
-    const isCollapsed = collapsedNodes.has(node.id);
+    const nodePath = [...path, node.label];
+    const nodeKey = nodePath.join(' / ');
+    const isCollapsed = collapsedNodes.has(nodeKey);
     const content = (
       <div className="space-y-2">
         <div
           className="flex items-center justify-between text-sm"
           style={{ paddingLeft: padding }}
         >
-          <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="flex items-center gap-2 text-left"
+            data-no-dnd
+            onClick={() => {
+              if (node.kind === 'group') toggleNodeCollapsed(nodeKey);
+            }}
+          >
             {node.kind === 'group' && (
-              <button
-                type="button"
-                aria-label={isCollapsed ? 'Expand section' : 'Collapse section'}
+              <span
                 className="flex h-5 w-5 items-center justify-center rounded-md border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:bg-slate-50"
-                onClick={() => toggleNodeCollapsed(node.id)}
+                aria-hidden="true"
               >
                 <ChevronRight
                   className={`h-3 w-3 transition-transform ${isCollapsed ? '' : 'rotate-90'}`}
                 />
-              </button>
+              </span>
             )}
             <span className="font-medium">{node.label}</span>
-          </div>
+          </button>
           {node.kind === 'account' && (
             <span className="text-[10px] text-muted-foreground">Account</span>
           )}
@@ -2071,7 +3150,7 @@ const KnowledgeBasePage = ({
         {!isCollapsed && node.children.length > 0 && (
           <div className="space-y-2">
             {node.children.map((child) =>
-              renderStructureReadOnlyNode(child, depth + 1, allowRemove)
+              renderStructureReadOnlyNode(child, depth + 1, allowRemove, nodePath)
             )}
           </div>
         )}
@@ -2098,9 +3177,28 @@ const KnowledgeBasePage = ({
     [mappingDoc]
   );
 
+  const structureAccountCodes = useMemo(() => {
+    const set = new Set<string>();
+    if (!fsStructure) return set;
+    const walk = (nodes: FsNode[]) => {
+      nodes.forEach((node) => {
+        if (node.kind === 'account' && node.code) {
+          set.add(node.code);
+        }
+        if (node.children.length) {
+          walk(node.children);
+        }
+      });
+    };
+    walk(fsStructure.tree);
+    return set;
+  }, [fsStructure]);
+
   const processMappingRows = useMemo(() => {
+    if (!fsStructure || structureAccountCodes.size === 0) return [];
     const map = new Map<string, ProcessMappingRow>();
     pcmList.forEach((item) => {
+      if (!structureAccountCodes.has(item.account)) return;
       const balanceRow = balanceNByAccount.get(item.account);
       const prefix = item.account.replace(/0+$/, '') || item.account;
       const hasExcel = balanceAccountCodes.some((account) =>
@@ -2115,6 +3213,7 @@ const KnowledgeBasePage = ({
     });
     manualFsAccounts.forEach((item) => {
       const account = padAccount(item.account);
+      if (!structureAccountCodes.has(account)) return;
       if (map.has(account)) return;
       const balanceRow = balanceNByAccount.get(account);
       const prefix = account.replace(/0+$/, '') || account;
@@ -2131,7 +3230,7 @@ const KnowledgeBasePage = ({
     return Array.from(map.values()).sort((a, b) =>
       a.account.localeCompare(b.account)
     );
-  }, [pcmList, manualFsAccounts, balanceNByAccount, balanceAccountCodes]);
+  }, [pcmList, manualFsAccounts, balanceNByAccount, balanceAccountCodes, fsStructure, structureAccountCodes]);
 
   const uniqueAccounts = useMemo(
     () => processMappingRows.map((row) => row.account),
@@ -2224,6 +3323,18 @@ const KnowledgeBasePage = ({
       status: nextStatus,
     }));
     await writeMapping(nextMappings, selectedProcesses);
+  };
+
+  const toggleProcessCollapsed = (processId: string) => {
+    setCollapsedProcesses((prev) => {
+      const next = new Set(prev);
+      if (next.has(processId)) {
+        next.delete(processId);
+      } else {
+        next.add(processId);
+      }
+      return next;
+    });
   };
 
   const handleProcessMappingDragEnd = async (event: DragEndEvent) => {
@@ -2359,11 +3470,10 @@ const KnowledgeBasePage = ({
     docSheet.addRow(['Affecter chaque compte PCM à un process.']);
     docSheet.addRow([]);
     docSheet.addRow(['✅ Onglet obligatoire: Mapping']);
-    docSheet.addRow(['✅ Colonnes obligatoires:']);
+    docSheet.addRow(['✅ Colonnes obligatoires (toutes):']);
     docSheet.addRow(['- account_code (obligatoire)']);
+    docSheet.addRow(['- account_label (obligatoire)']);
     docSheet.addRow(['- process_name (obligatoire)']);
-    docSheet.addRow(['Colonnes facultatives:']);
-    docSheet.addRow(['- account_label']);
     docSheet.addRow([]);
     docSheet.addRow(['⚠️ Règles importantes']).font = { bold: true };
     docSheet.addRow(['- 1 ligne = 1 compte PCM rattaché à 1 process.']);
@@ -2374,6 +3484,7 @@ const KnowledgeBasePage = ({
     docSheet.addRow([]);
     docSheet.addRow(['📚 Lexique']).font = { bold: true };
     docSheet.addRow(['- account_code: compte standard PCM.']);
+    docSheet.addRow(['- account_label: libellé du compte PCM.']);
     docSheet.addRow(['- process_name: nom du process.']);
 
     const rows = mappingEntries
@@ -2405,6 +3516,40 @@ const KnowledgeBasePage = ({
     });
     applyVerticalBorders(mapSheet, 3, rows.length + 1);
     docSheet.views = [{ showGridLines: false }];
+
+    const processLibSheet = workbook.addWorksheet('Processes Library');
+    processLibSheet.columns = [{ header: 'process_name', key: 'process_name', width: 32 }];
+    processLibSheet.views = [{ state: 'frozen', ySplit: 1, showGridLines: true }];
+    applyHeaderStyle(processLibSheet.getRow(1), 1);
+    cycles.forEach((cycle) => {
+      processLibSheet.addRow({ process_name: cycle.name });
+    });
+    processLibSheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1 && rowNumber % 2 === 0) {
+        applyZebra(row, 1);
+      }
+    });
+    applyVerticalBorders(processLibSheet, 1, cycles.length + 1);
+
+    const accountLibSheet = workbook.addWorksheet('Account Library');
+    accountLibSheet.columns = [
+      { header: 'account_code', key: 'account_code', width: 20 },
+      { header: 'account_label', key: 'account_label', width: 50 },
+    ];
+    accountLibSheet.views = [{ state: 'frozen', ySplit: 1, showGridLines: true }];
+    applyHeaderStyle(accountLibSheet.getRow(1), 2);
+    pcmList.forEach((item) => {
+      accountLibSheet.addRow({
+        account_code: item.account,
+        account_label: item.label,
+      });
+    });
+    accountLibSheet.eachRow((row, rowNumber) => {
+      if (rowNumber > 1 && rowNumber % 2 === 0) {
+        applyZebra(row, 2);
+      }
+    });
+    applyVerticalBorders(accountLibSheet, 2, pcmList.length + 1);
 
     await downloadExcel(workbook, 'process_mapping.xlsx');
   };
@@ -2619,6 +3764,7 @@ const KnowledgeBasePage = ({
                       variant="outline"
                       onClick={async () => {
                         if (!fsStructure) return;
+                        setBalanceMappingTree(null);
                         const cleared = clearAssignedAccounts(fsStructure.tree);
                         await setStructureAndSave(fsStructure.template, cleared);
                         setAutoMapMessage(null);
@@ -2670,7 +3816,7 @@ const KnowledgeBasePage = ({
                 </CardContent>
               </Card>
 
-              {showManualMapping && fsStructure && (
+              {activeTab === 'balances' && showManualMapping && fsStructure && (
                 <DndContext
                   sensors={sensors}
                   onDragStart={(event) => {
@@ -2783,7 +3929,8 @@ const KnowledgeBasePage = ({
                 </CardContent>
               </Card>
 
-              <DndContext sensors={sensors} onDragEnd={handleProcessMappingDragEnd}>
+              {activeTab === 'process-mapping' && (
+                <DndContext sensors={sensors} onDragEnd={handleProcessMappingDragEnd}>
                 <div className="grid gap-6 items-stretch lg:grid-cols-[1fr_1.15fr]">
                   <Card className="h-[720px] overflow-hidden">
                     <CardHeader>
@@ -2899,22 +4046,26 @@ const KnowledgeBasePage = ({
                         ) : (
                           selectedProcesses.map((process) => {
                             const assigned = accountsByProcess.get(process.id) ?? [];
+                            const isCollapsed = collapsedProcesses.has(process.id);
                             return (
                               <ProcessDropZone
                                 key={process.id}
                                 process={{ id: process.id, name: process.name }}
-                              >
-                                {process.source === 'custom' && (
-                                  <div className="flex justify-end">
+                                collapsed={isCollapsed}
+                                onToggle={() => toggleProcessCollapsed(process.id)}
+                                actions={
+                                  process.source === 'custom' ? (
                                     <button
                                       type="button"
                                       className="text-xs text-red-500 hover:text-red-700"
                                       onClick={() => handleRemoveProcess(process.id)}
+                                      data-no-dnd
                                     >
                                       Delete
                                     </button>
-                                  </div>
-                                )}
+                                  ) : null
+                                }
+                              >
                                 {assigned.length === 0 ? (
                                   <div className="text-xs text-gray-500">
                                     Drop accounts here.
@@ -2963,7 +4114,8 @@ const KnowledgeBasePage = ({
                     </CardContent>
                   </Card>
                 </div>
-              </DndContext>
+                </DndContext>
+              )}
             </>
           )}
         </TabsContent>
@@ -3006,6 +4158,25 @@ const KnowledgeBasePage = ({
                     Create manual structure
                   </Button>
                 </div>
+                {fsTemplates.length > 0 && (
+                  <div className="flex flex-col items-center gap-2 text-xs text-muted-foreground">
+                    <span>Load a saved template:</span>
+                    <select
+                      className="rounded-md border border-slate-200 bg-white px-3 py-1 text-xs text-slate-700"
+                      defaultValue=""
+                      onChange={(event) => handleSelectTemplate(event.target.value)}
+                    >
+                      <option value="" disabled>
+                        Select template...
+                      </option>
+                      {fsTemplates.map((template) => (
+                        <option key={template.id} value={template.id}>
+                          {template.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ) : (
@@ -3016,9 +4187,26 @@ const KnowledgeBasePage = ({
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm text-gray-600">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span>Structure: {fsStructure.template === 'bumex_pcm' ? 'BUMEX PCM' : 'Manual'}</span>
+                    <span>Structure: {currentTemplateLabel}</span>
                     <span>Unassigned accounts: {unassignedFsAccounts.length}</span>
                   </div>
+                  {fsTemplates.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      <span>Load template:</span>
+                      <select
+                        className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
+                        value={fsStructure.template === 'bumex_pcm' ? 'pcm' : (fsTemplateId ?? '')}
+                        onChange={(event) => handleSelectTemplate(event.target.value)}
+                      >
+                        <option value="pcm">BUMEX PCM</option>
+                        {fsTemplates.map((template) => (
+                          <option key={template.id} value={template.id}>
+                            {template.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                   {fsStructure.template === 'manual' && (
                     <div className="text-xs text-muted-foreground">
                       Select one of the 4 blocks, then build the hierarchy inside it.
@@ -3036,8 +4224,11 @@ const KnowledgeBasePage = ({
               </Card>
 
               <Card className="h-[720px] overflow-hidden">
-                <CardHeader>
+                <CardHeader className="relative">
                   <CardTitle>Hierarchy</CardTitle>
+                  <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                    {currentTemplateLabel}
+                  </div>
                 </CardHeader>
                 <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden">
                   <div className="h-full space-y-4 overflow-y-auto overflow-x-hidden pr-2">
@@ -3071,38 +4262,74 @@ const KnowledgeBasePage = ({
                     </span>
                   </div>
                   <div className="grid gap-6 lg:grid-cols-2">
-                    <Card className="h-[520px] overflow-hidden">
+                    <Card className="h-[680px] overflow-hidden">
                       <CardHeader>
                         <CardTitle>ACTIF</CardTitle>
                       </CardHeader>
-                      <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden">
-                        <div className="h-full space-y-2 overflow-y-auto overflow-x-hidden pr-2">
-                          {fsActif ? renderFsNode(fsActif) : (
+                      <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden min-h-0 flex flex-col">
+                        <div className="grid items-center gap-6 pb-2 pr-2 text-[11px] uppercase tracking-wide text-muted-foreground" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
+                          <span className="text-left" />
+                          <span className="text-left pl-1">PY</span>
+                          <span className="text-left pl-1">CY</span>
+                        </div>
+                        {fsActif && (
+                          <div className="grid items-center gap-6 rounded-md border border-slate-200/70 bg-slate-50 px-2 py-1.5 text-sm font-medium" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
+                            <span className="truncate">Total</span>
+                            <span className="text-right tabular-nums">{formatBalanceValue(fsActifAbsTotals.n1)}</span>
+                            <span className="text-right tabular-nums">{formatBalanceValue(fsActifAbsTotals.n)}</span>
+                          </div>
+                        )}
+                        <div className="flex-1 min-h-0 space-y-2 overflow-y-auto overflow-x-hidden pr-2 pb-10">
+                          {fsActif ? renderFsNode(fsActif, 0, true) : (
                             <div className="text-sm text-gray-500">No ASSETS block.</div>
                           )}
                         </div>
                       </CardContent>
                     </Card>
-                    <Card className="h-[520px] overflow-hidden">
+                    <Card className="h-[680px] overflow-hidden">
                       <CardHeader>
                         <CardTitle>PASSIF</CardTitle>
                       </CardHeader>
-                      <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden">
-                        <div className="h-full space-y-2 overflow-y-auto overflow-x-hidden pr-2">
-                          {fsPassif ? renderFsNode(fsPassif) : (
+                      <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden min-h-0 flex flex-col">
+                        <div className="grid items-center gap-6 pb-2 pr-2 text-[11px] uppercase tracking-wide text-muted-foreground" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
+                          <span className="text-left" />
+                          <span className="text-left pl-1">PY</span>
+                          <span className="text-left pl-1">CY</span>
+                        </div>
+                        {fsPassif && (
+                          <div className="grid items-center gap-6 rounded-md border border-slate-200/70 bg-slate-50 px-2 py-1.5 text-sm font-medium" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
+                            <span className="truncate">Total</span>
+                            <span className="text-right tabular-nums">{formatBalanceValue(fsPassifAbsTotals.n1)}</span>
+                            <span className="text-right tabular-nums">{formatBalanceValue(fsPassifAbsTotals.n)}</span>
+                          </div>
+                        )}
+                        <div className="flex-1 min-h-0 space-y-2 overflow-y-auto overflow-x-hidden pr-2 pb-10">
+                          {fsPassif ? renderFsNode(fsPassif, 0, true) : (
                             <div className="text-sm text-gray-500">No LIABILITIES block.</div>
                           )}
                         </div>
                       </CardContent>
                     </Card>
                   </div>
-                  <Card className="h-[520px] overflow-hidden">
+                  <Card className="h-[680px] overflow-hidden">
                     <CardHeader>
                       <CardTitle>RESULTAT</CardTitle>
                     </CardHeader>
-                    <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden">
-                      <div className="h-full space-y-2 overflow-y-auto overflow-x-hidden pr-2">
-                        {fsResultat ? renderFsNode(fsResultat) : (
+                    <CardContent className="h-[calc(100%-3.75rem)] overflow-hidden min-h-0 flex flex-col">
+                      <div className="grid items-center gap-6 pb-2 pr-2 text-[11px] uppercase tracking-wide text-muted-foreground" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
+                        <span className="text-left" />
+                        <span className="text-left pl-1">PY</span>
+                        <span className="text-left pl-1">CY</span>
+                      </div>
+                      {fsResultat && (
+                        <div className="grid items-center gap-6 rounded-md border border-slate-200/70 bg-slate-50 px-2 py-1.5 text-sm font-medium" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
+                          <span className="truncate">Total</span>
+                          <span className="text-right tabular-nums">{formatBalanceValue(resultTotals.n1)}</span>
+                          <span className="text-right tabular-nums">{formatBalanceValue(resultTotals.n)}</span>
+                        </div>
+                      )}
+                      <div className="flex-1 min-h-0 space-y-2 overflow-y-auto overflow-x-hidden pr-2 pb-10">
+                        {fsResultat ? renderFsNode(fsResultat, 0, false) : (
                           <div className="text-sm text-gray-500">No RESULT block.</div>
                         )}
                       </div>
@@ -3114,6 +4341,55 @@ const KnowledgeBasePage = ({
           )}
         </TabsContent>
       </Tabs>
+      <Dialog open={pcmLibraryOpen} onOpenChange={setPcmLibraryOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Add PCM accounts</DialogTitle>
+          </DialogHeader>
+          <div className="flex min-h-0 flex-1 flex-col gap-3">
+            <input
+              type="text"
+              value={pcmLibraryQuery}
+              onChange={(event) => setPcmLibraryQuery(event.target.value)}
+              placeholder="Search by code or label..."
+              className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
+            />
+            <div className="flex-1 min-h-0 space-y-2 overflow-y-auto pr-2 text-xs text-gray-600">
+              {pcmLibraryItems.length === 0 ? (
+                <div className="text-xs text-muted-foreground">
+                  No PCM accounts match your search.
+                </div>
+              ) : (
+                pcmLibraryItems.map((item) => {
+                  const checked = pcmLibrarySelected.has(item.account);
+                  return (
+                    <label key={item.account} className="flex items-center gap-2">
+                      <Checkbox
+                        checked={checked}
+                        onCheckedChange={() => togglePcmLibraryAccount(item.account)}
+                      />
+                      <span className="font-medium text-gray-900">
+                        {item.account}
+                      </span>
+                      <span className="truncate text-muted-foreground">
+                        {item.label}
+                      </span>
+                    </label>
+                  );
+                })
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setPcmLibraryOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={applyPcmLibrarySelection}>
+              Validate
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

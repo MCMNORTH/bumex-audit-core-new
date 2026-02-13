@@ -49,24 +49,31 @@ const parseSheetRows = (sheet: XLSX.WorkSheet): BalanceRow[] => {
   for (let r = startRow; r <= decoded.e.r; r += 1) {
     const accountCell = sheet[XLSX.utils.encode_cell({ r, c: 0 })];
     const labelCell = sheet[XLSX.utils.encode_cell({ r, c: 1 })];
-    const balanceCell = sheet[XLSX.utils.encode_cell({ r, c: 2 })];
+    const debitCell = sheet[XLSX.utils.encode_cell({ r, c: 2 })];
+    const creditCell = sheet[XLSX.utils.encode_cell({ r, c: 3 })];
 
     const accountValue = accountCell?.v;
     const labelValue = labelCell?.v;
-    const balanceValue = balanceCell?.v;
+    const debitValue = debitCell?.v;
+    const creditValue = creditCell?.v;
 
     const isEmptyRow =
       (accountValue === undefined || accountValue === null || accountValue === '') &&
       (labelValue === undefined || labelValue === null || labelValue === '') &&
-      (balanceValue === undefined || balanceValue === null || balanceValue === '');
+      (debitValue === undefined || debitValue === null || debitValue === '') &&
+      (creditValue === undefined || creditValue === null || creditValue === '');
 
     if (isEmptyRow) {
-      break;
+      continue;
     }
 
     const account = accountValue === undefined || accountValue === null ? '' : String(accountValue);
     const label = labelValue === undefined || labelValue === null ? '' : String(labelValue);
-    const balance = toNumber(balanceValue);
+    const debit = toNumber(debitValue);
+    const credit = toNumber(creditValue);
+    const hasDebit = typeof debit === 'number';
+    const hasCredit = typeof credit === 'number';
+    const balance = hasDebit || hasCredit ? (hasDebit ? debit : 0) - (hasCredit ? credit : 0) : '';
 
     if (account === '' && label === '' && balance === '') {
       continue;

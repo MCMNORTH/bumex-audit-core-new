@@ -43,6 +43,22 @@ const findSheet = (sheetNames, expected) => {
   return sheetNames.find((n) => normalize(n) === target) || null;
 };
 
+const parseAmount = (value) => {
+  if (value === null || value === undefined || value === "") return null;
+  if (typeof value === "number") return value;
+  const raw = String(value).trim();
+  if (!raw) return null;
+  const negative = raw.startsWith("(") && raw.endsWith(")");
+  const cleaned = raw
+    .replace(/[()]/g, "")
+    .replace(/\s+/g, "")
+    .replace(/\u00A0/g, "")
+    .replace(",", ".");
+  const parsed = Number(cleaned);
+  if (Number.isNaN(parsed)) return null;
+  return negative ? -parsed : parsed;
+};
+
 const parseRows = (sheet) => {
   const rows = XLSX.utils.sheet_to_json(sheet, {
     header: 1,
@@ -55,15 +71,25 @@ const parseRows = (sheet) => {
   for (const row of rows) {
     const account = String(row[0] ?? "").trim();
     const label = String(row[1] ?? "").trim();
-    const balanceRaw = row[2];
-    const balanceText = String(balanceRaw ?? "")
-      .trim()
-      .replace(/\s+/g, "")
-      .replace(",", ".");
-    const balanceNumber = typeof balanceRaw === "number" ? balanceRaw : Number(balanceText);
+    const debit = parseAmount(row[2]);
+    const credit = parseAmount(row[3]);
+    const hasDebit = debit !== null;
+    const hasCredit = credit !== null;
+    const hasAmount = hasDebit || hasCredit;
+    let balanceNumber = null;
+    if (hasAmount) {
+      if (hasDebit && !hasCredit) {
+        // File uses a single signed amount column.
+        balanceNumber = debit;
+      } else if (!hasDebit && hasCredit) {
+        balanceNumber = -credit;
+      } else {
+        balanceNumber = (debit ?? 0) - (credit ?? 0);
+      }
+    }
 
-    const isEmptyRow = account === "" && label === "" && (balanceText === "" || Number.isNaN(balanceNumber));
-    if (isEmptyRow) break;
+    const isEmptyRow = account === "" && label === "" && !hasAmount;
+    if (isEmptyRow) continue;
     if (!account) continue;
 
     parsed.push({
