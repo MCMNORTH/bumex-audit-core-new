@@ -439,7 +439,7 @@ const ProjectEdit = () => {
   }
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
+    <div className="flex min-h-screen bg-gray-50">
       {!isDashboardOrKnowledgeBase && (
         <ProjectSidebar
           projectName={project?.engagement_name || ''}
@@ -455,7 +455,7 @@ const ProjectEdit = () => {
         />
       )}
 
-      <div className={`flex-1 overflow-y-auto ${!isDashboardOrKnowledgeBase ? 'pl-64' : ''}`}>
+      <div className={`flex-1 ${!isDashboardOrKnowledgeBase ? 'pl-64' : ''}`}>
         <ProjectEditContent
         project={project}
         clients={clients}

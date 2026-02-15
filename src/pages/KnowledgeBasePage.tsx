@@ -3044,6 +3044,15 @@ const KnowledgeBasePage = ({
           </button>
               </div>
             )}
+    {node.kind === 'account' && allowEdit && (
+      <button
+        type="button"
+        className="text-xs text-red-500 hover:text-red-700"
+        onClick={() => handleDeleteNode(node.id)}
+      >
+        Remove
+      </button>
+    )}
           </div>
           {!isCollapsed && node.accounts.length > 0 && (
             <div className="space-y-1" style={{ paddingLeft: padding + 12 }}>
