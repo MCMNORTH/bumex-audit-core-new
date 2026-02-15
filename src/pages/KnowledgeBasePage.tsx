@@ -197,15 +197,41 @@ const applyVerticalBorders = (
   }
 };
 
+const autoFitColumns = (
+  sheet: ExcelJS.Worksheet,
+  options: { minWidth?: number; maxWidth?: number } = {}
+) => {
+  const { minWidth = 12, maxWidth = 60 } = options;
+  sheet.columns?.forEach((column) => {
+    let maxLength = 0;
+    column.eachCell({ includeEmpty: true }, (cell) => {
+      const raw = cell.value;
+      const text = raw === null || raw === undefined ? '' : String(raw);
+      maxLength = Math.max(maxLength, text.length);
+    });
+    const nextWidth = Math.min(maxWidth, Math.max(minWidth, maxLength + 2));
+    column.width = nextWidth;
+  });
+};
+
 
 const FsAccountRowDisplay = ({
   row,
   showExcelIndicator = false,
+  className = '',
+  fullWidth = true,
+  style,
 }: {
   row: BalanceRow & { hasExcel?: boolean };
   showExcelIndicator?: boolean;
+  className?: string;
+  fullWidth?: boolean;
+  style?: CSSProperties;
 }) => (
-  <div className="flex w-full min-w-0 items-center justify-between rounded-md border bg-white px-3 py-2 text-sm">
+  <div
+    className={`flex ${fullWidth ? 'w-full' : 'w-auto'} min-w-0 items-center justify-between rounded-md border bg-white px-3 py-2 text-sm ${className}`}
+    style={style}
+  >
     <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
       <span className="whitespace-nowrap font-medium">{row.account}</span>
       <span className="truncate whitespace-nowrap text-xs text-muted-foreground">
@@ -234,8 +260,10 @@ const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
   const style: CSSProperties = {
     transform: CSS.Translate.toString(transform),
     transition,
-    opacity: isDragging ? 0.6 : 1,
-    width: '100%',
+    opacity: 1,
+    width: isDragging ? 320 : '100%',
+    maxWidth: isDragging ? 320 : undefined,
+    display: isDragging ? 'inline-flex' : 'block',
   };
 
   return (
@@ -247,7 +275,11 @@ const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
       className="cursor-grab active:cursor-grabbing"
       title="Drag to a process"
     >
-      <FsAccountRowDisplay row={row} showExcelIndicator />
+      <FsAccountRowDisplay
+        row={row}
+        showExcelIndicator
+        fullWidth={!isDragging}
+      />
     </div>
   );
 };
@@ -312,8 +344,10 @@ const DraggableFsAccount = ({ row }: { row: BalanceRow }) => {
   const style: CSSProperties = {
     transform: CSS.Translate.toString(transform),
     transition,
-    opacity: isDragging ? 0.6 : 1,
-    width: '100%',
+    opacity: 1,
+    width: isDragging ? 320 : '100%',
+    maxWidth: isDragging ? 320 : undefined,
+    display: isDragging ? 'inline-flex' : 'block',
   };
 
   return (
@@ -325,7 +359,7 @@ const DraggableFsAccount = ({ row }: { row: BalanceRow }) => {
       className="cursor-grab active:cursor-grabbing"
       title="Drag to a section"
     >
-      <FsAccountRowDisplay row={row} />
+      <FsAccountRowDisplay row={row} fullWidth={!isDragging} />
     </div>
   );
 };
@@ -404,6 +438,7 @@ const KnowledgeBasePage = ({
   const [fsTemplateId, setFsTemplateId] = useState<string | null>(null);
   const [fsTemplateName, setFsTemplateName] = useState<string | null>(null);
   const [activeFsRow, setActiveFsRow] = useState<BalanceRow | null>(null);
+  const [dragOverlayWidth, setDragOverlayWidth] = useState<number | null>(null);
   const [fsError, setFsError] = useState<string | null>(null);
   const [fsLoading, setFsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState<'financial-statements' | 'balances' | 'process-mapping'>('financial-statements');
@@ -1922,6 +1957,24 @@ const KnowledgeBasePage = ({
       'Subvention d’équipement inscrites au comptes de résultat (solde débiteur)'
     );
 
+    const ensureRegulActifAttenteAccount = (code: string, label: string) => {
+      if (!regulActifAttente) return;
+      const padded = padAccount(code);
+      const exists = regulActifAttente.children.some(
+        (child) => child.kind === 'account' && padAccount(child.code ?? '') === padded
+      );
+      if (exists) return;
+      const pcmAccount = pcmByCode.get(padded);
+      regulActifAttente.children.push(
+        createAccountNode(padded, pcmAccount?.label ?? label)
+      );
+    };
+
+    ensureRegulActifAttenteAccount(
+      '488100',
+      'Comptes dâ€™attente et Ã  rÃ©gulariser'
+    );
+
     return rootNodes;
   };
 
@@ -2692,6 +2745,7 @@ const KnowledgeBasePage = ({
       }
     });
     applyVerticalBorders(mapSheet, 4, rows.length + 1);
+    autoFitColumns(mapSheet, { minWidth: 14, maxWidth: 60 });
     docSheet.views = [{ showGridLines: false }];
 
     const libSheet = workbook.addWorksheet('Library');
@@ -2713,6 +2767,7 @@ const KnowledgeBasePage = ({
       }
     });
     applyVerticalBorders(libSheet, 2, pcmList.length + 1);
+    autoFitColumns(libSheet, { minWidth: 14, maxWidth: 60 });
 
     await downloadExcel(workbook, 'balance_mapping.xlsx');
   };
@@ -3524,6 +3579,7 @@ const KnowledgeBasePage = ({
       }
     });
     applyVerticalBorders(mapSheet, 3, rows.length + 1);
+    autoFitColumns(mapSheet, { minWidth: 14, maxWidth: 60 });
     docSheet.views = [{ showGridLines: false }];
 
     const processLibSheet = workbook.addWorksheet('Processes Library');
@@ -3539,6 +3595,7 @@ const KnowledgeBasePage = ({
       }
     });
     applyVerticalBorders(processLibSheet, 1, cycles.length + 1);
+    autoFitColumns(processLibSheet, { minWidth: 14, maxWidth: 50 });
 
     const accountLibSheet = workbook.addWorksheet('Account Library');
     accountLibSheet.columns = [
@@ -3559,6 +3616,7 @@ const KnowledgeBasePage = ({
       }
     });
     applyVerticalBorders(accountLibSheet, 2, pcmList.length + 1);
+    autoFitColumns(accountLibSheet, { minWidth: 14, maxWidth: 60 });
 
     await downloadExcel(workbook, 'process_mapping.xlsx');
   };
@@ -3644,13 +3702,6 @@ const KnowledgeBasePage = ({
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Financial Statements</h1>
-        <p className="text-gray-600">
-          Review the trial balance, process mapping, and financial statements.
-        </p>
-      </div>
-
       <Tabs
         value={activeTab}
         onValueChange={(value) =>
@@ -3835,11 +3886,20 @@ const KnowledgeBasePage = ({
                     const row = mappingSourceUniqueRows.find(
                       (item) => item.account === account
                     );
+                    const width =
+                      event.active.rect.current?.initial?.width ??
+                      event.active.rect.current?.translated?.width ??
+                      null;
+                    setDragOverlayWidth(width);
                     setActiveFsRow(row ?? null);
                   }}
-                  onDragCancel={() => setActiveFsRow(null)}
+                  onDragCancel={() => {
+                    setActiveFsRow(null);
+                    setDragOverlayWidth(null);
+                  }}
                   onDragEnd={(event) => {
                     setActiveFsRow(null);
+                    setDragOverlayWidth(null);
                     handleFsDragEnd(event);
                   }}
                 >
@@ -3885,9 +3945,7 @@ const KnowledgeBasePage = ({
                       </CardContent>
                     </Card>
                   </div>
-                  <DragOverlay>
-                    {activeFsRow ? <FsAccountRowDisplay row={activeFsRow} /> : null}
-                  </DragOverlay>
+                  <DragOverlay />
                 </DndContext>
               )}
             </>
@@ -4195,8 +4253,10 @@ const KnowledgeBasePage = ({
                   <CardTitle>Structure</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3 text-sm text-gray-600">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span>Structure: {currentTemplateLabel}</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-sm text-slate-700">
+                      Structure: {currentTemplateLabel}
+                    </span>
                     <span>Unassigned accounts: {unassignedFsAccounts.length}</span>
                   </div>
                   {fsTemplates.length > 0 && (
