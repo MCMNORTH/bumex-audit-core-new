@@ -258,12 +258,10 @@ const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
     });
 
   const style: CSSProperties = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    opacity: 1,
-    width: isDragging ? 320 : '100%',
-    maxWidth: isDragging ? 320 : undefined,
-    display: isDragging ? 'inline-flex' : 'block',
+    transform: isDragging ? undefined : CSS.Translate.toString(transform),
+    transition: isDragging ? undefined : transition,
+    visibility: isDragging ? 'hidden' : 'visible',
+    width: '100%',
   };
 
   return (
@@ -275,11 +273,7 @@ const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
       className="cursor-grab active:cursor-grabbing"
       title="Drag to a process"
     >
-      <FsAccountRowDisplay
-        row={row}
-        showExcelIndicator
-        fullWidth={!isDragging}
-      />
+      <FsAccountRowDisplay row={row} showExcelIndicator />
     </div>
   );
 };
@@ -342,12 +336,10 @@ const DraggableFsAccount = ({ row }: { row: BalanceRow }) => {
     });
 
   const style: CSSProperties = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    opacity: 1,
-    width: isDragging ? 320 : '100%',
-    maxWidth: isDragging ? 320 : undefined,
-    display: isDragging ? 'inline-flex' : 'block',
+    transform: isDragging ? undefined : CSS.Translate.toString(transform),
+    transition: isDragging ? undefined : transition,
+    visibility: isDragging ? 'hidden' : 'visible',
+    width: '100%',
   };
 
   return (
@@ -359,7 +351,7 @@ const DraggableFsAccount = ({ row }: { row: BalanceRow }) => {
       className="cursor-grab active:cursor-grabbing"
       title="Drag to a section"
     >
-      <FsAccountRowDisplay row={row} fullWidth={!isDragging} />
+      <FsAccountRowDisplay row={row} />
     </div>
   );
 };
@@ -3945,7 +3937,22 @@ const KnowledgeBasePage = ({
                       </CardContent>
                     </Card>
                   </div>
-                  <DragOverlay />
+                  <DragOverlay adjustScale={false} dropAnimation={null}>
+                    {activeFsRow ? (
+                      <div
+                        className="pointer-events-none"
+                        style={{
+                          width: dragOverlayWidth ? `${dragOverlayWidth}px` : undefined,
+                        }}
+                      >
+                        <FsAccountRowDisplay
+                          row={activeFsRow}
+                          fullWidth={false}
+                          className="w-auto"
+                        />
+                      </div>
+                    ) : null}
+                  </DragOverlay>
                 </DndContext>
               )}
             </>
