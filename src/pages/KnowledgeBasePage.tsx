@@ -90,7 +90,7 @@ type FsTemplate = {
 class NoDndPointerSensor extends PointerSensor {
   static activators = [
     {
-      eventName: 'onPointerDown',
+      eventName: 'onPointerDown' as const,
       handler: ({ nativeEvent }: { nativeEvent: PointerEvent }) => {
         const target = nativeEvent.target as HTMLElement | null;
         if (target?.closest?.('[data-no-dnd]')) {
@@ -252,14 +252,14 @@ const FsAccountRowDisplay = ({
 );
 
 const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `account:${row.account}`,
     });
 
   const style: CSSProperties = {
     transform: isDragging ? undefined : CSS.Translate.toString(transform),
-    transition: isDragging ? undefined : transition,
+    transition: undefined,
     visibility: isDragging ? 'hidden' : 'visible',
     width: '100%',
   };
@@ -330,14 +330,14 @@ const ProcessDropZone = ({
 };
 
 const DraggableFsAccount = ({ row }: { row: BalanceRow }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
       id: `fs-account:${row.account}`,
     });
 
   const style: CSSProperties = {
     transform: isDragging ? undefined : CSS.Translate.toString(transform),
-    transition: isDragging ? undefined : transition,
+    transition: undefined,
     visibility: isDragging ? 'hidden' : 'visible',
     width: '100%',
   };
@@ -2070,7 +2070,7 @@ const KnowledgeBasePage = ({
     });
     let ownTotals = sumBalancesForAccounts(ownAccounts);
     if (node.kind === 'account' && node.code && node.accounts.length === 0) {
-      ownTotals = sumBalancesForAccounts([node.code]);
+      ownTotals = sumBalancesForAccounts(new Set([node.code]));
     }
     const childTotals = childResults.reduce(
       (acc, result) => ({

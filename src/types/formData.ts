@@ -290,6 +290,8 @@ export interface ProjectFormData {
   design_conclusion?: string;
   implementation_conclusion?: string;
   plan_operating_test?: string;
+  di_rafit_rows?: Array<{ id: number; rafit: string; itLayer: string; howAddresses: string }>;
+  di_operator_rows?: Array<{ id: number; role: string; authority: string }>;
   // Qualitative factors fields
   qualitative_factors_table: QualitativeFactorItem[];
   
@@ -921,6 +923,10 @@ export const getInitialFormData = (): ProjectFormData => ({
   selected_business_processes: [],
   entity_has_material_inventory: '',
   confirm_inventory_workpaper: false,
+
+  // D&I Section initial values
+  di_rafit_rows: [{ id: 1, rafit: '', itLayer: '', howAddresses: '' }],
+  di_operator_rows: [{ id: 1, role: '', authority: '' }],
 
   // TOE fields initial values  
   comptesAPouvoir_design_procedures_table: [],

@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { ProjectFormData } from '@/types/formData';
 import { CommentableQuestion } from './Comments';
 import { useTranslation } from '@/contexts/TranslationContext';
@@ -19,41 +18,38 @@ interface DISectionProps {
 
 const DISection = ({ formData, onFormDataChange }: DISectionProps) => {
   const { t } = useTranslation();
-  const [rafitRows, setRafitRows] = useState([
-    { id: 1, rafit: '', itLayer: '', howAddresses: '' }
-  ]);
-  const [operatorRows, setOperatorRows] = useState([
-    { id: 1, role: '', authority: '' }
-  ]);
+  
+  const rafitRows = formData.di_rafit_rows || [{ id: 1, rafit: '', itLayer: '', howAddresses: '' }];
+  const operatorRows = formData.di_operator_rows || [{ id: 1, role: '', authority: '' }];
 
   const addRafitRow = () => {
     const newId = Math.max(...rafitRows.map(r => r.id), 0) + 1;
-    setRafitRows([...rafitRows, { id: newId, rafit: '', itLayer: '', howAddresses: '' }]);
+    onFormDataChange({ di_rafit_rows: [...rafitRows, { id: newId, rafit: '', itLayer: '', howAddresses: '' }] });
   };
 
   const removeRafitRow = (id: number) => {
-    setRafitRows(rafitRows.filter(row => row.id !== id));
+    onFormDataChange({ di_rafit_rows: rafitRows.filter(row => row.id !== id) });
   };
 
   const updateRafitRow = (id: number, field: string, value: string) => {
-    setRafitRows(rafitRows.map(row => 
+    onFormDataChange({ di_rafit_rows: rafitRows.map(row => 
       row.id === id ? { ...row, [field]: value } : row
-    ));
+    ) });
   };
 
   const addOperatorRow = () => {
     const newId = Math.max(...operatorRows.map(r => r.id), 0) + 1;
-    setOperatorRows([...operatorRows, { id: newId, role: '', authority: '' }]);
+    onFormDataChange({ di_operator_rows: [...operatorRows, { id: newId, role: '', authority: '' }] });
   };
 
   const removeOperatorRow = (id: number) => {
-    setOperatorRows(operatorRows.filter(row => row.id !== id));
+    onFormDataChange({ di_operator_rows: operatorRows.filter(row => row.id !== id) });
   };
 
   const updateOperatorRow = (id: number, field: string, value: string) => {
-    setOperatorRows(operatorRows.map(row => 
+    onFormDataChange({ di_operator_rows: operatorRows.map(row => 
       row.id === id ? { ...row, [field]: value } : row
-    ));
+    ) });
   };
 
   const handleRadioChange = (field: string, value: string) => {
