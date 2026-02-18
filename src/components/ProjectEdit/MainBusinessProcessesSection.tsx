@@ -20,31 +20,6 @@ const businessProcessCards: BusinessProcessCard[] = [
     titleKey: 'mainBusinessProcesses.litigationClaims'
   },
   {
-    id: 'ventes-clients',
-    number: '3.',
-    titleKey: 'mainBusinessProcesses.ventesClients'
-  },
-  {
-    id: 'achats-fournisseurs',
-    number: '4.',
-    titleKey: 'mainBusinessProcesses.achatsFournisseurs'
-  },
-  {
-    id: 'immobilisations-incorporelles',
-    number: '5.',
-    titleKey: 'mainBusinessProcesses.immobilisations'
-  },
-  {
-    id: 'stocks',
-    number: '6.',
-    titleKey: 'mainBusinessProcesses.stocks'
-  },
-  {
-    id: 'tresorerie',
-    number: '7.',
-    titleKey: 'mainBusinessProcesses.tresorerie'
-  },
-  {
     id: 'mnsa-accounts',
     number: '8.',
     titleKey: 'mainBusinessProcesses.mnsaAccounts'

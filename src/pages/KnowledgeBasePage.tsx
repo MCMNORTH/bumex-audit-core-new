@@ -3694,6 +3694,36 @@ const KnowledgeBasePage = ({
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Financial Statements Workflow</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-gray-700">
+          <p>
+            This page is organized in 3 recommended steps. You can navigate freely,
+            but the expected workflow is:
+          </p>
+          <ol className="list-decimal space-y-1 pl-5">
+            <li>
+              <span className="font-medium">Financial Statements:</span> build the financial
+              statement structure.
+            </li>
+            <li>
+              <span className="font-medium">Trial Balance:</span> map imported accounts to the
+              structure.
+            </li>
+            <li>
+              <span className="font-medium">Process Mapping:</span> map accounts to business
+              processes.
+            </li>
+          </ol>
+          <p className="pt-1">
+            After Process Mapping is completed, selected processes flow into{' '}
+            <span className="font-medium">Audit Path &gt; 3. Business Process</span>.
+          </p>
+        </CardContent>
+      </Card>
+
       <Tabs
         value={activeTab}
         onValueChange={(value) =>

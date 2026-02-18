@@ -6,6 +6,7 @@ interface ProjectHeaderProps {
   projectName: string;
   engagementId: string;
   activeSection: string;
+  currentSectionTitle?: string;
   clientName?: string;
   auditType: string;
   onBack: () => void;
@@ -17,6 +18,7 @@ const ProjectHeader = ({
   projectName,
   engagementId,
   activeSection,
+  currentSectionTitle,
   clientName,
   auditType,
   onBack,
@@ -88,7 +90,25 @@ const ProjectHeader = ({
       case 'controle-24-toe': return '2 - TOE';
       case 'controle-25': return 'Contrôle 25';
       case 'related-parties': return 'RP - Related parties';
+      case 'related-parties-intercos': return 'Intercos. R?conciliation des comptes intercos';
       case 'litigation-claims': return '2. Litigation, claims and assessments';
+      case 'litigation-claims-leadsheet': return '0. Leadsheet';
+      case 'litigation-claims-understanding': return '1. Understanding, Risks and Response';
+      case 'litigation-claims-laws': return '1.1. Understand laws & litigation';
+      case 'litigation-claims-results': return '2. Results';
+      case 'litigation-claims-substantive': return 'SUB. Substantive Procedures';
+      case 'litigation-claims-substantive-tod-01': return 'TOD_01. Revue des PRC';
+      case 'litigation-claims-substantive-tod-01-design': return '1. Design TOD';
+      case 'litigation-claims-substantive-tod-01-perform': return '2. Perform TOD';
+      case 'conclusions-reporting-evaluate-result': return '1. Evaluate audit result';
+      case 'conclusions-reporting-reporting': return '2. Reporting';
+      case 'conclusions-reporting-final-analytics': return '0. Final analytics';
+      case 'conclusions-reporting-risk-update': return '1. Risk assessment update';
+      case 'conclusions-reporting-management-bias': return '2. Management bias';
+      case 'conclusions-reporting-evaluate-financial-statements': return '3. Evaluate financial statements';
+      case 'conclusions-reporting-summary-misstatements': return '4. Summary of audit misstatements';
+      case 'conclusions-reporting-subsequent-events': return '5. Subsequent events';
+      case 'conclusions-reporting-completion': return '6. Completion';
       case 'ventes-clients': return '3. Ventes - Clients';
       case 'achats-fournisseurs': return '4. Achats - Fournisseurs';
       case 'immobilisations-incorporelles': return '5. Immobilisations Incorporelles';
@@ -106,7 +126,7 @@ const ProjectHeader = ({
       case 'sign-off-2': return 'Sign-off';
       case 'sign-off-3': return 'Sign-off';
       
-      default: return 'Project Section';
+      default: return currentSectionTitle || 'Project Section';
     }
   };
 

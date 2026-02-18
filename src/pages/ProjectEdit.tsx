@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProjectData } from '@/hooks/useProjectData';
@@ -9,6 +9,8 @@ import ProjectEditContent from '@/components/ProjectEdit/ProjectEditContent';
 import LoadingScreen from '@/components/ProjectEdit/LoadingScreen';
 import { RightToolbar, CommentsPanel } from '@/components/ProjectEdit/Comments';
 import { canViewTeamManagement, getProjectRole, getPendingReviewRoles } from '@/utils/permissions';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 const ProjectEdit = () => {
   const navigate = useNavigate();
@@ -18,6 +20,8 @@ const ProjectEdit = () => {
   const [showCommentsPanel, setShowCommentsPanel] = useState(false);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [selectedFieldLabel, setSelectedFieldLabel] = useState<string>('');
+  const [mappedProcesses, setMappedProcesses] = useState<Array<{ id: string; name: string }>>([]);
+  const [isFinancialStatementsValidated, setIsFinancialStatementsValidated] = useState(false);
 
   const {
     id,
@@ -35,6 +39,46 @@ const ProjectEdit = () => {
     handleSignOff,
     handleUnsign,
   } = useProjectData();
+
+  useEffect(() => {
+    if (!id) {
+      setMappedProcesses([]);
+      setIsFinancialStatementsValidated(false);
+      return;
+    }
+
+    const mappingRef = doc(db, `projects/${id}/knowledge_base/process_mapping`);
+    const fsRef = doc(db, `projects/${id}/knowledge_base/financial_statements`);
+
+    const unsubMapping = onSnapshot(mappingRef, (snap) => {
+      if (!snap.exists()) {
+        setMappedProcesses([]);
+        return;
+      }
+      const data = snap.data() as { processes?: Array<{ id?: string; name?: string }> };
+      const processes = (data.processes ?? [])
+        .map((processItem, index) => ({
+          id: String(processItem.id ?? `process-${index + 1}`),
+          name: String(processItem.name ?? '').trim(),
+        }))
+        .filter((processItem) => processItem.name.length > 0);
+      setMappedProcesses(processes);
+    });
+
+    const unsubFs = onSnapshot(fsRef, (snap) => {
+      if (!snap.exists()) {
+        setIsFinancialStatementsValidated(false);
+        return;
+      }
+      const data = snap.data() as { tree?: unknown[] };
+      setIsFinancialStatementsValidated(Array.isArray(data.tree) && data.tree.length > 0);
+    });
+
+    return () => {
+      unsubMapping();
+      unsubFs();
+    };
+  }, [id]);
 
   const {
     comments,
@@ -276,15 +320,59 @@ const ProjectEdit = () => {
                 { id: 'controle-25', title: 'Contrôle 25', subtitle: 'SOD', active: false, signOffLevel: 'incharge' as const },
               ]
             },
-            { id: 'related-parties', title: 'RP - Related parties', active: false, signOffLevel: 'incharge' as const },
+            {
+              id: 'related-parties',
+              title: 'RP - Related parties',
+              active: false,
+              isParent: true,
+              signOffLevel: 'incharge' as const,
+              children: [
+                {
+                  id: 'related-parties-intercos',
+                  title: 'Intercos',
+                  subtitle: 'R\u00e9conciliation des comptes intercos',
+                  active: false,
+                  signOffLevel: 'incharge' as const,
+                },
+              ],
+            },
           ]
         },
-        { id: 'litigation-claims', title: 'Litigation, claims and assessments', number: '2.', active: false, signOffLevel: 'incharge' as const },
-        { id: 'ventes-clients', title: 'Ventes - Clients', number: '3.', active: false, signOffLevel: 'incharge' as const },
-        { id: 'achats-fournisseurs', title: 'Achats - Fournisseurs', number: '4.', active: false, signOffLevel: 'incharge' as const },
-        { id: 'immobilisations-incorporelles', title: 'Immobilisations Incorporelles', number: '5.', active: false, signOffLevel: 'incharge' as const },
-        { id: 'stocks', title: 'Stocks', number: '6.', active: false, signOffLevel: 'incharge' as const },
-        { id: 'tresorerie', title: 'Trésorerie', number: '7.', active: false, signOffLevel: 'incharge' as const },
+        {
+          id: 'litigation-claims',
+          title: 'Litigation, claims and assessments',
+          number: '2.',
+          active: false,
+          isParent: true,
+          signOffLevel: 'incharge' as const,
+          children: [
+            { id: 'litigation-claims-leadsheet', title: 'Leadsheet', number: '0', active: false, signOffLevel: 'incharge' as const },
+            { id: 'litigation-claims-understanding', title: 'Understanding, Risks and Response', number: '1', active: false, signOffLevel: 'incharge' as const },
+            { id: 'litigation-claims-laws', title: 'Understand laws & litigation', number: '1.1', active: false, signOffLevel: 'incharge' as const },
+            { id: 'litigation-claims-results', title: 'Results', number: '2', active: false, signOffLevel: 'incharge' as const },
+            {
+              id: 'litigation-claims-substantive',
+              title: 'Substantive Procedures',
+              number: 'SUB',
+              active: false,
+              isParent: true,
+              signOffLevel: 'incharge' as const,
+              children: [
+                {
+                  id: 'litigation-claims-substantive-tod-01',
+                  title: 'TOD_01. Revue des PRC',
+                  active: false,
+                  isParent: true,
+                  signOffLevel: 'incharge' as const,
+                  children: [
+                    { id: 'litigation-claims-substantive-tod-01-design', title: '1. Design TOD', active: false, signOffLevel: 'incharge' as const },
+                    { id: 'litigation-claims-substantive-tod-01-perform', title: '2. Perform TOD', active: false, signOffLevel: 'incharge' as const },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
         { id: 'mnsa-material-accounts', title: 'MNSA. Material non-significant accounts', number: '8.', active: false, signOffLevel: 'incharge' as const },
       ],
     },
@@ -295,8 +383,87 @@ const ProjectEdit = () => {
       active: false,
       number: '4.',
       signOffLevel: 'manager' as const,
+      children: [
+        {
+          id: 'conclusions-reporting-evaluate-result',
+          title: '1. Evaluate audit result',
+          active: false,
+          isParent: true,
+          signOffLevel: 'incharge' as const,
+          children: [
+            { id: 'conclusions-reporting-final-analytics', title: '0. Final analytics', active: false, signOffLevel: 'incharge' as const },
+            { id: 'conclusions-reporting-risk-update', title: '1. Risk assessment update', active: false, signOffLevel: 'incharge' as const },
+            { id: 'conclusions-reporting-management-bias', title: '2. Management bias', active: false, signOffLevel: 'incharge' as const },
+            { id: 'conclusions-reporting-evaluate-financial-statements', title: '3. Evaluate financial statements', active: false, signOffLevel: 'incharge' as const },
+            { id: 'conclusions-reporting-summary-misstatements', title: '4. Summary of audit misstatements', active: false, signOffLevel: 'incharge' as const },
+            { id: 'conclusions-reporting-subsequent-events', title: '5. Subsequent events', active: false, signOffLevel: 'incharge' as const },
+            { id: 'conclusions-reporting-completion', title: '6. Completion', active: false, signOffLevel: 'incharge' as const },
+          ],
+        },
+        {
+          id: 'conclusions-reporting-reporting',
+          title: '2. Reporting',
+          active: false,
+          signOffLevel: 'incharge' as const,
+        },
+      ],
     },
   ];
+
+  const sidebarSectionsWithDynamicProcesses = useMemo(() => {
+    const copy = JSON.parse(JSON.stringify(sidebarSections));
+    const businessProcesses = copy.find((section: any) => section.id === 'business-processes');
+    if (!businessProcesses || !Array.isArray(businessProcesses.children)) return copy;
+
+    const baseChildren = businessProcesses.children.filter(
+      (child: any) => typeof child.id === 'string' && !child.id.startsWith('bp-process-')
+    );
+    const mnsaIndex = baseChildren.findIndex((child: any) => child.id === 'mnsa-material-accounts');
+
+    const slugify = (value: string) =>
+      value
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    const dynamicSections =
+      isFinancialStatementsValidated
+        ? mappedProcesses.map((processItem, index) => {
+            const slug = slugify(processItem.name || processItem.id || `process-${index + 1}`);
+            const baseId = `bp-process-${slug || processItem.id || index + 1}`;
+            return {
+              id: baseId,
+              title: processItem.name,
+              number: `${index + 3}.`,
+              active: false,
+              isParent: true,
+              signOffLevel: 'incharge' as const,
+              meta: {
+                processId: processItem.id,
+                processName: processItem.name,
+              },
+              children: [
+                { id: `${baseId}-leadsheet`, title: 'Leadsheet', number: '0', active: false, signOffLevel: 'incharge' as const, meta: { processId: processItem.id, processName: processItem.name } },
+                { id: `${baseId}-understanding`, title: 'Understanding, Risks and Response', number: '1', active: false, signOffLevel: 'incharge' as const, meta: { processId: processItem.id, processName: processItem.name } },
+                { id: `${baseId}-results`, title: 'Results', number: '2', active: false, signOffLevel: 'incharge' as const, meta: { processId: processItem.id, processName: processItem.name } },
+                { id: `${baseId}-ca`, title: 'Control activities', number: 'CA', active: false, signOffLevel: 'incharge' as const, meta: { processId: processItem.id, processName: processItem.name } },
+                { id: `${baseId}-sub`, title: 'Substantive Procedures', number: 'SUB', active: false, signOffLevel: 'incharge' as const, meta: { processId: processItem.id, processName: processItem.name } },
+              ],
+            };
+          })
+        : [];
+
+    if (mnsaIndex >= 0) {
+      baseChildren.splice(mnsaIndex, 0, ...dynamicSections);
+    } else {
+      baseChildren.push(...dynamicSections);
+    }
+
+    businessProcesses.children = baseChildren;
+    return copy;
+  }, [sidebarSections, mappedProcesses, isFinancialStatementsValidated]);
 
   const isDashboardOrKnowledgeBase =
     activeSection === 'project-dashboard' || activeSection === 'knowledge-base';
@@ -377,7 +544,7 @@ const ProjectEdit = () => {
   const teamMemberCount = teamMemberIds.length;
 
   // Calculate sign-off stats and collect unsigned sections
-  const getSignOffData = (sections: typeof sidebarSections) => {
+  const getSignOffData = (sections: any[]) => {
     let total = 0;
     let unsigned = 0;
     const unsignedSections: { id: string; title: string; number?: string }[] = [];
@@ -404,10 +571,10 @@ const ProjectEdit = () => {
     return { total, unsigned, unsignedSections };
   };
   
-  const signOffData = getSignOffData(sidebarSections);
+  const signOffData = getSignOffData(sidebarSectionsWithDynamicProcesses);
 
   // Calculate pending reviews
-  const getPendingReviewsData = (sections: typeof sidebarSections) => {
+  const getPendingReviewsData = (sections: any[]) => {
     const pendingReviews: { sectionId: string; sectionTitle: string; pendingRoles: string[] }[] = [];
     
     const processSection = (section: any) => {
@@ -432,7 +599,20 @@ const ProjectEdit = () => {
     return pendingReviews;
   };
 
-  const pendingReviews = getPendingReviewsData(sidebarSections);
+  const pendingReviews = getPendingReviewsData(sidebarSectionsWithDynamicProcesses);
+
+  const findSectionTitle = (sections: any[], sectionId: string): string | null => {
+    for (const section of sections) {
+      if (section.id === sectionId) return section.number ? `${section.number} ${section.title}` : section.title;
+      if (Array.isArray(section.children) && section.children.length > 0) {
+        const nested = findSectionTitle(section.children, sectionId);
+        if (nested) return nested;
+      }
+    }
+    return null;
+  };
+
+  const currentSectionTitle = findSectionTitle(sidebarSectionsWithDynamicProcesses, activeSection) ?? undefined;
 
   if (loading) {
     return <LoadingScreen />;
@@ -444,7 +624,7 @@ const ProjectEdit = () => {
         <ProjectSidebar
           projectName={project?.engagement_name || ''}
           clientName={selectedClient?.name}
-          sections={sidebarSections}
+          sections={sidebarSectionsWithDynamicProcesses}
           activeSection={activeSection}
           currentUserRole={user?.role}
           formData={formData}
@@ -483,7 +663,7 @@ const ProjectEdit = () => {
         onRemoveMRRFile={handleRemoveMRRFileWrapper}
         onDownloadMRRFile={handleDownloadMRRFileWrapper}
         // Pass sidebarSections for dynamic cards and sign-off handlers
-        sidebarSections={sidebarSections}
+        sidebarSections={sidebarSectionsWithDynamicProcesses}
         onSectionChange={setActiveSection}
         onReview={handleReview}
         onUnreview={handleUnreview}
@@ -494,6 +674,7 @@ const ProjectEdit = () => {
         signOffData={signOffData}
         pendingReviews={pendingReviews}
         teamMemberCount={teamMemberCount}
+        currentSectionTitle={currentSectionTitle}
       />
 
       <RightToolbar
