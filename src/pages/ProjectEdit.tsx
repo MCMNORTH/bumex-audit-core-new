@@ -297,7 +297,30 @@ const ProjectEdit = () => {
           isParent: true,
           signOffLevel: 'incharge' as const,
           children: [
-            { id: 'financial-reporting-process', title: 'Financial reporting process', number: '1.', active: false, signOffLevel: 'incharge' as const },
+            {
+              id: 'financial-reporting-process',
+              title: 'Financial reporting process',
+              number: '1.',
+              active: false,
+              isParent: true,
+              signOffLevel: 'incharge' as const,
+              children: [
+                {
+                  id: 'financial-reporting-understand-financial-statements',
+                  title: 'Understand the financial statements',
+                  number: '1.',
+                  active: false,
+                  signOffLevel: 'incharge' as const,
+                },
+                {
+                  id: 'financial-reporting-relevant-processes',
+                  title: 'Relevant processes',
+                  number: '2.',
+                  active: false,
+                  signOffLevel: 'incharge' as const,
+                },
+              ],
+            },
             { 
               id: 'control-activities', 
               title: 'CA - Control activities', 

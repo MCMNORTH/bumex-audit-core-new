@@ -23,6 +23,8 @@ import DISection from './DISection';
 import ComptesAPouvoirSection from './ComptesAPouvoirSection';
 import FraudRiskAssessmentSection from './FraudRiskAssessmentSection';
 import FinancialReportingProcessSection from './FinancialReportingProcessSection';
+import FinancialReportingUnderstandStatementsSection from './FinancialReportingUnderstandStatementsSection';
+import FinancialReportingRelevantProcessesSection from './FinancialReportingRelevantProcessesSection';
 import TeamSection from './TeamSection';
 import SectionWrapper from './SectionWrapper';
 import ProjectSignOffsSummary from './ProjectSignOffsSummary';
@@ -6883,8 +6885,6 @@ const ProjectEditContent = ({
           <KnowledgeBasePage
             projectId={projectId}
             sourceExcelFile={formData.source_excel_file}
-            onNavigateToUpload={() => onSectionChange('engagement-profile-section')}
-            onRemoveSourceExcel={onRemoveFile}
           />
         )}
 
@@ -7039,6 +7039,40 @@ const ProjectEditContent = ({
           >
             <div className="space-y-4">
               <FinancialReportingProcessSection formData={formData} onFormDataChange={onFormDataChange} />
+            </div>
+          </SectionWrapper>
+        )}
+        {activeSection === 'financial-reporting-understand-financial-statements' && (
+          <SectionWrapper
+            sectionId="financial-reporting-understand-financial-statements"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
+            sidebarSections={sidebarSections}
+          >
+            <div className="space-y-4">
+              <FinancialReportingUnderstandStatementsSection
+                onNavigateToRelevantProcesses={() => onSectionChange('financial-reporting-relevant-processes')}
+              />
+            </div>
+          </SectionWrapper>
+        )}
+        {activeSection === 'financial-reporting-relevant-processes' && (
+          <SectionWrapper
+            sectionId="financial-reporting-relevant-processes"
+            formData={formData}
+            users={users}
+            currentUser={currentUser}
+            signOffLevel="incharge"
+            onReview={handleReviewWrapper}
+            onUnreview={onUnreview}
+            sidebarSections={sidebarSections}
+          >
+            <div className="space-y-4">
+              <FinancialReportingRelevantProcessesSection formData={formData} />
             </div>
           </SectionWrapper>
         )}

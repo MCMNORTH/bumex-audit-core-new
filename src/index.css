@@ -100,6 +100,7 @@
   html {
     height: 100%;
     overflow-y: scroll;
+    font-size: 14px;
   }
 
   body {

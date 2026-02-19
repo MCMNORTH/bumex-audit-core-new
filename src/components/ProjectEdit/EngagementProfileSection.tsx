@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,9 +8,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { Calendar } from 'lucide-react';
 import { Client, User, Project } from '@/types';
-import { doc, updateDoc } from 'firebase/firestore';
-import { ref, deleteObject } from 'firebase/storage';
-import { db, storage } from '@/lib/firebase';
 import FileUploadSection from './FileUploadSection';
 import DocumentAttachmentSection from './DocumentAttachmentSection';
 import EngagementScopeSection from './EngagementScopeSection';
@@ -18,9 +15,7 @@ import EntityProfileSection from './EngagementScope/EntityProfileSection';
 import MultiReportingSection from './MultiReportingSection';
 import { CommentableQuestion } from './Comments';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { useAuth } from '@/hooks/useAuth';
 import { SourceExcelFile } from '@/types/formData';
-import { getStorageBucketName, uploadXlsm } from '@/utils/uploadXlsm';
 
 interface DocumentFile {
   name: string;
@@ -227,11 +222,6 @@ const EngagementProfileSection = ({
   onDownloadMRRFile
 }: EngagementProfileSectionProps) => {
   const { t } = useTranslation();
-  const { user } = useAuth();
-  const sourceExcelInputRef = useRef<HTMLInputElement>(null);
-  const [sourceExcelUploading, setSourceExcelUploading] = useState(false);
-  const [sourceExcelProgress, setSourceExcelProgress] = useState(0);
-  const [sourceExcelError, setSourceExcelError] = useState<string | null>(null);
   
   const auditTypes = [
     { value: 'Financial Audit', label: t('engagement.auditTypes.financial') },
@@ -250,109 +240,6 @@ const EngagementProfileSection = ({
     { value: 'Not Selected', label: t('engagement.statuses.notSelected') },
     { value: 'Approved', label: t('engagement.statuses.approved') }
   ];
-
-  const validateXlsmFile = (file: File) => {
-    return file.name.toLowerCase().endsWith('.xlsm');
-  };
-
-  const getUploadErrorMessage = (error: unknown) => {
-    const fallback = 'Upload failed. Please try again.';
-    const code = (error as { code?: string })?.code;
-    const message = (error as Error)?.message || fallback;
-
-    if (code === 'auth/not-authenticated') {
-      return 'User not authenticated. Please sign in and retry.';
-    }
-    if (code === 'storage/unauthorized') {
-      return 'Permission denied. Check Storage rules and ensure the path is source-excel/<uid>/... and the user is signed in.';
-    }
-    if (code === 'storage/retry-limit-exceeded') {
-      return 'Upload failed due to unstable network or a large file. Please retry.';
-    }
-    if (code === 'storage/invalid-file-type') {
-      return 'Only .xlsm files are accepted.';
-    }
-
-    return message || fallback;
-  };
-
-  const handleSourceExcelUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!validateXlsmFile(file)) {
-      setSourceExcelError('Only .xlsm files are accepted.');
-      if (sourceExcelInputRef.current) {
-        sourceExcelInputRef.current.value = '';
-      }
-      return;
-    }
-
-    if (!projectId) {
-      setSourceExcelError('Project not found. Unable to upload the file.');
-      return;
-    }
-
-    setSourceExcelError(null);
-    setSourceExcelUploading(true);
-    setSourceExcelProgress(0);
-
-    try {
-      if (!user) {
-        throw Object.assign(new Error('User not authenticated'), {
-          code: 'auth/not-authenticated',
-        });
-      }
-
-      const { url, path, size } = await uploadXlsm(file, {
-        onProgress: (progress) => setSourceExcelProgress(progress),
-        projectId,
-      });
-
-      const metadata: SourceExcelFile = {
-        url,
-        path,
-        name: file.name,
-        size,
-        uploadedAt: new Date().toISOString(),
-        uploadedBy: user.id,
-      };
-
-      onFormDataChange({
-        source_excel_file: metadata,
-      });
-      await updateDoc(doc(db, 'projects', projectId), {
-        source_excel_file: metadata,
-      });
-
-      if (formData.source_excel_file?.url?.startsWith('https://')) {
-        try {
-          const oldRef = ref(storage, formData.source_excel_file.url);
-          await deleteObject(oldRef);
-        } catch (error) {
-          console.error('Error deleting old source excel file:', error);
-        }
-      }
-
-      console.info('XLSM uploaded', {
-        uid: user.id,
-        storagePath: path,
-        bucket: getStorageBucketName(),
-      });
-    } catch (error) {
-      const message = getUploadErrorMessage(error);
-      console.error('Error uploading source excel file:', {
-        uid: user?.id,
-        bucket: getStorageBucketName(),
-        code: (error as { code?: string })?.code,
-        message: (error as Error)?.message,
-        stack: (error as Error)?.stack,
-      });
-      setSourceExcelError(message);
-    } finally {
-      setSourceExcelUploading(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -527,54 +414,6 @@ const EngagementProfileSection = ({
               onCheckedChange={(checked) => onFormDataChange({ plan_to_roll_forward: checked as boolean })}
             />
             <Label htmlFor="plan_to_roll_forward">{t('engagement.planToRollForward')}</Label>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Source Excel file (.xlsm)</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="space-y-1">
-              <p className="text-sm text-gray-700">
-                {formData.source_excel_file?.name || 'No file uploaded.'}
-              </p>
-              <p className="text-xs text-gray-500">
-                Macros are not executed; only data is read.
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <input
-                ref={sourceExcelInputRef}
-                type="file"
-                accept=".xlsm"
-                className="hidden"
-                onChange={handleSourceExcelUpload}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => sourceExcelInputRef.current?.click()}
-                disabled={sourceExcelUploading}
-              >
-                {formData.source_excel_file ? 'Replace file' : 'Upload file'}
-              </Button>
-            </div>
-          </div>
-          {sourceExcelUploading && (
-            <div className="text-xs text-gray-500">
-              Uploading... {Math.round(sourceExcelProgress)}%
-            </div>
-          )}
-          {sourceExcelError && (
-            <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {sourceExcelError}
-            </div>
-          )}
-          <div className="text-xs text-gray-500">
-            Parsing happens on the backend after upload.
           </div>
         </CardContent>
       </Card>

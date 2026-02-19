@@ -10,8 +10,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { CalendarIcon, Plus, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import CommentableQuestion from '../Comments/CommentableQuestion';
-import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ITEnvironmentSectionProps {
   formData: {
@@ -192,6 +190,9 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
     onFormDataChange({ it_risk_assessment_procedures: updatedProcedures });
   };
 
+  const reliesOnAutomatedControls = formData.it_plan_to_rely_on_automated_controls === 'Yes';
+  const hasNewSoftwareOrMajorUpgrades = formData.it_new_accounting_software === 'Yes';
+
   return (
     <div className="space-y-6">
       <h4 className="font-medium text-gray-900 mb-4">Understand the entity's IT organization and IT systems</h4>
@@ -215,23 +216,25 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
           </RadioGroup>
         </div>
 
-        <div>
-          <Label className="text-sm font-medium">Do you plan to take the benchmarking strategy for testing automated controls?</Label>
-          <RadioGroup
-            value={formData.it_plan_benchmarking_strategy || ''}
-            onValueChange={(value) => onFormDataChange({ it_plan_benchmarking_strategy: value })}
-            className="flex space-x-6 mt-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="Yes" id="it-benchmarking-yes" />
-              <Label htmlFor="it-benchmarking-yes" className="text-sm">Yes</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="No" id="it-benchmarking-no" />
-              <Label htmlFor="it-benchmarking-no" className="text-sm">No</Label>
-            </div>
-          </RadioGroup>
-        </div>
+        {reliesOnAutomatedControls ? (
+          <div>
+            <Label className="text-sm font-medium">Do you plan to take the benchmarking strategy for testing automated controls?</Label>
+            <RadioGroup
+              value={formData.it_plan_benchmarking_strategy || ''}
+              onValueChange={(value) => onFormDataChange({ it_plan_benchmarking_strategy: value })}
+              className="flex space-x-6 mt-2"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="Yes" id="it-benchmarking-yes" />
+                <Label htmlFor="it-benchmarking-yes" className="text-sm">Yes</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="No" id="it-benchmarking-no" />
+                <Label htmlFor="it-benchmarking-no" className="text-sm">No</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        ) : null}
 
         <div>
           <Label htmlFor="it-key-members" className="text-sm font-medium">We inquired of the following key members of IT organization primarily responsible for the IT environment:</Label>
@@ -562,18 +565,20 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
         </div>
 
         {/* Software Effects Description */}
-        <div>
-          <Label htmlFor="software-effects" className="text-sm font-medium mb-2 block">
-            Briefly describe the effects (if any) on the processing of accounting transactions, or on the summarization of financial data and preparation of financial statements, and on the related risks of material misstatement.
-          </Label>
-          <Textarea
-            id="software-effects"
-            value={formData.it_software_effects_description || ''}
-            onChange={(e) => onFormDataChange({ it_software_effects_description: e.target.value })}
-            rows={4}
-            placeholder="Enter description of effects..."
-          />
-        </div>
+        {hasNewSoftwareOrMajorUpgrades && (
+          <div>
+            <Label htmlFor="software-effects" className="text-sm font-medium mb-2 block">
+              Briefly describe the effects (if any) on the processing of accounting transactions, or on the summarization of financial data and preparation of financial statements, and on the related risks of material misstatement.
+            </Label>
+            <Textarea
+              id="software-effects"
+              value={formData.it_software_effects_description || ''}
+              onChange={(e) => onFormDataChange({ it_software_effects_description: e.target.value })}
+              rows={4}
+              placeholder="Enter description of effects..."
+            />
+          </div>
+        )}
       </div>
 
       {/* New Container - IT Processes */}
@@ -653,7 +658,7 @@ const ITEnvironmentSection = ({ formData, onFormDataChange }: ITEnvironmentSecti
           <Label className="text-sm font-medium mb-2 block">
             Document the risk assessment procedures performed to obtain an understanding of how the entity uses IT as part of financial reporting (i.e., understanding of the IT systems, IT organization and IT processes).
           </Label>
-          
+
           <div className="flex justify-between items-center mb-3">
             <span></span>
             <Button onClick={addRiskAssessmentProcedure} size="sm" className="flex items-center gap-2">

@@ -84,6 +84,8 @@ const ProjectHeader = ({
       // Business processes children
       case 'financial-reporting': return '1. Financial reporting';
       case 'financial-reporting-process': return '1. Financial reporting process';
+      case 'financial-reporting-understand-financial-statements': return '1. Understand the financial statements';
+      case 'financial-reporting-relevant-processes': return '2. Relevant processes';
       case 'control-activities': return 'CA - Control activities';
       case 'controle-24': return 'Contrôle 24';
       case 'controle-24-d-i': return '1 - D&I';
@@ -140,10 +142,19 @@ const ProjectHeader = ({
           {clientName} • {auditType}
         </p>
       </div>
-      <Button onClick={onSave} disabled={saving}>
-        <Save className="mr-2 h-4 w-4" />
-        {saving ? 'Saving...' : 'Save Changes'}
-      </Button>
+      {activeSection === 'knowledge-base' ? (
+        <Button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event('knowledge-base-open-source-excel-upload'))}
+        >
+          Upload Source Excel (.xlsm)
+        </Button>
+      ) : (
+        <Button onClick={onSave} disabled={saving}>
+          <Save className="mr-2 h-4 w-4" />
+          {saving ? 'Saving...' : 'Save Changes'}
+        </Button>
+      )}
     </div>
   );
 };

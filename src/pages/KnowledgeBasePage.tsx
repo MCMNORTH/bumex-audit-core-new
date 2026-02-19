@@ -15,16 +15,18 @@ import {
   TabsTrigger,
 } from '@/components/ui/tabs';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties, ReactNode } from 'react';
+import type { ChangeEvent, CSSProperties, ReactNode } from 'react';
 import {
   collection,
+  updateDoc,
   doc,
   getDocs,
   onSnapshot,
   serverTimestamp,
   setDoc,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, storage } from '@/lib/firebase';
+import { ref, deleteObject } from 'firebase/storage';
 import { SourceExcelFile } from '@/types/formData';
 import {
   DndContext,
@@ -41,6 +43,8 @@ import pcmAccounts from '@/plan_comptable_mauritanien.json';
 import { ChevronRight } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
+import { useAuth } from '@/hooks/useAuth';
+import { uploadXlsm } from '@/utils/uploadXlsm';
 
 type BalanceRow = {
   account: string;
@@ -113,6 +117,11 @@ const padAccount = (value: string) => {
   const normalized = digits.replace(/^0+/, '') || '0';
   const trimmed = normalized.length > 6 ? normalized.slice(0, 6) : normalized;
   return trimmed.length >= 6 ? trimmed : trimmed.padEnd(6, '0');
+};
+const IGNORED_ACCOUNT_CODES = new Set(['870000']);
+const isIgnoredAccountCode = (account?: string | null) => {
+  if (!account) return false;
+  return IGNORED_ACCOUNT_CODES.has(padAccount(account));
 };
 
 const findSheetName = (sheetNames: string[], expected: string) => {
@@ -273,7 +282,7 @@ const DraggableAccountRow = ({ row }: { row: ProcessMappingRow }) => {
       className="cursor-grab active:cursor-grabbing"
       title="Drag to a process"
     >
-      <FsAccountRowDisplay row={row} showExcelIndicator />
+      <FsAccountRowDisplay row={row} />
     </div>
   );
 };
@@ -382,16 +391,18 @@ const FsDropZone = ({
 interface KnowledgeBasePageProps {
   projectId?: string;
   sourceExcelFile: SourceExcelFile | null;
-  onNavigateToUpload?: () => void;
-  onRemoveSourceExcel?: () => void;
 }
 
 const KnowledgeBasePage = ({
   projectId,
   sourceExcelFile,
-  onNavigateToUpload,
-  onRemoveSourceExcel,
 }: KnowledgeBasePageProps) => {
+  const { user } = useAuth();
+  const [sourceExcelFileState, setSourceExcelFileState] = useState<SourceExcelFile | null>(sourceExcelFile);
+  const [sourceExcelUploading, setSourceExcelUploading] = useState(false);
+  const [sourceExcelProgress, setSourceExcelProgress] = useState(0);
+  const [sourceExcelError, setSourceExcelError] = useState<string | null>(null);
+  const sourceExcelInputRef = useRef<HTMLInputElement | null>(null);
   const [balancesDoc, setBalancesDoc] = useState<{
     status?: 'processing' | 'done' | 'error';
     balanceN?: BalanceRow[];
@@ -450,6 +461,113 @@ const KnowledgeBasePage = ({
   const [collapsedNodes, setCollapsedNodes] = useState<Set<string>>(new Set());
   const balanceImportInputRef = useRef<HTMLInputElement | null>(null);
   const processImportInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setSourceExcelFileState(sourceExcelFile);
+  }, [sourceExcelFile]);
+
+  useEffect(() => {
+    const openUpload = () => {
+      sourceExcelInputRef.current?.click();
+    };
+    window.addEventListener('knowledge-base-open-source-excel-upload', openUpload);
+    return () => {
+      window.removeEventListener('knowledge-base-open-source-excel-upload', openUpload);
+    };
+  }, []);
+
+  const validateXlsmFile = (file: File) => file.name.toLowerCase().endsWith('.xlsm');
+
+  const getUploadErrorMessage = (error: unknown) => {
+    const fallback = 'Upload failed. Please try again.';
+    const code = (error as { code?: string })?.code;
+    const message = (error as Error)?.message || fallback;
+    if (code === 'auth/not-authenticated') return 'User not authenticated. Please sign in and retry.';
+    if (code === 'storage/unauthorized') return 'Permission denied to upload this file.';
+    if (code === 'storage/invalid-file-type') return 'Only .xlsm files are accepted.';
+    return message || fallback;
+  };
+
+  const handleSourceExcelUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!validateXlsmFile(file)) {
+      setSourceExcelError('Only .xlsm files are accepted.');
+      event.target.value = '';
+      return;
+    }
+    if (!projectId) {
+      setSourceExcelError('Project not found. Unable to upload the file.');
+      event.target.value = '';
+      return;
+    }
+    setSourceExcelError(null);
+    setSourceExcelUploading(true);
+    setSourceExcelProgress(0);
+
+    try {
+      if (!user) {
+        throw Object.assign(new Error('User not authenticated'), {
+          code: 'auth/not-authenticated',
+        });
+      }
+
+      const previous = sourceExcelFileState;
+      const { url, path, size } = await uploadXlsm(file, {
+        onProgress: (progress) => setSourceExcelProgress(progress),
+        projectId,
+      });
+
+      const metadata: SourceExcelFile = {
+        url,
+        path,
+        name: file.name,
+        size,
+        uploadedAt: new Date().toISOString(),
+        uploadedBy: user.id,
+      };
+
+      await updateDoc(doc(db, 'projects', projectId), {
+        source_excel_file: metadata,
+      });
+      setSourceExcelFileState(metadata);
+
+      if (previous?.path || previous?.url) {
+        try {
+          const previousRef = ref(storage, previous.path || previous.url);
+          await deleteObject(previousRef);
+        } catch (cleanupError) {
+          console.error('Error deleting previous source excel file:', cleanupError);
+        }
+      }
+    } catch (error) {
+      setSourceExcelError(getUploadErrorMessage(error));
+    } finally {
+      setSourceExcelUploading(false);
+      setSourceExcelProgress(0);
+      event.target.value = '';
+    }
+  };
+
+  const handleRemoveSourceExcel = async () => {
+    if (!projectId || !sourceExcelFileState) return;
+    try {
+      await updateDoc(doc(db, 'projects', projectId), {
+        source_excel_file: null,
+      });
+      if (sourceExcelFileState.path || sourceExcelFileState.url) {
+        try {
+          const oldRef = ref(storage, sourceExcelFileState.path || sourceExcelFileState.url);
+          await deleteObject(oldRef);
+        } catch (cleanupError) {
+          console.error('Error deleting source excel file:', cleanupError);
+        }
+      }
+      setSourceExcelFileState(null);
+    } catch (error) {
+      setSourceExcelError(getUploadErrorMessage(error));
+    }
+  };
 
   const sensors = useSensors(
     useSensor(NoDndPointerSensor, { activationConstraint: { distance: 6 } })
@@ -672,7 +790,9 @@ const KnowledgeBasePage = ({
   const mappingSourceUniqueRows = useMemo(() => {
     const map = new Map<string, BalanceRow>();
     mappingSourceRows.forEach((row) => {
-      if (row.account) map.set(row.account, row);
+      if (row.account && !isIgnoredAccountCode(row.account)) {
+        map.set(row.account, row);
+      }
     });
     return Array.from(map.values());
   }, [mappingSourceRows]);
@@ -2014,7 +2134,7 @@ const KnowledgeBasePage = ({
     let count = 0;
     const walk = (nodes: FsNode[]) => {
       nodes.forEach((node) => {
-        if (node.kind === 'account') count += 1;
+        if (node.kind === 'account' && !isIgnoredAccountCode(node.code)) count += 1;
         walk(node.children);
       });
     };
@@ -2101,13 +2221,49 @@ const KnowledgeBasePage = ({
     );
   }, [fsStructure, balanceNByAccount, balanceN1ByAccount, balanceAccountCodes]);
 
+  const pruneTreeToMappedSubaccounts = (nodes: FsNode[]): FsNode[] => {
+    const walk = (node: FsNode, depth = 0): FsNode | null => {
+      const prunedChildren = node.children
+        .map((child) => walk(child, depth + 1))
+        .filter((child): child is FsNode => child !== null);
+
+      if (node.kind === 'account') {
+        if (isIgnoredAccountCode(node.code)) return null;
+        // Keep only account nodes that actually have imported sub-accounts attached.
+        return node.accounts.length > 0 ? { ...node, children: prunedChildren } : null;
+      }
+
+      if (depth === 0) {
+        // Always keep top-level sections (ACTIF/PASSIF/RESULTAT) so totals are always rendered.
+        return { ...node, children: prunedChildren };
+      }
+
+      // Keep grouping nodes only when they still contain visible descendants.
+      return prunedChildren.length > 0 ? { ...node, children: prunedChildren } : null;
+    };
+
+    return nodes
+      .map((node) => walk(node, 0))
+      .filter((node): node is FsNode => node !== null);
+  };
+
   const statusTreeSource = balanceMappingTree ?? fsStructure?.tree ?? null;
-  const statusTreeWithTotals = useMemo(() => {
+  const statusTreeWithTotalsFull = useMemo(() => {
     if (!statusTreeSource) return null;
     return statusTreeSource.map((node) =>
       updateTotals(node, node.label).node
     );
   }, [statusTreeSource, balanceNByAccount, balanceN1ByAccount, balanceAccountCodes]);
+  const filteredStatusTreeSource = useMemo(() => {
+    if (!statusTreeSource) return null;
+    return pruneTreeToMappedSubaccounts(statusTreeSource);
+  }, [statusTreeSource]);
+  const statusTreeWithTotals = useMemo(() => {
+    if (!filteredStatusTreeSource) return null;
+    return filteredStatusTreeSource.map((node) =>
+      updateTotals(node, node.label).node
+    );
+  }, [filteredStatusTreeSource, balanceNByAccount, balanceN1ByAccount, balanceAccountCodes]);
 
   const findNodeByLabel = (nodes: FsNode[], label: string) =>
     nodes.find(
@@ -2128,6 +2284,10 @@ const KnowledgeBasePage = ({
     if (!statusTreeWithTotals) return null;
     return findNodeByLabel(statusTreeWithTotals, 'RESULTAT');
   }, [statusTreeWithTotals]);
+  const fsResultatForTotals = useMemo(() => {
+    if (!statusTreeWithTotalsFull) return null;
+    return findNodeByLabel(statusTreeWithTotalsFull, 'RESULTAT');
+  }, [statusTreeWithTotalsFull]);
 
   const getDisplayTotals = (node: FsNode, absDisplay: boolean) => {
     const base = { n: node.totalN ?? 0, n1: node.totalN1 ?? 0 };
@@ -2146,9 +2306,9 @@ const KnowledgeBasePage = ({
   );
 
   const resultTotals = useMemo(() => {
-    if (!fsResultat) return { n: 0, n1: 0 };
-    return getDisplayTotals(fsResultat, false);
-  }, [fsResultat]);
+    if (!fsResultatForTotals) return { n: 0, n1: 0 };
+    return getDisplayTotals(fsResultatForTotals, false);
+  }, [fsResultatForTotals]);
 
   const balanceNet = useMemo(() => {
     const rows = [...balanceN, ...balanceN1];
@@ -2232,8 +2392,18 @@ const KnowledgeBasePage = ({
   ) => {
     const next = { template, tree };
     setFsStructure(next);
-    const templateName = meta?.templateName ?? fsTemplateName ?? null;
-    const templateId = meta?.templateId ?? fsTemplateId ?? null;
+    const templateName =
+      meta?.templateName !== undefined
+        ? meta.templateName
+        : template === 'bumex_pcm'
+          ? null
+          : fsTemplateName ?? null;
+    const templateId =
+      meta?.templateId !== undefined
+        ? meta.templateId
+        : template === 'bumex_pcm'
+          ? null
+          : fsTemplateId ?? null;
     await saveFsStructure(next, { templateName, templateId });
   };
 
@@ -2279,7 +2449,17 @@ const KnowledgeBasePage = ({
   };
 
   const handleSwitchToPcm = async () => {
-    if (!window.confirm('Remplacer la structure actuelle par BUMEX PCM ?')) {
+    if (fsStructure?.template === 'manual') {
+      const firstConfirmation = window.confirm(
+        'You are switching from a manual structure to BUMEX PCM. All manual changes will be lost. Do you want to continue?'
+      );
+      if (!firstConfirmation) return;
+
+      const secondConfirmation = window.confirm(
+        'Final confirmation: this will delete your manual changes and the structure name will become "BUMEX PCM". Confirm?'
+      );
+      if (!secondConfirmation) return;
+    } else if (!window.confirm('Replace the current structure with BUMEX PCM?')) {
       return;
     }
     await handleChoosePcm();
@@ -2983,6 +3163,9 @@ const KnowledgeBasePage = ({
     allowEdit = false,
     path: string[] = []
   ) => {
+    if (node.kind === 'account' && isIgnoredAccountCode(node.code)) {
+      return null;
+    }
     const padding = depth * 12;
     const nodePath = [...path, node.label];
     const nodeKey = nodePath.join(' / ');
@@ -3092,18 +3275,29 @@ const KnowledgeBasePage = ({
               </div>
             )}
     {node.kind === 'account' && allowEdit && (
-      <button
-        type="button"
-        className="text-xs text-red-500 hover:text-red-700"
-        onClick={() => handleDeleteNode(node.id)}
-      >
-        Remove
-      </button>
+      <div className="flex items-center gap-2">
+        {fsStructure?.template === 'manual' && (
+          <button
+            type="button"
+            className="text-xs text-muted-foreground hover:text-foreground"
+            onClick={() => handleRenameNode(node.id, node.label)}
+          >
+            Rename
+          </button>
+        )}
+        <button
+          type="button"
+          className="text-xs text-red-500 hover:text-red-700"
+          onClick={() => handleDeleteNode(node.id)}
+        >
+          Remove
+        </button>
+      </div>
     )}
           </div>
           {!isCollapsed && node.accounts.length > 0 && (
             <div className="space-y-1" style={{ paddingLeft: padding + 12 }}>
-              {node.accounts.map((account) => {
+              {node.accounts.filter((account) => !isIgnoredAccountCode(account)).map((account) => {
                 const balanceLabel = balanceLabelByAccount.get(account);
                 return (
                 <div
@@ -3143,6 +3337,9 @@ const KnowledgeBasePage = ({
     allowRemove = false,
     path: string[] = []
   ) => {
+    if (node.kind === 'account' && isIgnoredAccountCode(node.code)) {
+      return null;
+    }
     const padding = depth * 12;
     const nodePath = [...path, node.label];
     const nodeKey = nodePath.join(' / ');
@@ -3179,7 +3376,7 @@ const KnowledgeBasePage = ({
         </div>
         {!isCollapsed && node.accounts.length > 0 && (
           <div className="space-y-1" style={{ paddingLeft: padding + 12 }}>
-              {node.accounts.map((account) => {
+              {node.accounts.filter((account) => !isIgnoredAccountCode(account)).map((account) => {
                 const balanceLabel = balanceLabelByAccount.get(account);
                 return (
                 <div
@@ -3233,12 +3430,14 @@ const KnowledgeBasePage = ({
     [mappingDoc]
   );
 
+  const processMappingTreeSource = balanceMappingTree ?? fsStructure?.tree ?? null;
+
   const structureAccountCodes = useMemo(() => {
     const set = new Set<string>();
-    if (!fsStructure) return set;
+    if (!processMappingTreeSource) return set;
     const walk = (nodes: FsNode[]) => {
       nodes.forEach((node) => {
-        if (node.kind === 'account' && node.code) {
+        if (node.kind === 'account' && node.code && !isIgnoredAccountCode(node.code)) {
           set.add(node.code);
         }
         if (node.children.length) {
@@ -3246,15 +3445,39 @@ const KnowledgeBasePage = ({
         }
       });
     };
-    walk(fsStructure.tree);
+    walk(processMappingTreeSource);
     return set;
-  }, [fsStructure]);
+  }, [processMappingTreeSource]);
+
+  const mappedStructureAccountCodes = useMemo(() => {
+    const set = new Set<string>();
+    if (!processMappingTreeSource) return set;
+    const walk = (nodes: FsNode[]) => {
+      nodes.forEach((node) => {
+        if (
+          node.kind === 'account' &&
+          node.code &&
+          !isIgnoredAccountCode(node.code) &&
+          node.accounts.some((account) => !isIgnoredAccountCode(account))
+        ) {
+          set.add(node.code);
+        }
+        if (node.children.length) {
+          walk(node.children);
+        }
+      });
+    };
+    walk(processMappingTreeSource);
+    return set;
+  }, [processMappingTreeSource]);
 
   const processMappingRows = useMemo(() => {
     if (!fsStructure || structureAccountCodes.size === 0) return [];
     const map = new Map<string, ProcessMappingRow>();
     pcmList.forEach((item) => {
+      if (isIgnoredAccountCode(item.account)) return;
       if (!structureAccountCodes.has(item.account)) return;
+      if (!mappedStructureAccountCodes.has(item.account)) return;
       const balanceRow = balanceNByAccount.get(item.account);
       const prefix = item.account.replace(/0+$/, '') || item.account;
       const hasExcel = balanceAccountCodes.some((account) =>
@@ -3269,7 +3492,9 @@ const KnowledgeBasePage = ({
     });
     manualFsAccounts.forEach((item) => {
       const account = padAccount(item.account);
+      if (isIgnoredAccountCode(account)) return;
       if (!structureAccountCodes.has(account)) return;
+      if (!mappedStructureAccountCodes.has(account)) return;
       if (map.has(account)) return;
       const balanceRow = balanceNByAccount.get(account);
       const prefix = account.replace(/0+$/, '') || account;
@@ -3286,7 +3511,7 @@ const KnowledgeBasePage = ({
     return Array.from(map.values()).sort((a, b) =>
       a.account.localeCompare(b.account)
     );
-  }, [pcmList, manualFsAccounts, balanceNByAccount, balanceAccountCodes, fsStructure, structureAccountCodes]);
+  }, [pcmList, manualFsAccounts, balanceNByAccount, balanceAccountCodes, fsStructure, structureAccountCodes, mappedStructureAccountCodes]);
 
   const uniqueAccounts = useMemo(
     () => processMappingRows.map((row) => row.account),
@@ -3694,6 +3919,24 @@ const KnowledgeBasePage = ({
 
   return (
     <div className="space-y-6">
+      <input
+        ref={sourceExcelInputRef}
+        type="file"
+        accept=".xlsm"
+        className="hidden"
+        onChange={handleSourceExcelUpload}
+      />
+      {sourceExcelUploading && (
+        <div className="text-xs text-gray-500">
+          Uploading... {Math.round(sourceExcelProgress)}%
+        </div>
+      )}
+      {sourceExcelError && (
+        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          {sourceExcelError}
+        </div>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle>Financial Statements Workflow</CardTitle>
@@ -3746,15 +3989,15 @@ const KnowledgeBasePage = ({
                 Select a project to import the trial balance.
               </CardContent>
             </Card>
-          ) : !sourceExcelFile ? (
+          ) : !sourceExcelFileState ? (
             <Card>
               <CardContent className="py-10 text-center space-y-3">
                 <p className="text-gray-600">No trial balance imported.</p>
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={onNavigateToUpload}
-                  disabled={!onNavigateToUpload}
+                  onClick={() => sourceExcelInputRef.current?.click()}
+                  disabled={sourceExcelUploading}
                 >
                   Import trial balance
                 </Button>
@@ -3767,23 +4010,12 @@ const KnowledgeBasePage = ({
                   <CardTitle>Imported trial balance</CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-1 text-sm text-gray-600">
-                  <span>{sourceExcelFile.name}</span>
+                  <span>{sourceExcelFileState.name}</span>
                   <span>
-                    {Math.round((sourceExcelFile.size / 1024) * 10) / 10} KB
+                    {Math.round((sourceExcelFileState.size / 1024) * 10) / 10} KB
                   </span>
                   {balanceParsedAt && (
                     <span>Imported on: {new Date(balanceParsedAt).toLocaleString()}</span>
-                  )}
-                  {onRemoveSourceExcel && (
-                    <div className="pt-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={onRemoveSourceExcel}
-                      >
-                        Remove trial balance
-                      </Button>
-                    </div>
                   )}
                 </CardContent>
               </Card>
@@ -4193,11 +4425,6 @@ const KnowledgeBasePage = ({
                                           <span className="whitespace-nowrap text-[10px] text-muted-foreground">
                                             {formatBalanceValue(row.balance)}
                                           </span>
-                                          {row.hasExcel && (
-                                            <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-                                              Excel
-                                            </span>
-                                          )}
                                           <button
                                             type="button"
                                             onClick={() => removeAccountMapping(row.account)}
@@ -4427,7 +4654,7 @@ const KnowledgeBasePage = ({
                         <span className="text-left pl-1">PY</span>
                         <span className="text-left pl-1">CY</span>
                       </div>
-                      {fsResultat && (
+                      {fsResultatForTotals && (
                         <div className="grid items-center gap-6 rounded-md border border-slate-200/70 bg-slate-50 px-2 py-1.5 text-sm font-medium" style={{ gridTemplateColumns: 'minmax(0,1fr) 110px 110px' }}>
                           <span className="truncate">Total</span>
                           <span className="text-right tabular-nums">{formatBalanceValue(resultTotals.n1)}</span>
